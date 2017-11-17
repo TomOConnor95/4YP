@@ -23,15 +23,13 @@ u = udp('127.0.0.1',57120);
 fopen(u); 
 
 %% Choose initail presets
-[presetA, lengths, nameStrings, typeStrings] = createPresetAforOSC();
-
-
+[presetA, nameStrings, typeStrings] = createPresetAforOSC();
 
 % [presetA, presetB, presetC] = loadPresetsFromStore(4,9,7);
  [presetA, presetB, presetC] = loadPresetsFromStoreRandom();
 P = presetGeneratorMonteCarloMVNoBounds(presetA, presetB, presetC);
 
-sendAllParamsOverOSC(P.presetA, lengths, nameStrings, typeStrings, u);
+sendAllParamsOverOSC(P.presetA, nameStrings, typeStrings, u);
 %% Plot all geometry for Blending Interface
 figure(1)
 G = createBlendingGeometry();
@@ -113,7 +111,7 @@ while(isSearching)
 
             barMix = updateMixBarPLot(barMix, P.presetMix);
             
-            sendAllParamsOverOSC(P.presetMix, lengths, nameStrings, typeStrings, u);
+            sendAllParamsOverOSC(P.presetMix, nameStrings, typeStrings, u);
             
             drawnow()
             
