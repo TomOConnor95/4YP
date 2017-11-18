@@ -4,6 +4,7 @@ classdef (Abstract) presetGeneratorParent
         presetA
         presetB
         presetC
+        currentTreeIndex
     end
     properties(GetAccess=public,SetAccess=private)
         presetAHistory
@@ -29,9 +30,11 @@ classdef (Abstract) presetGeneratorParent
                 obj.presetB = presetB_in;
                 obj.presetC = presetC_in;
                 
-                obj.presetAHistory = presetA_in;
-                obj.presetBHistory = presetB_in;
-                obj.presetCHistory = presetC_in;
+                obj.presetAHistory = tree(presetA_in);
+                obj.presetBHistory = tree(presetB_in);
+                obj.presetCHistory = tree(presetC_in);
+                
+                obj.currentTreeIndex = 1;
                 
                 obj.presetMix = presetA_in;
             end
@@ -52,9 +55,11 @@ classdef (Abstract) presetGeneratorParent
             obj = obj.generateNewBC();
             
             % Save presets to history
-            obj.presetAHistory = [obj.presetAHistory; obj.presetA];
-            obj.presetBHistory = [obj.presetBHistory; obj.presetB];
-            obj.presetCHistory = [obj.presetCHistory; obj.presetC];
+            oldIndex = obj.currentTreeIndex;
+            [obj.presetAHistory, newIndex] = obj.presetAHistory.addnode(obj.currentTreeIndex, obj.presetA);
+            [obj.presetBHistory] = obj.presetBHistory.addnode(oldIndex, obj.presetB);
+            [obj.presetCHistory] = obj.presetCHistory.addnode(oldIndex, obj.presetC);
+            obj.currentTreeIndex = newIndex;
         end
 
     end

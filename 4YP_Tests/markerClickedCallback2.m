@@ -1,7 +1,6 @@
-function markerClickedCallback(src,~, index, value)
+function markerClickedCallback2(src,~, index)
 
     disp(['Index: ',num2str(index), ' CLICKED']);
-    disp(['Value: ',num2str(value)]);
 
 %     for i = 1:nnodes(plot_markers_tree)
 %         marker = plot_markers_tree.get(i);
@@ -13,4 +12,8 @@ function markerClickedCallback(src,~, index, value)
     src.MarkerFaceColor = [0, 1, 1];
     %src.MarkerFaceColor = [.8 .6 .6];
 
+    assignin('base','isMarkerClicked',true);
+    assignin('base','markerIndex',index);
+
+    
 end

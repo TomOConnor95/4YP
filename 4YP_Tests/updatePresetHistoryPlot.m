@@ -1,7 +1,9 @@
 function historyPlot = updatePresetHistoryPlot(historyPlot,presetHistory)
 
-    for i=1:length(presetHistory(1,:))
-        historyPlot{i}.XData = 1:length(presetHistory(:,1));
-        historyPlot{i}.YData = presetHistory(:,i);
+historyArray = cell2mat(presetHistory.Node);
+
+    for i=1:length(historyArray(1,:))
+        historyPlot{i}.XData = 1:length(historyArray(:,1));
+        historyPlot{i}.YData = historyArray(:,i);
     end
 end

@@ -38,12 +38,14 @@ classdef presetGeneratorMonteCarloMV < presetGeneratorParent
         function obj = generateNewBC(obj)  
             % Generate new B & C
             
-            weights = sigmoidWeights(length(obj.presetAHistory(:,1)), obj.sigmoidCenterRatio);
+            historyArray = cell2mat(obj.presetAHistory.Node);
             
-            newPresetsMean = (obj.lastValueWeighting*obj.presetA + (1-obj.lastValueWeighting)*weights*obj.presetAHistory);
+            weights = sigmoidWeights(length(historyArray(:,1)), obj.sigmoidCenterRatio);
+            
+            newPresetsMean = (obj.lastValueWeighting*obj.presetA + (1-obj.lastValueWeighting)*weights*historyArray);
             
             % Covariance matrix
-            sigma = diag(zeros(1,length(obj.presetAHistory(1,:)))+std(obj.presetAHistory).^obj.stdExponent + obj.tempOffset);
+            sigma = diag(zeros(1,length(historyArray(1,:)))+std(historyArray).^obj.stdExponent + obj.tempOffset);
             sigma = obj.tempScaling * sigma;         %.*randn(1,length(obj.presetA));
             % Multivarite Normal distrubution samples
             tempPresetB = mvnrnd(newPresetsMean,sigma);
