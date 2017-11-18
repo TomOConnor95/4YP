@@ -3,7 +3,7 @@ s.boot;
 // Get the local server's options
 o = Server.local.options;
 // specify a device
-o.device ="Soundflower (2ch)";     // use a Soundflower for audio output
+o.device ="JackRouter";     // use a Soundflower for audio output
 // reboot server
 s.reboot;
 
