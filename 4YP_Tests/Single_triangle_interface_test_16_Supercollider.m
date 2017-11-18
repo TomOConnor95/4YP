@@ -25,24 +25,37 @@ fopen(u);
 %% Choose initial presets
 [presetA, nameStrings, typeStrings] = createPresetAforOSC();
 
-% [presetA, presetB, presetC] = loadPresetsFromStore(4,9,7);
- [presetA, presetB, presetC] = loadPresetsFromStoreRandom();
-P = presetGeneratorMonteCarloMVNoBounds(presetA, presetB, presetC);
+presetB = createPresetBforOSC();
+presetC = createPresetCforOSC();
 
-sendAllParamsOverOSC(P.presetA, nameStrings, typeStrings, u);
+
+% [presetA, presetB, presetC] = loadPresetsFromStore(4,9,7);
+ %[presetA, presetB, presetC] = loadPresetsFromStoreRandom();
+P = presetGeneratorSCMonteCarloMV(presetA, presetB, presetC);
+
+sendAllStructParamsOverOSC(P.presetA, nameStrings, typeStrings, u);
 %% Plot all geometry for Blending Interface
 figure(1)
 G = createBlendingGeometry();
 %set(gcf,'Position',[(screenSize(3)/2),0,screenSize(3)/2,screenSize(4)])
 
-%% Create all necessary bar graphs
-figure(2)
-[barA, barB, barC, barMix] = createBarGraphs(P.presetA,P.presetB,P.presetC);
+%% Create all necessary parameters visualisations
+ figure(3)
+% [barA, barB, barC, barMix] = createBarGraphs(P.presetA,P.presetB,P.presetC);
 
+barPlotPMparams =  bar3(reshape(P.presetA{1},6,6));
+for k = 1:length(barPlotPMparams)
+    zdata = barPlotPMparams(k).ZData;
+    barPlotPMparams(k).CData = zdata;
+    barPlotPMparams(k).FaceColor = 'interp';
+    colormap(cool)
+end
+set(gca,'Xdir','reverse')
+zlim([0,5])
 %% Create plots to show evolution of parameters and Mouse Points
 figure(2) 
 subplot(2,7,[4,5,11,12])
-historyPlot = createHistoryPlot(P.presetAHistory);
+%historyPlot = createHistoryPlot(P.presetAHistory);
 
 subplot(2,7,[6,7,13,14])
 P1HistoryPlot = createPointHistoryPlot(G.P1History);
@@ -83,7 +96,7 @@ while(isSearching)
         P = P.iteratePresets();
         
         % Update plot to show evolution of parameters
-        historyPlot = updatePresetHistoryPlot(historyPlot,P.presetAHistory);
+        %historyPlot = updatePresetHistoryPlot(historyPlot,P.presetAHistory);
         
         % Update Plot showing Point History
         G.P1Sum = G.P1Sum + G.P1;
@@ -91,7 +104,7 @@ while(isSearching)
         P1HistoryPlot = updatePointHistoryPlot(P1HistoryPlot,G.P1History);
         
         % Update Bar plots
-        [barA, barB, barC] = updateBarPlots(barA,barB,barC,P.presetA,P.presetB,P.presetC);
+        %[barA, barB, barC] = updateBarPlots(barA,barB,barC,P.presetA,P.presetB,P.presetC);
         
         isPressed = false;
         %isBlending = true;
@@ -109,9 +122,12 @@ while(isSearching)
             
             P = P.mixPresets(alpha,beta,gamma);
 
-            barMix = updateMixBarPLot(barMix, P.presetMix);
+            %barMix = updateMixBarPLot(barMix, P.presetMix);
+            barPlotPMparams =  updateBarPlotPMparams(barPlotPMparams, reshape(P.presetMix{1}, 6, 6));
             
-            sendAllParamsOverOSC(P.presetMix, nameStrings, typeStrings, u);
+          
+            
+            sendAllStructParamsOverOSC(P.presetMix, nameStrings, typeStrings, u);
             
             drawnow()
             

@@ -38,7 +38,7 @@ classdef (Abstract) presetGeneratorParentNoBounds
         end
         
         function obj = mixPresets(obj,alpha,beta,gamma)
-            obj.presetMix = mixPresetsNoBounds(obj.presetA, obj.presetB, obj.presetC,...
+            obj.presetMix = mixPresets(obj.presetA, obj.presetB, obj.presetC,...
                 alpha,beta,gamma);
         end
         

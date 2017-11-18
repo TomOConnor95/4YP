@@ -1,0 +1,11 @@
+function barPlotPMparams =  updateBarPlotPMparams(barPlotPMparams, P.presetMix);
+
+% Bar3d stores its data weirldly, need to edit each of the vertives
+% individually
+
+
+
+PMparams = reshape(P.presetMix{1}, 6, 6);
+
+
+barPlotPMparams(1).ZData
