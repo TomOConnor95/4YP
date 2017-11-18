@@ -1,6 +1,13 @@
-// Create Control busses containing all of the default paramerters
 (
+s.boot;
+// Get the local server's options
+o = Server.local.options;
+// specify a device
+o.device ="Soundflower (2ch)";     // use a Soundflower for audio output
+// reboot server
 s.reboot;
+
+// Create Control busses containing all of the default paramerters
 ~freqCoarse_B = Bus.control(s, 6);
 ~freqFine_B = Bus.control(s,6);
 
