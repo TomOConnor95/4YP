@@ -91,3 +91,7 @@ text_tree = text_tree.addnode(n11, text(P2(1), P2(2), ['  ', num2str(value_tree.
 %% Add a new data point and update all trees using function
 [newIndex, vector_tree, sum_tree, plot_tree, plot_markers_tree, value_tree, text_tree]...
     = addNewNodeToTrees(n11, [-1,1.5], vector_tree, sum_tree, plot_tree, plot_markers_tree, value_tree, text_tree);
+
+%% Add a new random data point and update all trees using function
+[newIndex, vector_tree, sum_tree, plot_tree, plot_markers_tree, value_tree, text_tree]...
+    = addNewNodeToTrees(randi(nnodes(vector_tree)), randn(1,2), vector_tree, sum_tree, plot_tree, plot_markers_tree, value_tree, text_tree);
