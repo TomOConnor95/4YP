@@ -85,6 +85,8 @@ classdef (Abstract) presetGeneratorParent
         
         function obj = switchPresets(obj, switchIndex)
             
+            assert(switchIndex <= nnodes(obj.presetAHistory), 'Invalid Index');
+            
             oldIndex = obj.currentTreeIndex;
             
             obj.P1HistoryPlot = resetColourOfOldMarker(obj.P1HistoryPlot, oldIndex);
