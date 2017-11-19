@@ -41,7 +41,7 @@ classdef presetGeneratorSCMonteCarloMV < presetGeneratorSCParent
             for i = 1:length(obj.presetA)
                 
                 if i == 1
-                weights = sigmoidWeights(length(obj.presetAHistory{1}(:,1)), obj.sigmoidCenterRatio);
+                weights = sigmoidWeights(length(obj.presetAHistory{1}.Node(:,1)), obj.sigmoidCenterRatio);
                 end
             
                 historyArray = cell2mat(obj.presetAHistory{i}.Node);

@@ -32,7 +32,7 @@ fopen(u);
 presetB = createPresetBforOSC();
 presetC = createPresetCforOSC();
 
-[presetA{2},presetB{2},presetC{2}]
+[presetA{2},obj.presetB{2},obj.presetC{2}]
 
 % [presetA, presetB, presetC] = loadPresetsFromStore(4,9,7);
  %[presetA, presetB, presetC] = loadPresetsFromStoreRandom();
