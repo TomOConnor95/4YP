@@ -59,7 +59,7 @@ classdef presetGeneratorSCMonteCarloMV < presetGeneratorSCParent
             end
              % Decay tempOffset
             obj.tempOffset = obj.tempOffset*0.9;
-            disp(obj.tempOffset)
+            %disp(obj.tempOffset)
       
         end
     end

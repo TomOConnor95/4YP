@@ -83,7 +83,7 @@ classdef (Abstract) presetGeneratorSCParent
             %[obj.presetA{2},obj.presetB{2},obj.presetC{2}]
             % Save presets to history
             oldIndex = obj.currentTreeIndex;
-            for i = 1: length(obj.presetA)
+            for i = 1:length(obj.presetA)
                 if i == 1
                     [obj.presetAHistory{i}, newIndex] = obj.presetAHistory{i}.addnode(obj.currentTreeIndex, obj.presetA{i});
                 else
@@ -112,10 +112,12 @@ classdef (Abstract) presetGeneratorSCParent
             obj.P1HistoryPlot = switchColourOfNewMarker(obj.P1HistoryPlot, switchIndex);
             
             obj.currentTreeIndex = switchIndex;
-
-            obj.presetA = obj.presetAHistory.get(switchIndex);
-            obj.presetB = obj.presetBHistory.get(switchIndex);
-            obj.presetC = obj.presetCHistory.get(switchIndex);
+            
+            for i = 1:length(obj.presetA)
+                obj.presetA{i} = obj.presetAHistory{i}.get(switchIndex);
+                obj.presetB{i} = obj.presetBHistory{i}.get(switchIndex);
+                obj.presetC{i} = obj.presetCHistory{i}.get(switchIndex);
+            end
         end
     end
     
