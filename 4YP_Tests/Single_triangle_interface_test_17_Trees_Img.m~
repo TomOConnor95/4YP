@@ -4,8 +4,8 @@ close all
 %Ptest = createPresetsForImageEditing();
 
 %% Option parameters
-selectedImageNumber = 2;
-savePresetsToFile = false;
+selectedImageNumber = 3;
+savePresetsToFile = true;
 
 %% Miscellaneous parameters
 MOUSE = [0,0];              % Variable for mouse position to be stored in
@@ -15,8 +15,8 @@ isButtonPressed = false;    % Has push button been pressed?
 isPauseButtonPressed = false;
 isPaused = false;
 isSearching = true;
-isMarkerClicked = false;
 isBeginBlending = false;
+isMarkerClicked = false;
 markerIndex = 1;
 currentGeneration = 1;
 screenSize = get(0,'Screensize');
@@ -55,19 +55,19 @@ G = createBlendingGeometry();
 
 %% Create all necessary bar graphs
 figure(2)
-subplot(2,5,[1,2,3,6,7,8])
+%subplot(2,5,[1,2,3,6,7,8])
 [barA, barB, barC, barMix] = createBarGraphs(P.presetA,P.presetB,P.presetC);
 
 %% Create plots to show evolution of parameters and Mouse Points
-figure(2)
-subplot(2,5,[4,5,9,10])
-historyPlot = createHistoryPlot(P.presetAHistory);
-set(gcf,'Position',[-screenSize(3)/26,screenSize(4)/1.6,screenSize(3)/2.4,screenSize(4)/2.5])
+% figure(3)
+% subplot(2,5,[4,5,9,10])
+% historyPlot = createHistoryPlot(P.presetAHistory);
+% set(gcf,'Position',[-screenSize(3)/26,screenSize(4)/1.6,screenSize(3)/2.4,screenSize(4)/2.5])
 
-figure(3)
-%clf
-P1HistoryPlot = createPointHistoryPlot();
-set(gcf,'Position',[screenSize(3)/0.7,screenSize(4)/1.6,screenSize(3)/2.4,screenSize(4)/2.5])
+% figure(3)
+% %clf
+% P1HistoryPlot = createPointHistoryPlot();
+% set(gcf,'Position',[screenSize(3)/0.7,screenSize(4)/1.6,screenSize(3)/2.4,screenSize(4)/2.5])
 
 %% Main Loop
 figure(1)
@@ -80,20 +80,47 @@ G.pauseText.Visible = 'off';
 while(isSearching)
     pause(0.01)
     
-    if isMarkerClicked == true;
-        isMarkerClicked == false;
-        if isPauseButtonPressed == true
-            isPauseButtonPressed = false;
-            isBlending = true;
-            isPressed = false;
-            isPaused = false;   
-            G.but_pause.String = 'Pause On Last Preset';
-            continue
+    %% Press button to save final image and quit program
+    if isButtonPressed == true
+        isBlending = false;
+        isPressed = false;
+        isSearching = false;
+        
+        % Revert to last clicked preset
+        imageEdited.CData = updateEditedImage2(img, P.presetA);
+        
+        if savePresetsToFile == true
+            presetSave = matfile('PresetStore.mat','Writable',true);
+            presetSave.presetStore(1+length(presetSave.presetStore(:,1)),:) = P.presetA;
         end
-        	
+        % Plot full size final output in new figure
+        figure;
+        
+        imageEditedFullSize = imshow(imgFullSize);
+        imageEditedFullSize.CData = updateEditedImage2(imgFullSize, P.presetA);
+    end
+    
+    %% Switch presets if a preset marker is clicked
+    if isMarkerClicked == true
+        isMarkerClicked = false;
+        
+        P.switchPresets(markerIndex);
+        
+%         P1HistoryPlot = resetColourOfOldMarker(P1HistoryPlot);
+%         
+%         % Update tree indeces
+%         P.currentTreeIndex = markerIndex;
+%         P1HistoryPlot.index = markerIndex;
+%         
+%         P.presetA = P.presetAHistory.get(markerIndex);
+%         P.presetB = P.presetBHistory.get(markerIndex);
+%         P.presetC = P.presetCHistory.get(markerIndex);
+        
+        imageEdited.CData = updateEditedImage2(img, P.presetA);
        continue 
     end
     
+    %% Paused State
     if isPaused == true
         
         if isPauseButtonPressed == true
@@ -121,25 +148,7 @@ while(isSearching)
         imageEdited.CData = updateEditedImage2(img, P.presetA);
         continue
     end
-    %% Press button to save final image and quit program
-    if isButtonPressed == true
-        isBlending = false;
-        isPressed = false;
-        isSearching = false;
-        
-        % Revert to last clicked preset
-        imageEdited.CData = updateEditedImage2(img, P.presetA);
-        
-        if savePresetsToFile == true
-            presetSave = matfile('PresetStore.mat','Writable',true);
-            presetSave.presetStore(1+length(presetSave.presetStore(:,1)),:) = P.presetA;
-        end
-        % Plot full size final output in new figure
-        figure;
-        
-        imageEditedFullSize = imshow(imgFullSize);
-        imageEditedFullSize.CData = updateEditedImage2(imgFullSize, P.presetA);
-    end
+    
     %% If mouse is clicked move to the next generation of presets
     if isPressed == true
         currentGeneration = currentGeneration + 1;
@@ -155,9 +164,9 @@ while(isSearching)
         % Update plot to show evolution of parameters
         historyPlot = updatePresetHistoryPlot(historyPlot,P.presetAHistory);
         
-        % Update Plot showing Point History
-        G.P1Sum = G.P1Sum + G.P1;
-        G.P1History = [G.P1History, G.P1Sum];
+%         % Update Plot showing Point History
+%         G.P1Sum = G.P1Sum + G.P1;
+%         G.P1History = [G.P1History, G.P1Sum];
         
 
         

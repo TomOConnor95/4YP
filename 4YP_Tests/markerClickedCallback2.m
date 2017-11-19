@@ -8,8 +8,8 @@ function markerClickedCallback2(src,~, index)
 %         plot_markers_tree = plot_markers_tree.set(i, marker);
 %     end
 
-    src.Color = rand(1,3);
-    src.MarkerFaceColor = [0, 1, 1];
+    %src.Color = rand(1,3);
+    %src.MarkerFaceColor = [0, 1, 1];
     %src.MarkerFaceColor = [.8 .6 .6];
 
     assignin('base','isMarkerClicked',true);

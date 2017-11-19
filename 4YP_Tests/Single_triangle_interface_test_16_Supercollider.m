@@ -55,7 +55,7 @@ zlim([0,5])
 %% Create plots to show evolution of parameters and Mouse Points
 figure(2) 
 subplot(2,7,[4,5,11,12])
-%historyPlot = createHistoryPlot(P.presetAHistory);
+%historyPlot = createStructHistoryPlot(P.presetAHistory);
 
 subplot(2,7,[6,7,13,14])
 P1HistoryPlot = createPointHistoryPlot(G.P1History);

@@ -1,15 +1,15 @@
-function [phPlot] = updatePointHistoryPlot(phPlot, mousePos)
+function [phPlot] = updatePointHistoryPlot(phPlot, mousePos, oldIndex, newIndex)
 figure(3);
-oldIndex = phPlot.index;
+%oldIndex = phPlot.index;
 
 %function [newIndex, vector_tree, sum_tree, plot_tree, plot_markers_tree, value_tree, text_tree]...
     %= addNewNodeToTrees(index, value, vector_tree, sum_tree, plot_tree, plot_markers_tree, value_tree, text_tree)
 
 % Add a new data point and update all trees
 
-[phPlot.vector_tree, newIndex] = phPlot.vector_tree.addnode(oldIndex, mousePos');
+phPlot.vector_tree = phPlot.vector_tree.addnode(oldIndex, mousePos');
 
-phPlot.index = newIndex;
+%phPlot.index = newIndex;
 
 phPlot.sum_tree = phPlot.sum_tree.addnode(oldIndex, phPlot.sum_tree.get(oldIndex) + phPlot.vector_tree.get(newIndex));
 

@@ -4,6 +4,7 @@ classdef (Abstract) presetGeneratorParentNoBounds
         presetA
         presetB
         presetC
+        currentTreeIndex
     end
     properties(GetAccess=public,SetAccess=private)
         presetAHistory
@@ -33,6 +34,8 @@ classdef (Abstract) presetGeneratorParentNoBounds
                 obj.presetBHistory = presetB_in;
                 obj.presetCHistory = presetC_in;
                 
+                obj.currentTreeIndex = 1;
+                
                 obj.presetMix = presetA_in;
             end
         end
@@ -50,9 +53,11 @@ classdef (Abstract) presetGeneratorParentNoBounds
             obj = obj.generateNewBC();
             
             % Save presets to history
-            obj.presetAHistory = [obj.presetAHistory; obj.presetA];
-            obj.presetBHistory = [obj.presetBHistory; obj.presetB];
-            obj.presetCHistory = [obj.presetCHistory; obj.presetC];
+            oldIndex = obj.currentTreeIndex;
+            [obj.presetAHistory, newIndex] = obj.presetAHistory.addnode(obj.currentTreeIndex, obj.presetA);
+            [obj.presetBHistory] = obj.presetBHistory.addnode(oldIndex, obj.presetB);
+            [obj.presetCHistory] = obj.presetCHistory.addnode(oldIndex, obj.presetC);
+            obj.currentTreeIndex = newIndex;
         end
 
     end

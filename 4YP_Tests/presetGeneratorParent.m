@@ -11,6 +11,9 @@ classdef (Abstract) presetGeneratorParent
         presetBHistory
         presetCHistory
         presetMix
+        
+        historyPlot
+        P1HistoryPlot
     end
     methods
         % Constructor
@@ -38,16 +41,28 @@ classdef (Abstract) presetGeneratorParent
                 
                 obj.presetMix = presetA_in;
             end
+            
+            % set up history plots
+            screenSize = get(0,'Screensize');
+            figure(3)
+            subplot(1,2,1)
+            obj.historyPlot = createHistoryPlot(obj.presetAHistory);
+            
+            subplot(1,2,2)
+            obj.P1HistoryPlot = createPointHistoryPlot();
+            
+            set(gcf,'Position',[-screenSize(3)/26,screenSize(4)/1.6,screenSize(3)/2.4,screenSize(4)/2.5])
+
         end
         
         function obj = mixPresets(obj,alpha,beta,gamma)
             obj.presetMix = mixPresets(obj.presetA, obj.presetB, obj.presetC,...
                 alpha,beta,gamma);
             obj.presetMix = bound(obj.presetMix,0,1);  % return preset values bounded between 0 and 1
-
+            
         end
         
-        function obj = iteratePresets(obj)
+        function obj = iteratePresets(obj, mousePointClicked)
             % Update preset A value
             obj.presetA = obj.presetMix;
             
@@ -60,6 +75,26 @@ classdef (Abstract) presetGeneratorParent
             [obj.presetBHistory] = obj.presetBHistory.addnode(oldIndex, obj.presetB);
             [obj.presetCHistory] = obj.presetCHistory.addnode(oldIndex, obj.presetC);
             obj.currentTreeIndex = newIndex;
+            
+            % update all trees for point history plot
+            obj.P1HistoryPlot = updatePointHistoryPlot(obj.P1HistoryPlot,mousePointClicked, oldIndex, newIndex);
+            
+            % Update plot to show evolution of parameters
+            obj.historyPlot = updatePresetHistoryPlot(obj.historyPlot,obj.presetAHistory);
+        end
+        
+        function obj = switchPresets(obj, switchIndex)
+            
+            oldIndex = obj.currentTreeIndex;
+            
+            obj.P1HistoryPlot = resetColourOfOldMarker(obj.P1HistoryPlot, oldIndex);
+            obj.P1HistoryPlot = switchColourOfNewMarker(obj.P1HistoryPlot, switchIndex);
+            
+            obj.currentTreeIndex = switchIndex;
+
+            obj.presetA = obj.presetAHistory.get(switchIndex);
+            obj.presetB = obj.presetBHistory.get(switchIndex);
+            obj.presetC = obj.presetCHistory.get(switchIndex);
         end
 
     end
