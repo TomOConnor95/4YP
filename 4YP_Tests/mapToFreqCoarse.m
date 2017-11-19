@@ -2,11 +2,11 @@ function [freqCoarse] = mapToFreqCoarse( freqCoarse)
 
 for i = 1:length(freqCoarse)
 
-    if freqCoarse(i) < 0.8
+    if freqCoarse(i) < 1.0
 
         freqCoarse(i) = 0.5;
     else
-       freqCoarse(i) = freqCoarse(i) - mod(freqCoarse(i),2); 
+       freqCoarse(i) = freqCoarse(i) - rem(freqCoarse(i),1); 
 
     end
 

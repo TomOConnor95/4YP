@@ -98,7 +98,7 @@ while(isSearching)
         
         P = P.switchPresets(markerIndex);
         
-        sendAllStructParamsOverOSC(P.presetMix, nameStrings, typeStrings, u);
+        sendAllStructParamsOverOSC(P.presetA, nameStrings, typeStrings, u);
        continue 
     end
     
@@ -127,7 +127,7 @@ while(isSearching)
         G.but_pause.String = 'Click to Resume Searching';
         
         % Revert to last clicked preset
-        sendAllStructParamsOverOSC(P.presetMix, nameStrings, typeStrings, u);
+        sendAllStructParamsOverOSC(P.presetA, nameStrings, typeStrings, u);
         continue
     end
     
