@@ -3,8 +3,8 @@ s.boot;
 // Get the local server's options
 o = Server.local.options;
 // specify a device
-o.device ="JackRouter";     // use a JackOSX for audio output
-//o.device ="Built-In Output";
+//o.device ="JackRouter";     // use a JackOSX for audio output
+o.device ="Built-In Output";
 // reboot server
 s.reboot;
 
@@ -93,7 +93,7 @@ SynthDef(\FM7_Synth, {
 	var envA, envAmp;
 	var env1, env2, env3, env4, env5, env6;
 	var lfo1;
-	var lagTime = 0.03;
+	var lagTime = 0.1;
 	var amp1, amp2, amp3, amp4, amp5, amp6;
     var ctls, mods, snd, fmChannels;
 
@@ -124,12 +124,12 @@ SynthDef(\FM7_Synth, {
    ctls = [
         // freq, phase, amp
 
-		[freq * freqCoarse[0] * freqFine[0].linlin(0,1,1,2), 0, MulAdd(MulAdd(envA, envAmt[0], (1-envAmt[0])), LFTri.kr(lfo1Rate, rand(0,lfo1PhaseSpread), lfo1Amp*lfoADepth[0],1), 0)],
-		[freq * freqCoarse[1] * freqFine[1].linlin(0,1,1,2), 0, MulAdd(MulAdd(envA, envAmt[1], (1-envAmt[1])), LFTri.kr(lfo1Rate, rand(0,lfo1PhaseSpread), lfo1Amp*lfoADepth[1],1), 0)],
-		[freq * freqCoarse[2] * freqFine[2].linlin(0,1,1,2), 0, MulAdd(MulAdd(envA, envAmt[2], (1-envAmt[2])), LFTri.kr(lfo1Rate, rand(0,lfo1PhaseSpread), lfo1Amp*lfoADepth[2],1), 0)],
-		[freq * freqCoarse[3] * freqFine[3].linlin(0,1,1,2), 0, MulAdd(MulAdd(envA, envAmt[3], (1-envAmt[3])), LFTri.kr(lfo1Rate, rand(0,lfo1PhaseSpread), lfo1Amp*lfoADepth[3],1), 0)],
-		[freq * freqCoarse[4] * freqFine[4].linlin(0,1,1,2), 0, MulAdd(MulAdd(envA, envAmt[4], (1-envAmt[4])), LFTri.kr(lfo1Rate, rand(0,lfo1PhaseSpread), lfo1Amp*lfoADepth[4],1), 0)],
-		[freq * freqCoarse[5] * freqFine[5].linlin(0,1,1,2), 0, MulAdd(MulAdd(envA, envAmt[5], (1-envAmt[5])), LFTri.kr(lfo1Rate, rand(0,lfo1PhaseSpread), lfo1Amp*lfoADepth[5],1), 0)]
+		[freq * Lag2.kr(freqCoarse[0],lagTime) * freqFine[0].linlin(0,1,1,2), 0, MulAdd(MulAdd(envA, envAmt[0], (1-envAmt[0])), LFTri.kr(lfo1Rate, rand(0,lfo1PhaseSpread), lfo1Amp*lfoADepth[0],1), 0)],
+		[freq * Lag2.kr(freqCoarse[1],lagTime) * freqFine[1].linlin(0,1,1,2), 0, MulAdd(MulAdd(envA, envAmt[1], (1-envAmt[1])), LFTri.kr(lfo1Rate, rand(0,lfo1PhaseSpread), lfo1Amp*lfoADepth[1],1), 0)],
+		[freq * Lag2.kr(freqCoarse[2],lagTime) * freqFine[2].linlin(0,1,1,2), 0, MulAdd(MulAdd(envA, envAmt[2], (1-envAmt[2])), LFTri.kr(lfo1Rate, rand(0,lfo1PhaseSpread), lfo1Amp*lfoADepth[2],1), 0)],
+		[freq * Lag2.kr(freqCoarse[3],lagTime) * freqFine[3].linlin(0,1,1,2), 0, MulAdd(MulAdd(envA, envAmt[3], (1-envAmt[3])), LFTri.kr(lfo1Rate, rand(0,lfo1PhaseSpread), lfo1Amp*lfoADepth[3],1), 0)],
+		[freq * Lag2.kr(freqCoarse[4],lagTime) * freqFine[4].linlin(0,1,1,2), 0, MulAdd(MulAdd(envA, envAmt[4], (1-envAmt[4])), LFTri.kr(lfo1Rate, rand(0,lfo1PhaseSpread), lfo1Amp*lfoADepth[4],1), 0)],
+		[freq * Lag2.kr(freqCoarse[5],lagTime) * freqFine[5].linlin(0,1,1,2), 0, MulAdd(MulAdd(envA, envAmt[5], (1-envAmt[5])), LFTri.kr(lfo1Rate, rand(0,lfo1PhaseSpread), lfo1Amp*lfoADepth[5],1), 0)]
 
     ];
    mods = [
@@ -150,9 +150,8 @@ SynthDef(\FM7_Synth, {
 	fmChannels[4] = fmChannels[4] * outputLevels[4];
 	fmChannels[5] = fmChannels[5] * outputLevels[5];
 
-	snd = Splay.ar(fmChannels, stereoSpread) * (-12.dbamp) * amp * envAmp;
+	snd = Splay.ar(fmChannels, Lag2.kr(stereoSpread, lagTime)) * (-12.dbamp) * amp * envAmp;
 
-	RLPF.ar(snd, lowPassCutOff, lowPassRes);
 	DetectSilence.ar(snd, doneAction:2);
 	Out.ar(out, snd);
 }).add;
