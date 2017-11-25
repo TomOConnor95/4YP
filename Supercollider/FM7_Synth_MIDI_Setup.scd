@@ -46,9 +46,14 @@ MIDIdef.noteOn(\noteOnTest, {
 	\lfo1Amp, ~lfo1Amp_B,
 	\lfo1PhaseSpread, ~lfo1PhaseSpread_B,
 
-	\stereoSpread, ~stereoSpread_B
-	//\lowPassCutOff, ~lowPassCutOff,
-	//\lowPassRes, ~lowPassRes
+	\lfo2Rate, ~lfo2Rate_B,
+	\lfo2Amp, ~lfo2Amp_B,
+	\lfo2PulseWidth, ~lfo2PulseWidth_B,
+
+
+	\stereoSpread, ~stereoSpread_B,
+	\lfoMix, ~lfoMix,
+	\lfoPulseWidth, ~lfoPulseWidth
 );
 });
 

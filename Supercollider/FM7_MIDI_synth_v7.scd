@@ -34,9 +34,12 @@ s.reboot;
 ~lfo1Amp_B = Bus.control(s,1);
 ~lfo1PhaseSpread_B = Bus.control(s,1);
 
+~lfo2Rate_B = Bus.control(s,1);
+~lfo2Amp_B = Bus.control(s,1);
+~lfo2PulseWidth_B = Bus.control(s,1);
+
 ~stereoSpread_B = Bus.control(s,1);
-~lowPassCutOff = Bus.control(s,1);
-~lowPassRes = Bus.control(s,1);
+
 
 SynthDef(\FM7_Synth, {
 	arg out = 0, freq = 440, gate = 1,  amp = 1,  bend = 0,
@@ -78,6 +81,7 @@ SynthDef(\FM7_Synth, {
 
 	// LFO parameters
 	lfo1Rate = 2, lfo1Amp = 0.2, lfo1PhaseSpread = 0.2, // Would be cool to have RateSpread
+	lfo2Rate = 4, lfo2Amp = 0.2, lfo2PulseWidth = 0.5, // Would be cool to have RateSpread
 
 	// Global Modifier Parameters
 	stereoSpread = 0.2,
@@ -124,7 +128,8 @@ SynthDef(\FM7_Synth, {
    ctls = [
         // freq, phase, amp
 
-		[freq * Lag2.kr(freqCoarse[0],lagTime) * freqFine[0].linlin(0,1,1,2), 0, MulAdd(MulAdd(envA, envAmt[0], (1-envAmt[0])), LFTri.kr(lfo1Rate, rand(0,lfo1PhaseSpread), lfo1Amp*lfoADepth[0],1), 0)],
+		[freq * Lag2.kr(freqCoarse[0],lagTime) * freqFine[0].linlin(0,1,1,2), 0, MulAdd(MulAdd(envA, envAmt[0], (1-envAmt[0])), LFPulse.kr(lfo2Rate, 0, lfo2PulseWidth, 2*((lfo2Amp*lfoADepth[0]).clip(0,0.99)),(1-((lfo2Amp*lfoADepth[0]).clip(0,0.99)))), 0)],
+		//[freq * Lag2.kr(freqCoarse[0],lagTime) * freqFine[0].linlin(0,1,1,2), 0, LFPulse.kr(lfo2Rate, 0, lfo2PulseWidth, 2*(0.4),(1-(0.4)))],
 		[freq * Lag2.kr(freqCoarse[1],lagTime) * freqFine[1].linlin(0,1,1,2), 0, MulAdd(MulAdd(envA, envAmt[1], (1-envAmt[1])), LFTri.kr(lfo1Rate, rand(0,lfo1PhaseSpread), lfo1Amp*lfoADepth[1],1), 0)],
 		[freq * Lag2.kr(freqCoarse[2],lagTime) * freqFine[2].linlin(0,1,1,2), 0, MulAdd(MulAdd(envA, envAmt[2], (1-envAmt[2])), LFTri.kr(lfo1Rate, rand(0,lfo1PhaseSpread), lfo1Amp*lfoADepth[2],1), 0)],
 		[freq * Lag2.kr(freqCoarse[3],lagTime) * freqFine[3].linlin(0,1,1,2), 0, MulAdd(MulAdd(envA, envAmt[3], (1-envAmt[3])), LFTri.kr(lfo1Rate, rand(0,lfo1PhaseSpread), lfo1Amp*lfoADepth[3],1), 0)],
@@ -156,3 +161,49 @@ SynthDef(\FM7_Synth, {
 	Out.ar(out, snd);
 }).add;
 )
+
+(
+// Set default params for busses
+~freqCoarse_B.set(1.0, 0.5, 2.0, 2.0, 3.0, 3.0);
+~freqFine_B.set(0.0, 0.01, 0.0, 0.0, 0.0, 0.0);
+~outputLevels_B.set(1.0,0.0,0.0,0.0,0.0,0.0);
+
+	~op1PM_B.set(0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
+	~op2PM_B.set(0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
+	~op3PM_B.set(0.0, 0.0, 0.0, 0.0, 0.0, 1.0);
+	~op4PM_B.set(0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
+	~op5PM_B.set(0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
+	~op6PM_B.set(0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
+
+	// Amp Envelope Parameters
+	~envAmpADSR_B.set(0.1, 0.05, 0.9, 0.44);
+	~envAmpCurve_B.set(0);
+	~stereoSpread_B.set(0.0);
+
+	// Envelope Parameters
+	~env1ADSR_B.set(0.1, 0.1, 0.9, 0.1);
+~env1Curve_B.set(0);
+
+	~envAmt_B.set(0.00, 0.70, 0.40, 0.00, 0.00, 0.00);
+~lfoADepth_B.set(0.9, 0.40, 0.30, 0.50, 1.00, 1.00);
+
+	// LFO parameters
+~lfo1Rate_B.set(0.8);
+~lfo1Amp_B.set(2.0);
+~lfo1PhaseSpread_B.set(0.0);
+
+~lfo2Rate_B.set(0.5);
+~lfo2Amp_B.set(0.0);
+~lfo2PulseWidth_B.set(0.5);
+)
+
+{ var depth = 0.4; LFPulse.ar(200, 0, 0.2, LFPulse.kr(1, 0, 0.5, 2*depth, (1-depth))) }.play;
+
+{var lfo2Amp =0.9; var envAmp = 1.0; var freq = 10; SinOsc.ar(500, 0, MulAdd(MulAdd(EnvGen.ar(Env.perc), envAmp, (1-envAmp)), LFPulse.kr(freq, 0, 0.5, 2*lfo2Amp,(1-lfo2Amp)), 0))}.play;
+
+
+
+//{ LFSaw.ar(500, 1, 0.1) }.play
+
+// used as both Oscillator and LFO:
+//{ LFSaw.ar(LFSaw.kr(4, 0, 200, 400), 0, 0.1) }.play
