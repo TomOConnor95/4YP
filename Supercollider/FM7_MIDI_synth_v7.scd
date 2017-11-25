@@ -128,8 +128,8 @@ SynthDef(\FM7_Synth, {
    ctls = [
         // freq, phase, amp
 
-		[freq * Lag2.kr(freqCoarse[0],lagTime) * freqFine[0].linlin(0,1,1,2), 0, MulAdd(MulAdd(envA, envAmt[0], (1-envAmt[0])), LFPulse.kr(lfo2Rate, 0, lfo2PulseWidth, 2*((lfo2Amp*lfoADepth[0]).clip(0,0.99)),(1-((lfo2Amp*lfoADepth[0]).clip(0,0.99)))), 0)],
-		//[freq * Lag2.kr(freqCoarse[0],lagTime) * freqFine[0].linlin(0,1,1,2), 0, LFPulse.kr(lfo2Rate, 0, lfo2PulseWidth, 2*(0.4),(1-(0.4)))],
+		[freq * Lag2.kr(freqCoarse[0],lagTime) * freqFine[0].linlin(0,1,1,2), 0, MulAdd(MulAdd(envA, envAmt[0], (1-envAmt[0])), MulAdd(LFPulse.kr(lfo2Rate, 0, lfo2PulseWidth, 2*((lfo2Amp*lfoADepth[0]).clip(0,0.99)),(1-((lfo2Amp*lfoADepth[0]).clip(0,0.99)))),LFTri.kr(lfo1Rate, rand(0,lfo1PhaseSpread), lfo1Amp*lfoADepth[1],1), 0), 0)],
+
 		[freq * Lag2.kr(freqCoarse[1],lagTime) * freqFine[1].linlin(0,1,1,2), 0, MulAdd(MulAdd(envA, envAmt[1], (1-envAmt[1])), LFTri.kr(lfo1Rate, rand(0,lfo1PhaseSpread), lfo1Amp*lfoADepth[1],1), 0)],
 		[freq * Lag2.kr(freqCoarse[2],lagTime) * freqFine[2].linlin(0,1,1,2), 0, MulAdd(MulAdd(envA, envAmt[2], (1-envAmt[2])), LFTri.kr(lfo1Rate, rand(0,lfo1PhaseSpread), lfo1Amp*lfoADepth[2],1), 0)],
 		[freq * Lag2.kr(freqCoarse[3],lagTime) * freqFine[3].linlin(0,1,1,2), 0, MulAdd(MulAdd(envA, envAmt[3], (1-envAmt[3])), LFTri.kr(lfo1Rate, rand(0,lfo1PhaseSpread), lfo1Amp*lfoADepth[3],1), 0)],
@@ -166,12 +166,12 @@ SynthDef(\FM7_Synth, {
 // Set default params for busses
 ~freqCoarse_B.set(1.0, 0.5, 2.0, 2.0, 3.0, 3.0);
 ~freqFine_B.set(0.0, 0.01, 0.0, 0.0, 0.0, 0.0);
-~outputLevels_B.set(1.0,0.0,0.0,0.0,0.0,0.0);
+~outputLevels_B.set(0.5,0.3,0.0,0.0,0.0,0.0);
 
-	~op1PM_B.set(0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
-	~op2PM_B.set(0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
-	~op3PM_B.set(0.0, 0.0, 0.0, 0.0, 0.0, 1.0);
-	~op4PM_B.set(0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
+	~op1PM_B.set(0.0, 0.2, 0.2, 0.3, 0.0, 0.0);
+	~op2PM_B.set(0.0, 0.0, 0.0, 1.0, 0.0, 0.0);
+	~op3PM_B.set(0.0, 0.0, 0.0, 0.0, 1.0, 1.0);
+	~op4PM_B.set(0.0, 0.0, 1.0, 0.0, 0.0, 0.0);
 	~op5PM_B.set(0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
 	~op6PM_B.set(0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
 
@@ -185,15 +185,15 @@ SynthDef(\FM7_Synth, {
 ~env1Curve_B.set(0);
 
 	~envAmt_B.set(0.00, 0.70, 0.40, 0.00, 0.00, 0.00);
-~lfoADepth_B.set(0.9, 0.40, 0.30, 0.50, 1.00, 1.00);
+~lfoADepth_B.set(0.2, 0.40, 0.30, 0.50, 1.00, 1.00);
 
 	// LFO parameters
-~lfo1Rate_B.set(0.8);
-~lfo1Amp_B.set(2.0);
+~lfo1Rate_B.set(2);
+~lfo1Amp_B.set(0.99);
 ~lfo1PhaseSpread_B.set(0.0);
 
-~lfo2Rate_B.set(0.5);
-~lfo2Amp_B.set(0.0);
+~lfo2Rate_B.set(1.5);
+~lfo2Amp_B.set(0.6);
 ~lfo2PulseWidth_B.set(0.5);
 )
 
