@@ -73,15 +73,37 @@ OSCdef.new(
 );
 
 OSCdef.new(
+	\receiveLfoBDepth,
+	{
+		arg msg, time, addr, port;
+		msg.postln;
+		~lfoBDepth_B.set(msg[1], msg[2], msg[3], msg[4], msg[5], msg[6]);
+	},
+	'/lfoBDepth'
+);
+
+OSCdef.new(
 	\receiveLfoAParams,
 	{
 		arg msg, time, addr, port;
 		msg.postln;
-		~lfo1Rate_B.set(msg[1]);
-		~lfo1Amt_B.set(msg[2]);
-		~lfo1PhaseSpread_B.set(msg[3]);
+		~lfoARate_B.set(msg[1]);
+		~lfoAAmt_B.set(msg[2]);
+		~lfoAPhaseSpread_B.set(msg[3]);
 	},
-	'/LfoAParams'
+	'/lfoAParams'
+);
+
+OSCdef.new(
+	\receiveLfoBParams,
+	{
+		arg msg, time, addr, port;
+		msg.postln;
+		~lfoBRate_B.set(msg[1]);
+		~lfoBAmt_B.set(msg[2]);
+		~lfoBPhaseSpread_B.set(msg[3]);
+	},
+	'/lfoBParams'
 );
 
 OSCdef.new(
@@ -112,8 +134,10 @@ OSCdef.new(
 		arg msg, time, addr, port;
 		msg.postln;
 		~stereoSpread_B.set(msg[1]);
-		//~lowPassCutOff.set(msg[2].clip(100,20000));
-		//~lowPassRes.set(msg[3].clip(0.001, 10));
+		~vibratoFreqEnd_B.set(msg[2]);
+		~vibratoAmtStart_B.set(msg[3]);
+		~vibratoAmtEnd_B.set(msg[4]);
+		~vibratoEnvTime_B.set(msg[5]);
 	},
 	'/misc'
 );

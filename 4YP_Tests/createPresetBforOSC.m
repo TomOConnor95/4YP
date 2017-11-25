@@ -20,15 +20,16 @@ presetB{4} = [0.8, 0.9, 0.5, 0.0, 0.0, 0.0];
 presetB{5} = [0.0, 0.5, 0.3, 1, 1, 1 ]; 
 % lfoADepth
 presetB{6} = [0.9, 0.1, 0.2, 0.3, 0.2, 0.1]; 
-        %lfo1Rate, lfo1Amp, lfo1PhaseSpread
-% lfoAParams 
-presetB{7} = [1, 0.4, 0.0]; 
-
+% lfoBDepth
+presetB{7} = [0.0, 0.5, 0.3, 0.2, 0.6, 0.5]; 
+% lfoAParams       %lfo1Rate, lfo1Amp, lfo1PhaseSpread
+presetB{8} = [0.4, 0.1, 0.0]; 
+% lfoBParams      %lfo2Rate, lfo2Amp, lfo2PulseWidth
+presetB{9} = [2.10, 0.1, 0.6]; 
 % envAmpParams      %A, D, S, R, curve
-presetB{8} = [0.1, 0.1, 0.7, 0.5]; 
+presetB{10} = [0.1, 0.1, 0.7, 0.5]; 
 % env1Params       %A, D, S, R, curve
-presetB{9} = [0.01, 2.0, 0.1, 0.5]; 
-% misc
-presetB{10} = [0.1]; % StereoSpread
-
+presetB{11} = [0.01, 2.0, 0.1, 0.5]; 
+% misc         % StereoSpread vibFreqStart/End, %Vib AmtStart/End, VibTime
+presetB{12} = [0.1, 0.4, 5.0, 0.5, 1.0, 5.5]; 
 end

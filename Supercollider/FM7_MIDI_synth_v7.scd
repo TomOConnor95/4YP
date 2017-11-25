@@ -23,6 +23,7 @@ s.reboot;
 
 ~envAmt_B = Bus.control(s,6);
 ~lfoADepth_B = Bus.control(s,6);
+~lfoBDepth_B = Bus.control(s,6);
 
 ~envAmpADSR_B = Bus.control(s,4);
 ~envAmpCurve_B = Bus.control(s,1);
@@ -30,22 +31,26 @@ s.reboot;
 ~env1ADSR_B = Bus.control(s,4);
 ~env1Curve_B = Bus.control(s,1);
 
-~lfo1Rate_B = Bus.control(s,1);
-~lfo1Amp_B = Bus.control(s,1);
-~lfo1PhaseSpread_B = Bus.control(s,1);
+~lfoARate_B = Bus.control(s,1);
+~lfoAAmp_B = Bus.control(s,1);
+~lfoAPhaseSpread_B = Bus.control(s,1);
 
-~lfo2Rate_B = Bus.control(s,1);
-~lfo2Amp_B = Bus.control(s,1);
-~lfo2PulseWidth_B = Bus.control(s,1);
+~lfoBRate_B = Bus.control(s,1);
+~lfoBAmp_B = Bus.control(s,1);
+~lfoBPulseWidth_B = Bus.control(s,1);
 
 ~stereoSpread_B = Bus.control(s,1);
-
+~vibratoFreqStart_B = Bus.control(s,1);
+~vibratoFreqEnd_B = Bus.control(s,1);
+~vibratoAmtStart_B = Bus.control(s,1);
+~vibratoAmtEnd_B = Bus.control(s,1);
+~vibratoEnvTime_B = Bus.control(s,1);
 
 SynthDef(\FM7_Synth, {
 	arg out = 0, freq = 440, gate = 1,  amp = 1,  bend = 0,
 
 	//---------------------------------------------------------
-	// Input ParameterS
+	// Input Parameters
 	//---------------------------------------------------------
 
 	// Operator frequency ratios
@@ -56,8 +61,6 @@ SynthDef(\FM7_Synth, {
 
 	// Operator amplitudes post Modulation
 	outputLevels = #[0.5,0.5,0.0,0.0,0.0,0.0],
-
-
 	// Phase Modulation Parameters
 	// [x->1, x->2, x->3, x->4, x->5, x->6]
 	op1PM = #[0.0, 1.0, 1.0, 0.0, 4.0, 0.2],
@@ -71,24 +74,26 @@ SynthDef(\FM7_Synth, {
 	envAmpADSR = #[0.3, 0.05, 0.9, 0.44],
 	envAmpCurve = 0,
 
-
 	// Envelope Parameters
 	env1ADSR = #[2, 0.45, 0.9, 0.54],
 	env1Curve = 0,
 
 	envAmt = #[0.00, 0.70, 0.40, 0.00, 0.00, 0.00],
-	lfoADepth = #[0.50, 0.40, 0.30, 0.50, 0.00, 0.00],
+	lfoADepth = #[0.50, 0.40, 0.30, 0.50, 0.00, 0.60],
+	lfoBDepth = #[0.50, 0.40, 0.50, 0.50, 0.90, 0.00],
 
 	// LFO parameters
-	lfo1Rate = 2, lfo1Amp = 0.2, lfo1PhaseSpread = 0.2, // Would be cool to have RateSpread
-	lfo2Rate = 4, lfo2Amp = 0.2, lfo2PulseWidth = 0.5, // Would be cool to have RateSpread
+	lfoARate = 2, lfoAAmp = 0.2, lfoAPhaseSpread = 0.2, // Would be cool to have RateSpread
+	lfoBRate = 4, lfoBAmp = 0.2, lfoBPulseWidth = 0.5, // Would be cool to have RateSpread
 
 	// Global Modifier Parameters
 	stereoSpread = 0.2,
-	lowPassCutOff = 20000,
-	lowPassRes = 0.1;
-
-	// LFOs usually have range -1 - 1, but I've included offset of 1. therefore max LFOamp = 1
+	vibratoFreqStart = 0.4,
+	vibratoFreqEnd = 6.4,
+	vibratoAmtStart = 0.5,
+	vibratoAmtEnd = 4.0,
+	vibratoEnvTime = 3.0;
+	// Tri LFOs usually have range -1 - 1, but I've included offset of 1. therefore max LFOamp = 1
 
 	//---------------------------------------------------------
 	// Set-up
@@ -108,52 +113,52 @@ SynthDef(\FM7_Synth, {
 
 	envA = EnvGen.kr(Env.adsr(env1ADSR[0], env1ADSR[1], env1ADSR[2], env1ADSR[3], curve: env1Curve), gate);
 
-	/*  // Cant get mixing between multiple envelopes to work. But maybe not necessary
-	env1 = MulAdd(Mix([MulAdd(envA, (1-envBlend1)), MulAdd(envB, envBlend1)]), envAmt1, (1-envAmt1));
-	env2 = MulAdd(Mix([MulAdd(envA, (1-envBlend2)), MulAdd(envB, envBlend2)]), envAmt2, (1-envAmt2));
-	env3 = MulAdd(Mix([MulAdd(envA, (1-envBlend3)), MulAdd(envB, envBlend3)]), envAmt3, (1-envAmt3));
-	env4 = MulAdd(Mix([MulAdd(envA, (1-envBlend4)), MulAdd(envB, envBlend4)]), envAmt4, (1-envAmt4));
-	env5 = MulAdd(Mix([MulAdd(envA, (1-envBlend5)), MulAdd(envB, envBlend5)]), envAmt5, (1-envAmt5));
-	env6 = MulAdd(Mix([MulAdd(envA, (1-envBlend6)), MulAdd(envB, envBlend6)]), envAmt6, (1-envAmt6));
-	*/
-
 	// bend base frequency with pitchbend data
-	freq = freq * bend.midiratio;
+	freq = SinOsc.kr(
+				XLine.kr(vibratoFreqStart, vibratoFreqEnd, vibratoEnvTime),
+				0,
+				XLine.kr(vibratoAmtStart, vibratoAmtEnd, vibratoEnvTime),
+				freq * bend.midiratio);
 
 	//---------------------------------------------------------
 	// FM7 Ugen
 	//---------------------------------------------------------
 
+	ctls = Array.fill(6, { arg op;
+		[freq * Lag2.kr(freqCoarse[0],lagTime) * freqFine[0].linlin(0,1,1,2),
+		0,
+		MulAdd(
+			MulAdd(
+				envA, envAmt[0], (1-envAmt[0])
+				),
+			MulAdd(
+				LFTri.kr(
+					lfoARate,
+					rand(0,lfoAPhaseSpread),
+					lfoAAmp*lfoADepth[op],1
+					),
+				LFPulse.kr(
+					lfoBRate, 0, lfoBPulseWidth,
+					2*((lfoBAmp*lfoBDepth[op]).clip(0,0.99)),
+					(1-((lfoBAmp*lfoBDepth[op]).clip(0,0.99)))
+					),
+				0),
+			0)
+		]
+	});
 
-   ctls = [
-        // freq, phase, amp
+   	mods = [op1PM, op2PM, op3PM, op4PM, op5PM, op6PM];
 
-		[freq * Lag2.kr(freqCoarse[0],lagTime) * freqFine[0].linlin(0,1,1,2), 0, MulAdd(MulAdd(envA, envAmt[0], (1-envAmt[0])), MulAdd(LFPulse.kr(lfo2Rate, 0, lfo2PulseWidth, 2*((lfo2Amp*lfoADepth[0]).clip(0,0.99)),(1-((lfo2Amp*lfoADepth[0]).clip(0,0.99)))),LFTri.kr(lfo1Rate, rand(0,lfo1PhaseSpread), lfo1Amp*lfoADepth[1],1), 0), 0)],
+	fmChannels = FM7.ar(ctls, mods) ;
 
-		[freq * Lag2.kr(freqCoarse[1],lagTime) * freqFine[1].linlin(0,1,1,2), 0, MulAdd(MulAdd(envA, envAmt[1], (1-envAmt[1])), LFTri.kr(lfo1Rate, rand(0,lfo1PhaseSpread), lfo1Amp*lfoADepth[1],1), 0)],
-		[freq * Lag2.kr(freqCoarse[2],lagTime) * freqFine[2].linlin(0,1,1,2), 0, MulAdd(MulAdd(envA, envAmt[2], (1-envAmt[2])), LFTri.kr(lfo1Rate, rand(0,lfo1PhaseSpread), lfo1Amp*lfoADepth[2],1), 0)],
-		[freq * Lag2.kr(freqCoarse[3],lagTime) * freqFine[3].linlin(0,1,1,2), 0, MulAdd(MulAdd(envA, envAmt[3], (1-envAmt[3])), LFTri.kr(lfo1Rate, rand(0,lfo1PhaseSpread), lfo1Amp*lfoADepth[3],1), 0)],
-		[freq * Lag2.kr(freqCoarse[4],lagTime) * freqFine[4].linlin(0,1,1,2), 0, MulAdd(MulAdd(envA, envAmt[4], (1-envAmt[4])), LFTri.kr(lfo1Rate, rand(0,lfo1PhaseSpread), lfo1Amp*lfoADepth[4],1), 0)],
-		[freq * Lag2.kr(freqCoarse[5],lagTime) * freqFine[5].linlin(0,1,1,2), 0, MulAdd(MulAdd(envA, envAmt[5], (1-envAmt[5])), LFTri.kr(lfo1Rate, rand(0,lfo1PhaseSpread), lfo1Amp*lfoADepth[5],1), 0)]
+	//---------------------------------------------------------
+	// Mix Output Channels
+	//---------------------------------------------------------
 
-    ];
-   mods = [
-		op1PM,
-		op2PM,
-		op3PM,
-		op4PM,
-		op5PM,
-		op6PM
-    ];
-
-    fmChannels = FM7.ar(ctls, mods) ;
-
-	fmChannels[0] = fmChannels[0] * outputLevels[0];
-	fmChannels[1] = fmChannels[1] * outputLevels[1];
-	fmChannels[2] = fmChannels[2] * outputLevels[2];
-	fmChannels[3] = fmChannels[3] * outputLevels[3];
-	fmChannels[4] = fmChannels[4] * outputLevels[4];
-	fmChannels[5] = fmChannels[5] * outputLevels[5];
+	6.do{
+		arg op;
+		fmChannels[op] = fmChannels[op] * outputLevels[op]
+	};
 
 	snd = Splay.ar(fmChannels, Lag2.kr(stereoSpread, lagTime)) * (-12.dbamp) * amp * envAmp;
 
@@ -164,45 +169,57 @@ SynthDef(\FM7_Synth, {
 
 (
 // Set default params for busses
-~freqCoarse_B.set(1.0, 0.5, 2.0, 2.0, 3.0, 3.0);
-~freqFine_B.set(0.0, 0.01, 0.0, 0.0, 0.0, 0.0);
-~outputLevels_B.set(0.5,0.3,0.0,0.0,0.0,0.0);
+~freqCoarse_B.set(1.0, 0.5, 1.0, 2.0, 3.0, 3.0);
+~freqFine_B.set(0.0, 0.01, 0.01, 0.0, 0.0, 0.0);
+~outputLevels_B.set(0.6,0.5,0.0,0.2,0.0,0.0);
 
-	~op1PM_B.set(0.0, 0.2, 0.2, 0.3, 0.0, 0.0);
-	~op2PM_B.set(0.0, 0.0, 0.0, 1.0, 0.0, 0.0);
-	~op3PM_B.set(0.0, 0.0, 0.0, 0.0, 1.0, 1.0);
-	~op4PM_B.set(0.0, 0.0, 1.0, 0.0, 0.0, 0.0);
-	~op5PM_B.set(0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
-	~op6PM_B.set(0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
+~op1PM_B.set(0.0, 0.9, 1.2, 0.3, 0.0, 0.0);
+~op2PM_B.set(0.0, 0.0, 1.0, 1.0, 0.0, 0.0);
+~op3PM_B.set(0.0, 0.0, 0.0, 0.0, 1.0, 1.0);
+~op4PM_B.set(0.0, 0.0, 1.0, 0.0, 1.0, 0.0);
+~op5PM_B.set(0.0, 0.0, 0.0, 0.0, 0.4, 0.0);
+~op6PM_B.set(0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
 
-	// Amp Envelope Parameters
-	~envAmpADSR_B.set(0.1, 0.05, 0.9, 0.44);
-	~envAmpCurve_B.set(0);
-	~stereoSpread_B.set(0.0);
+// Amp Envelope Parameters
+~envAmpADSR_B.set(0.1, 0.05, 0.9, 0.44);
+~envAmpCurve_B.set(0);
+~stereoSpread_B.set(0.0);
 
-	// Envelope Parameters
-	~env1ADSR_B.set(0.1, 0.1, 0.9, 0.1);
+// Envelope Parameters
+~env1ADSR_B.set(0.1, 0.1, 0.9, 0.1);
 ~env1Curve_B.set(0);
 
-	~envAmt_B.set(0.00, 0.70, 0.40, 0.00, 0.00, 0.00);
-~lfoADepth_B.set(0.2, 0.40, 0.30, 0.50, 1.00, 1.00);
+~envAmt_B.set(0.00, 0.70, 0.40, 0.00, 0.00, 0.00);
+~lfoADepth_B.set(0.0, 0.90, 0.90, 0.00, 0.80, 0.00);
+~lfoBDepth_B.set(0.3, 0.40, 0.20, 0.50, 0.10, 0.90);
 
 	// LFO parameters
-~lfo1Rate_B.set(2);
-~lfo1Amp_B.set(0.99);
-~lfo1PhaseSpread_B.set(0.0);
+~lfoARate_B.set(4);
+~lfoAAmp_B.set(0.49);
+~lfoAPhaseSpread_B.set(0.0);
 
-~lfo2Rate_B.set(1.5);
-~lfo2Amp_B.set(0.6);
-~lfo2PulseWidth_B.set(0.5);
+~lfoBRate_B.set(1.0);
+~lfoBAmp_B.set(0.9);
+~lfoBPulseWidth_B.set(0.7);
+
+// Global parameters
+~vibratoFreqStart_B.set(0.4);
+~vibratoFreqEnd_B.set(5.0);
+~vibratoAmtStart_B.set(0.5);
+~vibratoAmtEnd_B.set(3.0);
+~vibratoEnvTime_B.set(1.5);
+
 )
 
 { var depth = 0.4; LFPulse.ar(200, 0, 0.2, LFPulse.kr(1, 0, 0.5, 2*depth, (1-depth))) }.play;
 
 {var lfo2Amp =0.9; var envAmp = 1.0; var freq = 10; SinOsc.ar(500, 0, MulAdd(MulAdd(EnvGen.ar(Env.perc), envAmp, (1-envAmp)), LFPulse.kr(freq, 0, 0.5, 2*lfo2Amp,(1-lfo2Amp)), 0))}.play;
 
-
-
+x = 1;
+x = [];
+x(0) = 1;
+x = Array.fill(4, { arg i; i * 2 });
+x[1]
 //{ LFSaw.ar(500, 1, 0.1) }.play
 
 // used as both Oscillator and LFO:

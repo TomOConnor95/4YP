@@ -35,6 +35,7 @@ MIDIdef.noteOn(\noteOnTest, {
 
 	\envAmt, ~envAmt_B,
 	\lfoADepth, ~lfoADepth_B,
+	\lfoBDepth, ~lfoBDepth_B,
 
 	\envAmpADSR, ~envAmpADSR_B,
 	\envAmpCurve, ~envAmpCurve_B,
@@ -42,18 +43,21 @@ MIDIdef.noteOn(\noteOnTest, {
 	\env1ADSR, ~env1ADSR_B,
 	\env1Curve, ~env1Curve_B,
 
-	\lfo1Rate, ~lfo1Rate_B,
-	\lfo1Amp, ~lfo1Amp_B,
-	\lfo1PhaseSpread, ~lfo1PhaseSpread_B,
+	\lfoARate, ~lfoARate_B,
+	\lfoAAmp, ~lfoAAmp_B,
+	\lfoAPhaseSpread, ~lfoAPhaseSpread_B,
 
-	\lfo2Rate, ~lfo2Rate_B,
-	\lfo2Amp, ~lfo2Amp_B,
-	\lfo2PulseWidth, ~lfo2PulseWidth_B,
-
+	\lfoBRate, ~lfoBRate_B,
+	\lfoBAmp, ~lfoBAmp_B,
+	\lfoBPulseWidth, ~lfoBPulseWidth_B,
 
 	\stereoSpread, ~stereoSpread_B,
-	\lfoMix, ~lfoMix,
-	\lfoPulseWidth, ~lfoPulseWidth
+	\vibratoFreqStart, ~vibratoFreqStart_B,
+	\vibratoFreqEnd, ~vibratoFreqEnd_B,
+	\vibratoAmtStart, ~vibratoAmtStart_B,
+	\vibratoAmtEnd, ~vibratoAmtEnd_B,
+	\vibratoEnvTime, ~vibratoEnvTime_B
+
 );
 });
 
