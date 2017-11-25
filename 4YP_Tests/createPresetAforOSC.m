@@ -28,7 +28,7 @@ presetA{8} = [0.6, 0.1, 0.7, 0.5];
 % env1Params    %A, D, S, R, curve
 presetA{9} = [0.7, 0.9, 1.0, 0.5]; 
 % misc
-presetA{10} = 0.9; % StereoSpread
+presetA{10} = [0.9]; % StereoSpread
 
 
 nameStrings = {'/PMparams',...

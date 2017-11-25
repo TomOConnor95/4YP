@@ -4,7 +4,7 @@ close all
 %Ptest = createPresetsForImageEditing();
 
 %% Option parameters
-selectedImageNumber = 3;
+selectedImageNumber = 1;
 savePresetsToFile = true;
 
 %% Miscellaneous parameters

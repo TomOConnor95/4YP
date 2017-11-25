@@ -112,22 +112,11 @@ OSCdef.new(
 		arg msg, time, addr, port;
 		msg.postln;
 		~stereoSpread_B.set(msg[1]);
+		//~lowPassCutOff.set(msg[2].clip(100,20000));
+		//~lowPassRes.set(msg[3].clip(0.001, 10));
 	},
 	'/misc'
 );
 
 
 )
-
-
-
-x = Synth(\FM7_Synth, [ \freq , 200.0, \gate, 1, ]).register;
-x.free;
-
-x.set(\gate, 0)
-x.set(\lfo1Rate, 1, \lfo1Amt, 0.3, \stereoSpread, 0.2)
-
-
-
-
-NetAddr.langPort;  // The default Port SC listens on - 57120

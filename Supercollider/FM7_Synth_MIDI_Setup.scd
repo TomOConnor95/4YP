@@ -38,14 +38,17 @@ MIDIdef.noteOn(\noteOnTest, {
 
 	\envAmpADSR, ~envAmpADSR_B,
 	\envAmpCurve, ~envAmpCurve_B,
-	\stereoSpread, ~stereoSpread_B,
 
 	\env1ADSR, ~env1ADSR_B,
 	\env1Curve, ~env1Curve_B,
 
 	\lfo1Rate, ~lfo1Rate_B,
 	\lfo1Amp, ~lfo1Amp_B,
-	\lfo1PhaseSpread, ~lfo1PhaseSpread_B
+	\lfo1PhaseSpread, ~lfo1PhaseSpread_B,
+
+	\stereoSpread, ~stereoSpread_B
+	//\lowPassCutOff, ~lowPassCutOff,
+	//\lowPassRes, ~lowPassRes
 );
 });
 
@@ -64,6 +67,3 @@ MIDIdef.bend(\bendTest, {
 	~notes.do{arg synth; synth.set(\bend, val.linlin(0,16383,-2,2))}
 });
 )
-
-
-In.kr

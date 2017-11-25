@@ -26,7 +26,6 @@ s.reboot;
 
 ~envAmpADSR_B = Bus.control(s,4);
 ~envAmpCurve_B = Bus.control(s,1);
-~stereoSpread_B = Bus.control(s,1);
 
 ~env1ADSR_B = Bus.control(s,4);
 ~env1Curve_B = Bus.control(s,1);
@@ -35,11 +34,15 @@ s.reboot;
 ~lfo1Amp_B = Bus.control(s,1);
 ~lfo1PhaseSpread_B = Bus.control(s,1);
 
+~stereoSpread_B = Bus.control(s,1);
+~lowPassCutOff = Bus.control(s,1);
+~lowPassRes = Bus.control(s,1);
+
 SynthDef(\FM7_Synth, {
 	arg out = 0, freq = 440, gate = 1,  amp = 1,  bend = 0,
 
 	//---------------------------------------------------------
-	// Input Parameters
+	// Input ParameterS
 	//---------------------------------------------------------
 
 	// Operator frequency ratios
@@ -64,7 +67,7 @@ SynthDef(\FM7_Synth, {
 	// Amp Envelope Parameters
 	envAmpADSR = #[0.3, 0.05, 0.9, 0.44],
 	envAmpCurve = 0,
-	stereoSpread = 0.2,
+
 
 	// Envelope Parameters
 	env1ADSR = #[2, 0.45, 0.9, 0.54],
@@ -74,7 +77,12 @@ SynthDef(\FM7_Synth, {
 	lfoADepth = #[0.50, 0.40, 0.30, 0.50, 0.00, 0.00],
 
 	// LFO parameters
-	lfo1Rate = 2, lfo1Amp = 0.2, lfo1PhaseSpread = 0.2; // Would be cool to have RateSpread
+	lfo1Rate = 2, lfo1Amp = 0.2, lfo1PhaseSpread = 0.2, // Would be cool to have RateSpread
+
+	// Global Modifier Parameters
+	stereoSpread = 0.2,
+	lowPassCutOff = 20000,
+	lowPassRes = 0.1;
 
 	// LFOs usually have range -1 - 1, but I've included offset of 1. therefore max LFOamp = 1
 
@@ -144,131 +152,8 @@ SynthDef(\FM7_Synth, {
 
 	snd = Splay.ar(fmChannels, stereoSpread) * (-12.dbamp) * amp * envAmp;
 
+	RLPF.ar(snd, lowPassCutOff, lowPassRes);
 	DetectSilence.ar(snd, doneAction:2);
 	Out.ar(out, snd);
 }).add;
-)
-
-s.boot;
-s.plotTree;
-s.quit;
-
-~outputLevels_B.index
-
-
-(
-x = Synth(\FM7_Synth, [ \freq, 200.0, \gate, 1, ]).register;
-
-x.map(
-	\freqCoarse, ~freqCoarse_B,
-	\freqFine, ~freqFine_B,
-	\outputLevels, ~outputLevels_B,
-
-	\op1PM, ~op1PM_B,
-	\op2PM, ~op2PM_B,
-	\op3PM, ~op3PM_B,
-	\op4PM, ~op4PM_B,
-	\op5PM, ~op5PM_B,
-	\op6PM, ~op6PM_B,
-
-	\envAmt, ~envAmt_B,
-	\lfoADepth, ~lfoADepth_B,
-
-	\envAmpADSR, ~envAmpADSR_B,
-	\envAmpCurve, ~envAmpCurve_B,
-	\stereoSpread, ~stereoSpread_B,
-
-	\env1ADSR, ~env1ADSR_B,
-	\env1Curve, ~env1Curve_B,
-
-	\lfo1Rate, ~lfo1Rate_B,
-	\lfo1Amp, ~lfo1Amp_B,
-	\lfo1PhaseSpread, ~lfo1PhaseSpread_B
-);
-
-// Set default params for busses
-~freqCoarse_B.set(1.0, 0.5, 2.0, 2.0, 3.0, 3.0);
-~freqFine_B.set(0.0, 0.1, 0.0, 0.0, 0.0, 0.0);
-~outputLevels_B.set(0.5,0.5,0.0,0.0,0.0,0.0);
-
-	~op1PM_B.set(0.0, 1.0, 1.0, 0.0, 4.0, 0.2);
-	~op2PM_B.set(0.0, 0.0, 0.0, 1.0, 0.0, 1.0);
-	~op3PM_B.set(0.0, 0.0, 0.0, 0.0, 0.0, 1.0);
-	~op4PM_B.set(0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
-	~op5PM_B.set(0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
-	~op6PM_B.set(0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
-
-	// Amp Envelope Parameters
-	~envAmpADSR_B.set(0.3, 0.05, 0.9, 0.44);
-	~envAmpCurve_B.set(0);
-	~stereoSpread_B.set(0.2);
-
-	// Envelope Parameters
-	~env1ADSR_B.set(2, 0.45, 0.9, 0.54);
-~env1Curve_B.set(0);
-
-	~envAmt_B.set(0.00, 0.70, 0.40, 0.00, 0.00, 0.00);
-~lfoADepth_B.set(0.50, 0.40, 0.30, 0.50, 0.00, 0.00);
-
-	// LFO parameters
-~lfo1Rate_B.set(1);
-~lfo1Amp_B.set(0.2);
-~lfo1PhaseSpread_B.set(0.2);
-)
-
-
-
-x.set(\gate, 0);
-
-x.set(\stereoSpread, 0.2);
-x.set(\stereoSpread, 0.9);
-
-x.set(\lfo1Rate, 1, \lfo1Amt, 0.3);
-{
-	var count;
-
-x.set(\outputLevels, [0.5, 0.5, 0.1, 0.1, 0.5, 0.5]);
-
-
-/*
-(
-
-MIDIClient.init;
-MIDIIn.connect(0);
-// how to deal with midi polyphony
-~notes = Array.newClear(128);
-~bend = 8192;
-
-
-
-
-MIDIdef.noteOn(\noteOnTest, {
-	arg vel, nn, chan, src;
-	[vel, nn,].postln;
-	~notes[nn] = Synth.new(
-		\FM7_Synth,
-		[
-			\freq, nn.midicps,
-			\amp, vel.linexp(1,127,0.2,1),
-			\gate, 1,
-			\bend, ~bend.linlin(0,16383, -2, 2),
-			\outputLevels, #[1,1,0,0,0,0]
-	]
-	);
-});
-
-MIDIdef.noteOff(\noteOffTest, {
-	arg vel, nn;
-	[vel, nn,].postln;
-	~notes[nn].set(\gate, 0);
-	~notes[nn] = nil;
-});
-
-
-MIDIdef.bend(\bendTest, {
-	arg val, chan, src;
-	[val, chan, src].postln;
-	~bend = val;
-	~notes.do{arg synth; synth.set(\bend, val.linlin(0,16383,-2,2))}
-});
 )

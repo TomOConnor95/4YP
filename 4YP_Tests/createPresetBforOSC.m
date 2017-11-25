@@ -29,7 +29,6 @@ presetB{8} = [0.1, 0.1, 0.7, 0.5];
 % env1Params       %A, D, S, R, curve
 presetB{9} = [0.01, 2.0, 0.1, 0.5]; 
 % misc
-presetB{10} = 0.1; % StereoSpread
-
+presetB{10} = [0.1]; % StereoSpread
 
 end
