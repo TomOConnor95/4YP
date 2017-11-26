@@ -20,8 +20,7 @@ isMarkerClicked = false;
 markerIndex = 1;
 currentGeneration = 1;
 screenSize = get(0,'Screensize');
-barUpdateTime = 0.5; 
-tic;
+
 %% Open UDP connection
 u = udp('127.0.0.1',57120); 
 fopen(u); 
@@ -58,6 +57,9 @@ G.pauseText.Visible = 'off';
 % Currently if you click during the paused time it will trigger the
 % callback and cause a bug
 
+ dispstat('','init')  
+
+
 while(isSearching)
     
     pause(0.01)
@@ -83,6 +85,9 @@ while(isSearching)
         P = P.switchPresets(markerIndex);
         
         sendAllStructParamsOverOSC(P.presetA, nameStrings, typeStrings, u);
+        
+        barStruct = updateBarGraphsStruct(P.presetA, barStruct);
+
        continue 
     end
     
@@ -124,11 +129,11 @@ while(isSearching)
         P = P.iteratePresets(G.P1);
         
         % Update Bar plots
-        %[barA, barB, barC] = updateBarPlots(barA,barB,barC,P.presetA,P.presetB,P.presetC);
+        barStruct = updateBarGraphsStruct(P.presetA, barStruct);
         
         isPressed = false;
         %isBlending = true;
-        tic;
+        
     end
     %%  Live Preset Blending Step
     if isBlending == true
@@ -144,13 +149,9 @@ while(isSearching)
             P = P.mixPresets(alpha,beta,gamma);
             
             
-            if toc > barUpdateTime
-            barStruct = updateBarGraphsStruct(P.presetMix, barStruct);
-            tic
-            end
-            
-            
             sendAllStructParamsOverOSC(P.presetMix, nameStrings, typeStrings, u);
+            
+            dispstat(sprintf(preset2string(P.presetMix, nameStrings)));
             
             drawnow()
             
