@@ -198,7 +198,7 @@ SynthDef(\FM7_Synth, {
 ~lfoAAmp_B.set(0.49);
 ~lfoAPhaseSpread_B.set(0.0);
 
-~lfoBRate_B.set(1.0);
+~lfoBRate_B.set(5.0);
 ~lfoBAmp_B.set(0.9);
 ~lfoBPulseWidth_B.set(0.7);
 

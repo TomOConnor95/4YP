@@ -88,7 +88,7 @@ OSCdef.new(
 		arg msg, time, addr, port;
 		msg.postln;
 		~lfoARate_B.set(msg[1]);
-		~lfoAAmt_B.set(msg[2]);
+		~lfoAAmp_B.set(msg[2]);
 		~lfoAPhaseSpread_B.set(msg[3]);
 	},
 	'/lfoAParams'
@@ -100,8 +100,8 @@ OSCdef.new(
 		arg msg, time, addr, port;
 		msg.postln;
 		~lfoBRate_B.set(msg[1]);
-		~lfoBAmt_B.set(msg[2]);
-		~lfoBPhaseSpread_B.set(msg[3]);
+		~lfoBAmp_B.set(msg[2]);
+		~lfoBPulseWidth_B.set(msg[3]);
 	},
 	'/lfoBParams'
 );
