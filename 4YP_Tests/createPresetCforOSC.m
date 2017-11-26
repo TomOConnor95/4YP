@@ -24,9 +24,9 @@ presetC{6} = [0.9, 0.1, 0.2, 0.5, 0.2, 0.8];
 % lfoBDepth
 presetC{7} = [0.6, 0.5, 0.1, 0.2, 0.5, 0.1]; 
 % lfoAParams       %lfo1Rate, lfo1Amp, lfo1PhaseSpread
-presetC{8} = [10, 0.4, 0.1]; 
+presetC{8} = [10, 0.3, 0.1]; 
 % lfoBParams      %lfo2Rate, lfo2Amp, lfo2PulseWidth
-presetC{9} = [0.1, 1.0, 0.5]; 
+presetC{9} = [0.1, 0.2, 0.5]; 
         
 % envAmpParams
          %A, D, S, R, curve

@@ -20,8 +20,8 @@ isMarkerClicked = false;
 markerIndex = 1;
 currentGeneration = 1;
 screenSize = get(0,'Screensize');
-
-
+barUpdateTime = 0.5; 
+tic;
 %% Open UDP connection
 u = udp('127.0.0.1',57120); 
 fopen(u); 
@@ -32,7 +32,6 @@ fopen(u);
 presetB = createPresetBforOSC();
 presetC = createPresetCforOSC();
 
-[presetA{2},presetB{2},presetC{2}]
 
 % [presetA, presetB, presetC] = loadPresetsFromStore(4,9,7);
  %[presetA, presetB, presetC] = loadPresetsFromStoreRandom();
@@ -45,27 +44,12 @@ G = createBlendingGeometry();
 %set(gcf,'Position',[(screenSize(3)/2),0,screenSize(3)/2,screenSize(4)])
 
 %% Create all necessary parameters visualisations
-%  figure(2)
-% % [barA, barB, barC, barMix] = createBarGraphs(P.presetA,P.presetB,P.presetC);
-% 
-% barPlotPMparams =  bar3(reshape(P.presetA{1},6,6));
-% for k = 1:length(barPlotPMparams)
-%     zdata = barPlotPMparams(k).ZData;
-%     barPlotPMparams(k).CData = zdata;
-%     barPlotPMparams(k).FaceColor = 'interp';
-%     colormap(cool)
-% end
-% set(gca,'Xdir','reverse')
-zlim([0,5])
-%% Create plots to show evolution of parameters and Mouse Points
-% figure(2) 
-% subplot(2,7,[4,5,11,12])
-% historyPlot = createStructHistoryPlot(P.presetAHistory);
-% 
-% subplot(2,7,[6,7,13,14])
-% P1HistoryPlot = createPointHistoryPlot(G.P1History);
-% set(gcf,'Position',[-screenSize(3)/26,screenSize(4)/1.6,screenSize(3)/2,screenSize(4)/2.3])
+figure(2)
+barStruct = createBarGraphsStruct(P.presetA, nameStrings);
+set(gcf,'Position',[-screenSize(3)/26,0,screenSize(3)/2.4,screenSize(4)/2])
 
+%% Create plots to show evolution of parameters and Mouse Points
+% This is done by the presetGenerator class
 %% Main Loop
 figure(1)
 
@@ -144,6 +128,7 @@ while(isSearching)
         
         isPressed = false;
         %isBlending = true;
+        tic;
     end
     %%  Live Preset Blending Step
     if isBlending == true
@@ -157,10 +142,14 @@ while(isSearching)
             [alpha,beta,gamma] = calculatePresetRatios(G);
             
             P = P.mixPresets(alpha,beta,gamma);
-
-            %barMix = updateMixBarPLot(barMix, P.presetMix);
-%             barPlotPMparams =  updateBarPlotPMparams(barPlotPMparams, reshape(P.presetMix{1}, 6, 6));
-          
+            
+            
+            if toc > barUpdateTime
+            barStruct = updateBarGraphsStruct(P.presetMix, barStruct);
+            tic
+            end
+            
+            
             sendAllStructParamsOverOSC(P.presetMix, nameStrings, typeStrings, u);
             
             drawnow()
