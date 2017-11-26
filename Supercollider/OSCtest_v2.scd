@@ -134,10 +134,11 @@ OSCdef.new(
 		arg msg, time, addr, port;
 		msg.postln;
 		~stereoSpread_B.set(msg[1]);
-		~vibratoFreqEnd_B.set(msg[2]);
-		~vibratoAmtStart_B.set(msg[3]);
-		~vibratoAmtEnd_B.set(msg[4]);
-		~vibratoEnvTime_B.set(msg[5]);
+		~vibratoFreqStart_B.set(msg[2]);
+		~vibratoFreqEnd_B.set(msg[3]);
+		~vibratoAmtStart_B.set(msg[4]);
+		~vibratoAmtEnd_B.set(msg[5]);
+		~vibratoEnvTime_B.set(msg[6]);
 	},
 	'/misc'
 );

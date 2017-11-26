@@ -1,4 +1,4 @@
-(
+
 s.boot;
 // Get the local server's options
 o = Server.local.options;
@@ -125,11 +125,11 @@ SynthDef(\FM7_Synth, {
 	//---------------------------------------------------------
 
 	ctls = Array.fill(6, { arg op;
-		[freq * Lag2.kr(freqCoarse[0],lagTime) * freqFine[0].linlin(0,1,1,2),
+		[freq * Lag2.kr(freqCoarse[op],lagTime) * freqFine[op].linlin(0,1,1,2),
 		0,
 		MulAdd(
 			MulAdd(
-				envA, envAmt[0], (1-envAmt[0])
+				envA, envAmt[op], (1-envAmt[op])
 				),
 			MulAdd(
 				LFTri.kr(
@@ -165,9 +165,9 @@ SynthDef(\FM7_Synth, {
 	DetectSilence.ar(snd, doneAction:2);
 	Out.ar(out, snd);
 }).add;
-)
 
-(
+
+
 // Set default params for busses
 ~freqCoarse_B.set(1.0, 0.5, 1.0, 2.0, 3.0, 3.0);
 ~freqFine_B.set(0.0, 0.01, 0.01, 0.0, 0.0, 0.0);
@@ -208,19 +208,3 @@ SynthDef(\FM7_Synth, {
 ~vibratoAmtStart_B.set(0.5);
 ~vibratoAmtEnd_B.set(3.0);
 ~vibratoEnvTime_B.set(1.5);
-
-)
-
-{ var depth = 0.4; LFPulse.ar(200, 0, 0.2, LFPulse.kr(1, 0, 0.5, 2*depth, (1-depth))) }.play;
-
-{var lfo2Amp =0.9; var envAmp = 1.0; var freq = 10; SinOsc.ar(500, 0, MulAdd(MulAdd(EnvGen.ar(Env.perc), envAmp, (1-envAmp)), LFPulse.kr(freq, 0, 0.5, 2*lfo2Amp,(1-lfo2Amp)), 0))}.play;
-
-x = 1;
-x = [];
-x(0) = 1;
-x = Array.fill(4, { arg i; i * 2 });
-x[1]
-//{ LFSaw.ar(500, 1, 0.1) }.play
-
-// used as both Oscillator and LFO:
-//{ LFSaw.ar(LFSaw.kr(4, 0, 200, 400), 0, 0.1) }.play
