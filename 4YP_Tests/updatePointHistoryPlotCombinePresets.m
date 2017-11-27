@@ -21,9 +21,12 @@ phPlot.plot_tree = phPlot.plot_tree.addnode(oldIndex, plot([P2(1), P1a(1), P2(1)
 phPlot.plot_markers_tree = phPlot.plot_markers_tree.addnode(oldIndex, plot(P2(1), P2(2), 'ro','MarkerSize',12,'MarkerFaceColor',[0.1,1.0,0.1], 'ButtonDownFcn',{@markerClickedCallback2, newIndex}, 'PickableParts','all'));
 
 % %recolour child node
-% marker = phPlot.plot_markers_tree.get(oldIndex);
-% marker.MarkerFaceColor = [.8 .6 .6];
-% phPlot.plot_markers_tree = phPlot.plot_markers_tree.set(oldIndex, marker);
+for index = presetsDoubleClicked
+    marker = phPlot.plot_markers_tree.get(index);
+    marker.Color = [0.1,1.0,0.1];
+    phPlot.plot_markers_tree = phPlot.plot_markers_tree.set(index, marker);
+end
+
 figure(1)
 end
 

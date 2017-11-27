@@ -17,10 +17,8 @@ isPaused = false;
 isSearching = true;
 isBeginBlending = false;
 isMarkerClicked = false;
-isSelectPresetsButtonPressed = false;
-isPresetSelectionMode = false;
 markerIndex = 1;
-currentMarkerIndex = 1;
+currentMarkerIndex = 0;
 presetsDoubleClicked = [];
 
 currentGeneration = 1;
@@ -105,13 +103,7 @@ while(isSearching)
         imageEditedFullSize.CData = updateEditedImage2(imgFullSize, P.presetA);
     end
     
-    %% Go into preset Selection Mode if Select Presets button Is Clicked
-    if isSelectPresetsButtonPressed == true
-        isSelectPresetsButtonPressed = false;
-        isPresetSelectionMode = true;
-        P.P1HistoryPlot.but_select_presets.String = 'Double Click on 3 presets';
-       continue 
-    end
+
 
     %% Switch presets if a preset marker is clicked
     if isMarkerClicked == true
@@ -119,48 +111,45 @@ while(isSearching)
         
         P = P.switchPresets(markerIndex);
         
-        if isPresetSelectionMode == true &&  markerIndex == currentMarkerIndex
+        imageEdited.CData = updateEditedImage2(img, P.presetA);
+
+        % Test for Double clicks and double click cancels
+        if markerIndex == currentMarkerIndex
             
-            % Test for Double clicks and double click cancels
             if ismember(markerIndex, presetsDoubleClicked)
                 presetsDoubleClicked(presetsDoubleClicked == markerIndex) = [];
                 disp('removed double click')
                 %P.P1HistoryPlot.plot_markers_tree.Node{markerIndex}.MarkerFaceColor = [0.8, 0.6, 0.6];
             else
-                presetsDoubleClicked = [presetsDoubleClicked, markerIndex]
+                presetsDoubleClicked = [presetsDoubleClicked, markerIndex];
                 disp('double clicked')
                 P.P1HistoryPlot.plot_markers_tree.Node{markerIndex}.MarkerFaceColor = [0,1,0];
+            end
+        end
+        
+        
+        % Colour nodes appropriately, & create combine presets if necessary
+        if length(presetsDoubleClicked) >2
+
+            for i = 1:3
+            P.P1HistoryPlot.plot_markers_tree.Node{presetsDoubleClicked(i)}.MarkerFaceColor = [0.8, 0.6, 0.6];
+            end
+
+            P = P.combineSelectedPresets(presetsDoubleClicked);
+
+            presetsDoubleClicked = [];
+            markerIndex = 0;
+
+        elseif ~isempty(presetsDoubleClicked)
+            for i = 1:length(presetsDoubleClicked)
+                P.P1HistoryPlot.plot_markers_tree.Node{presetsDoubleClicked(i)}.MarkerFaceColor = [0,1,0];
             end
 
         end
         
-        % Colour nodes appropriately
-            if length(presetsDoubleClicked) >2
-                isPresetSelectionMode = false;
-                P.P1HistoryPlot.but_select_presets.String = 'Select 3 Presets to Blend';
-                
-                for i = 1:3
-                P.P1HistoryPlot.plot_markers_tree.Node{presetsDoubleClicked(i)}.MarkerFaceColor = [0.8, 0.6, 0.6];
-                end
-                
-                P = P.combineSelectedPresets(presetsDoubleClicked);
-                
-                presetsDoubleClicked = [];
-                
-            elseif length(presetsDoubleClicked) > 0
-                for i = 1:length(presetsDoubleClicked)
-                    P.P1HistoryPlot.plot_markers_tree.Node{presetsDoubleClicked(i)}.MarkerFaceColor = [0,1,0];
-                end
-                
-            end
-        
-        
         currentMarkerIndex = markerIndex;
         
-        
-        
-        imageEdited.CData = updateEditedImage2(img, P.presetA);
-       continue 
+        continue 
     end
     
     %% Paused State

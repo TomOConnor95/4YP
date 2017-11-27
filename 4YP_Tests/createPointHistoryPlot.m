@@ -12,20 +12,5 @@ title('Selection Location History')
 set(gca,'color',[0.7 0.9 1])
 hold on
 
-pointHistoryPlot.but_select_presets = uicontrol('style', 'pushbutton',...
-    'string', 'Select 3 Presets to Blend',...
-    'units', 'normalized',...
-    'position', [0.4 0 0.3 0.12],...
-    'callback', {@selectPresetsButtonCallback},...
-    'visible', 'on');
-
 end
 
-
-function selectPresetsButtonCallback (object, eventdata)
-% writes continuous mouse position to base workspace
-disp('Select Presets Button Clicked')
-
-assignin('base','isSelectPresetsButtonPressed',true)
-
-end
