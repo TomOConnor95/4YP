@@ -12,9 +12,9 @@ preset = P.presetC;
 %% PMparams
 preset{1} = [...
     0.0, 1.0, 1.0, 2.0, 0.4, 0.0, ...
-    0.0, 0.0, 0.0, 1.0, 3.0, 4.0, ...
-    0.0, 0.0, 0.0, 2.0, 4.0, 0.0, ...
-    0.0, 0.0, 0.0, 0.0, 0.0, 3.0, ...
+    0.0, 0.0, 0.0, 1.0, 1.0, 4.0, ...
+    0.0, 0.0, 0.0, 2.0, 1.0, 0.0, ...
+    0.0, 0.0, 0.0, 0.0, 0.0, 1.0, ...
     0.0, 0.0, 0.0, 0.0, 0.0, 0.0, ...
     0.0, 0.0, 0.0, 0.2, 0.0, 0.0]; 
 sendParamsOverOSC(preset{1}, '/PMparams', 'ffffffffffffffffffffffffffffffffffff', u);
@@ -34,13 +34,13 @@ sendParamsOverOSC(preset{5}, '/envAmt', 'ffffff', u);
 preset{6} = [0.2, 0.5, 0.7, 0.2, 0.6, 0.5]; 
 sendParamsOverOSC(preset{6}, '/lfoADepth', 'ffffff', u);
 %% lfoBDepth
-preset{7} = [1.0, 0.5, 0.3, 0.9, 0.6, 0.5]; 
+preset{7} = [0.9, 0.5, 0.3, 0.3, 0.6, 0.5]; 
 sendParamsOverOSC(preset{7}, '/lfoBDepth', 'ffffff', u);
 %% lfoAParams      %lfo1Rate, lfo1Amp, lfo1PhaseSpread
-preset{8} = [0.10, 0.9, 0.1]; 
+preset{8} = [2.10, 0.9, 0.5]; 
 sendParamsOverOSC(preset{8}, '/lfoAParams', 'fff', u);
 %% lfoBParams      %lfo2Rate, lfo2Amp, lfo2PulseWidth
-preset{9} = [0.40, 0.5, 0.5]; 
+preset{9} = [1.40, 0.01, 0.5]; 
 sendParamsOverOSC(preset{9}, '/lfoBParams', 'fff', u);
 %% envAmpParams  % A, D, S, R, curve
 preset{10} = [0.02, 0.1, 0.9, 0.5]; 

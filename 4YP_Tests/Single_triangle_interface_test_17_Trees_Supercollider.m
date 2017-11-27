@@ -71,10 +71,9 @@ while(isSearching)
         isButtonPressed = false;
         
         if savePresetsToFile == true
-            presetSave = matfile('PresetStore2.mat','Writable',true);
+            presetSave = matfile('PresetStoreSC.mat','Writable',true);
             presetSave.presetStore(1+length(presetSave.presetStore(:,1)),:) = P.presetA;
         end
-        
         continue
     end
     
