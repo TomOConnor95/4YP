@@ -154,6 +154,7 @@ while(isSearching)
         isBlending = false;
         isPressed = false;
         isPaused = true;
+        %isSearching = false;
         
         G.but_pause.String = 'Click to Resume Searching';
         
@@ -166,11 +167,14 @@ while(isSearching)
     if isPressed == true
         currentGeneration = currentGeneration + 1;
         
+        % Generate new presets
         P = P.iteratePresets(G.P1);
         
+        % Update Bar plots
         [barA, barB, barC] = updateBarPlots(barA,barB,barC,P.presetA,P.presetB,P.presetC);
         
         isPressed = false;
+        %isBlending = true;
     end
     %%  Live Preset Blending Step
     if isBlending == true

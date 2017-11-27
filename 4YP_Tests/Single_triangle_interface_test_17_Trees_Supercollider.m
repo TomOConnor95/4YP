@@ -18,6 +18,9 @@ isSearching = true;
 isBeginBlending = false;
 isMarkerClicked = false;
 markerIndex = 1;
+currentMarkerIndex = 0;
+presetsDoubleClicked = [];
+
 currentGeneration = 1;
 screenSize = get(0,'Screensize');
 
@@ -82,12 +85,29 @@ while(isSearching)
         isMarkerClicked = false;
         
         P = P.switchPresets(markerIndex);
-        
         sendAllStructParamsOverOSC(P.presetA, nameStrings, typeStrings, u);
+        dispstat(sprintf(preset2string(P.presetA, nameStrings)));
         
-        barStruct = updateBarGraphsStruct(P.presetA, barStruct);
+        [P, presetsDoubleClicked] = testForDoubleClicks(P, presetsDoubleClicked, currentMarkerIndex, markerIndex);
+        
+        if length(presetsDoubleClicked) >2
+            
+            P = setMarkerFaceColours(P, presetsDoubleClicked, [0.8, 0.6, 0.6]);
+            
+            P = P.combineSelectedPresets(presetsDoubleClicked);
 
-       continue 
+            presetsDoubleClicked = [];
+            currentMarkerIndex = 0;
+            continue
+            
+        elseif ~isempty(presetsDoubleClicked)
+            P = setMarkerFaceColours(P, presetsDoubleClicked, [0,1,0]);
+        end
+        
+        currentMarkerIndex = markerIndex;
+        
+        continue 
+        
     end
     
     %% Paused State
@@ -110,7 +130,6 @@ while(isSearching)
         isBlending = false;
         isPressed = false;
         isPaused = true;
-        %isSearching = false;
         
         G.but_pause.String = 'Click to Resume Searching';
         
@@ -124,14 +143,12 @@ while(isSearching)
     %% If mouse is clicked move to the next generation of presets
     if isPressed == true
         currentGeneration = currentGeneration + 1;
-        % Generate new presets
+
         P = P.iteratePresets(G.P1);
         
-        % Update Bar plots
         barStruct = updateBarGraphsStruct(P.presetA, barStruct);
         
         isPressed = false;
-        %isBlending = true;
         
     end
     %%  Live Preset Blending Step

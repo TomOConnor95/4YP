@@ -77,10 +77,7 @@ classdef (Abstract) presetGeneratorSCParent
             % Call Virtual method to generate new B and C
             obj = obj.generateNewBC();
             
-            %obj.presetB{2} = mapToFreqCoarse(obj.presetB{2});
-            %obj.presetC{2} = mapToFreqCoarse(obj.presetC{2});
             
-            %[obj.presetA{2},obj.presetB{2},obj.presetC{2}]
             % Save presets to history
             oldIndex = obj.currentTreeIndex;
             for i = 1:length(obj.presetA)
@@ -118,6 +115,34 @@ classdef (Abstract) presetGeneratorSCParent
                 obj.presetB{i} = obj.presetBHistory{i}.get(switchIndex);
                 obj.presetC{i} = obj.presetCHistory{i}.get(switchIndex);
             end
+        end
+        
+        function obj = combineSelectedPresets(obj, presetsDoubleClicked)
+            
+            % Branch the tree from the first node double clicked
+            oldIndex = presetsDoubleClicked(1);
+            
+            for i = 1:length(obj.presetA)
+                obj.presetA{i} = obj.presetAHistory{i}.get(presetsDoubleClicked(1));
+                obj.presetB{i} = obj.presetAHistory{i}.get(presetsDoubleClicked(2));
+                obj.presetC{i} = obj.presetAHistory{i}.get(presetsDoubleClicked(3));
+                
+                if i == 1
+                    [obj.presetAHistory{i}, newIndex] = obj.presetAHistory{i}.addnode(oldIndex, obj.presetA{i});
+                else
+                    obj.presetAHistory{i} = obj.presetAHistory{i}.addnode(oldIndex, obj.presetA{i});
+                end
+                
+                obj.presetBHistory{i} = obj.presetBHistory{i}.addnode(oldIndex, obj.presetB{i});
+                obj.presetCHistory{i} = obj.presetCHistory{i}.addnode(oldIndex, obj.presetC{i});
+            end
+            obj.currentTreeIndex = newIndex;
+            
+            % update all trees for point history plot - Specialised 
+            obj.P1HistoryPlot = updatePointHistoryPlotCombinePresets(obj.P1HistoryPlot, oldIndex, newIndex, presetsDoubleClicked);
+            
+            % Update plot to show evolution of parameters
+            obj.historyPlot = updateStructPresetHistoryPlot(obj.historyPlot,obj.presetAHistory);
         end
     end
     
