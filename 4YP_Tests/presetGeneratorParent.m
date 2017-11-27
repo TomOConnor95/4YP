@@ -98,7 +98,28 @@ classdef (Abstract) presetGeneratorParent
             obj.presetB = obj.presetBHistory.get(switchIndex);
             obj.presetC = obj.presetCHistory.get(switchIndex);
         end
-
+        
+        function obj = combineSelectedPresets(obj, presetsDoubleClicked)
+            
+            % Branch the tree from the first node double clicked
+            oldIndex = presetsDoubleClicked(1);
+            
+            obj.presetA = obj.presetAHistory.get(presetsDoubleClicked(1));
+            obj.presetB = obj.presetAHistory.get(presetsDoubleClicked(2));
+            obj.presetC = obj.presetAHistory.get(presetsDoubleClicked(3));
+            
+            [obj.presetAHistory, newIndex] = obj.presetAHistory.addnode(oldIndex, obj.presetA);
+            [obj.presetBHistory] = obj.presetBHistory.addnode(oldIndex, obj.presetB);
+            [obj.presetCHistory] = obj.presetCHistory.addnode(oldIndex, obj.presetC);
+            
+            obj.currentTreeIndex = newIndex;
+            
+            % update all trees for point history plot - Specialised 
+            obj.P1HistoryPlot = updatePointHistoryPlotCombinePresets(obj.P1HistoryPlot, oldIndex, newIndex, presetsDoubleClicked);
+            
+            % Update plot to show evolution of parameters
+            obj.historyPlot = updatePresetHistoryPlot(obj.historyPlot,obj.presetAHistory);
+        end
     end
     methods (Abstract)
         generateNewBC(obj)

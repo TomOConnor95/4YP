@@ -82,3 +82,4 @@ set (gca, 'ButtonDownFcn', @mousePressedTest);
 set (gcf, 'WindowButtonMotionFcn', @mouseMoveTest);
 
 end
+

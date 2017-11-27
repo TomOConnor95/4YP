@@ -5,5 +5,4 @@ disp('Pause Button Clicked')
 
 assignin('base','isPauseButtonPressed',true)
 
-
 end
