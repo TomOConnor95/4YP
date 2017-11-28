@@ -62,7 +62,7 @@ classdef (Abstract) presetGeneratorParent
             
         end
         
-        function obj = iteratePresets(obj, mousePointClicked)
+        function obj = iteratePresets(obj, mousePointClicked, lineColour)
             % Update preset A value
             obj.presetA = obj.presetMix;
             
@@ -77,7 +77,7 @@ classdef (Abstract) presetGeneratorParent
             obj.currentTreeIndex = newIndex;
             
             % update all trees for point history plot
-            obj.P1HistoryPlot = updatePointHistoryPlot(obj.P1HistoryPlot,mousePointClicked, oldIndex, newIndex);
+            obj.P1HistoryPlot = updatePointHistoryPlot(obj.P1HistoryPlot,mousePointClicked, oldIndex, newIndex, lineColour);
             
             % Update plot to show evolution of parameters
             obj.historyPlot = updatePresetHistoryPlot(obj.historyPlot,obj.presetAHistory);

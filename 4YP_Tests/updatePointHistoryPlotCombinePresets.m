@@ -1,5 +1,6 @@
-function [phPlot] = updatePointHistoryPlotCombinePresets(phPlot, oldIndex, newIndex, presetsDoubleClicked, lineColour)
+function [phPlot] = updatePointHistoryPlotCombinePresets(phPlot, oldIndex, newIndex, presetsDoubleClicked)
 figure(3);
+lineColour = 'g';
 
 phPlot.vector_tree = phPlot.vector_tree.addnode(oldIndex, [0,0]);
 

@@ -3,13 +3,15 @@ close all
 %% Create Initial Presets and related data structures
 %Ptest = createPresetsForImageEditing();
 
-
 %% Option parameters
 savePresetsToFile = true;
 displayParameters = false;
 displayBarGraphs = false;
 
-
+timbreColour = [0.94, 0.6, 0.6];
+timeColour = [0.94, 0.94, 0.6];
+normalColour = [0.4,0.5,0.9];
+normalButtonColour = [0.94, 0.94, 0.94];
 
 %% Miscellaneous Set-up Parameters
 % Mouse clicks
@@ -102,8 +104,18 @@ while(isSearching)
             
             P = setMarkerFaceColours(P, presetsDoubleClicked, [0.8, 0.6, 0.6]);
             
+            
+            P = P.combineSelectedPresets(presetsDoubleClicked, timeColour);
+            
             P = P.combineSelectedPresets(presetsDoubleClicked);
-
+%             if isTimeFrozen == true
+%                 P = P.combineSelectedPresets(presetsDoubleClicked, timeColour);
+%             elseif isTimbreFrozen == true
+%                 P = P.combineSelectedPresets(presetsDoubleClicked, timbreColour);
+%             else
+%                 P = P.combineSelectedPresets(presetsDoubleClicked, 'g');
+%             end
+            
             presetsDoubleClicked = [];
             currentMarkerIndex = 0;
             continue
@@ -124,19 +136,18 @@ while(isSearching)
         
         if isTimbreFrozen == true
             isTimbreFrozen = false;
-            G.but_freeze_timbre.BackgroundColor = [0.94, 0.94, 0.94];
+            G.but_freeze_timbre.BackgroundColor = normalButtonColour;
         else
             isTimbreFrozen = true;
-        	G.but_freeze_timbre.BackgroundColor = [0.6, 0.94, 0.6];
+        	G.but_freeze_timbre.BackgroundColor = timbreColour;
             
             % Don't allow Time and Timbre to be frozen at the same time
             if isTimeFrozen == true
                 isTimeFrozen = false;
-                G.but_freeze_time.BackgroundColor = [0.94, 0.94, 0.94];
+                G.but_freeze_time.BackgroundColor = normalButtonColour;
             end
             
         end
-        
         
         continue
     end
@@ -147,15 +158,15 @@ while(isSearching)
         
         if isTimeFrozen == true
             isTimeFrozen = false;
-            G.but_freeze_time.BackgroundColor = [0.94, 0.94, 0.94];
+            G.but_freeze_time.BackgroundColor = normalButtonColour;
         else
             isTimeFrozen = true;
-        	G.but_freeze_time.BackgroundColor = [0.94, 0.94, 0.6];
+        	G.but_freeze_time.BackgroundColor = timeColour;
             
             % Don't allow Time and Timbre to be frozen at the same time
             if isTimbreFrozen == true
                 isTimbreFrozen = false;
-                G.but_freeze_timbre.BackgroundColor = [0.94, 0.94, 0.94];
+                G.but_freeze_timbre.BackgroundColor = normalButtonColour;
             end
         end
 
@@ -197,8 +208,13 @@ while(isSearching)
     if isPressed == true
         isPressed = false;
         
-        if isTimeFrozen
-            P = P.iteratePresets(G.P1, );
+        if isTimeFrozen == true
+            P = P.iteratePresets(G.P1, timeColour);
+        elseif isTimbreFrozen == true
+            P = P.iteratePresets(G.P1, timbreColour);
+        else
+            P = P.iteratePresets(G.P1, normalColour);
+        end
         
         if displayBarGraphs == true
             barStruct = updateBarGraphsStruct(P.presetA, barStruct);

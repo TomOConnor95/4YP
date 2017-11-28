@@ -47,15 +47,10 @@ hold off
 
 set(gca,'YTickLabel',[])
 
-% % Message to be displayed at start
-% G.pauseText = text(0.5, 0.5, 'Press Any Key To Begin Searching', 'FontSize',25, 'Color','k', ...
-%     'HorizontalAlignment','Center', 'VerticalAlignment','Middle');
 
-% Edit response to mouse clicks
+% Listen for mouse clicks mouse clicks
 child_handles = allchild(gca);
-
 set(child_handles,'HitTest','off')
-
 set (gca, 'ButtonDownFcn', @mousePressedTest);
 
 % read continuous mouse position

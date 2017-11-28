@@ -24,7 +24,7 @@ set(G.but_pause,'HitTest','on')
 
 % Initilally the program is in pause mode
 G.but_pause.String = 'Begin Searching';    
-G.but_pause.BackgroundColor = [0.94, 0.6, 0.6];
+G.but_pause.BackgroundColor = [0.6, 0.94, 0.6];
 
 end
 

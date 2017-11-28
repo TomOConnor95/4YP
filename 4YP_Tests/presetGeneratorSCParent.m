@@ -120,7 +120,7 @@ classdef (Abstract) presetGeneratorSCParent
             end
         end
         
-        function obj = combineSelectedPresets(obj, presetsDoubleClicked, lineColour)
+        function obj = combineSelectedPresets(obj, presetsDoubleClicked)
             
             % Branch the tree from the first node double clicked
             oldIndex = presetsDoubleClicked(1);
@@ -142,7 +142,7 @@ classdef (Abstract) presetGeneratorSCParent
             obj.currentTreeIndex = newIndex;
             
             % update all trees for point history plot - Specialised 
-            obj.P1HistoryPlot = updatePointHistoryPlotCombinePresets(obj.P1HistoryPlot, oldIndex, newIndex, presetsDoubleClicked, lineColour);
+            obj.P1HistoryPlot = updatePointHistoryPlotCombinePresets(obj.P1HistoryPlot, oldIndex, newIndex, presetsDoubleClicked);
             
             % Update plot to show evolution of parameters
             obj.historyPlot = updateStructPresetHistoryPlot(obj.historyPlot,obj.presetAHistory);

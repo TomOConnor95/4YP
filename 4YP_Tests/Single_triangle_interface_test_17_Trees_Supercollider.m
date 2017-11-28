@@ -3,16 +3,16 @@ close all
 %% Create Initial Presets and related data structures
 %Ptest = createPresetsForImageEditing();
 
-
 %% Option parameters
 savePresetsToFile = true;
 displayParameters = false;
 displayBarGraphs = false;
 
-
 timbreColour = [0.94, 0.6, 0.6];
 timeColour = [0.94, 0.94, 0.6];
+pauseColour = [0.6, 0.94, 0.6];
 normalColour = [0.4,0.5,0.9];
+normalButtonColour = [0.94, 0.94, 0.94];
 
 %% Miscellaneous Set-up Parameters
 % Mouse clicks
@@ -25,20 +25,19 @@ isPauseButtonPressed = false;
 isTimbreButtonPressed = false;
 isTimeButtonPressed = false;
 
-isPaused = true;
-isTimbreFrozen = false;
-isTimeFrozen = false;
-
 % Preset Markers
 isMarkerClicked = false;
 markerIndex = 1;
 currentMarkerIndex = 0;
 presetsDoubleClicked = [];
 
-
 % Program State
 isBlending = true;          % Is UI in blending mode?
 isSearching = true;         % Is the program's while loop active
+
+isPaused = true;
+isTimbreFrozen = false;
+isTimeFrozen = false;
 
 screenSize = get(0,'Screensize');
 
@@ -108,13 +107,14 @@ while(isSearching)
             
             P = P.combineSelectedPresets(presetsDoubleClicked, timeColour);
             
-            if isTimeFrozen == true
-                P = P.combineSelectedPresets(presetsDoubleClicked, timeColour);
-            elseif isTimbreFrozen == true
-                P = P.combineSelectedPresets(presetsDoubleClicked, timbreColour);
-            else
-                P = P.combineSelectedPresets(presetsDoubleClicked, 'g');
-            end
+            P = P.combineSelectedPresets(presetsDoubleClicked);
+%             if isTimeFrozen == true
+%                 P = P.combineSelectedPresets(presetsDoubleClicked, timeColour);
+%             elseif isTimbreFrozen == true
+%                 P = P.combineSelectedPresets(presetsDoubleClicked, timbreColour);
+%             else
+%                 P = P.combineSelectedPresets(presetsDoubleClicked, 'g');
+%             end
             
             presetsDoubleClicked = [];
             currentMarkerIndex = 0;
@@ -136,7 +136,7 @@ while(isSearching)
         
         if isTimbreFrozen == true
             isTimbreFrozen = false;
-            G.but_freeze_timbre.BackgroundColor = [0.94, 0.94, 0.94];
+            G.but_freeze_timbre.BackgroundColor = normalButtonColour;
         else
             isTimbreFrozen = true;
         	G.but_freeze_timbre.BackgroundColor = timbreColour;
@@ -144,7 +144,7 @@ while(isSearching)
             % Don't allow Time and Timbre to be frozen at the same time
             if isTimeFrozen == true
                 isTimeFrozen = false;
-                G.but_freeze_time.BackgroundColor = [0.94, 0.94, 0.94];
+                G.but_freeze_time.BackgroundColor = normalButtonColour;
             end
             
         end
@@ -158,7 +158,7 @@ while(isSearching)
         
         if isTimeFrozen == true
             isTimeFrozen = false;
-            G.but_freeze_time.BackgroundColor = [0.94, 0.94, 0.94];
+            G.but_freeze_time.BackgroundColor = normalButtonColour;
         else
             isTimeFrozen = true;
         	G.but_freeze_time.BackgroundColor = timeColour;
@@ -166,7 +166,7 @@ while(isSearching)
             % Don't allow Time and Timbre to be frozen at the same time
             if isTimbreFrozen == true
                 isTimbreFrozen = false;
-                G.but_freeze_timbre.BackgroundColor = [0.94, 0.94, 0.94];
+                G.but_freeze_timbre.BackgroundColor = normalButtonColour;
             end
         end
 
@@ -182,7 +182,7 @@ while(isSearching)
             isPressed = false;
             isPaused = false;   
             G.but_pause.String = 'Pause On Last Preset';
-            G.but_pause.BackgroundColor = [0.94, 0.94, 0.94];
+            G.but_pause.BackgroundColor = normalButtonColour;
             continue
         end
         	
@@ -197,7 +197,7 @@ while(isSearching)
         
         G.but_pause.String = 'Resume Searching';
         
-        G.but_pause.BackgroundColor = [0.94, 0.6, 0.6];
+        G.but_pause.BackgroundColor = pauseColour;
         % Revert to last clicked preset
         sendAllStructParamsOverOSC(P.presetA, nameStrings, typeStrings, u);
         continue
