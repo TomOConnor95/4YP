@@ -17,7 +17,7 @@ normalButtonColour = [0.94, 0.94, 0.94];
 %% Miscellaneous parameters
 % Mouse Clicks
 MOUSE = [0,0];              % Variable for mouse position to be stored in
-isMouseClicked = false;          % Has mouse been pressed?
+isPressed = false;          % Has mouse been pressed?
 
 % UI Buttons
 isSaveButtonPressed = false;    
@@ -92,7 +92,7 @@ while(S.isSearching)
     pause(0.01)
     
     %% Press button to save final image and quit program
-    if isSaveButtonPressed
+    if S.isSaveButtonPressed == true
         S.isBlending = false;
         S.isPressed = false;
         S.isSearching = false;
@@ -114,8 +114,8 @@ while(S.isSearching)
 
 
     %% Switch presets if a preset marker is clicked
-    if isMarkerClicked
-        isMarkerClicked = false;
+    if S.isMarkerClicked
+        S.isMarkerClicked = false;
         
         P = P.switchPresets(markerIndex);
         imageEdited.CData = updateEditedImage2(img, P.presetA);
@@ -141,7 +141,7 @@ while(S.isSearching)
         
         continue 
     end
-    %% Press Freeze Foreground Button
+        %% Press Freeze Foreground Button
     if isForegroundButtonPressed == true
         isForegroundButtonPressed = false;
         
@@ -149,12 +149,12 @@ while(S.isSearching)
             S.isForegroundFrozen = false;
             G.but_freeze_foreground.BackgroundColor = normalButtonColour;
         else
-            S.isForegroundFrozen = true;
+            isForegroundFrozen = true;
         	G.but_freeze_foreground.BackgroundColor = foregroundColour;
             
             % Don't allow Foreground and Background to be frozen at the same time
             if S.isBackgroundFrozen
-                S.isBackgroundFrozen = false;
+                isBackgroundFrozen = false;
                 G.but_freeze_background.BackgroundColor = normalButtonColour;
             end
             
@@ -163,7 +163,7 @@ while(S.isSearching)
         continue
     end
     
-    %% Press Freeze Background Button
+    %% Press Freeze Time Button
     if isBackgroundButtonPressed == true
         isBackgroundButtonPressed = false;
         
@@ -215,11 +215,11 @@ while(S.isSearching)
     end
     
     %% If mouse is clicked move to the next generation of presets
-    if isMouseClicked == true
+    if isPressed == true
         
-        if S.isForegroundFrozen
+        if isForegroundFrozen == true
             P = P.iteratePresets(G.P1, foregroundColour);
-        elseif S.isBackgroundFrozen
+        elseif isBackgroundFrozen == true
             P = P.iteratePresets(G.P1, backgroundColour);
         else
             P = P.iteratePresets(G.P1, normalColour);
@@ -229,10 +229,10 @@ while(S.isSearching)
             [barA, barB, barC] = updateBarPlots(barA,barB,barC,P.presetA,P.presetB,P.presetC);
         end
         
-        isMouseClicked = false;
+        isPressed = false;
     end
     %%  Live Preset Blending Step
-    if S.isBlending
+    if isBlending == true
         G.P1 = [MOUSE(1,1);MOUSE(1,2)];
         
         % has P1 Changed?
@@ -242,7 +242,7 @@ while(S.isSearching)
             
             [alpha,beta,gamma] = calculatePresetRatios(G);
             
-            P = P.mixPresets(alpha,beta,gamma); %S
+            P = P.mixPresets(alpha,beta,gamma, S);
             
             if displayBarGraphs == true
                 barMix = updateMixBarPLot(barMix, P.presetMix);

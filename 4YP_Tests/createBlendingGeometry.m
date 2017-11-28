@@ -51,10 +51,25 @@ set(gca,'YTickLabel',[])
 % Listen for mouse clicks mouse clicks
 child_handles = allchild(gca);
 set(child_handles,'HitTest','off')
-set (gca, 'ButtonDownFcn', @mousePressedTest);
+set (gca, 'ButtonDownFcn', @mouseClicked);
 
 % read continuous mouse position
-set (gcf, 'WindowButtonMotionFcn', @mouseMoveTest);
+set (gcf, 'WindowButtonMotionFcn', @mouseMoved);
 
 end
 
+function mouseClicked (object, eventdata)
+
+disp('CLICK')
+
+% detects mouse clicks and 
+assignin('base','isMouseClicked',1)
+
+end
+
+function mouseMoved (object, eventdata)
+% writes continuous mouse position to base workspace
+MOUSE = get (gca, 'CurrentPoint');
+
+assignin('base','MOUSE',MOUSE)
+end

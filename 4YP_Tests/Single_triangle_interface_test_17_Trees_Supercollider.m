@@ -17,7 +17,7 @@ normalButtonColour = [0.94, 0.94, 0.94];
 %% Miscellaneous Set-up Parameters
 % Mouse clicks
 MOUSE = [0,0];              % Mouse State
-isPressed = false;          % Has mouse been pressed?
+isMouseClicked = false;          % Has mouse been pressed?
 
 % UI Buttons
 isSaveButtonPressed = false;
@@ -32,12 +32,12 @@ currentMarkerIndex = 0;
 presetsDoubleClicked = [];
 
 % Program State
-isBlending = true;          % Is UI in blending mode?
-isSearching = true;         % Is the program's while loop active
+S.isBlending = true;          % Is UI in blending mode?
+S.isSearching = true;         % Is the program's while loop active
 
-isPaused = true;
-isTimbreFrozen = false;
-isTimeFrozen = false;
+S.isPaused = true;
+S.isTimbreFrozen = false;
+S.isTimeFrozen = false;
 
 screenSize = get(0,'Screensize');
 
@@ -76,7 +76,7 @@ figure(1)
 % Initialsise the command line printing of parameters.
 dispstat('','init')  
 
-while(isSearching)
+while(S.isSearching)
     
     pause(0.01)
     %% Press button to save final image and quit program
@@ -91,7 +91,7 @@ while(isSearching)
     end
     
     %% Switch presets if a preset marker is clicked
-    if isMarkerClicked == true
+    if isMarkerClicked
         isMarkerClicked = false;
         
         P = P.switchPresets(markerIndex);
@@ -131,19 +131,19 @@ while(isSearching)
     end
     
     %% Press Freeze Timbre Button
-    if isTimbreButtonPressed == true
+    if isTimbreButtonPressed
         isTimbreButtonPressed = false;
         
-        if isTimbreFrozen == true
-            isTimbreFrozen = false;
+        if S.isTimbreFrozen
+            S.isTimbreFrozen = false;
             G.but_freeze_timbre.BackgroundColor = normalButtonColour;
         else
-            isTimbreFrozen = true;
+            S.isTimbreFrozen = true;
         	G.but_freeze_timbre.BackgroundColor = timbreColour;
             
             % Don't allow Time and Timbre to be frozen at the same time
-            if isTimeFrozen == true
-                isTimeFrozen = false;
+            if S.isTimeFrozen
+                S.isTimeFrozen = false;
                 G.but_freeze_time.BackgroundColor = normalButtonColour;
             end
             
@@ -153,19 +153,19 @@ while(isSearching)
     end
     
     %% Press Freeze Time Button
-    if isTimeButtonPressed == true
+    if isTimeButtonPressed
         isTimeButtonPressed = false;
         
-        if isTimeFrozen == true
-            isTimeFrozen = false;
+        if S.isTimeFrozen
+            S.isTimeFrozen = false;
             G.but_freeze_time.BackgroundColor = normalButtonColour;
         else
-            isTimeFrozen = true;
+            S.isTimeFrozen = true;
         	G.but_freeze_time.BackgroundColor = timeColour;
             
             % Don't allow Time and Timbre to be frozen at the same time
-            if isTimbreFrozen == true
-                isTimbreFrozen = false;
+            if S.isTimbreFrozen
+                S.isTimbreFrozen = false;
                 G.but_freeze_timbre.BackgroundColor = normalButtonColour;
             end
         end
@@ -174,13 +174,13 @@ while(isSearching)
     end
     
     %% Paused State
-    if isPaused == true
+    if S.isPaused
         
-        if isPauseButtonPressed == true
+        if isPauseButtonPressed
             isPauseButtonPressed = false;
-            isBlending = true;
-            isPressed = false;
-            isPaused = false;   
+            %isMouseClicked = false;
+            S.isBlending = true;
+            S.isPaused = false;   
             G.but_pause.String = 'Pause On Last Preset';
             G.but_pause.BackgroundColor = normalButtonColour;
             continue
@@ -189,11 +189,11 @@ while(isSearching)
        continue 
     end
     %% Press pause button to pause searching
-    if isPauseButtonPressed == true
+    if isPauseButtonPressed
         isPauseButtonPressed = false;
-        isBlending = false;
-        isPressed = false;
-        isPaused = true;
+        S.isBlending = false;
+        %isMouseClicked = false;
+        S.isPaused = true;
         
         G.but_pause.String = 'Resume Searching';
         
@@ -205,23 +205,23 @@ while(isSearching)
     
     
     %% If mouse is clicked move to the next generation of presets
-    if isPressed == true
-        isPressed = false;
+    if isMouseClicked
+        isMouseClicked = false;
         
-        if isTimeFrozen == true
+        if S.isTimeFrozen
             P = P.iteratePresets(G.P1, timeColour);
-        elseif isTimbreFrozen == true
+        elseif S.isTimbreFrozen
             P = P.iteratePresets(G.P1, timbreColour);
         else
             P = P.iteratePresets(G.P1, normalColour);
         end
         
-        if displayBarGraphs == true
+        if displayBarGraphs
             barStruct = updateBarGraphsStruct(P.presetA, barStruct);
         end
     end
     %%  Live Preset Blending Step
-    if isBlending == true
+    if S.isBlending
         G.P1 = [MOUSE(1,1);MOUSE(1,2)];
         
         % has P1 Changed?
@@ -236,7 +236,7 @@ while(isSearching)
             
             sendAllStructParamsOverOSC(P.presetMix, nameStrings, typeStrings, u);
             
-            if displayParameters == true
+            if displayParameters
                 dispstat(sprintf(preset2string(P.presetMix, nameStrings)));
             end
             
