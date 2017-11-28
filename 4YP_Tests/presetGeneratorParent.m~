@@ -145,8 +145,6 @@ classdef (Abstract) presetGeneratorParent
             
             obj.foregroundFrozenNode = obj.currentTreeIndex;
             % Potential bug here if foreground unfrozen then refrozen
-            % Could solve by keeping a tree syaing whether each node was
-            % frozen or not
             
         end
         
@@ -154,22 +152,13 @@ classdef (Abstract) presetGeneratorParent
             obj.isBackgroundFrozen = true;
             
             if obj.isForegroundFrozen
-                obj.isForegroundFrozen = false;
+                obj.isBackgroundFrozen = false;
             end
             
-            obj.backgroundFrozenNode = obj.currentTreeIndex;
+            obj.foregroundFrozenNode = obj.currentTreeIndex;
             % Potential bug here if foreground unfrozen then refrozen
             
         end
-        
-        function obj = unfreezeForeground(obj)
-            obj.isForegroundFrozen = false;
-        end
-        
-        function obj = unfreezeBackground(obj)
-            obj.isBackgroundFrozen = false;
-        end
-        
         
     end
     methods (Abstract)

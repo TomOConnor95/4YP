@@ -36,8 +36,8 @@ S.isBlending = true;          % Is UI in blending mode?
 S.isSearching = true;
 
 S.isPaused = true;
-S.isForegroundFrozen = false;    
-S.isBackgroundFrozen = false;
+%%S.isForegroundFrozen = false;    
+%%S.isBackgroundFrozen = false;
 
 screenSize = get(0,'Screensize');
 
@@ -100,7 +100,7 @@ while(S.isSearching)
         % Revert to last clicked preset
         imageEdited.CData = updateEditedImage2(img, P.presetA);
         
-        if savePresetsToFile == true
+        if savePresetsToFile
             presetSave = matfile('PresetStore.mat','Writable',true);
             presetSave.presetStore(1+length(presetSave.presetStore(:,1)),:) = P.presetA;
         end
@@ -141,44 +141,42 @@ while(S.isSearching)
         
         continue 
     end
-    %% Press Freeze Foreground Button
-    if isForegroundButtonPressed == true
-        isForegroundButtonPressed = false;
+    %% Press Freeze Foreground/Background Buttons
+    if isForegroundButtonPressed == true || isBackgroundButtonPressed == true
         
-        if S.isForegroundFrozen
-            S.isForegroundFrozen = false;
-            G.but_freeze_foreground.BackgroundColor = normalButtonColour;
-        else
-            S.isForegroundFrozen = true;
-        	G.but_freeze_foreground.BackgroundColor = foregroundColour;
-            
-            % Don't allow Foreground and Background to be frozen at the same time
-            if S.isBackgroundFrozen
-                S.isBackgroundFrozen = false;
-                G.but_freeze_background.BackgroundColor = normalButtonColour;
+        if isForegroundButtonPressed == true
+            isForegroundButtonPressed = false;
+
+            % This bit could also be a funtion of P, i.e. toggleForegroundState
+            if P.isForegroundFrozen
+                P = P.unfreezeForeground();
+            else
+                P = P.freezeForeground();
             end
-            
+            %
         end
         
-        continue
-    end
-    
-    %% Press Freeze Background Button
-    if isBackgroundButtonPressed == true
-        isBackgroundButtonPressed = false;
-        
-        if S.isBackgroundFrozen
-            S.isBackgroundFrozen = false;
-            G.but_freeze_background.BackgroundColor = normalButtonColour;
-        else
-            S.isBackgroundFrozen = true;
-        	G.but_freeze_background.BackgroundColor = backgroundColour;
-            
-            % Don't allow Foreground and Bckground to be frozen at the same time
-            if S.isForegroundFrozen == true
-                S.isForegroundFrozen = false;
-                G.but_freeze_foreground.BackgroundColor = normalButtonColour;
+        if isBackgroundButtonPressed == true
+            isBackgroundButtonPressed = false;
+
+            if P.isBackgroundFrozen
+                P = P.unfreezeBackground();
+            else
+                P = P.freezeBackground();
             end
+        end
+        
+        % Corretly Colour Buttons
+        if P.isForegroundFrozen
+            G.but_freeze_foreground.BackgroundColor =  foregroundColour; 
+        else
+            G.but_freeze_foreground.BackgroundColor =  normalButtonColour; 
+        end
+        
+        if P.isBackgroundFrozen
+            G.but_freeze_background.BackgroundColor =  backgroundColour; 
+        else
+            G.but_freeze_background.BackgroundColor =  normalButtonColour; 
         end
 
         continue
@@ -217,9 +215,9 @@ while(S.isSearching)
     %% If mouse is clicked move to the next generation of presets
     if isMouseClicked == true
         
-        if S.isForegroundFrozen
+        if P.isForegroundFrozen
             P = P.iteratePresets(G.P1, foregroundColour);
-        elseif S.isBackgroundFrozen
+        elseif P.isBackgroundFrozen
             P = P.iteratePresets(G.P1, backgroundColour);
         else
             P = P.iteratePresets(G.P1, normalColour);

@@ -80,10 +80,10 @@ while(S.isSearching)
     
     pause(0.01)
     %% Press button to save final image and quit program
-    if isSaveButtonPressed == true
+    if isSaveButtonPressed
         isSaveButtonPressed = false;
         
-        if savePresetsToFile == true
+        if savePresetsToFile
             presetSave = matfile('PresetStoreSC.mat','Writable',true);
             presetSave.presetStore(1+length(presetSave.presetStore(:,1)),:) = P.presetA;
         end
