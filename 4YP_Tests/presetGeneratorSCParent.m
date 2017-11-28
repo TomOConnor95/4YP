@@ -70,7 +70,7 @@ classdef (Abstract) presetGeneratorSCParent
             
         end
         
-        function obj = iteratePresets(obj, mousePointClicked)
+        function obj = iteratePresets(obj, mousePointClicked, lineColour)
             % Update preset A value
             obj.presetA = obj.presetMix;
             
@@ -92,8 +92,11 @@ classdef (Abstract) presetGeneratorSCParent
             obj.currentTreeIndex = newIndex;
             
             % update all trees for point history plot
-            obj.P1HistoryPlot = updatePointHistoryPlot(obj.P1HistoryPlot,mousePointClicked, oldIndex, newIndex);
-            
+            if nargin <3
+                obj.P1HistoryPlot = updatePointHistoryPlot(obj.P1HistoryPlot,mousePointClicked, oldIndex, newIndex);
+            else
+                obj.P1HistoryPlot = updatePointHistoryPlot(obj.P1HistoryPlot,mousePointClicked, oldIndex, newIndex, lineColour);
+            end
             % Update plot to show evolution of parameters
             obj.historyPlot = updateStructPresetHistoryPlot(obj.historyPlot,obj.presetAHistory);
 
@@ -117,7 +120,7 @@ classdef (Abstract) presetGeneratorSCParent
             end
         end
         
-        function obj = combineSelectedPresets(obj, presetsDoubleClicked)
+        function obj = combineSelectedPresets(obj, presetsDoubleClicked, lineColour)
             
             % Branch the tree from the first node double clicked
             oldIndex = presetsDoubleClicked(1);
@@ -139,7 +142,7 @@ classdef (Abstract) presetGeneratorSCParent
             obj.currentTreeIndex = newIndex;
             
             % update all trees for point history plot - Specialised 
-            obj.P1HistoryPlot = updatePointHistoryPlotCombinePresets(obj.P1HistoryPlot, oldIndex, newIndex, presetsDoubleClicked);
+            obj.P1HistoryPlot = updatePointHistoryPlotCombinePresets(obj.P1HistoryPlot, oldIndex, newIndex, presetsDoubleClicked, lineColour);
             
             % Update plot to show evolution of parameters
             obj.historyPlot = updateStructPresetHistoryPlot(obj.historyPlot,obj.presetAHistory);

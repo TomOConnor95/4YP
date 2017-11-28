@@ -1,4 +1,4 @@
-function [phPlot] = updatePointHistoryPlotCombinePresets(phPlot, oldIndex, newIndex, presetsDoubleClicked)
+function [phPlot] = updatePointHistoryPlotCombinePresets(phPlot, oldIndex, newIndex, presetsDoubleClicked, lineColour)
 figure(3);
 
 phPlot.vector_tree = phPlot.vector_tree.addnode(oldIndex, [0,0]);
@@ -16,7 +16,7 @@ P2 = phPlot.sum_tree.get(newIndex);
 
 phPlot.plot_tree = phPlot.plot_tree.addnode(oldIndex, plot([P2(1), P1a(1), P2(1), P1b(1), P2(1), P1c(1), P2(1)],...
                                                            [P2(2), P1a(2), P2(2), P1b(2), P2(2), P1c(2), P2(2)],...
-                                                            '--g','LineWidth',3, 'PickableParts','none'));
+                                                            'Color', lineColour, 'LineStyle', ':','LineWidth',3, 'PickableParts','none'));
 
 phPlot.plot_markers_tree = phPlot.plot_markers_tree.addnode(oldIndex, plot(P2(1), P2(2), 'ro','MarkerSize',12,'MarkerFaceColor',[0.1,1.0,0.1], 'ButtonDownFcn',{@markerClickedCallback2, newIndex}, 'PickableParts','all'));
 

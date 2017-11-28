@@ -19,8 +19,8 @@ G.pointC = plot(G.C(1),G.C(2), 'r+');
 G.lineSides = plot(sides(1,:),sides(2,:), 'LineWidth',3);
 axis([-14,14,-9,17])
 axis equal
+axis manual
 G.pointCenter = plot(0,sideLength*(sqrt(3)/2)*(2/3),'b+','MarkerSize',12);
-
 
 
 % guide lines outside of triangle
@@ -42,40 +42,20 @@ G.lineC = plot([G.C(1), G.P1(1)],[G.C(2),G.P1(2)], 'LineWidth',2);
 
 % Background Colour
 set(gca,'color',[0.7 0.9 1])
+
 hold off
 
-% create a "push button" user interface (UI) object
-G.but_h = uicontrol('style', 'pushbutton',...
-    'string', 'Save Last Preset',...
-    'units', 'normalized',...
-    'position', [0 0 0.3 0.12],...
-    'callback', {@pushButtonCallback},...
-    'visible', 'on');
+set(gca,'YTickLabel',[])
 
-% create a "push button" user interface (UI) object
-G.but_pause = uicontrol('style', 'pushbutton',...
-    'string', 'Pause On Last Preset',...
-    'units', 'normalized',...
-    'position', [0.4 0 0.3 0.12],...
-    'callback', {@pauseButtonCallback},...
-    'visible', 'on');
-% % create a "push button" user interface (UI) object
-% G.but_h_2 = uicontrol('style', 'pushbutton',...
-%     'string', 'Begin Blending',...
-%     'units', 'normalized',...
-%     'position', [0.4 0.4 0.3 0.12],...
-%     'callback', {@pushButtonCallback2},...
-%     'visible', 'on');
-
-% Message to be displayed at start
-G.pauseText = text(0.5, 0.5, 'Press Any Key To Begin Searching', 'FontSize',25, 'Color','k', ...
-    'HorizontalAlignment','Center', 'VerticalAlignment','Middle');
+% % Message to be displayed at start
+% G.pauseText = text(0.5, 0.5, 'Press Any Key To Begin Searching', 'FontSize',25, 'Color','k', ...
+%     'HorizontalAlignment','Center', 'VerticalAlignment','Middle');
 
 % Edit response to mouse clicks
 child_handles = allchild(gca);
 
 set(child_handles,'HitTest','off')
-set(G.but_h,'HitTest','on')
+
 set (gca, 'ButtonDownFcn', @mousePressedTest);
 
 % read continuous mouse position

@@ -1,6 +1,6 @@
-function [presetA, presetB, presetC] = loadPresetsFromStoreRandom()
+function [presetA, presetB, presetC] = loadPresetsFromStoreRandom(fileName)
 %% Open Preset Store
-presetRead = matfile('PresetStore2.mat');
+presetRead = matfile(fileName);
 numberOfPresets = length(presetRead.presetStore(:,1));
 
 randomOrder = randperm(numberOfPresets);

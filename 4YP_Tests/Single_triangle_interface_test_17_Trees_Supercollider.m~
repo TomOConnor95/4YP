@@ -10,9 +10,6 @@ displayParameters = false;
 displayBarGraphs = false;
 
 
-timbreColour = [0.94, 0.6, 0.6];
-timeColour = [0.94, 0.94, 0.6];
-normalColour = [0.4,0.5,0.9];
 
 %% Miscellaneous Set-up Parameters
 % Mouse clicks
@@ -105,17 +102,8 @@ while(isSearching)
             
             P = setMarkerFaceColours(P, presetsDoubleClicked, [0.8, 0.6, 0.6]);
             
-            
-            P = P.combineSelectedPresets(presetsDoubleClicked, timeColour);
-            
-            if isTimeFrozen == true
-                P = P.combineSelectedPresets(presetsDoubleClicked, timeColour);
-            elseif isTimbreFrozen == true
-                P = P.combineSelectedPresets(presetsDoubleClicked, timbreColour);
-            else
-                P = P.combineSelectedPresets(presetsDoubleClicked, 'g');
-            end
-            
+            P = P.combineSelectedPresets(presetsDoubleClicked);
+
             presetsDoubleClicked = [];
             currentMarkerIndex = 0;
             continue
@@ -139,7 +127,7 @@ while(isSearching)
             G.but_freeze_timbre.BackgroundColor = [0.94, 0.94, 0.94];
         else
             isTimbreFrozen = true;
-        	G.but_freeze_timbre.BackgroundColor = timbreColour;
+        	G.but_freeze_timbre.BackgroundColor = [0.6, 0.94, 0.6];
             
             % Don't allow Time and Timbre to be frozen at the same time
             if isTimeFrozen == true
@@ -148,6 +136,7 @@ while(isSearching)
             end
             
         end
+        
         
         continue
     end
@@ -161,7 +150,7 @@ while(isSearching)
             G.but_freeze_time.BackgroundColor = [0.94, 0.94, 0.94];
         else
             isTimeFrozen = true;
-        	G.but_freeze_time.BackgroundColor = timeColour;
+        	G.but_freeze_time.BackgroundColor = [0.94, 0.94, 0.6];
             
             % Don't allow Time and Timbre to be frozen at the same time
             if isTimbreFrozen == true
@@ -208,13 +197,8 @@ while(isSearching)
     if isPressed == true
         isPressed = false;
         
-        if isTimeFrozen == true
-            P = P.iteratePresets(G.P1, timeColour);
-        elseif isTimbreFrozen == true
-            P = P.iteratePresets(G.P1, timbreColour);
-        else
-            P = P.iteratePresets(G.P1, normalColour);
-        end
+        if isTimeFrozen
+            P = P.iteratePresets(G.P1, );
         
         if displayBarGraphs == true
             barStruct = updateBarGraphsStruct(P.presetA, barStruct);

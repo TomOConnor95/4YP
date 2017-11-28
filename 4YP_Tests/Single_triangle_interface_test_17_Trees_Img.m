@@ -54,6 +54,7 @@ P = presetGeneratorMonteCarloMV(presetArray(selectedPresetNumbers(1),:),...
 %% Plot all geometry for Blending Interface
 figure(1)
 G = createBlendingGeometry();
+
 %set(gcf,'Position',[(screenSize(3)/2 - screenSize(3)/26),screenSize(4)/2,screenSize(3)/3,screenSize(4)/2])
 
 %% Create all necessary bar graphs
