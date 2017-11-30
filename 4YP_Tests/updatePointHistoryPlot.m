@@ -24,5 +24,12 @@ marker = phPlot.plot_markers_tree.get(oldIndex);
 marker.MarkerFaceColor = [.8 .6 .6];
 phPlot.plot_markers_tree = phPlot.plot_markers_tree.set(oldIndex, marker);
 figure(1)
+
+% Store frozen line if neccesary // Need a different way of doing this
+if isequal(phPlot.frozenLine.Visible, 'on')
+   phPlot.frozenLineStore = [phPlot.frozenLineStore, phPlot.frozenLine];
+   phPlot.frozenLine.Visible = 'off';
+end
+
 end
 

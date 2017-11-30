@@ -14,6 +14,6 @@ set(gca,'color',[0.7 0.9 1])
 hold on
 
 pointHistoryPlot.frozenLine = plot([0,0],[0,0],'LineStyle', ':', 'LineWidth', 2, 'Visible', 'off');
-
+pointHistoryPlot.frozenLineStore = [];
 end
 

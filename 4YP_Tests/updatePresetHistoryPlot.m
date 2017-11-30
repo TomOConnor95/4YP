@@ -6,4 +6,6 @@ historyArray = cell2mat(presetHistory.Node);
         historyPlot{i}.XData = 1:length(historyArray(:,1));
         historyPlot{i}.YData = historyArray(:,i);
     end
+   
+
 end
