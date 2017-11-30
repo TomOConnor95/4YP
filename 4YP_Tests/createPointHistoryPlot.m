@@ -13,7 +13,7 @@ set(gca,'color',[0.7 0.9 1])
 %set(gca,'color',[0.5, 0.5, 0.5])
 hold on
 
-pointHistoryPlot.frozenLine = plot([0,0],[0,0],'LineStyle', ':', 'LineWidth', 2, 'Visible', 'off');
+pointHistoryPlot.frozenLine = plot([0,0],[0,0],'LineStyle', ':', 'LineWidth', 2, 'Visible', 'off', 'PickableParts','none');
 pointHistoryPlot.frozenLineStore = [];
 end
 

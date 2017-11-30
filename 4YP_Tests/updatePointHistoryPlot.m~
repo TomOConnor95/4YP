@@ -23,7 +23,7 @@ phPlot.plot_markers_tree = phPlot.plot_markers_tree.addnode(oldIndex, plot(P2(1)
 marker = phPlot.plot_markers_tree.get(oldIndex);
 marker.MarkerFaceColor = [.8 .6 .6];
 phPlot.plot_markers_tree = phPlot.plot_markers_tree.set(oldIndex, marker);
-
+figure(1)
 
 % Store frozen line if neccesary // Need a different way of doing this
 if isequal(phPlot.frozenLine.Visible, 'on')
@@ -34,12 +34,12 @@ if isequal(phPlot.frozenLine.Visible, 'on')
    lineColour = phPlot.frozenLine.Color;
    
    phPlot.frozenLineStore = [phPlot.frozenLineStore, ...
-                plot(xData, yData, 'Color', lineColour, 'LineStyle', ':',...
-                'PickableParts','none', 'LineWidth', 2)];
+       plot([xData];
    
-
+   
+   
+   
 end
 
-figure(1)
 end
 
