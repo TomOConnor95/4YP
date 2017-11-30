@@ -14,6 +14,17 @@ classdef (Abstract) presetGeneratorSCParent
         
         historyPlot
         P1HistoryPlot
+        
+        isTimeFrozen
+        isTimbreFrozen
+        
+        timeFrozenNode
+        timbreFrozenNode
+        
+        lineColour
+        timeColour
+        timbreColour
+        normalColour
     end
     methods
         % Constructor
@@ -56,7 +67,17 @@ classdef (Abstract) presetGeneratorSCParent
             
             set(gcf,'Position',[-screenSize(3)/26,screenSize(4)/1.6,screenSize(3)/2.4,screenSize(4)/2.5])
 
+            % Set up freezing time/timbre
+            obj.isTimeFrozen = false;
+            obj.isTimbreFrozen = false;
+            obj.timeFrozenNode = 0; 
+            obj.timbreFrozenNode = 0;
             
+            obj.timeColour = [0.94, 0.6, 0.6];
+            obj.timbreColour = [0.94, 0.94, 0.6];
+            obj.normalColour = [0.4,0.5,0.9];
+            
+            obj.lineColour = obj.normalColour;
         end
         
         function obj = mixPresets(obj,alpha,beta,gamma)
@@ -70,7 +91,7 @@ classdef (Abstract) presetGeneratorSCParent
             
         end
         
-        function obj = iteratePresets(obj, mousePointClicked, lineColour)
+        function obj = iteratePresets(obj, mousePointClicked)
             % Update preset A value
             obj.presetA = obj.presetMix;
             
@@ -92,15 +113,11 @@ classdef (Abstract) presetGeneratorSCParent
             obj.currentTreeIndex = newIndex;
             
             % update all trees for point history plot
-            if nargin <3
-                obj.P1HistoryPlot = updatePointHistoryPlot(obj.P1HistoryPlot,mousePointClicked, oldIndex, newIndex);
-            else
-                obj.P1HistoryPlot = updatePointHistoryPlot(obj.P1HistoryPlot,mousePointClicked, oldIndex, newIndex, lineColour);
-            end
+            obj.P1HistoryPlot = updatePointHistoryPlot(obj.P1HistoryPlot,mousePointClicked, oldIndex, newIndex, obj.lineColour);
+            
             % Update plot to show evolution of parameters
             obj.historyPlot = updateStructPresetHistoryPlot(obj.historyPlot,obj.presetAHistory);
-            
-            
+              
             
         end
 
@@ -149,6 +166,64 @@ classdef (Abstract) presetGeneratorSCParent
             % Update plot to show evolution of parameters
             obj.historyPlot = updateStructPresetHistoryPlot(obj.historyPlot,obj.presetAHistory);
         end
+        
+        %-----Functions to freeze Time/Timbre -----------------------------
+        
+        function obj = freezeTime(obj)
+            obj.isTimeFrozen = true;
+            
+            if obj.isTimbreFrozen
+                obj.isTimbreFrozen = false;
+            end
+                        
+            obj.lineColour = obj.timeColour;
+            
+            obj.timeFrozenNode = obj.currentTreeIndex;
+            % Potential bug here if time unfrozen then refrozen
+            
+        end
+        
+        function obj = freezeTimbre(obj)
+            obj.isTimbreFrozen = true;
+            
+            if obj.isTimeFrozen
+                obj.isTimeFrozen = false;
+            end
+            
+            obj.lineColour = obj.timbreColour;
+            
+            obj.timbreFrozenNode = obj.currentTreeIndex;
+            % Potential bug here if timbre unfrozen then refrozen
+            
+        end
+        
+        function obj = unfreezeTime(obj)
+            obj.isTimeFrozen = false;
+            
+            obj.lineColour = obj.normalColour;
+        end
+        
+        function obj = unfreezeTimbre(obj)
+            obj.isTimbreFrozen = false;
+            obj.lineColour = obj.normalColour;
+        end
+        
+        function obj = toggleTimeState(obj)
+            if obj.isTimeFrozen
+                obj = obj.unfreezeTime();
+            else
+                obj = obj.freezeTime();
+            end
+        end
+        
+        function obj = toggleTimbreState(obj)
+            if obj.isTimbreFrozen
+                obj = obj.unfreezeTimbre();
+            else
+                obj = obj.freezeTimbre();
+            end
+        end
+        
     end
     
     methods (Abstract)

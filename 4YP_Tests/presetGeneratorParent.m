@@ -147,12 +147,11 @@ classdef (Abstract) presetGeneratorParent
         function obj = freezeForeground(obj)
             obj.isForegroundFrozen = true;
             
-            obj.lineColour = obj.foregroundColour;
-            
             if obj.isBackgroundFrozen
                 obj.isBackgroundFrozen = false;
             end
             
+            obj.lineColour = obj.foregroundColour;
             
             obj.foregroundFrozenNode = obj.currentTreeIndex;
             % Potential bug here if foreground unfrozen then refrozen
@@ -164,11 +163,11 @@ classdef (Abstract) presetGeneratorParent
         function obj = freezeBackground(obj)
             obj.isBackgroundFrozen = true;
             
-            obj.lineColour = obj.backgroundColour;
-            
             if obj.isForegroundFrozen
                 obj.isForegroundFrozen = false;
             end
+            
+            obj.lineColour = obj.backgroundColour;
             
             obj.backgroundFrozenNode = obj.currentTreeIndex;
             % Potential bug here if foreground unfrozen then refrozen

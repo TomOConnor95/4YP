@@ -1,15 +1,15 @@
 function G = correctlyColourFreezeButtons(G, P)
     % Corretly Colour blending UI Buttons based on frozen state
     
-    if P.isForegroundFrozen
-        G.but_freeze_foreground.BackgroundColor =  P.foregroundColour; 
+    if P.isTimeFrozen
+        G.but_freeze_time.BackgroundColor =  P.timeColour; 
     else
-        G.but_freeze_foreground.BackgroundColor =  G.normalButtonColour; 
+        G.but_freeze_time.BackgroundColor =  G.normalButtonColour; 
     end
 
-    if P.isBackgroundFrozen
-        G.but_freeze_background.BackgroundColor =  P.backgroundColour; 
+    if P.isTimbreFrozen
+        G.but_freeze_timbre.BackgroundColor =  P.timbreColour; 
     else
-        G.but_freeze_background.BackgroundColor =  G.normalButtonColour; 
+        G.but_freeze_timbre.BackgroundColor =  G.normalButtonColour; 
     end
 end

@@ -1,18 +1,10 @@
 % Test script for preset blending interface
 close all
-%% Create Initial Presets and related data structures
-%Ptest = createPresetsForImageEditing();
 
 %% Option parameters
 savePresetsToFile = true;
 displayParameters = false;
 displayBarGraphs = false;
-
-timbreColour = [0.94, 0.6, 0.6];
-timeColour = [0.94, 0.94, 0.6];
-pauseColour = [0.6, 0.94, 0.6];
-normalColour = [0.4,0.5,0.9];
-normalButtonColour = [0.94, 0.94, 0.94];
 
 %% Miscellaneous Set-up Parameters
 % Mouse clicks
@@ -32,12 +24,9 @@ currentMarkerIndex = 0;
 presetsDoubleClicked = [];
 
 % Program State
-S.isBlending = true;          % Is UI in blending mode?
-S.isSearching = true;         % Is the program's while loop active
-
-S.isPaused = true;
-S.isTimbreFrozen = false;
-S.isTimeFrozen = false;
+isBlending = true;          % Is UI in blending mode?
+isSearching = true;         % Is the program's while loop active
+isPaused = true;
 
 screenSize = get(0,'Screensize');
 
@@ -73,10 +62,10 @@ end
 %% Main Loop
 figure(1)
 
-% Initialsise the command line printing of parameters.
+% Initialsise the command line printing of parameter
 dispstat('','init')  
 
-while(S.isSearching)
+while(isSearching)
     
     pause(0.01)
     %% Press button to save final image and quit program
@@ -104,17 +93,7 @@ while(S.isSearching)
             
             P = setMarkerFaceColours(P, presetsDoubleClicked, [0.8, 0.6, 0.6]);
             
-            
-            P = P.combineSelectedPresets(presetsDoubleClicked, timeColour);
-            
             P = P.combineSelectedPresets(presetsDoubleClicked);
-%             if isTimeFrozen == true
-%                 P = P.combineSelectedPresets(presetsDoubleClicked, timeColour);
-%             elseif isTimbreFrozen == true
-%                 P = P.combineSelectedPresets(presetsDoubleClicked, timbreColour);
-%             else
-%                 P = P.combineSelectedPresets(presetsDoubleClicked, 'g');
-%             end
             
             presetsDoubleClicked = [];
             currentMarkerIndex = 0;
@@ -127,62 +106,38 @@ while(S.isSearching)
         currentMarkerIndex = markerIndex;
         
         continue 
+    end
+    %% Press Freeze Time Button
+    if isTimeButtonPressed
+        isTimeButtonPressed = false;
         
+        P = P.toggleTimeState();
+        G = correctlyColourFreezeButtons(G, P);
+        
+        continue
     end
     
     %% Press Freeze Timbre Button
     if isTimbreButtonPressed
         isTimbreButtonPressed = false;
         
-        if S.isTimbreFrozen
-            S.isTimbreFrozen = false;
-            G.but_freeze_timbre.BackgroundColor = normalButtonColour;
-        else
-            S.isTimbreFrozen = true;
-        	G.but_freeze_timbre.BackgroundColor = timbreColour;
-            
-            % Don't allow Time and Timbre to be frozen at the same time
-            if S.isTimeFrozen
-                S.isTimeFrozen = false;
-                G.but_freeze_time.BackgroundColor = normalButtonColour;
-            end
-            
-        end
+        P = P.toggleTimbreState();
+        G = correctlyColourFreezeButtons(G, P);
         
-        continue
-    end
-    
-    %% Press Freeze Time Button
-    if isTimeButtonPressed
-        isTimeButtonPressed = false;
-        
-        if S.isTimeFrozen
-            S.isTimeFrozen = false;
-            G.but_freeze_time.BackgroundColor = normalButtonColour;
-        else
-            S.isTimeFrozen = true;
-        	G.but_freeze_time.BackgroundColor = timeColour;
-            
-            % Don't allow Time and Timbre to be frozen at the same time
-            if S.isTimbreFrozen
-                S.isTimbreFrozen = false;
-                G.but_freeze_timbre.BackgroundColor = normalButtonColour;
-            end
-        end
-
         continue
     end
     
     %% Paused State
-    if S.isPaused
+    if isPaused
         
         if isPauseButtonPressed
             isPauseButtonPressed = false;
-            %isMouseClicked = false;
-            S.isBlending = true;
-            S.isPaused = false;   
+            isMouseClicked = false;
+            isBlending = true;
+            isPaused = false;  
+            
             G.but_pause.String = 'Pause On Last Preset';
-            G.but_pause.BackgroundColor = normalButtonColour;
+            G.but_pause.BackgroundColor = G.normalButtonColour;
             continue
         end
         	
@@ -191,13 +146,13 @@ while(S.isSearching)
     %% Press pause button to pause searching
     if isPauseButtonPressed
         isPauseButtonPressed = false;
-        S.isBlending = false;
-        %isMouseClicked = false;
-        S.isPaused = true;
+        isBlending = false;
+        isMouseClicked = false;
+        isPaused = true;
         
         G.but_pause.String = 'Resume Searching';
+        G.but_pause.BackgroundColor = G.pauseColour;
         
-        G.but_pause.BackgroundColor = pauseColour;
         % Revert to last clicked preset
         sendAllStructParamsOverOSC(P.presetA, nameStrings, typeStrings, u);
         continue
@@ -208,20 +163,14 @@ while(S.isSearching)
     if isMouseClicked
         isMouseClicked = false;
         
-        if S.isTimeFrozen
-            P = P.iteratePresets(G.P1, timeColour);
-        elseif S.isTimbreFrozen
-            P = P.iteratePresets(G.P1, timbreColour);
-        else
-            P = P.iteratePresets(G.P1, normalColour);
-        end
+        P = P.iteratePresets(G.P1);
         
         if displayBarGraphs
             barStruct = updateBarGraphsStruct(P.presetA, barStruct);
         end
     end
     %%  Live Preset Blending Step
-    if S.isBlending
+    if isBlending
         G.P1 = [MOUSE(1,1);MOUSE(1,2)];
         
         % has P1 Changed?
@@ -233,14 +182,11 @@ while(S.isSearching)
             
             P = P.mixPresets(alpha,beta,gamma);
             
-            
             sendAllStructParamsOverOSC(P.presetMix, nameStrings, typeStrings, u);
             
             if displayParameters
                 dispstat(sprintf(preset2string(P.presetMix, nameStrings)));
             end
-            
-            drawnow()
             
         end
     end
