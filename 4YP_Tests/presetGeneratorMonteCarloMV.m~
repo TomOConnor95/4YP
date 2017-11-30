@@ -51,9 +51,17 @@ classdef presetGeneratorMonteCarloMV < presetGeneratorParent
             tempPresetB = mvnrnd(newPresetsMean,sigma);
             tempPresetC = mvnrnd(newPresetsMean,sigma);
             
-            obj.presetB = bound(tempPresetB,0,1);
-            obj.presetC = bound(tempPresetC,0,1);
-
+            tempPresetB = bound(tempPresetB,0,1);
+            tempPresetC = bound(tempPresetC,0,1);
+            
+            if obj.isForegroundFrozen
+                
+            elseif isBackFrozen
+            
+            
+            obj.presetB = tempPresetB;
+            obj.presetC = tempPresetC;
+            
              % Decay tempOffset
             obj.tempOffset = obj.tempOffset*0.9;
             disp(obj.tempOffset)

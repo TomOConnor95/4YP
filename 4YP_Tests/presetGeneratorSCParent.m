@@ -21,6 +21,11 @@ classdef (Abstract) presetGeneratorSCParent
         timeFrozenNode
         timbreFrozenNode
         
+        timeIndeces
+        timbreIndeces
+        allIndeces
+        unfrozenIndeces
+        
         lineColour
         timeColour
         timbreColour
@@ -73,6 +78,13 @@ classdef (Abstract) presetGeneratorSCParent
             obj.timeFrozenNode = 0; 
             obj.timbreFrozenNode = 0;
             
+            obj.timbreIndeces = 1:7;
+            obj.timeIndeces = 8:12;
+            obj.allIndeces = 1:12;
+            
+            obj.unfrozenIndeces = obj.allIndeces;
+            
+            
             obj.timeColour = [0.94, 0.6, 0.6];
             obj.timbreColour = [0.94, 0.94, 0.6];
             obj.normalColour = [0.4,0.5,0.9];
@@ -81,13 +93,14 @@ classdef (Abstract) presetGeneratorSCParent
         end
         
         function obj = mixPresets(obj,alpha,beta,gamma)
-            for i = 1: length(obj.presetA)
+            for i = obj.unfrozenIndeces
                 obj.presetMix{i} = mixPresets(obj.presetA{i}, obj.presetB{i}, obj.presetC{i},...
                     alpha,beta,gamma);
             end
             
             % Apply any necessary parameter constraints
             obj.presetMix{2} = mapToFreqCoarse(obj.presetMix{2});
+            
             
         end
         
@@ -177,7 +190,7 @@ classdef (Abstract) presetGeneratorSCParent
             end
                         
             obj.lineColour = obj.timeColour;
-            
+            obj.unfrozenIndeces = obj.timbreIndeces;
             obj.timeFrozenNode = obj.currentTreeIndex;
             % Potential bug here if time unfrozen then refrozen
             
@@ -191,7 +204,7 @@ classdef (Abstract) presetGeneratorSCParent
             end
             
             obj.lineColour = obj.timbreColour;
-            
+            obj.unfrozenIndeces = obj.timeIndeces;
             obj.timbreFrozenNode = obj.currentTreeIndex;
             % Potential bug here if timbre unfrozen then refrozen
             

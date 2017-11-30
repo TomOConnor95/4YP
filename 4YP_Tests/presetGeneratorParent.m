@@ -22,6 +22,9 @@ classdef (Abstract) presetGeneratorParent
         foregroundFrozenNode
         backgroundFrozenNode
         
+        foregroundIndexMask
+        backgroundIndexMask
+        
         lineColour
         foregroundColour
         backgroundColour
@@ -71,6 +74,9 @@ classdef (Abstract) presetGeneratorParent
             obj.foregroundFrozenNode = 0; 
             obj.backgroundFrozenNode = 0;
             
+            obj.foregroundIndexMask = [ones(1,15), zeros(1,3), 1];
+            obj.backgroundIndexMask = 1 - obj.foregroundIndexMask;
+            
             obj.foregroundColour = [0.94, 0.6, 0.6];
             obj.backgroundColour = [0.94, 0.94, 0.6];
             obj.normalColour = [0.4,0.5,0.9];
@@ -79,10 +85,19 @@ classdef (Abstract) presetGeneratorParent
         end
         
         function obj = mixPresets(obj,alpha,beta,gamma)
-            obj.presetMix = mixPresets(obj.presetA, obj.presetB, obj.presetC,...
+            presetMixTemp = mixPresets(obj.presetA, obj.presetB, obj.presetC,...
                 alpha,beta,gamma);
-            obj.presetMix = bound(obj.presetMix,0,1);  % return preset values bounded between 0 and 1
+            presetMixTemp = bound(presetMixTemp,0,1);  % return preset values bounded between 0 and 1
             
+            if obj.isForegroundFrozen
+                obj.presetMix = obj.presetA.*obj.foregroundIndexMask + ...
+                                presetMixTemp.*obj.backgroundIndexMask;
+            elseif obj.isBackgroundFrozen
+                obj.presetMix = obj.presetA.*obj.backgroundIndexMask + ...
+                                presetMixTemp.*obj.foregroundIndexMask;
+            else
+                obj.presetMix = presetMixTemp;
+            end
         end
         
         function obj = iteratePresets(obj, mousePointClicked)
@@ -116,8 +131,37 @@ classdef (Abstract) presetGeneratorParent
             obj.P1HistoryPlot = switchColourOfNewMarker(obj.P1HistoryPlot, switchIndex);
             
             obj.currentTreeIndex = switchIndex;
-
-            obj.presetA = obj.presetAHistory.get(switchIndex);
+            
+            if obj.isForegroundFrozen
+                obj.presetA = obj.presetAHistory.get(obj.foregroundFrozenNode).*obj.foregroundIndexMask + ...
+                               obj.presetAHistory.get(switchIndex).*obj.backgroundIndexMask;
+                           
+                % Draw Dotted line from frozen node to switched node
+                frozenNode = obj.P1HistoryPlot.sum_tree.Node{obj.foregroundFrozenNode};
+                switchNode = obj.P1HistoryPlot.sum_tree.Node{switchIndex};
+                
+                obj.P1HistoryPlot.frozenLine.XData = [frozenNode(1), switchNode(1)];
+                obj.P1HistoryPlot.frozenLine.YData = [frozenNode(2), switchNode(2)];
+                obj.P1HistoryPlot.frozenLine.Color = obj.foregroundColour;
+                obj.P1HistoryPlot.frozenLine.Visible = 'on';
+                
+            elseif obj.isBackgroundFrozen
+                obj.presetA = obj.presetAHistory.get(obj.backgroundFrozenNode).*obj.backgroundIndexMask + ...
+                               obj.presetAHistory.get(switchIndex).*obj.foregroundIndexMask;
+                
+                % Draw Dotted line from frozen node to switched node
+                frozenNode = obj.P1HistoryPlot.sum_tree.Node{obj.backgroundFrozenNode};
+                switchNode = obj.P1HistoryPlot.sum_tree.Node{switchIndex};
+                           
+                obj.P1HistoryPlot.frozenLine.XData = [frozenNode(1), switchNode(1)];
+                obj.P1HistoryPlot.frozenLine.YData = [frozenNode(2), switchNode(2)];
+                obj.P1HistoryPlot.frozenLine.Color = obj.backgroundColour;
+                obj.P1HistoryPlot.frozenLine.Visible = 'on';
+                
+            else
+                obj.presetA = obj.presetAHistory.get(switchIndex);
+            end
+            
             obj.presetB = obj.presetBHistory.get(switchIndex);
             obj.presetC = obj.presetCHistory.get(switchIndex);
         end
@@ -143,6 +187,8 @@ classdef (Abstract) presetGeneratorParent
             % Update plot to show evolution of parameters
             obj.historyPlot = updatePresetHistoryPlot(obj.historyPlot,obj.presetAHistory);
         end
+        
+        %-----Functions to freeze Foreground/Background -------------------
         
         function obj = freezeForeground(obj)
             obj.isForegroundFrozen = true;
@@ -178,11 +224,17 @@ classdef (Abstract) presetGeneratorParent
             obj.isForegroundFrozen = false;
             
             obj.lineColour = obj.normalColour;
+            obj.P1HistoryPlot.frozenLine.Visible = 'off';
+            obj.presetA = obj.presetAHistory.get(obj.currentTreeIndex);
         end
         
         function obj = unfreezeBackground(obj)
             obj.isBackgroundFrozen = false;
+            
             obj.lineColour = obj.normalColour;
+            obj.P1HistoryPlot.frozenLine.Visible = 'off';
+            obj.presetA = obj.presetAHistory.get(obj.currentTreeIndex);
+
         end
         
         function obj = toggleForegroundState(obj)
