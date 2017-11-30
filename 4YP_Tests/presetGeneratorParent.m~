@@ -139,12 +139,17 @@ classdef (Abstract) presetGeneratorParent
         function obj = freezeForeground(obj)
             obj.isForegroundFrozen = true;
             
+            obj.lineColour = o
+            
             if obj.isBackgroundFrozen
                 obj.isBackgroundFrozen = false;
             end
             
+            
             obj.foregroundFrozenNode = obj.currentTreeIndex;
             % Potential bug here if foreground unfrozen then refrozen
+            % Could solve by keeping a tree syaing whether each node was
+            % frozen or not
             
         end
         
@@ -152,13 +157,38 @@ classdef (Abstract) presetGeneratorParent
             obj.isBackgroundFrozen = true;
             
             if obj.isForegroundFrozen
-                obj.isBackgroundFrozen = false;
+                obj.isForegroundFrozen = false;
             end
             
-            obj.foregroundFrozenNode = obj.currentTreeIndex;
+            obj.backgroundFrozenNode = obj.currentTreeIndex;
             % Potential bug here if foreground unfrozen then refrozen
             
         end
+        
+        function obj = unfreezeForeground(obj)
+            obj.isForegroundFrozen = false;
+        end
+        
+        function obj = unfreezeBackground(obj)
+            obj.isBackgroundFrozen = false;
+        end
+        
+        function obj = toggleForegroundState(obj)
+            if obj.isForegroundFrozen
+                obj = obj.unfreezeForeground();
+            else
+                obj = obj.freezeForeground();
+            end
+        end
+        
+        function obj = toggleBackgroundState(obj)
+            if obj.isBackgroundFrozen
+                obj = obj.unfreezeBackground();
+            else
+                obj = obj.freezeBackground();
+            end
+        end
+        
         
     end
     methods (Abstract)

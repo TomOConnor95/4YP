@@ -21,10 +21,14 @@ G.but_pause = uicontrol('style', 'pushbutton',...
 set(G.but_save,'HitTest','on')
 set(G.but_pause,'HitTest','on')
 
+% Button Colours
+
+G.pauseColour = [0.6, 0.94, 0.6];
+G.normalButtonColour = [0.94, 0.94, 0.94];
 
 % Initilally the program is in pause mode
 G.but_pause.String = 'Begin Searching';    
-G.but_pause.BackgroundColor = [0.6, 0.94, 0.6];
+G.but_pause.BackgroundColor = G.pauseColour;
 
 end
 

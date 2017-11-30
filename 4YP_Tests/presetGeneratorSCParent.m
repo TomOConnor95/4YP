@@ -99,7 +99,9 @@ classdef (Abstract) presetGeneratorSCParent
             end
             % Update plot to show evolution of parameters
             obj.historyPlot = updateStructPresetHistoryPlot(obj.historyPlot,obj.presetAHistory);
-
+            
+            
+            
         end
 
         function obj = switchPresets(obj, switchIndex)

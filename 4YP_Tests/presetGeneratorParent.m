@@ -22,6 +22,10 @@ classdef (Abstract) presetGeneratorParent
         foregroundFrozenNode
         backgroundFrozenNode
         
+        lineColour
+        foregroundColour
+        backgroundColour
+        normalColour
     end
     methods
         % Constructor
@@ -67,7 +71,11 @@ classdef (Abstract) presetGeneratorParent
             obj.foregroundFrozenNode = 0; 
             obj.backgroundFrozenNode = 0;
             
+            obj.foregroundColour = [0.94, 0.6, 0.6];
+            obj.backgroundColour = [0.94, 0.94, 0.6];
+            obj.normalColour = [0.4,0.5,0.9];
             
+            obj.lineColour = obj.normalColour;
         end
         
         function obj = mixPresets(obj,alpha,beta,gamma)
@@ -77,7 +85,7 @@ classdef (Abstract) presetGeneratorParent
             
         end
         
-        function obj = iteratePresets(obj, mousePointClicked, lineColour)
+        function obj = iteratePresets(obj, mousePointClicked)
             % Update preset A value
             obj.presetA = obj.presetMix;
             
@@ -92,7 +100,7 @@ classdef (Abstract) presetGeneratorParent
             obj.currentTreeIndex = newIndex;
             
             % update all trees for point history plot
-            obj.P1HistoryPlot = updatePointHistoryPlot(obj.P1HistoryPlot,mousePointClicked, oldIndex, newIndex, lineColour);
+            obj.P1HistoryPlot = updatePointHistoryPlot(obj.P1HistoryPlot,mousePointClicked, oldIndex, newIndex, obj.lineColour);
             
             % Update plot to show evolution of parameters
             obj.historyPlot = updatePresetHistoryPlot(obj.historyPlot,obj.presetAHistory);
@@ -139,9 +147,12 @@ classdef (Abstract) presetGeneratorParent
         function obj = freezeForeground(obj)
             obj.isForegroundFrozen = true;
             
+            obj.lineColour = obj.foregroundColour;
+            
             if obj.isBackgroundFrozen
                 obj.isBackgroundFrozen = false;
             end
+            
             
             obj.foregroundFrozenNode = obj.currentTreeIndex;
             % Potential bug here if foreground unfrozen then refrozen
@@ -152,6 +163,8 @@ classdef (Abstract) presetGeneratorParent
         
         function obj = freezeBackground(obj)
             obj.isBackgroundFrozen = true;
+            
+            obj.lineColour = obj.backgroundColour;
             
             if obj.isForegroundFrozen
                 obj.isForegroundFrozen = false;
@@ -164,10 +177,29 @@ classdef (Abstract) presetGeneratorParent
         
         function obj = unfreezeForeground(obj)
             obj.isForegroundFrozen = false;
+            
+            obj.lineColour = obj.normalColour;
         end
         
         function obj = unfreezeBackground(obj)
             obj.isBackgroundFrozen = false;
+            obj.lineColour = obj.normalColour;
+        end
+        
+        function obj = toggleForegroundState(obj)
+            if obj.isForegroundFrozen
+                obj = obj.unfreezeForeground();
+            else
+                obj = obj.freezeForeground();
+            end
+        end
+        
+        function obj = toggleBackgroundState(obj)
+            if obj.isBackgroundFrozen
+                obj = obj.unfreezeBackground();
+            else
+                obj = obj.freezeBackground();
+            end
         end
         
         
