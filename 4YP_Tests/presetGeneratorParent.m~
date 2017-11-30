@@ -5,8 +5,6 @@ classdef (Abstract) presetGeneratorParent
         presetB
         presetC
         currentTreeIndex
-        
-        
     end
     properties(GetAccess=public,SetAccess=private)
         presetAHistory
@@ -19,6 +17,7 @@ classdef (Abstract) presetGeneratorParent
         
         isForegroundFrozen
         isBackgroundFrozen
+        
         foregroundFrozenNode
         backgroundFrozenNode
         
@@ -136,19 +135,28 @@ classdef (Abstract) presetGeneratorParent
                 obj.presetA = obj.presetAHistory.get(obj.foregroundFrozenNode).*obj.foregroundIndexMask + ...
                                obj.presetAHistory.get(switchIndex).*obj.backgroundIndexMask;
                            
-               % Draw Dotted line from frozen node to switched node
-               frozenNode = P.P1HistoryPlot.sum_tree.Node{obj.foregroundFrozenNode};
-               switchNode = P.P1HistoryPlot.sum_tree.Node{switchIndex};
-               
-               
-               
-               obj.P1HistoryPlot.frozenLine = plot([frozenNode(1), switchNode(1)],...
-                                                    [frozenNode(2), switchNode(2)],...
-                                                    'LineStyle', ':', 'Color', obj.foregroundColour);
+                % Draw Dotted line from frozen node to switched node
+                obj = drawDottedLineBetweenNodes
+                frozenNode = obj.P1HistoryPlot.sum_tree.Node{obj.foregroundFrozenNode};
+                switchNode = obj.P1HistoryPlot.sum_tree.Node{switchIndex};
+                
+                obj.P1HistoryPlot.frozenLine.XData = [frozenNode(1), switchNode(1)];
+                obj.P1HistoryPlot.frozenLine.YData = [frozenNode(2), switchNode(2)];
+                obj.P1HistoryPlot.frozenLine.Color = obj.foregroundColour;
+                obj.P1HistoryPlot.frozenLine.Visible = 'on';
+                
             elseif obj.isBackgroundFrozen
                 obj.presetA = obj.presetAHistory.get(obj.backgroundFrozenNode).*obj.backgroundIndexMask + ...
                                obj.presetAHistory.get(switchIndex).*obj.foregroundIndexMask;
+                
                 % Draw Dotted line from frozen node to switched node
+                frozenNode = obj.P1HistoryPlot.sum_tree.Node{obj.backgroundFrozenNode};
+                switchNode = obj.P1HistoryPlot.sum_tree.Node{switchIndex};
+                           
+                obj.P1HistoryPlot.frozenLine.XData = [frozenNode(1), switchNode(1)];
+                obj.P1HistoryPlot.frozenLine.YData = [frozenNode(2), switchNode(2)];
+                obj.P1HistoryPlot.frozenLine.Color = obj.backgroundColour;
+                obj.P1HistoryPlot.frozenLine.Visible = 'on';
                 
             else
                 obj.presetA = obj.presetAHistory.get(switchIndex);
@@ -214,15 +222,17 @@ classdef (Abstract) presetGeneratorParent
         
         function obj = unfreezeForeground(obj)
             obj.isForegroundFrozen = false;
-            obj.lineColour = obj.normalColour;
             
+            obj.lineColour = obj.normalColour;
+            obj.P1HistoryPlot.frozenLine.Visible = 'off';
             obj.presetA = obj.presetAHistory.get(obj.currentTreeIndex);
         end
         
         function obj = unfreezeBackground(obj)
             obj.isBackgroundFrozen = false;
-            obj.lineColour = obj.normalColour;
             
+            obj.lineColour = obj.normalColour;
+            obj.P1HistoryPlot.frozenLine.Visible = 'off';
             obj.presetA = obj.presetAHistory.get(obj.currentTreeIndex);
 
         end

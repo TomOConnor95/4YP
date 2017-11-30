@@ -145,34 +145,11 @@ classdef (Abstract) presetGeneratorSCParent
             
             obj.currentTreeIndex = switchIndex;
             
-            for i = obj.unfrozenIndeces
+            for i = obj.
                 obj.presetA{i} = obj.presetAHistory{i}.get(switchIndex);
-            end
-            if obj.isTimeFrozen
-                for i = obj.timeIndeces
-                obj.presetA{i} = obj.presetAHistory{i}.get(obj.timeFrozenNode);
-                end
-                
-                obj.P1HistoryPlot = drawDottedLineBetweenNodes(obj.P1HistoryPlot,...
-                        obj.timeFrozenNode, switchIndex, obj.timeColour);
-            end
-            
-            if obj.isTimbreFrozen
-                for i = obj.timbreIndeces
-                obj.presetA{i} = obj.presetAHistory{i}.get(obj.timbreFrozenNode);
-                end
-                
-                obj.P1HistoryPlot = drawDottedLineBetweenNodes(obj.P1HistoryPlot,...
-                        obj.timbreFrozenNode, switchIndex, obj.timbreColour);
-                
-            end    
-            
-            for i = obj.allIndeces
                 obj.presetB{i} = obj.presetBHistory{i}.get(switchIndex);
                 obj.presetC{i} = obj.presetCHistory{i}.get(switchIndex);
             end
-            
-            
         end
         
         function obj = combineSelectedPresets(obj, presetsDoubleClicked)
@@ -249,12 +226,9 @@ classdef (Abstract) presetGeneratorSCParent
             obj.isTimeFrozen = false;
             
             obj.unfrozenIndeces = obj.allIndeces;
-            for i = obj.timeIndeces
-                obj.presetMix{i} = obj.presetA{i};
-            end
+            
             
             obj.lineColour = obj.normalColour;
-            obj.P1HistoryPlot.frozenLine.Visible = 'off';
         end
         
         function obj = unfreezeTimbre(obj)
@@ -264,9 +238,7 @@ classdef (Abstract) presetGeneratorSCParent
             for i = obj.timbreIndeces
                 obj.presetMix{i} = obj.presetA{i};
             end
-            
             obj.lineColour = obj.normalColour;
-            obj.P1HistoryPlot.frozenLine.Visible = 'off';
         end
         
         function obj = toggleTimeState(obj)

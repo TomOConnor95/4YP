@@ -25,19 +25,19 @@ marker.MarkerFaceColor = [.8 .6 .6];
 phPlot.plot_markers_tree = phPlot.plot_markers_tree.set(oldIndex, marker);
 
 
-% Store frozen line if neccesary // Need a different way of doing this
+% Store frozen line if neccesary
 if isequal(phPlot.frozenLine.Visible, 'on')
-   phPlot.frozenLine.Visible = 'off';
-   
-   xData = phPlot.frozenLine.XData;
-   yData = phPlot.frozenLine.YData;
-   lineColour = phPlot.frozenLine.Color;
-   
-   phPlot.frozenLineStore = [phPlot.frozenLineStore, ...
-                plot(xData, yData, 'Color', lineColour, 'LineStyle', ':',...
-                'PickableParts','none', 'LineWidth', 2)];
-   
-
+    phPlot.frozenLine.Visible = 'off';
+    
+    xData = phPlot.frozenLine.XData;
+    yData = phPlot.frozenLine.YData;
+    lineColour = phPlot.frozenLine.Color;
+    
+    phPlot.frozenLineStore = [phPlot.frozenLineStore, ...
+        plot(xData, yData, 'Color', lineColour, 'LineStyle', ':',...
+        'PickableParts','none', 'LineWidth', 2)];
+    
+    
 end
 
 figure(1)

@@ -28,6 +28,22 @@ for index = presetsDoubleClicked
     phPlot.plot_markers_tree = phPlot.plot_markers_tree.set(index, marker);
 end
 
+
+% Store frozen line if neccesary
+if isequal(phPlot.frozenLine.Visible, 'on')
+    phPlot.frozenLine.Visible = 'off';
+    
+    xData = phPlot.frozenLine.XData;
+    yData = phPlot.frozenLine.YData;
+    lineColour = phPlot.frozenLine.Color;
+    
+    phPlot.frozenLineStore = [phPlot.frozenLineStore, ...
+        plot([xData(1), P2(1)], [yData(1), P2(2)], 'Color', lineColour, 'LineStyle', ':',...
+        'PickableParts','none', 'LineWidth', 2)];
+    
+    
+end
+
 figure(1)
 end
 

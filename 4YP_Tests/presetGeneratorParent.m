@@ -5,8 +5,6 @@ classdef (Abstract) presetGeneratorParent
         presetB
         presetC
         currentTreeIndex
-        
-        
     end
     properties(GetAccess=public,SetAccess=private)
         presetAHistory
@@ -19,6 +17,7 @@ classdef (Abstract) presetGeneratorParent
         
         isForegroundFrozen
         isBackgroundFrozen
+        
         foregroundFrozenNode
         backgroundFrozenNode
         
@@ -136,28 +135,16 @@ classdef (Abstract) presetGeneratorParent
                 obj.presetA = obj.presetAHistory.get(obj.foregroundFrozenNode).*obj.foregroundIndexMask + ...
                                obj.presetAHistory.get(switchIndex).*obj.backgroundIndexMask;
                            
-                % Draw Dotted line from frozen node to switched node
-                frozenNode = obj.P1HistoryPlot.sum_tree.Node{obj.foregroundFrozenNode};
-                switchNode = obj.P1HistoryPlot.sum_tree.Node{switchIndex};
-                
-                obj.P1HistoryPlot.frozenLine.XData = [frozenNode(1), switchNode(1)];
-                obj.P1HistoryPlot.frozenLine.YData = [frozenNode(2), switchNode(2)];
-                obj.P1HistoryPlot.frozenLine.Color = obj.foregroundColour;
-                obj.P1HistoryPlot.frozenLine.Visible = 'on';
+                obj.P1HistoryPlot = drawDottedLineBetweenNodes(obj.P1HistoryPlot,...
+                        obj.foregroundFrozenNode, switchIndex, obj.foregroundColour);
                 
             elseif obj.isBackgroundFrozen
                 obj.presetA = obj.presetAHistory.get(obj.backgroundFrozenNode).*obj.backgroundIndexMask + ...
                                obj.presetAHistory.get(switchIndex).*obj.foregroundIndexMask;
                 
-                % Draw Dotted line from frozen node to switched node
-                frozenNode = obj.P1HistoryPlot.sum_tree.Node{obj.backgroundFrozenNode};
-                switchNode = obj.P1HistoryPlot.sum_tree.Node{switchIndex};
-                           
-                obj.P1HistoryPlot.frozenLine.XData = [frozenNode(1), switchNode(1)];
-                obj.P1HistoryPlot.frozenLine.YData = [frozenNode(2), switchNode(2)];
-                obj.P1HistoryPlot.frozenLine.Color = obj.backgroundColour;
-                obj.P1HistoryPlot.frozenLine.Visible = 'on';
-                
+                obj.P1HistoryPlot = drawDottedLineBetweenNodes(obj.P1HistoryPlot,...
+                        obj.backgroundFrozenNode, switchIndex, obj.backgroundColour);
+                    
             else
                 obj.presetA = obj.presetAHistory.get(switchIndex);
             end

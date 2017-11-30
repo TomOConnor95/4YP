@@ -3,7 +3,7 @@ close all
 
 %% Option parameters
 savePresetsToFile = true;
-displayParameters = false;
+displayParameters = true;
 displayBarGraphs = false;
 
 %% Miscellaneous Set-up Parameters
