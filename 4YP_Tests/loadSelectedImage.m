@@ -1,5 +1,7 @@
 function [imgFullSize] = loadSelectedImage(selectedImageNumber)
 
+addpath('Images')
+
 switch selectedImageNumber
     case 1, imgFullSize = imread('Sunset.jpg');
     case 2, imgFullSize = imread('Sunset2.jpg');
