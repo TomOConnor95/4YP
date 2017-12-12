@@ -2,7 +2,7 @@
 close all
 
 %% Option parameters
-selectedImageNumber = 1;
+selectedImageNumber = 2;
 savePresetsToFile = true;
 displayBarGraphs = false;
 

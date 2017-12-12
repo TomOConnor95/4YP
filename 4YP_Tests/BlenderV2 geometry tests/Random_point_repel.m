@@ -1,6 +1,6 @@
 %clear all
 %close all
-P = rand(100,2);
+P = rand(20,2);
 
 
 plot(P(:,1),P(:,2),'r+')
