@@ -10,9 +10,6 @@ numPoints = 20;
 
 x = gallery('uniformdata',[numPoints 2],1);
 
-global MOUSE
-global isMouseClicked
-
 MOUSE = [0,0];
 isMouseClicked = false;
 
@@ -25,9 +22,7 @@ function selectedIndeces = voronoiSelection(x)
     global MOUSE
     global isMouseClicked
     
-    numPoints = length(x(:,1));
-    
-    colours = cell(1,numPoints);
+    colours = cell(1,length(x(:,1));
     for i = 1:numPoints
             colours{i} = [0.6,0.9+ 0.1*rand,0.6 + 0.4*rand];
     end

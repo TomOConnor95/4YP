@@ -1,6 +1,10 @@
-function [presetA, presetB, presetC] = loadPresetsFromStore(numA, numB, numC)
+function [presetA, presetB, presetC] = loadPresetsFromStore(numA, numB, numC, storeString)
 %% Open Preset Store
-presetRead = matfile('PresetStore2.mat');
+if nargin <4
+    presetRead = matfile('PresetStore2.mat');
+else
+    presetRead = matfile(storeString);
+end
 
 %% Choose initial preset
 presetA = presetRead.presetStore(numA,:);
