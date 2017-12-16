@@ -37,11 +37,23 @@ u = udp('127.0.0.1',57120);
 fopen(u); 
 
 %% Choose initial presets
+% 
+% [presetA, nameStrings, typeStrings] = createPresetAforOSC();
+% 
+% presetRead = matfile('PresetStoreSC.mat');
+% presetStore = presetRead.presetStore;
+% 
+% figure(3)
+% 
+% numPoints = length(presetRead.presetStore(:,1));
+% 
+% %presetB = createPresetBforOSC();
+% %presetC = createPresetCforOSC();
 
-% Get nameStrings and TypeStrings    Maybe just save these in presetStore
+% Get nameStrings and TypeStrings
 [~, nameStrings, typeStrings] = createPresetAforOSC();
 
-selectedIndeces = voronoiSelection('PresetStoreSC.mat', u, nameStrings, typeStrings);
+selectedIndeces = voronoiSelection('PresetStoreSC.mat', u);
 
 [presetA, presetB, presetC] = loadPresetsFromStore(selectedIndeces(1),...
                                                    selectedIndeces(2),...

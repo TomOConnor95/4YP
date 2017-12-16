@@ -1,28 +1,22 @@
-% Voronoi Diagram with Color
-% This code uses |voronoin| and |patch| to
-% fill the bounded cells of the same Voronoi diagram with color.
-
-% Copyright 2015 The MathWorks, Inc.
-
-figure(1)
-
-numPoints = 20;
-
-x = gallery('uniformdata',[numPoints 2],1);
-
-MOUSE = [0,0];
-isMouseClicked = false;
-
-selectedIndeces = voronoiSelection(x);
-
-disp(['selected indeces: ', mat2str(selectedIndeces)])
-
-
-function selectedIndeces = voronoiSelection(x)
+function selectedIndeces = voronoiSelection(storeString)
     global MOUSE
     global isMouseClicked
     
-    colours = cell(1,length(x(:,1));
+    if nargin == 0
+        presetRead = matfile('PresetStoreSC.mat');
+    else
+        presetRead = matfile(storeString);
+    end
+    
+    
+    presetStore = presetRead.presetStore;
+    
+    numPoints = length(presetStore(:,1));
+
+    x = gallery('uniformdata',[numPoints 2],1);
+    
+    
+    colours = cell(1,numPoints);
     for i = 1:numPoints
             colours{i} = [0.6,0.9+ 0.1*rand,0.6 + 0.4*rand];
     end
@@ -40,14 +34,9 @@ function selectedIndeces = voronoiSelection(x)
     set (gcf, 'WindowButtonMotionFcn', @mouseMoved);
     set (gca, 'ButtonDownFcn', @mouseClicked);
 
-
-
+    % Misc variables
     P1current = [0,0];
-    
-
     idxCurrent = 1;
-
-    
     idxSelected = [];
 
     while(true)
@@ -82,14 +71,15 @@ function selectedIndeces = voronoiSelection(x)
         if ~isequal(P1,P1current)
             P1current = P1;
 
-            % Change parameters to this preset
-
             % Find closest point to mouse Point
             closestPoint=bsxfun(@minus,x,P1);
             [~,idx]=min(hypot(closestPoint(:,1),closestPoint(:,2)));
-
+            
+            % Has index changed?
             if idx ~= idxCurrent
-
+                % Change parameters to this preset
+                
+                
                 % Old Patch
                 if ~ismember(idxCurrent, idxSelected)
 
@@ -113,22 +103,4 @@ function selectedIndeces = voronoiSelection(x)
         end
         pause(0.02)
     end
-end
-
-
-
-function mouseClicked (object, eventdata)
-
-disp('CLICK')
-
-% detects mouse clicks and 
-assignin('base','isMouseClicked',1)
-
-end
-
-function mouseMoved (object, eventdata)
-% writes continuous mouse position to base workspace
-MOUSE = get (gca, 'CurrentPoint');
-
-assignin('base','MOUSE',MOUSE)
 end
