@@ -27,9 +27,9 @@ presetA{8} = [5.10, 0.2, 0.1];
 % lfoBParams      %lfo2Rate, lfo2Amp, lfo2PulseWidth
 presetA{9} = [4.10, 0.0, 0.4]; 
 % envAmpParams  % A, D, S, R, curve
-presetA{10} = [0.6, 0.1, 0.7, 0.5]; 
+presetA{10} = [0.6, 0.1, 0.7, 0.5, 0]; 
 % env1Params    %A, D, S, R, curve
-presetA{11} = [0.7, 0.9, 1.0, 0.5]; 
+presetA{11} = [0.7, 0.9, 1.0, 0.5, 0]; 
 % misc         % StereoSpread vibFreqStart/End, %Vib AmtStart/End, VibTime
 presetA{12} = [0.9, 0.4, 5.0, 0.5, 3.0, 1.5]; 
 
