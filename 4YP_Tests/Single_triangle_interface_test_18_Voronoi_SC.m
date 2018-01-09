@@ -138,12 +138,10 @@ while(isSearching)
     if isFreezeSectionToggled
         isFreezeSectionToggled = false;
         
-        sectionsToFreeze = checkFreezeToggles(G);
-        %P = P.toggleTimbreState();
+        P = P.setFreezeSectionsToggled(checkFreezeToggles(G));
+        
         continue
     end
-    
-    
     
     %% Paused State
     if isPaused
@@ -172,7 +170,8 @@ while(isSearching)
         G.but_pause.BackgroundColor = G.pauseColour;
         
         % Revert to last clicked preset
-        sendAllStructParamsOverOSC(P.presetA, nameStrings, typeStrings, u);
+        P = P.mixPresets(1,0,0);
+        sendAllStructParamsOverOSC(P.presetMix, nameStrings, typeStrings, u);
         continue
     end
     

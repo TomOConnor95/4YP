@@ -5,6 +5,7 @@ classdef (Abstract) presetGeneratorSCParent
         presetB
         presetC
         currentTreeIndex
+        
     end
     properties(GetAccess=public,SetAccess=private)
         presetAHistory
@@ -20,6 +21,8 @@ classdef (Abstract) presetGeneratorSCParent
         
         timeFrozenNode
         timbreFrozenNode
+        
+        toggledIndeces
         
         timeIndeces
         timbreIndeces
@@ -84,6 +87,7 @@ classdef (Abstract) presetGeneratorSCParent
             
             obj.unfrozenIndeces = obj.allIndeces;
             
+            obj.toggledIndeces = [];
             
             obj.timeColour = [0.94, 0.6, 0.6];
             obj.timbreColour = [0.94, 0.94, 0.6];
@@ -99,9 +103,20 @@ classdef (Abstract) presetGeneratorSCParent
             end
             
             % Apply any necessary parameter constraints
+            obj.presetMix{1} = bound(obj.presetMix{1}, 0, 10);
             obj.presetMix{2} = mapToFreqCoarse(obj.presetMix{2});
-            
-            
+            obj.presetMix{3} = bound(obj.presetMix{3}, 0, 10);
+            obj.presetMix{4} = bound(obj.presetMix{4}, 0, 10);
+            obj.presetMix{5} = bound(obj.presetMix{5}, 0, 10);
+            obj.presetMix{6} = bound(obj.presetMix{6}, 0, 10);
+            obj.presetMix{7} = bound(obj.presetMix{7}, 0, 10);
+            obj.presetMix{8}(1:2) = bound(obj.presetMix{8}(1:2), 0, 40);
+            obj.presetMix{8}(3) = bound(obj.presetMix{8}(3), 0, 1);
+            obj.presetMix{9}(1:2) = bound(obj.presetMix{9}(1:2), 0, 40);
+            obj.presetMix{9}(3) = bound(obj.presetMix{9}(3), 0, 1);
+            obj.presetMix{10}(1:4) = bound(obj.presetMix{10}(1:4), 0, 40);
+            obj.presetMix{11}(1:4) = bound(obj.presetMix{11}(1:4), 0, 40);
+            obj.presetMix{12} = bound(obj.presetMix{12}, 0, 40);
         end
         
         function obj = iteratePresets(obj, mousePointClicked)
@@ -204,6 +219,31 @@ classdef (Abstract) presetGeneratorSCParent
         end
         
         %-----Functions to freeze Time/Timbre -----------------------------
+        function obj = setFreezeSectionsToggled(obj, toggledSections)
+
+            obj.toggledIndeces = nonzeros((toggledSections).*(1:12))';
+            
+            obj = setUnfrozenIndeces(obj);
+            %obj.unfrozenIndeces = setdiff(obj.unfrozenIndeces, toggledIndeces);
+            
+        end
+        
+        function obj = setUnfrozenIndeces(obj)
+           
+            % Account for time/timbre buttons
+            if obj.isTimbreFrozen
+                obj.unfrozenIndeces = obj.timeIndeces;
+            elseif obj.isTimeFrozen
+                obj.unfrozenIndeces = obj.timbreIndeces;
+            else
+                obj.unfrozenIndeces = obj.allIndeces;
+            end
+            
+            % Account for toggle Buttons
+            obj.unfrozenIndeces = setdiff(obj.unfrozenIndeces, obj.toggledIndeces);
+            
+            
+        end
         
         function obj = freezeTime(obj)
             obj.isTimeFrozen = true;
@@ -212,7 +252,10 @@ classdef (Abstract) presetGeneratorSCParent
                 obj.isTimbreFrozen = false;
             end
                         
-            obj.unfrozenIndeces = obj.timbreIndeces;
+            obj = setUnfrozenIndeces(obj);
+            
+            %obj.unfrozenIndeces = obj.timbreIndeces;
+            
             
             % ensure time is set to that of presetA
             for i = obj.timeIndeces
@@ -232,7 +275,8 @@ classdef (Abstract) presetGeneratorSCParent
                 obj.isTimeFrozen = false;
             end
             
-            obj.unfrozenIndeces = obj.timeIndeces;
+            obj = setUnfrozenIndeces(obj);
+            %obj.unfrozenIndeces = obj.timeIndeces;
             
             % ensure timbre is set to that of presetA
             for i = obj.timbreIndeces
@@ -248,7 +292,9 @@ classdef (Abstract) presetGeneratorSCParent
         function obj = unfreezeTime(obj)
             obj.isTimeFrozen = false;
             
-            obj.unfrozenIndeces = obj.allIndeces;
+            obj = setUnfrozenIndeces(obj);
+            %obj.unfrozenIndeces = obj.allIndeces;
+            
             for i = obj.timeIndeces
                 obj.presetMix{i} = obj.presetA{i};
             end
@@ -260,7 +306,9 @@ classdef (Abstract) presetGeneratorSCParent
         function obj = unfreezeTimbre(obj)
             obj.isTimbreFrozen = false;
             
-            obj.unfrozenIndeces = obj.allIndeces;
+            obj = setUnfrozenIndeces(obj);
+            %obj.unfrozenIndeces = obj.allIndeces;
+            
             for i = obj.timbreIndeces
                 obj.presetMix{i} = obj.presetA{i};
             end
