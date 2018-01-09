@@ -18,6 +18,7 @@ isSaveButtonPressed = false;
 isPauseButtonPressed = false;
 isTimbreButtonPressed = false;
 isTimeButtonPressed = false;
+isFreezeSectionToggled = false;
 
 % Preset Markers
 isMarkerClicked = false;
@@ -55,7 +56,8 @@ sendAllStructParamsOverOSC(P.presetA, nameStrings, typeStrings, u);
 figure(1)
 G = createBlendingGeometry();
 G = createPauseSaveButtons(G);
-G = createFreezeButtons(G);
+%G = createFreezeButtons(G);
+G = createFreezeSections(G);
 %% Create all necessary parameters visualisations
 if displayBarGraphs == true
     figure(2)
@@ -118,7 +120,7 @@ while(isSearching)
         
         P = P.toggleTimeState();
         G = correctlyColourFreezeButtons(G, P);
-        
+        G = correctlyDisableFreezeToggles(G, P);
         continue
     end
     
@@ -128,9 +130,20 @@ while(isSearching)
         
         P = P.toggleTimbreState();
         G = correctlyColourFreezeButtons(G, P);
-        
+        G = correctlyDisableFreezeToggles(G, P);
         continue
     end
+    
+    %% Press Freeze Section Toggle Button
+    if isFreezeSectionToggled
+        isFreezeSectionToggled = false;
+        
+        sectionsToFreeze = checkFreezeToggles(G);
+        %P = P.toggleTimbreState();
+        continue
+    end
+    
+    
     
     %% Paused State
     if isPaused
