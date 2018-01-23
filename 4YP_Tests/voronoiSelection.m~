@@ -10,7 +10,7 @@ function selectedIndeces = voronoiSelection(storeString, u, nameStrings, typeStr
     
      presetStore = presetRead.presetStore;
 
-    numPoints = length(presetStore(:,1))
+    numPoints = length(presetStore(:,1));
 % 
 %     x = gallery('uniformdata',[numPoints 2],1);
 
@@ -19,14 +19,12 @@ function selectedIndeces = voronoiSelection(storeString, u, nameStrings, typeStr
     [coeff, score, latent] = pca(presetStoreFlattened);
 
     x = score(:,1:2);
-    x(:,1) = mapRange(x(:,1), min(x(:,1)), max(x(:,1)), 0.05,0.95);
-    x(:,2) = mapRange(x(:,2), min(x(:,2)), max(x(:,2)), 0.05,0.95);
 
-    colours = cell(1,numPoints);
-    for i = 1:numPoints
-        R = mapRange(score(i,3), min(score(:,3)), max(score(:,3)), 0.1,1);
-        G = mapRange(score(i,4), min(score(:,4)), max(score(:,4)), 0.1,1);
-        B = mapRange(score(i,5), min(score(:,5)), max(score(:,5)), 0.1,1);
+    colours = cell(1,length(presetStoreFlattened(:,1)));
+    for i = 1:length(presetStoreFlattened(:,1))
+        R = mapRange(score(i,3), min(score(:,3)), max(score(:,3)), 0,1);
+        G = mapRange(score(i,4), min(score(:,4)), max(score(:,4)), 0,1);
+        B = mapRange(score(i,5), min(score(:,5)), max(score(:,5)), 0,1);
         
         colours{i} = [R,G,B];
         % Might be able to vectorise this whole thing!
