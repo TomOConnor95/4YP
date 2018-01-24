@@ -4,15 +4,9 @@ presetRead = matfile('PresetStoreSC.mat');
 
 presetStoreFlattened = cell2mat(presetRead.presetStore);
 
-presetStoreFlattened = presetStoreFlattened(1:17,:);
-
-mu = mean(presetStoreFlattened);
-
-presetStoreFlattened = presetStoreFlattened - mu;
-
+presetStoreFlattened = presetStoreFlattened(1:15,:);
 
 [coeff, score, latent] = pca(presetStoreFlattened);
-%[coeff, score, latent] = ppca(presetStoreFlattened,6);
 
 labels = cell(1,length(score(:,1)));
 for i = 1:length(score(:,1))
@@ -35,7 +29,7 @@ for i = 1:length(score(:,1))       %length(score(:,1))
         'MarkerFaceColor', [R,G,B],...
         'MarkerEdgeColor', [R,G,B],...
         'MarkerSize', 10);
-   text(score(i,1) + 0.2, score(i,2) + 0.2, labels{i}); 
+    
 end
 
 
@@ -55,7 +49,7 @@ for i = 1:length(score(:,1))
         'MarkerFaceColor', [R,G,B],...
         'MarkerEdgeColor', [R,G,B],...
         'MarkerSize', 10);
-    text(score(i,1) + 0.2, score(i,2) + 0.2, score(i,3) + 0.2, labels{i});
+    text(score(i,1) + 0.1, score(i,2) +
     
 end
 

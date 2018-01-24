@@ -103,6 +103,7 @@ classdef (Abstract) presetGeneratorSCParent
             end
             
             % Apply any necessary parameter constraints
+            % Should make a function out of this!!!
             obj.presetMix{1} = bound(obj.presetMix{1}, 0, 10);
             obj.presetMix{2} = mapToFreqCoarse(obj.presetMix{2});
             obj.presetMix{3} = bound(obj.presetMix{3}, 0, 10);
