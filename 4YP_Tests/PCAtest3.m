@@ -4,7 +4,7 @@ presetStore = presetRead.presetStore;
 presetStoreFlattened = cell2mat(presetStore);
 
 %testPreset = presetStoreFlattened(17,:);
-presetStoreFlattened = presetStoreFlattened(1:16,:);
+presetStoreFlattened = presetStoreFlattened(1:17,:);
 
 
 mu = mean(presetStoreFlattened);
@@ -77,9 +77,9 @@ fopen(u);
 
 [~, nameStrings, typeStrings] = createPresetAforOSC();
 
-presetToLoad = 5
+presetToLoad = 16
 %% Adjust with PCA
-pcaWeights = [0,0,-1,2,0,5,2,1];
+pcaWeights = [0,0,0,0,0,0,0,0];
 alteredCellPreset = adjustPresetWithPCA(presetStore(presetToLoad,:), coeffCell, pcaWeights);
 sendAllStructParamsOverOSC(alteredCellPreset, nameStrings, typeStrings, u)
 

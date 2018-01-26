@@ -10,7 +10,7 @@ function selectedIndeces = voronoiSelection(storeString, u, nameStrings, typeStr
     
      presetStore = presetRead.presetStore;
 
-    numPoints = length(presetStore(:,1))
+    numPoints = length(presetStore(:,1));
 % 
 %     x = gallery('uniformdata',[numPoints 2],1);
 
