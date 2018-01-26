@@ -5,8 +5,8 @@ classdef ApplicationDataVoronoi < handle
         x = [];
         y = [];
         
-        selectedColour = [1.0, 0.2, 0.7];
-        mouseOverColour = [0.9, 0.6, 0.6];
+        selectedColour = [1.0, 0, 0];
+        mouseOverColour = [0, 0, 1.0];
         mouseOverSelectedColour = [1.0, 0.4, 0.75];
         
         colours

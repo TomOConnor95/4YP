@@ -1,14 +1,9 @@
 % Test script for PCA selection editing of presets blending interface
-close all
+%close all
 
 % Option parameters
 
 % Miscellaneous Set-up Parameters
-% Mouse clicks
-global MOUSE
-global isMouseClicked
-MOUSE = [0,0];              % Mouse State
-isMouseClicked = false;          % Has mouse been pressed?
 
 appData = ApplicationDataVoronoi();
 % Open UDP connection
@@ -25,7 +20,7 @@ presetRead = matfile('PresetStoreSC.mat');
 appData.presetStore = presetRead.presetStore;
 presetStoreFlattened = cell2mat(presetRead.presetStore);
 
-numPoints = length(presetStore(:,1));
+numPoints = length(appData.presetStore(:,1));
 
 [coeff, score, latent] = pca(presetStoreFlattened);
 
@@ -38,31 +33,23 @@ x(:,1) = mapRange(x(:,1), min(x(:,1)), max(x(:,1)), 0.05,0.95);
 x(:,2) = mapRange(x(:,2), min(x(:,2)), max(x(:,2)), 0.05,0.95);
 
 appData.presetPositions = x;
-% Colours
-appData.colours = cell(1,numPoints);
-for i = 1:numPoints
-    R = mapRange(score(i,3), min(score(:,3)), max(score(:,3)), 0.1,1);
-    G = mapRange(score(i,4), min(score(:,4)), max(score(:,4)), 0.1,1);
-    B = mapRange(score(i,5), min(score(:,5)), max(score(:,5)), 0.1,1);
-    
-    appData.colours{i} = [R,G,B];
-    % Might be able to vectorise this whole thing!
-    
-    %         colours{i} = [0.6,0.9+ 0.1*rand,0.6 + 0.4*rand];
-end
 
+% Colours
+R = mapRange(score(:,3), min(score(:,3)), max(score(:,3)), 0.1,1);
+G = mapRange(score(:,4), min(score(:,4)), max(score(:,4)), 0.1,1);
+B = mapRange(score(:,5), min(score(:,5)), max(score(:,5)), 0.1,1);
+appData.colours = num2cell([R,G,B],2);
+
+% Create voronoi diagram from preset locations
 figure(2)
 appData.patches = filledVoronoi(appData.presetPositions, appData.colours);
 
 appData.patchesPressed = zeros(1,numPoints);
 for i = 1:numPoints
-
     set(appData.patches{i}, 'ButtonDownFcn', {@patchClicked, i, appData})
-    set(appData.patches{i}, 'HitTest', 'On')
-    
+    set(appData.patches{i}, 'HitTest', 'On')  
 end
 
-hold on
 plot(appData.presetPositions(:,1), appData.presetPositions(:,2),...
     'b+', 'HitTest', 'off', 'PickableParts', 'none')
 
@@ -73,20 +60,11 @@ function patchClicked (object, eventdata, idx, appData)
     % writes continuous mouse position to base workspace
     disp(['Patch ', num2str(idx), ' Clicked'])
 
-%     if appData.patchesPressed(patchNo) == 0
-%         appData.patchesPressed(patchNo) = 1;
-%         appData.patches{patchNo}.FaceColor = appData.selectedColour;
-% 
-%     else
-% 
-%         appData.patchesPressed(patchNo) = 0;
-%         appData.patches{patchNo}.FaceColor = appData.colours{patchNo};
-%     end
-    
     if ~ismember(idx, appData.idxSelected)
                 appData.idxSelected = [appData.idxSelected, idx];
 
-                appData.patches{idx}.FaceColor = appData.selectedColour;
+                %appData.patches{idx}.FaceColor = appData.selectedColour;
+                appData.patches{idx}.EdgeColor = appData.selectedColour;
 
                 if length(appData.idxSelected) == 3
                     
@@ -100,10 +78,11 @@ function patchClicked (object, eventdata, idx, appData)
 
                 appData.idxSelected(appData.idxSelected == idx) = [];
 
-                appData.patches{idx}.FaceColor = appData.mouseOverColour;
+                %appData.patches{idx}.FaceColor = appData.mouseOverColour;
+                appData.patches{idx}.EdgeColor = appData.mouseOverColour;
 
     end   
-    drawnow()
+    %drawnow()
     
 end
 
@@ -111,10 +90,14 @@ function mouseMoving (object, eventdata, appData)
 % writes continuous mouse position to base workspace
 MOUSE = get (gca, 'CurrentPoint');
 mousePos = MOUSE(1,1:2);
-closestPoint=bsxfun(@minus,appData.presetPositions,mousePos);
-[~,idx]=min(hypot(closestPoint(:,1),closestPoint(:,2)));
-disp(['Index: ', num2str(idx)])
 
+if ~isempty(appData.idxSelected) && mousePosOutOfRange(mousePos)
+    idx = appData.idxSelected(length(appData.idxSelected))
+else
+    closestPoint=bsxfun(@minus,appData.presetPositions,mousePos);
+    [~,idx]=min(hypot(closestPoint(:,1),closestPoint(:,2)));
+    %disp(['Index: ', num2str(idx)])
+end
 
 % Has index changed?
 if idx ~= appData.idxCurrent
@@ -125,25 +108,33 @@ if idx ~= appData.idxCurrent
     % Old Patch
     if ~ismember(appData.idxCurrent, appData.idxSelected)
         
-        appData.patches{appData.idxCurrent}.FaceColor = appData.colours{appData.idxCurrent};
+        %appData.patches{appData.idxCurrent}.FaceColor = appData.colours{appData.idxCurrent};
+        appData.patches{appData.idxCurrent}.EdgeColor = [0,0,0];
+        appData.patches{appData.idxCurrent}.LineWidth = 0.5;
     else
-        appData.patches{appData.idxCurrent}.FaceColor = appData.selectedColour;
+        %appData.patches{appData.idxCurrent}.FaceColor = appData.selectedColour;
+        appData.patches{appData.idxCurrent}.EdgeColor = appData.selectedColour;
     end
     
     % New patch
     if ~ismember(idx, appData.idxSelected)
         
-        appData.patches{idx}.FaceColor = appData.mouseOverColour;
+        %appData.patches{idx}.FaceColor = appData.mouseOverColour;
+        appData.patches{idx}.EdgeColor = appData.mouseOverColour;
+        appData.patches{idx}.LineWidth = 5;
+        
     else
-        appData.patches{idx}.FaceColor = appData.mouseOverSelectedColour;
+        %appData.patches{idx}.FaceColor = appData.mouseOverSelectedColour;
+        appData.patches{idx}.EdgeColor = appData.mouseOverSelectedColour;
+        appData.patches{idx}.LineWidth = 5;
     end
     
     appData.idxCurrent = idx;
-    drawnow()
+    %drawnow()
+    
     
     
 end
-
 
 
 end
