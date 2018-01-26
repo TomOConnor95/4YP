@@ -1,15 +1,11 @@
 classdef ApplicationDataVoronoi < handle
     properties (SetAccess = public, GetAccess = public)
-        patchesPressed = [];
-        
-        x = [];
-        y = [];
-        
+
         selectedColour = [1.0, 0, 0];
         mouseOverColour = [0, 0, 1.0];
         mouseOverSelectedColour = [1.0, 0.4, 0.75];
         
-        colours
+        colours;
         
         patches;
         
@@ -34,5 +30,32 @@ classdef ApplicationDataVoronoi < handle
         coeff;
         score;
         latent;
+        
+        
+        % UI elements
+        sliders;
+        numDisplays;
+    end
+    
+    methods
+        % Constructor
+        function obj = ApplicationDataVoronoi()
+            
+            % Open UDP connection
+            obj.u = udp('127.0.0.1',57120);
+            fopen(obj.u);
+            
+            % Get nameStrings and TypeStrings
+            [~, obj.nameStrings, obj.typeStrings] = createPresetAforOSC();
+            
+            
+            % Load Presets
+            presetRead = matfile('PresetStoreSC.mat');
+            obj.presetStore = presetRead.presetStore;
+            
+            
+            
+        end
+        
     end
 end
