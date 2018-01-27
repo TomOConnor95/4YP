@@ -44,32 +44,56 @@ plot(appData.presetPositions(:,1), appData.presetPositions(:,2),...
 
 set(gcf, 'WindowButtonMotionFcn', {@mouseMoving, appData});
 set(gca, 'Position', [0.1300 0.2100 0.7750 0.7150]);
-% Add Sliders to adjust the PCs
 
-% Sliders
-appData.sliders = cell(1,4);
-for i = 1:length(appData.sliders)
-appData.sliders{i} = uicontrol('style', 'slider',...
+
+% Sliders - To adjust the principal components of presets
+appData.leftSliders = cell(1,4);
+appData.rightSliders = cell(1,4);
+for i = 1:length(appData.leftSliders)
+appData.leftSliders{i} = uicontrol('style', 'slider',...
     'string', 'Slider1',...
     'units', 'normalized',...
-    'position', [0.05 (0.12 -0.04*(i-1)) 0.25 0.05],...
-    'callback', {@sliderCallback, i, appData},...
+    'position', [0.14 (0.12 -0.04*(i-1)) 0.26 0.05],...
+    'callback', {@leftSliderCallback, i, appData},...
     'visible', 'on',...
     'FontSize', 13,...
     'min', -5,...
     'max', 5);
-
 end
+for i = 1:length(appData.rightSliders)
+appData.rightSliders{i} = uicontrol('style', 'slider',...
+    'string', 'Slider1',...
+    'units', 'normalized',...
+    'position', [0.64 (0.12 -0.04*(i-1)) 0.26 0.05],...
+    'callback', {@rightSliderCallback, i, appData},...
+    'visible', 'on',...
+    'FontSize', 13,...
+    'min', -5,...
+    'max', 5);
+end
+
 % NumberDisplays
-appData.numDisplays = cell(1,4);
-for i = 1:length(appData.sliders)
-appData.numDisplays{i} = uicontrol('Style','text',...
+appData.leftNumDisplays = cell(1,4);
+appData.rightNumDisplays = cell(1,4);
+
+for i = 1:length(appData.leftSliders)
+appData.leftNumDisplays{i} = uicontrol('Style','text',...
     'units', 'normalized',...
     'BackgroundColor', [0.800 0.9400 0.9400],...
-    'ButtonDownFcn', {@textCallback, i, appData},...
-    'String',num2str(appData.sliders{i}.Value),...
-    'Position',[0.3,(0.12 -0.04*(i-1)),0.1,0.05]);
+    'ButtonDownFcn', {@leftTextCallback, i, appData},...
+    'String',num2str(appData.leftSliders{i}.Value),...
+    'Position',[0.41,(0.12 -0.04*(i-1)),0.1,0.05]);
 end
+for i = 1:length(appData.rightSliders)
+appData.rightNumDisplays{i} = uicontrol('Style','text',...
+    'units', 'normalized',...
+    'BackgroundColor', [0.800 0.9400 0.9400],...
+    'ButtonDownFcn', {@rightTextCallback, i, appData},...
+    'String',num2str(appData.rightSliders{i}.Value),...
+    'Position',[0.53,(0.12 -0.04*(i-1)),0.1,0.05]);
+end
+
+%Callbacks
 function patchClicked (object, eventdata, idx, appData)
     % writes continuous mouse position to base workspace
     disp(['Patch ', num2str(idx), ' Clicked'])
@@ -106,7 +130,7 @@ MOUSE = get (gca, 'CurrentPoint');
 mousePos = MOUSE(1,1:2);
 
 if ~isempty(appData.idxSelected) && mousePosOutOfRange(mousePos)
-    idx = appData.idxSelected(length(appData.idxSelected))
+    idx = appData.idxSelected(length(appData.idxSelected));
 else
     closestPoint=bsxfun(@minus,appData.presetPositions,mousePos);
     [~,idx]=min(hypot(closestPoint(:,1),closestPoint(:,2)));
@@ -145,29 +169,40 @@ if idx ~= appData.idxCurrent
     
     appData.idxCurrent = idx;
     %drawnow()
-    
-    
-    
-end
-
 
 end
 
-function sliderCallback (object, eventdata, idx, appData)
-disp(['slider 1: ', num2str(appData.sliders{1}.Value)])
-disp(['slider 2: ', num2str(appData.sliders{2}.Value)])
-disp(['slider 3: ', num2str(appData.sliders{3}.Value)])
-disp(['slider 4: ', num2str(appData.sliders{4}.Value)])
-
-for i = 1:4
-appData.numDisplays{i}.String = num2str(appData.sliders{i}.Value);
-end
 
 end
 
-function textCallback (object, eventdata, idx, appData)
-% NOT WORKING!!!!
-appData.numDisplays{idx}.String = num2str(0);
-appData.sliders{idx}.Value = 0;
+function leftSliderCallback (object, eventdata, idx, appData)
+disp(['leftSlider 1: ', num2str(appData.leftSliders{1}.Value)])
+disp(['leftSlider 2: ', num2str(appData.leftSliders{2}.Value)])
+disp(['leftSlider 3: ', num2str(appData.leftSliders{3}.Value)])
+disp(['leftSlider 4: ', num2str(appData.leftSliders{4}.Value)])
+
+appData.leftNumDisplays{idx}.String = num2str(appData.leftSliders{idx}.Value);
+
+end
+function rightSliderCallback (object, eventdata, idx, appData)
+disp(['rightSlider 1: ', num2str(appData.rightSliders{1}.Value)])
+disp(['rightSlider 2: ', num2str(appData.rightSliders{2}.Value)])
+disp(['rightSlider 3: ', num2str(appData.rightSliders{3}.Value)])
+disp(['rightSlider 4: ', num2str(appData.rightSliders{4}.Value)])
+
+appData.rightNumDisplays{idx}.String = num2str(appData.rightSliders{idx}.Value);
+
+end
+
+function leftTextCallback (object, eventdata, idx, appData)
+% Works with Right click
+appData.leftNumDisplays{idx}.String = num2str(0);
+appData.leftSliders{idx}.Value = 0;
+
+end
+function rightTextCallback (object, eventdata, idx, appData)
+% Works with Right click
+appData.rightNumDisplays{idx}.String = num2str(0);
+appData.rightSliders{idx}.Value = 0;
 
 end

@@ -33,8 +33,11 @@ classdef ApplicationDataVoronoi < handle
         
         
         % UI elements
-        sliders;
-        numDisplays;
+        leftSliders;
+        rightSliders;
+        
+        leftNumDisplays;
+        rightNumDisplays;
     end
     
     methods
