@@ -15,11 +15,15 @@ appData.coeff = coeff;
 appData.score = score;
 appData.latent = latent;
 
+appData.coeffCell = createCoeffCell(appData.coeff);
+
 x = score(:,1:2);
 x(:,1) = mapVectorRange(x(:,1), 0.05,0.95);
 x(:,2) = mapVectorRange(x(:,2), 0.05,0.95);
 
 appData.presetPositions = x;
+
+
 
 % Colours
 R = mapVectorRange(score(:,3), 0.1,1);
@@ -182,6 +186,23 @@ disp(['leftSlider 3: ', num2str(appData.leftSliders{3}.Value)])
 disp(['leftSlider 4: ', num2str(appData.leftSliders{4}.Value)])
 
 appData.leftNumDisplays{idx}.String = num2str(appData.leftSliders{idx}.Value);
+
+pcaWeights = [appData.leftSliders{1}.Value,...
+              appData.leftSliders{2}.Value,...
+              appData.leftSliders{3}.Value,...
+              appData.leftSliders{4}.Value,...
+              appData.rightSliders{1}.Value,...
+              appData.rightSliders{2}.Value,...
+              appData.rightSliders{3}.Value,...
+              appData.rightSliders{4}.Value];
+% Alter Selected preset
+appData.presetStoreVaried(appData.idxCurrent,:) = adjustPresetWithPCA(...
+    appData.presetStore(appData.idxCurrent,:), appData.coeffCell,...
+    pcaWeights);
+
+    sendAllStructParamsOverOSC(appData.presetStoreVaried(appData.idxCurrent,:),...
+        appData.nameStrings, appData.typeStrings, appData.u);
+
 
 end
 function rightSliderCallback (object, eventdata, idx, appData)

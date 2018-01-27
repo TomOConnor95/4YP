@@ -10,6 +10,7 @@ classdef ApplicationDataVoronoi < handle
         patches;
         
         presetStore;
+        presetStoreVaried;
         
         presetPositions;
         
@@ -31,6 +32,7 @@ classdef ApplicationDataVoronoi < handle
         score;
         latent;
         
+        coeffCell;
         
         % UI elements
         leftSliders;
@@ -56,7 +58,7 @@ classdef ApplicationDataVoronoi < handle
             presetRead = matfile('PresetStoreSC.mat');
             obj.presetStore = presetRead.presetStore;
             
-            
+            obj.presetStoreVaried = obj.presetStore;
             
         end
         
