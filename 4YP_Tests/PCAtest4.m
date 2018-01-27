@@ -180,13 +180,46 @@ end
 end
 
 function leftSliderCallback (object, eventdata, idx, appData)
-disp(['leftSlider 1: ', num2str(appData.leftSliders{1}.Value)])
-disp(['leftSlider 2: ', num2str(appData.leftSliders{2}.Value)])
-disp(['leftSlider 3: ', num2str(appData.leftSliders{3}.Value)])
-disp(['leftSlider 4: ', num2str(appData.leftSliders{4}.Value)])
+% disp(['leftSlider 1: ', num2str(appData.leftSliders{1}.Value)])
+% disp(['leftSlider 2: ', num2str(appData.leftSliders{2}.Value)])
+% disp(['leftSlider 3: ', num2str(appData.leftSliders{3}.Value)])
+% disp(['leftSlider 4: ', num2str(appData.leftSliders{4}.Value)])
 
 appData.leftNumDisplays{idx}.String = num2str(appData.leftSliders{idx}.Value);
 
+updatePCAWeightsAndSendParams(appData)
+
+end
+function rightSliderCallback (object, eventdata, idx, appData)
+% disp(['rightSlider 1: ', num2str(appData.rightSliders{1}.Value)])
+% disp(['rightSlider 2: ', num2str(appData.rightSliders{2}.Value)])
+% disp(['rightSlider 3: ', num2str(appData.rightSliders{3}.Value)])
+% disp(['rightSlider 4: ', num2str(appData.rightSliders{4}.Value)])
+
+appData.rightNumDisplays{idx}.String = num2str(appData.rightSliders{idx}.Value);
+
+updatePCAWeightsAndSendParams(appData)
+
+end
+
+function leftTextCallback (object, eventdata, idx, appData)
+% Works with Right click
+appData.leftNumDisplays{idx}.String = num2str(0);
+appData.leftSliders{idx}.Value = 0;
+
+updatePCAWeightsAndSendParams(appData)
+
+end
+function rightTextCallback (object, eventdata, idx, appData)
+% Works with Right click
+appData.rightNumDisplays{idx}.String = num2str(0);
+appData.rightSliders{idx}.Value = 0;
+
+updatePCAWeightsAndSendParams(appData)
+
+end
+
+function updatePCAWeightsAndSendParams(appData)
 pcaWeights = [appData.leftSliders{1}.Value,...
               appData.leftSliders{2}.Value,...
               appData.leftSliders{3}.Value,...
@@ -200,30 +233,6 @@ appData.presetStoreVaried(appData.idxCurrent,:) = adjustPresetWithPCA(...
     appData.presetStore(appData.idxCurrent,:), appData.coeffCell,...
     pcaWeights);
 
-    sendAllStructParamsOverOSC(appData.presetStoreVaried(appData.idxCurrent,:),...
-        appData.nameStrings, appData.typeStrings, appData.u);
-
-
-end
-function rightSliderCallback (object, eventdata, idx, appData)
-disp(['rightSlider 1: ', num2str(appData.rightSliders{1}.Value)])
-disp(['rightSlider 2: ', num2str(appData.rightSliders{2}.Value)])
-disp(['rightSlider 3: ', num2str(appData.rightSliders{3}.Value)])
-disp(['rightSlider 4: ', num2str(appData.rightSliders{4}.Value)])
-
-appData.rightNumDisplays{idx}.String = num2str(appData.rightSliders{idx}.Value);
-
-end
-
-function leftTextCallback (object, eventdata, idx, appData)
-% Works with Right click
-appData.leftNumDisplays{idx}.String = num2str(0);
-appData.leftSliders{idx}.Value = 0;
-
-end
-function rightTextCallback (object, eventdata, idx, appData)
-% Works with Right click
-appData.rightNumDisplays{idx}.String = num2str(0);
-appData.rightSliders{idx}.Value = 0;
-
+sendAllStructParamsOverOSC(appData.presetStoreVaried(appData.idxCurrent,:),...
+    appData.nameStrings, appData.typeStrings, appData.u);
 end
