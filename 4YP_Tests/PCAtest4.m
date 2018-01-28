@@ -15,7 +15,7 @@ appData.coeff = coeff;
 appData.score = score;
 appData.latent = latent;
 
-appData.coeffCell = createCoeffCell(appData.coeff);
+%appData.coeffCell = createCoeffCell(appData.coeff);
 
 x = score(:,1:2);
 x(:,1) = mapVectorRange(x(:,1), 0.05,0.95);
@@ -23,15 +23,23 @@ x(:,2) = mapVectorRange(x(:,2), 0.05,0.95);
 
 appData.presetPositions = x;
 
-
-
 % Colours
 R = mapVectorRange(score(:,3), 0.1,1);
 G = mapVectorRange(score(:,4), 0.1,1);
 B = mapVectorRange(score(:,5), 0.1,1);
 appData.colours = num2cell([R,G,B],2);
 
-% Create voronoi diagram from preset locations
+% Perform PCA on presets - timbre parameters
+[timbreCoeff, timbreScore, timbreLatent] = pca(presetStoreFlattened(:,1:72));
+
+% Perform PCA on presets - time parameters
+[timeCoeff, timeScore, timeLatent] = pca(presetStoreFlattened(:,73:94));
+
+coeffCombined = [timbreCoeff(:,1:4), zeros(size(timbreCoeff(:,1:4)));...
+                 zeros(size(timeCoeff(:,1:4))), timeCoeff(:,1:4), ];
+appData.coeffCell = createCoeffCell(coeffCombined);
+             
+% Create voronoi diagram from global PCA preset locations
 figure(2)
 clf
 hold on

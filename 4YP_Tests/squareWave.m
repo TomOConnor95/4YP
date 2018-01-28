@@ -1,8 +1,10 @@
-function [x,y] = squareWave(rate, amp, pulseWidth)
+function [x,y] = squareWave(rate, amp, pulseWidth, plotLength)
 
 period = 1/rate;
 
-plotLength = 1;
+if nargin < 4
+    plotLength = 1;
+end
 
 numPeriodsToPlot = floor(plotLength/period) + 1;
 

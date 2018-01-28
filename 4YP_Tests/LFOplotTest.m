@@ -5,8 +5,10 @@ amp = 0.5;   % 0 - 1
 phaseSpread = 0.1;   % 0 - 1
 
 
+plotLength = 1;
 
-[x,y] = triangleWave(rate, amp);
+
+[x,y] = triangleWave(rate, amp, plotLength);
 
 figure(1)
 subplot(1,2,1)
@@ -18,7 +20,7 @@ grid on
 pulseWidth = 0.7;
 
 
-[x2,y2] = squareWave(rate, amp, pulseWidth);
+[x2,y2] = squareWave(rate, amp, pulseWidth, plotLength);
 subplot(1,2,2)
 squareWavePlot = plot(x2,y2, 'LineWidth', 3);
 xlim([0, plotLength])
