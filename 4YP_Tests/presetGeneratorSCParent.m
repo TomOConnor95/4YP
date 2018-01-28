@@ -111,13 +111,13 @@ classdef (Abstract) presetGeneratorSCParent
             obj.presetMix{5} = bound(obj.presetMix{5}, 0, 10);
             obj.presetMix{6} = bound(obj.presetMix{6}, 0, 10);
             obj.presetMix{7} = bound(obj.presetMix{7}, 0, 10);
-            obj.presetMix{8}(1:2) = bound(obj.presetMix{8}(1:2), 0, 40);
+            obj.presetMix{8}(1:2) = bound(obj.presetMix{8}(1:2), 0.001, 40);
             obj.presetMix{8}(3) = bound(obj.presetMix{8}(3), 0, 1);
-            obj.presetMix{9}(1:2) = bound(obj.presetMix{9}(1:2), 0, 40);
+            obj.presetMix{9}(1:2) = bound(obj.presetMix{9}(1:2), 0.001, 40);
             obj.presetMix{9}(3) = bound(obj.presetMix{9}(3), 0, 1);
             obj.presetMix{10}(1:4) = bound(obj.presetMix{10}(1:4), 0, 40);
             obj.presetMix{11}(1:4) = bound(obj.presetMix{11}(1:4), 0, 40);
-            obj.presetMix{12} = bound(obj.presetMix{12}, 0, 40);
+            obj.presetMix{12} = bound(obj.presetMix{12}, 0.001, 40);
         end
         
         function obj = iteratePresets(obj, mousePointClicked)

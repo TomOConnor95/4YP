@@ -1,11 +1,12 @@
 % Test script for PCA selection editing of presets blending interface
 %close all
 
-% Option parameters
-
 % Set up GUI figure
 appData = ApplicationDataVoronoi();
 
+%----------------------------------------------------------%
+%------------------PCA Calculations------------------------%
+%----------------------------------------------------------%
 
 % Perform PCA on presets
 presetStoreFlattened = cell2mat(appData.presetStore);
@@ -39,10 +40,13 @@ coeffCombined = [timbreCoeff(:,1:4), zeros(size(timbreCoeff(:,1:4)));...
                  zeros(size(timeCoeff(:,1:4))), timeCoeff(:,1:4), ];
 appData.coeffCell = createCoeffCell(coeffCombined);
              
+%----------------------------------------------------------%
+%----------------------Figures & Plots---------------------%
+%----------------------------------------------------------%
+
+
 % Create voronoi diagram from global PCA preset locations
-figure(2)
-clf
-hold on
+figure(2), clf, hold on
 
 appData.patches = filledVoronoi(appData.presetPositions, appData.colours);
 
@@ -105,7 +109,19 @@ appData.rightNumDisplays{i} = uicontrol('Style','text',...
     'Position',[0.53,(0.12 -0.04*(i-1)),0.1,0.05]);
 end
 
-%Callbacks
+
+% Time plots
+figure(3), clf
+
+appData.Tdata = timePlotDataFromPreset(appData.presetStore(1,:));
+appData.Tplots = createAllTimePlots(appData.Tdata);
+set(figure(3), 'Position',(get(figure(2), 'Position') - [0, 420, 0, 0]))
+
+dispstat('','init') 
+
+%----------------------------------------------------------%
+%----------------------Callbacks---------------------------%
+%----------------------------------------------------------%
 function patchClicked (object, eventdata, idx, appData)
     % writes continuous mouse position to base workspace
     disp(['Patch ', num2str(idx), ' Clicked'])
@@ -155,6 +171,12 @@ if idx ~= appData.idxCurrent
     sendAllStructParamsOverOSC(appData.presetStore(idx,:),...
         appData.nameStrings, appData.typeStrings, appData.u);
     
+    % Update Time Plots
+    appData.Tdata = timePlotDataFromPreset(appData.presetStore(idx,:));
+    appData.Tplots = updateTimePlots(appData.Tplots, appData.Tdata); 
+    
+    dispstat(sprintf(preset2string(appData.presetStoreVaried(appData.idxCurrent, :),...
+                                appData.nameStrings)));
     % Old Patch
     if ~ismember(appData.idxCurrent, appData.idxSelected)
         
@@ -188,26 +210,22 @@ end
 end
 
 function leftSliderCallback (object, eventdata, idx, appData)
-% disp(['leftSlider 1: ', num2str(appData.leftSliders{1}.Value)])
-% disp(['leftSlider 2: ', num2str(appData.leftSliders{2}.Value)])
-% disp(['leftSlider 3: ', num2str(appData.leftSliders{3}.Value)])
-% disp(['leftSlider 4: ', num2str(appData.leftSliders{4}.Value)])
-
 appData.leftNumDisplays{idx}.String = num2str(appData.leftSliders{idx}.Value);
 
 updatePCAWeightsAndSendParams(appData)
 
 end
 function rightSliderCallback (object, eventdata, idx, appData)
-% disp(['rightSlider 1: ', num2str(appData.rightSliders{1}.Value)])
-% disp(['rightSlider 2: ', num2str(appData.rightSliders{2}.Value)])
-% disp(['rightSlider 3: ', num2str(appData.rightSliders{3}.Value)])
-% disp(['rightSlider 4: ', num2str(appData.rightSliders{4}.Value)])
-
 appData.rightNumDisplays{idx}.String = num2str(appData.rightSliders{idx}.Value);
 
 updatePCAWeightsAndSendParams(appData)
 
+% Update Time Plots
+appData.Tdata = timePlotDataFromPreset(appData.presetStoreVaried(appData.idxCurrent,:));
+appData.Tplots = updateTimePlots(appData.Tplots, appData.Tdata); 
+
+dispstat(sprintf(preset2string(appData.presetStoreVaried(appData.idxCurrent, :),...
+                                appData.nameStrings)));
 end
 
 function leftTextCallback (object, eventdata, idx, appData)
@@ -225,6 +243,9 @@ appData.rightSliders{idx}.Value = 0;
 
 updatePCAWeightsAndSendParams(appData)
 
+% Update Time Plots
+appData.Tdata = timePlotDataFromPreset(appData.presetStoreVaried(appData.idxCurrent,:));
+appData.Tplots = updateTimePlots(appData.Tplots, appData.Tdata); 
 end
 
 function updatePCAWeightsAndSendParams(appData)

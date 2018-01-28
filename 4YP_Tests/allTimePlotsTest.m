@@ -29,8 +29,6 @@ modR = 8;
 [xAmp, yAmp] = ADSR(ampA, ampD, ampS, ampR);
 [xMod, yMod] = ADSR(modA, modD, modS, modR);
 
-
-
 % VibratoPlot - A sine wave wave changing in amplitude and frequency
 
 startRate = 0.5;   % Hz
@@ -46,6 +44,7 @@ plotLengthVib = 5; % seconds
 [xVib,yVib] = vibratoWave(startRate, endRate, startAmp, endAmp, envTime, plotLengthVib);
 
 
+% Plots
 figure(1)
 
 subplot(2,2,1)
@@ -136,5 +135,26 @@ triWavePlot.YData = yA;
 squareWavePlot.XData = xB;
 squareWavePlot.YData = yB;
 
+%% Load data prom preset and update plot
+presetRead = matfile('PresetStoreSC.mat');
+presetStore = presetRead.presetStore;
 
+presetNo = 17
+
+T = timePlotDataFromPreset(presetStore(presetNo,:));
+
+modFill.Vertices(1:5,1) = T.xMod';
+modFill.Vertices(1:5,2) = T.yMod';
+
+ampFill.Vertices(1:5,1) = T.xAmp';
+ampFill.Vertices(1:5,2) = T.yAmp';
+
+vibratoWavePlot.XData = T.xVib;
+vibratoWavePlot.YData = T.yVib;
+
+triWavePlot.XData = T.xA;
+triWavePlot.YData = T.yA;
+
+squareWavePlot.XData = T.xB;
+squareWavePlot.YData = T.yB;
  
