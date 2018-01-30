@@ -32,7 +32,7 @@ ylim([0.5, 6.5]);
 hold on
 y2 = cell(1,6);
 for i = 1:6
-    y2{i} = seperation*i + 0.5* sin(x*2*pi*freqCoarse(i)*(freqFine(i)+1));
+    y2{i} = 1*i + 0.5* sin(x*2*pi*freqCoarse(i)*(freqFine(i)+1));
     plot(x, y2{i}, 'LineWidth', 3)
 end
 
@@ -43,7 +43,7 @@ hold on
 for i = 1:6
     for j = 1:6
         if mod(i,j) > 0.001
-            plot([0,1], [i, j], 'Color', colours(i,:), 'LineWidth', mod(i,j)) 
+            plot([0,1], [j, i], 'Color', colours(i,:), 'LineWidth', 2*mod(i,j)) 
         end
     end
 end
