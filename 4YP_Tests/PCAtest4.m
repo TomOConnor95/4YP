@@ -10,6 +10,7 @@ appData = ApplicationDataVoronoi();
 
 % Perform PCA on presets
 presetStoreFlattened = cell2mat(appData.presetStore);
+
 [coeff, score, latent] = pca(presetStoreFlattened);
 
 appData.coeff = coeff;
@@ -117,8 +118,17 @@ appData.timeData = timePlotDataFromPreset(appData.presetStore(1,:));
 appData.timePlots = createAllTimePlots(appData.timeData);
 set(figure(3), 'Position',(get(figure(2), 'Position') - [0, 420, 0, 0]))
 
-dispstat('','init') 
+% Timbre plots
+figure(4), clf
 
+appData.timbreData = timbrePlotDataFromPreset(appData.presetStore(1,:));
+appData.timbrePlots = createAllTimbrePlots(appData.timbreData);
+set(figure(4), 'Position',(get(figure(2), 'Position') - [560, 420, 0, -420]))
+
+
+
+%Initialise seding data to command line
+dispstat('','init') 
 %----------------------------------------------------------%
 %----------------------Callbacks---------------------------%
 %----------------------------------------------------------%
@@ -175,6 +185,11 @@ if idx ~= appData.idxCurrent
     appData.timeData = timePlotDataFromPreset(appData.presetStore(idx,:));
     appData.timePlots = updateTimePlots(appData.timePlots, appData.timeData); 
     
+    % Update Timbre Plots
+    appData.timbreData = timbrePlotDataFromPreset(appData.presetStore(idx,:));
+    appData.timbrePlots = updateTimbrePlots(appData.timbrePlots, appData.timbreData); 
+    
+    
     % Display Parameter Values to Command Line
     dispstat(sprintf(preset2string(appData.presetStoreVaried(appData.idxCurrent, :),...
                                 appData.nameStrings)));
@@ -215,6 +230,10 @@ appData.leftNumDisplays{idx}.String = num2str(appData.leftSliders{idx}.Value);
 
 updatePCAWeightsAndSendParams(appData)
 
+% Update Timbre Plots
+appData.timbreData = timbrePlotDataFromPreset(appData.presetStoreVaried(appData.idxCurrent,:));
+appData.timbrePlots = updateTimbrePlots(appData.timbrePlots, appData.timbreData); 
+
 end
 function rightSliderCallback (object, eventdata, idx, appData)
 appData.rightNumDisplays{idx}.String = num2str(appData.rightSliders{idx}.Value);
@@ -235,6 +254,10 @@ appData.leftNumDisplays{idx}.String = num2str(0);
 appData.leftSliders{idx}.Value = 0;
 
 updatePCAWeightsAndSendParams(appData)
+
+% Update Timbre Plots
+appData.timbreData = timbrePlotDataFromPreset(appData.presetStoreVaried(appData.idxCurrent,:));
+appData.timbrePlots = updateTimbrePlots(appData.timbrePlots, appData.timbreData); 
 
 end
 function rightTextCallback (object, eventdata, idx, appData)

@@ -4,7 +4,6 @@ function [Tplots] = createAllTimbrePlots(Tdata)
 % Default colourorder
 colours = get(gca,'colororder');
 
-figure(6), clf 
 subplot(2,3,1)
 title('Input Frequencies', 'FontSize', 15)
 ylim([0.5, 6.5]);
@@ -25,7 +24,7 @@ hold on
 Tplots.routingPlot = cell(6,6);
 for i = 1:6
     for j = 1:6
-        Tplots.routingPlot{i,j} = plot(Tdata.routingData{i,j}(1,:), Tdata.routingData{i,j}(2,:), 'Color', colours(i,:));
+        Tplots.routingPlot{i,j} = plot(Tdata.routingData{i,j}(1,:), Tdata.routingData{i,j}(2,:), 'Color', colours(j,:));
         if Tdata.mod(i,j) > 0.001
         	Tplots.routingPlot{i,j}.LineWidth = 2*Tdata.mod(i,j);
         end

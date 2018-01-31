@@ -43,6 +43,9 @@ classdef ApplicationDataVoronoi < handle
         
         timeData; % Time plots data
         timePlots;
+        
+        timbreData; % Timbre plots data
+        timbrePlots;
     end
     
     methods
