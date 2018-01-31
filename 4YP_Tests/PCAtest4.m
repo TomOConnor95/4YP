@@ -113,8 +113,8 @@ end
 % Time plots
 figure(3), clf
 
-appData.Tdata = timePlotDataFromPreset(appData.presetStore(1,:));
-appData.Tplots = createAllTimePlots(appData.Tdata);
+appData.timeData = timePlotDataFromPreset(appData.presetStore(1,:));
+appData.timePlots = createAllTimePlots(appData.timeData);
 set(figure(3), 'Position',(get(figure(2), 'Position') - [0, 420, 0, 0]))
 
 dispstat('','init') 
@@ -172,9 +172,10 @@ if idx ~= appData.idxCurrent
         appData.nameStrings, appData.typeStrings, appData.u);
     
     % Update Time Plots
-    appData.Tdata = timePlotDataFromPreset(appData.presetStore(idx,:));
-    appData.Tplots = updateTimePlots(appData.Tplots, appData.Tdata); 
+    appData.timeData = timePlotDataFromPreset(appData.presetStore(idx,:));
+    appData.timePlots = updateTimePlots(appData.timePlots, appData.timeData); 
     
+    % Display Parameter Values to Command Line
     dispstat(sprintf(preset2string(appData.presetStoreVaried(appData.idxCurrent, :),...
                                 appData.nameStrings)));
     % Old Patch
@@ -221,8 +222,8 @@ appData.rightNumDisplays{idx}.String = num2str(appData.rightSliders{idx}.Value);
 updatePCAWeightsAndSendParams(appData)
 
 % Update Time Plots
-appData.Tdata = timePlotDataFromPreset(appData.presetStoreVaried(appData.idxCurrent,:));
-appData.Tplots = updateTimePlots(appData.Tplots, appData.Tdata); 
+appData.timeData = timePlotDataFromPreset(appData.presetStoreVaried(appData.idxCurrent,:));
+appData.timePlots = updateTimePlots(appData.timePlots, appData.timeData); 
 
 dispstat(sprintf(preset2string(appData.presetStoreVaried(appData.idxCurrent, :),...
                                 appData.nameStrings)));
@@ -244,8 +245,8 @@ appData.rightSliders{idx}.Value = 0;
 updatePCAWeightsAndSendParams(appData)
 
 % Update Time Plots
-appData.Tdata = timePlotDataFromPreset(appData.presetStoreVaried(appData.idxCurrent,:));
-appData.Tplots = updateTimePlots(appData.Tplots, appData.Tdata); 
+appData.timeData = timePlotDataFromPreset(appData.presetStoreVaried(appData.idxCurrent,:));
+appData.timePlots = updateTimePlots(appData.timePlots, appData.timeData); 
 end
 
 function updatePCAWeightsAndSendParams(appData)

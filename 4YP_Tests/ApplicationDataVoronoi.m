@@ -41,8 +41,8 @@ classdef ApplicationDataVoronoi < handle
         leftNumDisplays;
         rightNumDisplays;
         
-        Tdata; % Time plots data
-        Tplots;
+        timeData; % Time plots data
+        timePlots;
     end
     
     methods

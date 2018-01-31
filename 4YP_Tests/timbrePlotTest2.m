@@ -39,9 +39,11 @@ for i = 1:6
     freqOutData{i} = i + 0.5*yPM(i,:);
 end
 
+% Create plots for timbre visualisation
+
+
 % Default colourorder
 colours = get(gca,'colororder');
-
 
 figure(6), clf 
 subplot(2,3,1)
@@ -86,6 +88,7 @@ title('Modulation Output Post-Mixing', 'FontSize', 15)
 hold on
 freqCombinedPlot = cell(1,6);
 set(gca, 'XTick',[])
+set(gca, 'YTick',[])
 for i = 1:6
     freqCombinedPlot{i} = plot(outputLevels(i)*yPM(i,:), 'LineWidth',1.5);
 end
