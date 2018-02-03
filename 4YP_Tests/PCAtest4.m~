@@ -45,6 +45,8 @@ appData.colours = num2cell([R,G,B],2);
 coeffCombined = [timbreCoeff(:,1:4), zeros(size(timbreCoeff(:,1:4)));...
                  zeros(size(timeCoeff(:,1:4))), timeCoeff(:,1:4), ];
 appData.coeffCell = createCoeffCell(coeffCombined);
+
+
              
 %----------------------------------------------------------%
 %----------------------Figures & Plots---------------------%
@@ -260,97 +262,7 @@ storeLeftSliderPosition(appData)
 
 updatePCAWeightsAndSendParams(appData)
 
-updatePresetVariedMarker(appData)
-
-% Update Timbre Plots
-appData.timbreData = timbrePlotDataFromPreset(appData.presetStoreVaried(appData.idxCurrent,:));
-appData.timbrePlots = updateTimbrePlots(appData.timbrePlots, appData.timbreData); 
-
-end
-function rightSliderCallback (object, eventdata, idx, appData)
-appData.rightNumDisplays{idx}.String = num2str(appData.rightSliders{idx}.Value);
-
-storeRightSliderPosition(appData)
-
-updatePCAWeightsAndSendParams(appData)
-
-updatePresetVariedMarker(appData)
-
-% Update Time Plots
-appData.timeData = timePlotDataFromPreset(appData.presetStoreVaried(appData.idxCurrent,:));
-appData.timePlots = updateTimePlots(appData.timePlots, appData.timeData); 
-
-dispstat(sprintf(preset2string(appData.presetStoreVaried(appData.idxCurrent, :),...
-                                appData.nameStrings)));
-end
-
-function leftTextCallback (object, eventdata, idx, appData)
-% Works with Right click
-appData.leftNumDisplays{idx}.String = num2str(0);
-appData.leftSliders{idx}.Value = 0;
-
-storeLeftSliderPosition(appData)
-
-updatePCAWeightsAndSendParams(appData)
-
-updatePresetVariedMarker(appData)
-
-% Update Timbre Plots
-appData.timbreData = timbrePlotDataFromPreset(appData.presetStoreVaried(appData.idxCurrent,:));
-appData.timbrePlots = updateTimbrePlots(appData.timbrePlots, appData.timbreData); 
-
-end
-function rightTextCallback (object, eventdata, idx, appData)
-% Works with Right click
-appData.rightNumDisplays{idx}.String = num2str(0);
-appData.rightSliders{idx}.Value = 0;
-
-storeRightSliderPosition(appData)
-
-updatePCAWeightsAndSendParams(appData)
-
-updatePresetVariedMarker(appData)
-
-% Update Time Plots
-appData.timeData = timePlotDataFromPreset(appData.presetStoreVaried(appData.idxCurrent,:));
-appData.timePlots = updateTimePlots(appData.timePlots, appData.timeData); 
-end
-
-function updatePCAWeightsAndSendParams(appData)
-          
-pcaWeights = reshape(appData.presetPCAParams{appData.idxCurrent},...
-            1, 2*length(appData.presetPCAParams{appData.idxCurrent}));
-            
-% Alter Selected preset
-appData.presetStoreVaried(appData.idxCurrent,:) = adjustPresetWithPCA(...
-    appData.presetStore(appData.idxCurrent,:), appData.coeffCell,...
-    pcaWeights);
-
-sendAllStructParamsOverOSC(appData.presetStoreVaried(appData.idxCurrent,:),...
-    appData.nameStrings, appData.typeStrings, appData.u);
-end
-
-function storeLeftSliderPosition(appData)
-% Store left slider position for the currently selected preset
-appData.presetPCAParams{appData.idxCurrent}(1,:) = [...
-                                appData.leftSliders{1}.Value,...
-                                appData.leftSliders{2}.Value,...
-                                appData.leftSliders{3}.Value,...
-                                appData.leftSliders{4}.Value,...
-                                ];
-end
-
-function storeRightSliderPosition(appData)
-% Store right slider position for the currently selected preset
-appData.presetPCAParams{appData.idxCurrent}(2,:) = [...
-                                appData.rightSliders{1}.Value,...
-                                appData.rightSliders{2}.Value,...
-                                appData.rightSliders{3}.Value,...
-                                appData.rightSliders{4}.Value,...
-                                ];
-end
-
-function updatePresetVariedMarker(appData)
+updatePresetVariedMarker(app
 alteredPresetFlattened = cell2mat(appData.presetStoreVaried(appData.idxCurrent,:));
 mu = mean(cell2mat(appData.presetStoreVaried));
 alteredPresetFlattened = alteredPresetFlattened - mu;
@@ -382,4 +294,92 @@ else
     appData.variedPresetLines{appData.idxCurrent}.XData(2) = x;
     appData.variedPresetLines{appData.idxCurrent}.YData(2) = y;
 end
+% Update Timbre Plots
+appData.timbreData = timbrePlotDataFromPreset(appData.presetStoreVaried(appData.idxCurrent,:));
+appData.timbrePlots = updateTimbrePlots(appData.timbrePlots, appData.timbreData); 
+
+end
+function rightSliderCallback (object, eventdata, idx, appData)
+appData.rightNumDisplays{idx}.String = num2str(appData.rightSliders{idx}.Value);
+
+storeRightSliderPosition(appData)
+
+updatePCAWeightsAndSendParams(appData)
+
+% Update Time Plots
+appData.timeData = timePlotDataFromPreset(appData.presetStoreVaried(appData.idxCurrent,:));
+appData.timePlots = updateTimePlots(appData.timePlots, appData.timeData); 
+
+dispstat(sprintf(preset2string(appData.presetStoreVaried(appData.idxCurrent, :),...
+                                appData.nameStrings)));
+end
+
+function leftTextCallback (object, eventdata, idx, appData)
+% Works with Right click
+appData.leftNumDisplays{idx}.String = num2str(0);
+appData.leftSliders{idx}.Value = 0;
+
+storeLeftSliderPosition(appData)
+
+updatePCAWeightsAndSendParams(appData)
+
+% Update Timbre Plots
+appData.timbreData = timbrePlotDataFromPreset(appData.presetStoreVaried(appData.idxCurrent,:));
+appData.timbrePlots = updateTimbrePlots(appData.timbrePlots, appData.timbreData); 
+
+end
+function rightTextCallback (object, eventdata, idx, appData)
+% Works with Right click
+appData.rightNumDisplays{idx}.String = num2str(0);
+appData.rightSliders{idx}.Value = 0;
+
+storeRightSliderPosition(appData)
+
+updatePCAWeightsAndSendParams(appData)
+
+% Update Time Plots
+appData.timeData = timePlotDataFromPreset(appData.presetStoreVaried(appData.idxCurrent,:));
+appData.timePlots = updateTimePlots(appData.timePlots, appData.timeData); 
+end
+
+function updatePCAWeightsAndSendParams(appData)
+% pcaWeights = [appData.leftSliders{1}.Value,...
+%               appData.leftSliders{2}.Value,...
+%               appData.leftSliders{3}.Value,...
+%               appData.leftSliders{4}.Value,...
+%               appData.rightSliders{1}.Value,...
+%               appData.rightSliders{2}.Value,...
+%               appData.rightSliders{3}.Value,...
+%               appData.rightSliders{4}.Value];
+          
+pcaWeights = reshape(appData.presetPCAParams{appData.idxCurrent},...
+            1, 2*length(appData.presetPCAParams{appData.idxCurrent}));
+            
+% Alter Selected preset
+appData.presetStoreVaried(appData.idxCurrent,:) = adjustPresetWithPCA(...
+    appData.presetStore(appData.idxCurrent,:), appData.coeffCell,...
+    pcaWeights);
+
+sendAllStructParamsOverOSC(appData.presetStoreVaried(appData.idxCurrent,:),...
+    appData.nameStrings, appData.typeStrings, appData.u);
+end
+
+function storeLeftSliderPosition(appData)
+% Store left slider position for the currently selected preset
+appData.presetPCAParams{appData.idxCurrent}(1,:) = [...
+                                appData.leftSliders{1}.Value,...
+                                appData.leftSliders{2}.Value,...
+                                appData.leftSliders{3}.Value,...
+                                appData.leftSliders{4}.Value,...
+                                ];
+end
+
+function storeRightSliderPosition(appData)
+% Store right slider position for the currently selected preset
+appData.presetPCAParams{appData.idxCurrent}(2,:) = [...
+                                appData.rightSliders{1}.Value,...
+                                appData.rightSliders{2}.Value,...
+                                appData.rightSliders{3}.Value,...
+                                appData.rightSliders{4}.Value,...
+                                ];
 end

@@ -37,7 +37,6 @@ classdef ApplicationDataVoronoi < handle
         presetPCAParams;
         
         variedPresetMarkers;
-        variedPresetLines;
         
         % UI elements
         leftSliders;
@@ -72,9 +71,6 @@ classdef ApplicationDataVoronoi < handle
             obj.presetStoreVaried = obj.presetStore;
             
             obj.presetPCAParams = repmat({zeros(2,4)},1,length(obj.presetStore(:,1)));
-            
-            obj.variedPresetMarkers = cell(1,length(obj.presetStore(:,1)));
-            obj.variedPresetLines = cell(1,length(obj.presetStore(:,1)));
         end
         
     end

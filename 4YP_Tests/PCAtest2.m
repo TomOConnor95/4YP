@@ -4,8 +4,8 @@ presetRead = matfile('PresetStoreSC.mat');
 presetStore = presetRead.presetStore;
 presetStoreFlattened = cell2mat(presetStore);
 
-testPreset = presetStoreFlattened(17,:);
-presetStoreFlattened = presetStoreFlattened(1:16,:);
+testPreset = presetStoreFlattened(18,:);
+%presetStoreFlattened = presetStoreFlattened(1:17,:);
 
 
 mu = mean(presetStoreFlattened);
@@ -40,6 +40,7 @@ for i = 1:length(score(:,1))       %length(score(:,1))
 end
 
 i = 17;
+testPreset = testPreset - mu;
 testScore = testPreset*coeff;
 R = bound(mapRange(testScore(3), min(score(:,3)), max(score(:,3)), 0,1), 0, 1);
 G = bound(mapRange(testScore(4), min(score(:,4)), max(score(:,4)), 0,1), 0, 1);
