@@ -1,5 +1,6 @@
 % Test script for PCA selection editing of presets blending interface
-%close all
+% Settings
+isMidiEnabled = true;
 
 % Set up GUI figure
 appData = ApplicationDataVoronoi();
@@ -130,10 +131,18 @@ appData.timbreData = timbrePlotDataFromPreset(appData.presetStore(1,:));
 appData.timbrePlots = createAllTimbrePlots(appData.timbreData);
 set(figure(4), 'Position',(get(figure(2), 'Position') - [560, 420, 0, -420]))
 
-
-
 %Initialise seding data to command line
 dispstat('','init') 
+
+if isMidiEnabled == true
+    %Initilasise Midi CC input
+    midiControls = cell(1,8);
+    for i = 1:8
+        midiControls{i} = midicontrols(i, 'MIDIDevice', 'IAC Driver Bus 1');
+        functionHandle = @(x)midiCallback(x,i, appData);
+        midicallback(midiControls{i},functionHandle);
+    end
+end
 %----------------------------------------------------------%
 %----------------------Callbacks---------------------------%
 %----------------------------------------------------------%
@@ -266,6 +275,8 @@ updatePresetVariedMarker(appData)
 appData.timbreData = timbrePlotDataFromPreset(appData.presetStoreVaried(appData.idxCurrent,:));
 appData.timbrePlots = updateTimbrePlots(appData.timbrePlots, appData.timbreData); 
 
+dispstat(sprintf(preset2string(appData.presetStoreVaried(appData.idxCurrent, :),...
+                                appData.nameStrings)));
 end
 function rightSliderCallback (object, eventdata, idx, appData)
 appData.rightNumDisplays{idx}.String = num2str(appData.rightSliders{idx}.Value);
@@ -299,6 +310,8 @@ updatePresetVariedMarker(appData)
 appData.timbreData = timbrePlotDataFromPreset(appData.presetStoreVaried(appData.idxCurrent,:));
 appData.timbrePlots = updateTimbrePlots(appData.timbrePlots, appData.timbreData); 
 
+dispstat(sprintf(preset2string(appData.presetStoreVaried(appData.idxCurrent, :),...
+                                appData.nameStrings)));
 end
 function rightTextCallback (object, eventdata, idx, appData)
 % Works with Right click
@@ -314,11 +327,14 @@ updatePresetVariedMarker(appData)
 % Update Time Plots
 appData.timeData = timePlotDataFromPreset(appData.presetStoreVaried(appData.idxCurrent,:));
 appData.timePlots = updateTimePlots(appData.timePlots, appData.timeData); 
+
+dispstat(sprintf(preset2string(appData.presetStoreVaried(appData.idxCurrent, :),...
+                                appData.nameStrings)));
 end
 
 function updatePCAWeightsAndSendParams(appData)
-          
-pcaWeights = reshape(appData.presetPCAParams{appData.idxCurrent},...
+          % Reshape is column elementwise so use the transpose!
+pcaWeights = reshape(appData.presetPCAParams{appData.idxCurrent}',...   
             1, 2*length(appData.presetPCAParams{appData.idxCurrent}));
             
 % Alter Selected preset
@@ -382,4 +398,43 @@ else
     appData.variedPresetLines{appData.idxCurrent}.XData(2) = x;
     appData.variedPresetLines{appData.idxCurrent}.YData(2) = y;
 end
+end
+
+
+function midiCallback(midicontrolsObject, idx, appData)
+
+midiCC = midiread(midicontrolsObject);
+%disp([num2str(idx), ': ', num2str(midiCC)])
+
+if idx < 5
+    appData.leftSliders{idx}.Value = (midiCC * 10) - 5;
+
+    appData.leftNumDisplays{idx}.String = num2str(appData.leftSliders{idx}.Value);
+
+    storeLeftSliderPosition(appData)
+     
+else
+    appData.rightSliders{idx-4}.Value = (midiCC * 10) - 5;
+ 
+    appData.rightNumDisplays{idx-4}.String = num2str(appData.rightSliders{idx-4}.Value);
+
+    storeRightSliderPosition(appData)
+end
+
+updatePCAWeightsAndSendParams(appData)
+
+updatePresetVariedMarker(appData)
+
+if idx < 5
+    % Update Timbre Plots
+    appData.timbreData = timbrePlotDataFromPreset(appData.presetStoreVaried(appData.idxCurrent,:));
+    appData.timbrePlots = updateTimbrePlots(appData.timbrePlots, appData.timbreData); 
+else
+    % Update Time Plots
+    appData.timeData = timePlotDataFromPreset(appData.presetStoreVaried(appData.idxCurrent,:));
+    appData.timePlots = updateTimePlots(appData.timePlots, appData.timeData);  
+end
+dispstat(sprintf(preset2string(appData.presetStoreVaried(appData.idxCurrent, :),...
+                                appData.nameStrings)));
+ 
 end
