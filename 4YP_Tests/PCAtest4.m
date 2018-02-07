@@ -68,6 +68,19 @@ plot(appData.presetPositions(:,1), appData.presetPositions(:,2),...
 set(gcf, 'WindowButtonMotionFcn', {@mouseMoving, appData});
 set(gca, 'Position', [0.1300 0.2100 0.7750 0.7150]);
 
+% Add number to display the selected Preset
+% Create pop-up menu
+
+popupString = cell(1,length(appData.presetStore(:,1)));
+for i = 1:length(popupString)
+   popupString{i} = num2str(i);    
+end
+
+appData.popup = uicontrol('Style', 'popup',...
+           'String', popupString,...
+           'units', 'normalized',...
+           'Position', [0,0.12, 0.12, 0.05],...
+           'Callback', {@numPopUpCallback, appData});
 
 % Sliders - To adjust the principal components of presets
 appData.leftSliders = cell(1,4);
@@ -192,70 +205,74 @@ end
 % Has index changed?
 if idx ~= appData.idxCurrent
     
-    % Change parameters to this preset
-    sendAllStructParamsOverOSC(appData.presetStoreVaried(idx,:),...
-        appData.nameStrings, appData.typeStrings, appData.u);
-    
-    % Update Time Plots
-    appData.timeData = timePlotDataFromPreset(appData.presetStoreVaried(idx,:));
-    appData.timePlots = updateTimePlots(appData.timePlots, appData.timeData); 
-    
-    % Update Timbre Plots
-    appData.timbreData = timbrePlotDataFromPreset(appData.presetStoreVaried(idx,:));
-    appData.timbrePlots = updateTimbrePlots(appData.timbrePlots, appData.timbreData); 
-    
-    
-    % Display Parameter Values to Command Line
-    dispstat(sprintf(preset2string(appData.presetStoreVaried(appData.idxCurrent, :),...
-                                appData.nameStrings)));
-    % Old Patch
-    if ~ismember(appData.idxCurrent, appData.idxSelected)
-        
-        %appData.patches{appData.idxCurrent}.FaceColor = appData.colours{appData.idxCurrent};
-        appData.patches{appData.idxCurrent}.EdgeColor = [0,0,0];
-        appData.patches{appData.idxCurrent}.LineWidth = 0.5;
-    else
-        %appData.patches{appData.idxCurrent}.FaceColor = appData.selectedColour;
-        appData.patches{appData.idxCurrent}.EdgeColor = appData.selectedColour;
-    end
-    
-    % New patch
-    if ~ismember(idx, appData.idxSelected)
-        
-        %appData.patches{idx}.FaceColor = appData.mouseOverColour;
-        appData.patches{idx}.EdgeColor = appData.mouseOverColour;
-        appData.patches{idx}.LineWidth = 5;
-        
-    else
-        %appData.patches{idx}.FaceColor = appData.mouseOverSelectedColour;
-        appData.patches{idx}.EdgeColor = appData.mouseOverSelectedColour;
-        appData.patches{idx}.LineWidth = 5;
-    end
-    
-    % Update sliders to new preset
-    appData.leftSliders{1}.Value = appData.presetPCAParams{idx}(1,1);
-    appData.leftSliders{2}.Value = appData.presetPCAParams{idx}(1,2);
-    appData.leftSliders{3}.Value = appData.presetPCAParams{idx}(1,3);
-    appData.leftSliders{4}.Value = appData.presetPCAParams{idx}(1,4);
-    
-    appData.rightSliders{1}.Value = appData.presetPCAParams{idx}(2,1);
-    appData.rightSliders{2}.Value = appData.presetPCAParams{idx}(2,2);
-    appData.rightSliders{3}.Value = appData.presetPCAParams{idx}(2,3);
-    appData.rightSliders{4}.Value = appData.presetPCAParams{idx}(2,4);
-    
-    % Update NumDisplays top new preset
-    appData.leftNumDisplays{1}.String = num2str(appData.presetPCAParams{idx}(1,1));
-    appData.leftNumDisplays{2}.String = num2str(appData.presetPCAParams{idx}(1,2));
-    appData.leftNumDisplays{3}.String = num2str(appData.presetPCAParams{idx}(1,3));
-    appData.leftNumDisplays{4}.String = num2str(appData.presetPCAParams{idx}(1,4));
-    
-    appData.rightNumDisplays{1}.String = num2str(appData.presetPCAParams{idx}(2,1));
-    appData.rightNumDisplays{2}.String = num2str(appData.presetPCAParams{idx}(2,2));
-    appData.rightNumDisplays{3}.String = num2str(appData.presetPCAParams{idx}(2,3));
-    appData.rightNumDisplays{4}.String = num2str(appData.presetPCAParams{idx}(2,4));
-    
-    appData.idxCurrent = idx;
-    %drawnow()
+    switchToPreset(idx, appData);
+%     
+%     % Change parameters to this preset
+%     sendAllStructParamsOverOSC(appData.presetStoreVaried(idx,:),...
+%         appData.nameStrings, appData.typeStrings, appData.u);
+%     
+%     % Update Time Plots
+%     appData.timeData = timePlotDataFromPreset(appData.presetStoreVaried(idx,:));
+%     appData.timePlots = updateTimePlots(appData.timePlots, appData.timeData); 
+%     
+%     % Update Timbre Plots
+%     appData.timbreData = timbrePlotDataFromPreset(appData.presetStoreVaried(idx,:));
+%     appData.timbrePlots = updateTimbrePlots(appData.timbrePlots, appData.timbreData); 
+%     
+%     % Update Preset number popup
+%     appData.popup.Value = idx;
+%     
+%     % Display Parameter Values to Command Line
+%     dispstat(sprintf(preset2string(appData.presetStoreVaried(appData.idxCurrent, :),...
+%                                 appData.nameStrings)));
+%     % Old Patch
+%     if ~ismember(appData.idxCurrent, appData.idxSelected)
+%         
+%         %appData.patches{appData.idxCurrent}.FaceColor = appData.colours{appData.idxCurrent};
+%         appData.patches{appData.idxCurrent}.EdgeColor = [0,0,0];
+%         appData.patches{appData.idxCurrent}.LineWidth = 0.5;
+%     else
+%         %appData.patches{appData.idxCurrent}.FaceColor = appData.selectedColour;
+%         appData.patches{appData.idxCurrent}.EdgeColor = appData.selectedColour;
+%     end
+%     
+%     % New patch
+%     if ~ismember(idx, appData.idxSelected)
+%         
+%         %appData.patches{idx}.FaceColor = appData.mouseOverColour;
+%         appData.patches{idx}.EdgeColor = appData.mouseOverColour;
+%         appData.patches{idx}.LineWidth = 5;
+%         
+%     else
+%         %appData.patches{idx}.FaceColor = appData.mouseOverSelectedColour;
+%         appData.patches{idx}.EdgeColor = appData.mouseOverSelectedColour;
+%         appData.patches{idx}.LineWidth = 5;
+%     end
+%     
+%     % Update sliders to new preset
+%     appData.leftSliders{1}.Value = appData.presetPCAParams{idx}(1,1);
+%     appData.leftSliders{2}.Value = appData.presetPCAParams{idx}(1,2);
+%     appData.leftSliders{3}.Value = appData.presetPCAParams{idx}(1,3);
+%     appData.leftSliders{4}.Value = appData.presetPCAParams{idx}(1,4);
+%     
+%     appData.rightSliders{1}.Value = appData.presetPCAParams{idx}(2,1);
+%     appData.rightSliders{2}.Value = appData.presetPCAParams{idx}(2,2);
+%     appData.rightSliders{3}.Value = appData.presetPCAParams{idx}(2,3);
+%     appData.rightSliders{4}.Value = appData.presetPCAParams{idx}(2,4);
+%     
+%     % Update NumDisplays top new preset
+%     appData.leftNumDisplays{1}.String = num2str(appData.presetPCAParams{idx}(1,1));
+%     appData.leftNumDisplays{2}.String = num2str(appData.presetPCAParams{idx}(1,2));
+%     appData.leftNumDisplays{3}.String = num2str(appData.presetPCAParams{idx}(1,3));
+%     appData.leftNumDisplays{4}.String = num2str(appData.presetPCAParams{idx}(1,4));
+%     
+%     appData.rightNumDisplays{1}.String = num2str(appData.presetPCAParams{idx}(2,1));
+%     appData.rightNumDisplays{2}.String = num2str(appData.presetPCAParams{idx}(2,2));
+%     appData.rightNumDisplays{3}.String = num2str(appData.presetPCAParams{idx}(2,3));
+%     appData.rightNumDisplays{4}.String = num2str(appData.presetPCAParams{idx}(2,4));
+%     
+%     appData.idxCurrent = idx;
+%     %drawnow()
 
 end
 
@@ -400,7 +417,6 @@ else
 end
 end
 
-
 function midiCallback(midicontrolsObject, idx, appData)
 
 midiCC = midiread(midicontrolsObject);
@@ -437,4 +453,99 @@ end
 dispstat(sprintf(preset2string(appData.presetStoreVaried(appData.idxCurrent, :),...
                                 appData.nameStrings)));
  
+end
+
+function numPopUpCallback(object, eventdata, appData)
+    idx = appData.popup.Value;
+    
+    switchToPreset(idx, appData);
+    
+    if ~ismember(idx, appData.idxSelected)
+        appData.idxSelected = [appData.idxSelected, idx];
+
+        appData.patches{idx}.EdgeColor = appData.selectedColour;
+    end
+    
+    if ~isempty(appData.idxPopupSelected)
+        appData.idxSelected(appData.idxSelected == appData.idxPopupSelected) = [];
+        
+        appData.patches{appData.idxPopupSelected}.FaceColor = appData.colours{appData.idxPopupSelected};
+        appData.patches{appData.idxPopupSelected}.EdgeColor = [0,0,0];
+        appData.patches{appData.idxPopupSelected}.LineWidth = 0.5;
+    end
+     
+    appData.idxPopupSelected = idx;
+
+    appData.patches{idx}.EdgeColor = appData.selectedColour;
+    
+end
+
+function switchToPreset(idx, appData)
+    
+    % Change parameters to this preset
+    sendAllStructParamsOverOSC(appData.presetStoreVaried(idx,:),...
+        appData.nameStrings, appData.typeStrings, appData.u);
+    
+    % Update Time Plots
+    appData.timeData = timePlotDataFromPreset(appData.presetStoreVaried(idx,:));
+    appData.timePlots = updateTimePlots(appData.timePlots, appData.timeData); 
+    
+    % Update Timbre Plots
+    appData.timbreData = timbrePlotDataFromPreset(appData.presetStoreVaried(idx,:));
+    appData.timbrePlots = updateTimbrePlots(appData.timbrePlots, appData.timbreData); 
+    
+    % Update Preset number popup
+    appData.popup.Value = idx;
+    
+    % Display Parameter Values to Command Line
+    dispstat(sprintf(preset2string(appData.presetStoreVaried(appData.idxCurrent, :),...
+                                appData.nameStrings)));
+    % Old Patch
+    if ~ismember(appData.idxCurrent, appData.idxSelected)
+        
+        %appData.patches{appData.idxCurrent}.FaceColor = appData.colours{appData.idxCurrent};
+        appData.patches{appData.idxCurrent}.EdgeColor = [0,0,0];
+        appData.patches{appData.idxCurrent}.LineWidth = 0.5;
+    else
+        %appData.patches{appData.idxCurrent}.FaceColor = appData.selectedColour;
+        appData.patches{appData.idxCurrent}.EdgeColor = appData.selectedColour;
+    end
+    
+    % New patch
+    if ~ismember(idx, appData.idxSelected)
+        
+        %appData.patches{idx}.FaceColor = appData.mouseOverColour;
+        appData.patches{idx}.EdgeColor = appData.mouseOverColour;
+        appData.patches{idx}.LineWidth = 5;
+        
+    else
+        %appData.patches{idx}.FaceColor = appData.mouseOverSelectedColour;
+        appData.patches{idx}.EdgeColor = appData.mouseOverSelectedColour;
+        appData.patches{idx}.LineWidth = 5;
+    end
+    
+    % Update sliders to new preset
+    appData.leftSliders{1}.Value = appData.presetPCAParams{idx}(1,1);
+    appData.leftSliders{2}.Value = appData.presetPCAParams{idx}(1,2);
+    appData.leftSliders{3}.Value = appData.presetPCAParams{idx}(1,3);
+    appData.leftSliders{4}.Value = appData.presetPCAParams{idx}(1,4);
+    
+    appData.rightSliders{1}.Value = appData.presetPCAParams{idx}(2,1);
+    appData.rightSliders{2}.Value = appData.presetPCAParams{idx}(2,2);
+    appData.rightSliders{3}.Value = appData.presetPCAParams{idx}(2,3);
+    appData.rightSliders{4}.Value = appData.presetPCAParams{idx}(2,4);
+    
+    % Update NumDisplays top new preset
+    appData.leftNumDisplays{1}.String = num2str(appData.presetPCAParams{idx}(1,1));
+    appData.leftNumDisplays{2}.String = num2str(appData.presetPCAParams{idx}(1,2));
+    appData.leftNumDisplays{3}.String = num2str(appData.presetPCAParams{idx}(1,3));
+    appData.leftNumDisplays{4}.String = num2str(appData.presetPCAParams{idx}(1,4));
+    
+    appData.rightNumDisplays{1}.String = num2str(appData.presetPCAParams{idx}(2,1));
+    appData.rightNumDisplays{2}.String = num2str(appData.presetPCAParams{idx}(2,2));
+    appData.rightNumDisplays{3}.String = num2str(appData.presetPCAParams{idx}(2,3));
+    appData.rightNumDisplays{4}.String = num2str(appData.presetPCAParams{idx}(2,4));
+    
+    appData.idxCurrent = idx;
+    %drawnow()
 end

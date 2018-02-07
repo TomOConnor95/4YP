@@ -18,6 +18,8 @@ classdef ApplicationDataVoronoi < handle
         
         idxSelected = [];
         
+        idxPopupSelected = [];
+        
         %currentSelectedPatch;
         
         
@@ -45,6 +47,8 @@ classdef ApplicationDataVoronoi < handle
         
         leftNumDisplays;
         rightNumDisplays;
+        
+        popup;
         
         timeData; % Time plots data
         timePlots;
