@@ -38,6 +38,8 @@ classdef ApplicationDataPCAInterface < handle
         
         popup;
         
+        blendModeButton;
+        
         idxCurrent = 1;
         idxSelected = [];
         idxPopupSelected = [];
@@ -99,6 +101,9 @@ classdef ApplicationDataPCAInterface < handle
             % Create pop-up menu
             createPopup(obj);
             
+            % Sliders - To adjust the principal components of presets
+            createSliders(obj);
+            
             % NumberDisplays
             createNumDisplays(obj);
             
@@ -107,6 +112,9 @@ classdef ApplicationDataPCAInterface < handle
             
             % Timbre plots
             createTimbrePlots(obj);
+            
+            % Blend Mode Button
+            createBlendModeButton(obj);
             
             %----------------------------------------------------------%
             %----------------------Miscellaneous-----------------------%
@@ -143,8 +151,7 @@ function patchClicked (object, eventdata, idx, appData)
                 if length(appData.idxSelected) == 3
                     
                     disp('3 Presets Selected!');
-%                     selectedIndeces = idxSelected;
-%                     break
+                    appData.blendModeButton.Enable = 'on';
                 end
             
                 
@@ -533,9 +540,6 @@ appData.popup = uicontrol('Style', 'popup',...
            'units', 'normalized',...
            'Position', [0,0.12, 0.12, 0.05],...
            'Callback', {@numPopupCallback, appData});
-
-% Sliders - To adjust the principal components of presets
-createSliders(appData);
 end
 
 function createNumDisplays(appData)
@@ -600,4 +604,27 @@ function initialiseMidiInput(appData)
         functionHandle = @(x)midiCallback(x,i, appData);
         midicallback(appData.midiControls{i},functionHandle);
     end
+end
+
+function createBlendModeButton(appData)
+appData.blendModeButton = uicontrol('style', 'pushbutton',...
+    'string', 'Blend Mode',...
+    'units', 'normalized',...
+    'position', [0.0 0.0 0.14 0.08],...
+    'callback', {@blendModeButtonCallback, appData},...
+    'visible', 'on',...
+    'FontSize', 13,...
+    'Enable', 'off');
+
+end
+
+function blendModeButtonCallback (object, eventdata, appData)
+disp('Blend Mode Button Clicked');
+appData.idxSelected;
+
+appData.presetStoreVaried(appData.idxSelected(1,:))
+appData.presetStoreVaried(appData.idxSelected(2,:))
+appData.presetStoreVaried(appData.idxSelected(3,:))
+
+
 end
