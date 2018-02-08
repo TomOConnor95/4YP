@@ -259,6 +259,83 @@ dispstat(sprintf(preset2string(appData.presetStoreVaried(appData.idxCurrent, :),
                                 appData.nameStrings)));
 end
 
+function blendModeButtonCallback (object, eventdata, appData)
+disp('Blend Mode Button Clicked');
+appData.idxSelected;
+
+% appData.presetStoreVaried(appData.idxSelected(1,:))
+% appData.presetStoreVaried(appData.idxSelected(2,:))
+% appData.presetStoreVaried(appData.idxSelected(3,:))
+run('Single_triangle_interface_test_19_PCASelection_SC.m')
+
+end
+
+function midiCallback(midicontrolsObject, idx, appData)
+
+midiCC = midiread(midicontrolsObject);
+%disp([num2str(idx), ': ', num2str(midiCC)])
+
+if idx < 5
+    appData.leftSliders{idx}.Value = (midiCC * 10) - 5;
+
+    appData.leftNumDisplays{idx}.String = num2str(appData.leftSliders{idx}.Value);
+
+    storeLeftSliderPosition(appData)
+     
+else
+    appData.rightSliders{idx-4}.Value = (midiCC * 10) - 5;
+ 
+    appData.rightNumDisplays{idx-4}.String = num2str(appData.rightSliders{idx-4}.Value);
+
+    storeRightSliderPosition(appData)
+end
+
+updatePCAWeightsAndSendParams(appData)
+
+updatePresetVariedMarker(appData)
+
+if idx < 5
+    % Update Timbre Plots
+    appData.timbreData = timbrePlotDataFromPreset(appData.presetStoreVaried(appData.idxCurrent,:));
+    appData.timbrePlots = updateTimbrePlots(appData.timbrePlots, appData.timbreData); 
+else
+    % Update Time Plots
+    appData.timeData = timePlotDataFromPreset(appData.presetStoreVaried(appData.idxCurrent,:));
+    appData.timePlots = updateTimePlots(appData.timePlots, appData.timeData);  
+end
+dispstat(sprintf(preset2string(appData.presetStoreVaried(appData.idxCurrent, :),...
+                                appData.nameStrings)));
+ 
+end
+
+function numPopupCallback(object, eventdata, appData)
+    idx = appData.popup.Value;
+    
+    switchToPreset(idx, appData);
+    
+    if ~ismember(idx, appData.idxSelected)
+        appData.idxSelected = [appData.idxSelected, idx];
+
+        appData.patches{idx}.EdgeColor = appData.selectedColour;
+    end
+    
+    if ~isempty(appData.idxPopupSelected)
+        appData.idxSelected(appData.idxSelected == appData.idxPopupSelected) = [];
+        
+        appData.patches{appData.idxPopupSelected}.FaceColor = appData.colours{appData.idxPopupSelected};
+        appData.patches{appData.idxPopupSelected}.EdgeColor = [0,0,0];
+        appData.patches{appData.idxPopupSelected}.LineWidth = 0.5;
+    end
+     
+    appData.idxPopupSelected = idx;
+
+    appData.patches{idx}.EdgeColor = appData.selectedColour;
+    
+end
+%----------------------------------------------------------%
+%----------------------Misc Functions----------------------%
+%----------------------------------------------------------%
+
 function updatePCAWeightsAndSendParams(appData)
           % Reshape is column elementwise so use the transpose!
 pcaWeights = reshape(appData.presetPCAParams{appData.idxCurrent}',...   
@@ -325,69 +402,6 @@ else
     appData.variedPresetLines{appData.idxCurrent}.XData(2) = x;
     appData.variedPresetLines{appData.idxCurrent}.YData(2) = y;
 end
-end
-
-function midiCallback(midicontrolsObject, idx, appData)
-
-midiCC = midiread(midicontrolsObject);
-%disp([num2str(idx), ': ', num2str(midiCC)])
-
-if idx < 5
-    appData.leftSliders{idx}.Value = (midiCC * 10) - 5;
-
-    appData.leftNumDisplays{idx}.String = num2str(appData.leftSliders{idx}.Value);
-
-    storeLeftSliderPosition(appData)
-     
-else
-    appData.rightSliders{idx-4}.Value = (midiCC * 10) - 5;
- 
-    appData.rightNumDisplays{idx-4}.String = num2str(appData.rightSliders{idx-4}.Value);
-
-    storeRightSliderPosition(appData)
-end
-
-updatePCAWeightsAndSendParams(appData)
-
-updatePresetVariedMarker(appData)
-
-if idx < 5
-    % Update Timbre Plots
-    appData.timbreData = timbrePlotDataFromPreset(appData.presetStoreVaried(appData.idxCurrent,:));
-    appData.timbrePlots = updateTimbrePlots(appData.timbrePlots, appData.timbreData); 
-else
-    % Update Time Plots
-    appData.timeData = timePlotDataFromPreset(appData.presetStoreVaried(appData.idxCurrent,:));
-    appData.timePlots = updateTimePlots(appData.timePlots, appData.timeData);  
-end
-dispstat(sprintf(preset2string(appData.presetStoreVaried(appData.idxCurrent, :),...
-                                appData.nameStrings)));
- 
-end
-
-function numPopupCallback(object, eventdata, appData)
-    idx = appData.popup.Value;
-    
-    switchToPreset(idx, appData);
-    
-    if ~ismember(idx, appData.idxSelected)
-        appData.idxSelected = [appData.idxSelected, idx];
-
-        appData.patches{idx}.EdgeColor = appData.selectedColour;
-    end
-    
-    if ~isempty(appData.idxPopupSelected)
-        appData.idxSelected(appData.idxSelected == appData.idxPopupSelected) = [];
-        
-        appData.patches{appData.idxPopupSelected}.FaceColor = appData.colours{appData.idxPopupSelected};
-        appData.patches{appData.idxPopupSelected}.EdgeColor = [0,0,0];
-        appData.patches{appData.idxPopupSelected}.LineWidth = 0.5;
-    end
-     
-    appData.idxPopupSelected = idx;
-
-    appData.patches{idx}.EdgeColor = appData.selectedColour;
-    
 end
 
 function switchToPreset(idx, appData)
@@ -499,6 +513,26 @@ coeffCombined = [timbreCoeff(:,1:4), zeros(size(timbreCoeff(:,1:4)));...
                  zeros(size(timeCoeff(:,1:4))), timeCoeff(:,1:4), ];
 appData.coeffCell = createCoeffCell(coeffCombined);
 end
+%----------------------------------------------------------%
+%----------------------UI Objects--------------------------%
+%----------------------------------------------------------%
+
+function createPresetVoronoi(appData)
+figure(5), clf, hold on
+
+appData.patches = filledVoronoi(appData.presetPositions, appData.colours);
+
+for i = 1:length(appData.presetStore(:,1))
+    set(appData.patches{i}, 'ButtonDownFcn', {@patchClicked, i, appData})
+    set(appData.patches{i}, 'HitTest', 'On')  
+end
+
+plot(appData.presetPositions(:,1), appData.presetPositions(:,2),...
+    'b+', 'HitTest', 'off', 'PickableParts', 'none')
+
+set(gcf, 'WindowButtonMotionFcn', {@mouseMoving, appData});
+set(gca, 'Position', [0.1300 0.2100 0.7750 0.7150]);
+end
 
 function createSliders(appData)
 
@@ -564,48 +598,6 @@ appData.rightNumDisplays{i} = uicontrol('Style','text',...
 end
 end
 
-function createPresetVoronoi(appData)
-figure(2), clf, hold on
-
-appData.patches = filledVoronoi(appData.presetPositions, appData.colours);
-
-for i = 1:length(appData.presetStore(:,1))
-    set(appData.patches{i}, 'ButtonDownFcn', {@patchClicked, i, appData})
-    set(appData.patches{i}, 'HitTest', 'On')  
-end
-
-plot(appData.presetPositions(:,1), appData.presetPositions(:,2),...
-    'b+', 'HitTest', 'off', 'PickableParts', 'none')
-
-set(gcf, 'WindowButtonMotionFcn', {@mouseMoving, appData});
-set(gca, 'Position', [0.1300 0.2100 0.7750 0.7150]);
-end
-
-function createTimePlots(appData)
-figure(3), clf
-
-appData.timeData = timePlotDataFromPreset(appData.presetStore(1,:));
-appData.timePlots = createAllTimePlots(appData.timeData);
-set(figure(3), 'Position',(get(figure(2), 'Position') - [0, 420, 0, 0]))
-end
-
-function createTimbrePlots(appData)
-figure(4), clf
-
-appData.timbreData = timbrePlotDataFromPreset(appData.presetStore(1,:));
-appData.timbrePlots = createAllTimbrePlots(appData.timbreData);
-set(figure(4), 'Position',(get(figure(2), 'Position') - [560, 420, 0, -420]))
-end
-
-function initialiseMidiInput(appData)
-    appData.midiControls = cell(1,8);
-    for i = 1:8
-        appData.midiControls{i} = midicontrols(i, 'MIDIDevice', 'IAC Driver Bus 1');
-        functionHandle = @(x)midiCallback(x,i, appData);
-        midicallback(appData.midiControls{i},functionHandle);
-    end
-end
-
 function createBlendModeButton(appData)
 appData.blendModeButton = uicontrol('style', 'pushbutton',...
     'string', 'Blend Mode',...
@@ -618,13 +610,30 @@ appData.blendModeButton = uicontrol('style', 'pushbutton',...
 
 end
 
-function blendModeButtonCallback (object, eventdata, appData)
-disp('Blend Mode Button Clicked');
-appData.idxSelected;
+function createTimePlots(appData)
+figure(6), clf
 
-appData.presetStoreVaried(appData.idxSelected(1,:))
-appData.presetStoreVaried(appData.idxSelected(2,:))
-appData.presetStoreVaried(appData.idxSelected(3,:))
-
-
+appData.timeData = timePlotDataFromPreset(appData.presetStore(1,:));
+appData.timePlots = createAllTimePlots(appData.timeData);
+set(figure(6), 'Position',(get(figure(5), 'Position') - [0, 420, 0, 0]))
 end
+
+function createTimbrePlots(appData)
+figure(7), clf
+
+appData.timbreData = timbrePlotDataFromPreset(appData.presetStore(1,:));
+appData.timbrePlots = createAllTimbrePlots(appData.timbreData);
+set(figure(7), 'Position',(get(figure(5), 'Position') - [560, 420, 0, -420]))
+end
+
+function initialiseMidiInput(appData)
+    appData.midiControls = cell(1,8);
+    for i = 1:8
+        appData.midiControls{i} = midicontrols(i, 'MIDIDevice', 'IAC Driver Bus 1');
+        functionHandle = @(x)midiCallback(x,i, appData);
+        midicallback(appData.midiControls{i},functionHandle);
+    end
+end
+
+
+
