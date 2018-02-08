@@ -1,44 +1,132 @@
-% Test script for PCA selection editing of presets blending interface
-% Settings
-isMidiEnabled = true;
-
-% Set up GUI figure
-appData = ApplicationDataPCAInterface();
-
-%----------------------------------------------------------%
-%------------------PCA Calculations------------------------%
-%----------------------------------------------------------%
-
-% Perform PCA on presets
-calculatePresetPCA(appData);
-             
-%----------------------------------------------------------%
-%----------------------Figures & Plots---------------------%
-%----------------------------------------------------------%
-
-% Create voronoi diagram from global PCA preset locations
-createPresetVoronoi(appData);
-
-% Add number to display the selected Preset
-% Create pop-up menu
-createPopup(appData);
-
-% NumberDisplays
-createNumDisplays(appData);
-
-% Time plots
-createTimePlots(appData);
-
-% Timbre plots
-createTimbrePlots(appData);
-
-%Initialise seding data to command line
-dispstat('','init') 
-
-%Initilasise Midi CC input
-if isMidiEnabled == true
-    initialiseMidiInput(appData);
+classdef ApplicationDataPCAInterface < handle
+    properties (SetAccess = public, GetAccess = public)
+        % Preset Data
+        presetStore;
+        presetStoreVaried;
+        
+        presetPositions;
+        
+        nameStrings;
+        typeStrings;
+        
+        % PCA
+        coeff;
+        score;
+        latent;
+        
+        coeffCell;
+        
+        presetPCAParams;
+        
+        % UI elements - PCA Voronoi
+        selectedColour = [1.0, 0, 0];
+        mouseOverColour = [0, 0, 1.0];
+        mouseOverSelectedColour = [1.0, 0.4, 0.75];
+        
+        colours;
+        
+        patches;
+        
+        variedPresetMarkers;
+        variedPresetLines;
+        
+        leftSliders;
+        rightSliders;
+        
+        leftNumDisplays;
+        rightNumDisplays;
+        
+        popup;
+        
+        idxCurrent = 1;
+        idxSelected = [];
+        idxPopupSelected = [];
+        
+        % UI elements - time/timbre
+        timeData;
+        timePlots;
+        
+        timbreData;
+        timbrePlots;
+        
+        % Connectivity
+        u; % UDP adress
+        
+        midiControls;
+    end
+    
+    methods
+        % Constructor
+        function obj = ApplicationDataPCAInterface()
+            
+            % Open UDP connection
+            obj.u = udp('127.0.0.1',57120);
+            fopen(obj.u);
+            
+            %----------------------------------------------------------%
+            %----------------------Presets-----------------------------%
+            %----------------------------------------------------------%
+            
+            % Get nameStrings and TypeStrings
+            [~, obj.nameStrings, obj.typeStrings] = createPresetAforOSC();
+            
+            % Load Presets
+            presetRead = matfile('PresetStoreSC.mat');
+            obj.presetStore = presetRead.presetStore;
+            
+            obj.presetStoreVaried = obj.presetStore;
+            
+            obj.presetPCAParams = repmat({zeros(2,4)},1,length(obj.presetStore(:,1)));
+            
+            obj.variedPresetMarkers = cell(1,length(obj.presetStore(:,1)));
+            obj.variedPresetLines = cell(1,length(obj.presetStore(:,1)));
+            
+            %----------------------------------------------------------%
+            %------------------PCA Calculations------------------------%
+            %----------------------------------------------------------%
+            
+            % Perform PCA on presets
+            calculatePresetPCA(obj);
+            
+            %----------------------------------------------------------%
+            %----------------------Figures & Plots---------------------%
+            %----------------------------------------------------------%
+            
+            % Create voronoi diagram from global PCA preset locations
+            createPresetVoronoi(obj);
+            
+            % Add number to display the selected Preset
+            % Create pop-up menu
+            createPopup(obj);
+            
+            % NumberDisplays
+            createNumDisplays(obj);
+            
+            % Time plots
+            createTimePlots(obj);
+            
+            % Timbre plots
+            createTimbrePlots(obj);
+            
+            %----------------------------------------------------------%
+            %----------------------Miscellaneous-----------------------%
+            %----------------------------------------------------------%
+            
+            %Initialise seding data to command line
+            dispstat('','init')
+            
+            %Initilasise Midi CC input
+            isMidiEnabled = true;
+            if isMidiEnabled == true
+                initialiseMidiInput(obj);
+            end
+            
+            
+        end
+        
+    end
 end
+
 %----------------------------------------------------------%
 %----------------------Callbacks---------------------------%
 %----------------------------------------------------------%

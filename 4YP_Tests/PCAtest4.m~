@@ -27,17 +27,26 @@ createPopup(appData);
 createNumDisplays(appData);
 
 % Time plots
-createTimePlots(appData);
+createTimePlots(appData)
 
 % Timbre plots
-createTimbrePlots(appData);
+figure(4), clf
+
+appData.timbreData = timbrePlotDataFromPreset(appData.presetStore(1,:));
+appData.timbrePlots = createAllTimbrePlots(appData.timbreData);
+set(figure(4), 'Position',(get(figure(2), 'Position') - [560, 420, 0, -420]))
 
 %Initialise seding data to command line
 dispstat('','init') 
 
 %Initilasise Midi CC input
 if isMidiEnabled == true
-    initialiseMidiInput(appData);
+    midiControls = cell(1,8);
+    for i = 1:8
+        midiControls{i} = midicontrols(i, 'MIDIDevice', 'IAC Driver Bus 1');
+        functionHandle = @(x)midiCallback(x,i, appData);
+        midicallback(midiControls{i},functionHandle);
+    end
 end
 %----------------------------------------------------------%
 %----------------------Callbacks---------------------------%
@@ -495,21 +504,4 @@ figure(3), clf
 appData.timeData = timePlotDataFromPreset(appData.presetStore(1,:));
 appData.timePlots = createAllTimePlots(appData.timeData);
 set(figure(3), 'Position',(get(figure(2), 'Position') - [0, 420, 0, 0]))
-end
-
-function createTimbrePlots(appData)
-figure(4), clf
-
-appData.timbreData = timbrePlotDataFromPreset(appData.presetStore(1,:));
-appData.timbrePlots = createAllTimbrePlots(appData.timbreData);
-set(figure(4), 'Position',(get(figure(2), 'Position') - [560, 420, 0, -420]))
-end
-
-function initialiseMidiInput(appData)
-    appData.midiControls = cell(1,8);
-    for i = 1:8
-        appData.midiControls{i} = midicontrols(i, 'MIDIDevice', 'IAC Driver Bus 1');
-        functionHandle = @(x)midiCallback(x,i, appData);
-        midicallback(appData.midiControls{i},functionHandle);
-    end
 end
