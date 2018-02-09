@@ -51,10 +51,7 @@ set(gca,'YTickLabel',[])
 % Listen for mouse clicks mouse clicks
 child_handles = allchild(gca);
 set(child_handles,'HitTest','off')
-set (gca, 'ButtonDownFcn', @mouseClicked);
 
-% read continuous mouse position
-set (gcf, 'WindowButtonMotionFcn', @mouseMoved);
 
 end
 

@@ -55,6 +55,11 @@ sendAllStructParamsOverOSC(P.presetA, nameStrings, typeStrings, u);
 %% Plot all geometry for Blending Interface
 figure(1)
 G = createBlendingGeometry();
+% Blending Interface Callbacks
+set (gca, 'ButtonDownFcn', @mouseClicked);
+set (gcf, 'WindowButtonMotionFcn', @mouseMoved);
+
+
 G = createPauseSaveButtons(G);
 %G = createFreezeButtons(G);
 G = createFreezeSections(G);

@@ -1,4 +1,4 @@
-function [phPlot] = updatePointHistoryPlot(phPlot, mousePos, oldIndex, newIndex, lineColour)
+function [phPlot] = updatePointHistoryPlot(phPlot, mousePos, oldIndex, newIndex, lineColour, appData)
 
 if nargin <5
     lineColour = [0.4,0.5,0.9];
@@ -17,7 +17,7 @@ P2 = phPlot.sum_tree.get(newIndex);
 
 phPlot.plot_tree = phPlot.plot_tree.addnode(oldIndex, plot([P1(1), P2(1)], [P1(2), P2(2)], 'Color', [lineColour, 0.9],'LineWidth', 4, 'PickableParts','none'));
 
-phPlot.plot_markers_tree = phPlot.plot_markers_tree.addnode(oldIndex, plot(P2(1), P2(2), 'ro','MarkerSize',12,'MarkerFaceColor',[0.0, 1.0, 1.0], 'ButtonDownFcn',{@markerClickedCallback2, newIndex}, 'PickableParts','all'));
+phPlot.plot_markers_tree = phPlot.plot_markers_tree.addnode(oldIndex, plot(P2(1), P2(2), 'ro','MarkerSize',12,'MarkerFaceColor',[0.0, 1.0, 1.0], 'ButtonDownFcn',{@markerClickedCallback2, newIndex, appData}, 'PickableParts','all'));
 
 %recolour child node
 marker = phPlot.plot_markers_tree.get(oldIndex);

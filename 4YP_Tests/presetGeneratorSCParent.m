@@ -33,15 +33,20 @@ classdef (Abstract) presetGeneratorSCParent
         timeColour
         timbreColour
         normalColour
+        
+        nameStrings
+        typeStrings
+        
+        appData
     end
     methods
         % Constructor
-        function obj = presetGeneratorSCParent(presetA_in, presetB_in, presetC_in)
-            if nargin < 3
+        function obj = presetGeneratorSCParent(presetA_in, presetB_in, presetC_in, appData_in)
+            if nargin < 4
             error('Not enough Input Presets')
             end
             
-            if nargin == 3
+            if nargin == 4
                 
                 assert(isequal(length(presetA_in), length(presetB_in), length(presetC_in))...
                     ,'Presets A, B, C must be of equal Length');
@@ -63,6 +68,8 @@ classdef (Abstract) presetGeneratorSCParent
                 obj.presetMix = presetA_in;
             end
             
+            obj.appData = appData_in;
+
             % set up history plots
             screenSize = get(0,'Screensize');
             figure(3)
@@ -71,7 +78,7 @@ classdef (Abstract) presetGeneratorSCParent
             obj.historyPlot = createStructHistoryPlot(obj.presetAHistory);
             
             subplot(1,2,2)
-            obj.P1HistoryPlot = createPointHistoryPlot();
+            obj.P1HistoryPlot = createPointHistoryPlot(obj.appData);
             
             set(gcf,'Position',[-screenSize(3)/26,screenSize(4)/1.6,screenSize(3)/2.4,screenSize(4)/2.5])
 
@@ -142,7 +149,7 @@ classdef (Abstract) presetGeneratorSCParent
             obj.currentTreeIndex = newIndex;
             
             % update all trees for point history plot
-            obj.P1HistoryPlot = updatePointHistoryPlot(obj.P1HistoryPlot,mousePointClicked, oldIndex, newIndex, obj.lineColour);
+            obj.P1HistoryPlot = updatePointHistoryPlot(obj.P1HistoryPlot,mousePointClicked, oldIndex, newIndex, obj.lineColour, obj.appData);
             
             % Update plot to show evolution of parameters
             obj.historyPlot = updateStructPresetHistoryPlot(obj.historyPlot,obj.presetAHistory);
@@ -213,7 +220,7 @@ classdef (Abstract) presetGeneratorSCParent
             obj.currentTreeIndex = newIndex;
             
             % update all trees for point history plot - Specialised 
-            obj.P1HistoryPlot = updatePointHistoryPlotCombinePresets(obj.P1HistoryPlot, oldIndex, newIndex, presetsDoubleClicked);
+            obj.P1HistoryPlot = updatePointHistoryPlotCombinePresets(obj.P1HistoryPlot, oldIndex, newIndex, presetsDoubleClicked, obj.appData);
             
             % Update plot to show evolution of parameters
             obj.historyPlot = updateStructPresetHistoryPlot(obj.historyPlot,obj.presetAHistory);

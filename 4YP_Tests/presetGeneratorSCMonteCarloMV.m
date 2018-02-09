@@ -12,10 +12,10 @@ classdef presetGeneratorSCMonteCarloMV < presetGeneratorSCParent
     end
     methods
         % Constructor
-        function obj = presetGeneratorSCMonteCarloMV(presetA_in, presetB_in, presetC_in, initialTempOffset_in, tempScaling_in, lastValueWeighting_in)
-            obj@presetGeneratorSCParent(presetA_in, presetB_in, presetC_in);
+        function obj = presetGeneratorSCMonteCarloMV(presetA_in, presetB_in, presetC_in, appData_in, initialTempOffset_in, tempScaling_in, lastValueWeighting_in)
+            obj@presetGeneratorSCParent(presetA_in, presetB_in, presetC_in, appData_in);
             
-            if nargin < 4
+            if nargin < 5
             % Set Generator Parameters
             obj.initialTempOffset = 0.01;
             obj.tempOffset = obj.initialTempOffset;
