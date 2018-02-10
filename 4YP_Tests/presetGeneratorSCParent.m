@@ -73,6 +73,7 @@ classdef (Abstract) presetGeneratorSCParent
             % set up history plots
             screenSize = get(0,'Screensize');
             figure(3)
+            set(figure(3), 'MenuBar', 'none', 'ToolBar' ,'none')
             clf
             subplot(1,2,1)
             obj.historyPlot = createStructHistoryPlot(obj.presetAHistory);

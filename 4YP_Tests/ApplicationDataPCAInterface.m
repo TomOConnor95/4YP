@@ -129,7 +129,6 @@ classdef ApplicationDataPCAInterface < handle
                 initialiseMidiInput(obj);
             end
             
-            
         end
         
     end
