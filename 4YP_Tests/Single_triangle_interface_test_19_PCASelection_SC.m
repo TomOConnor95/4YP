@@ -1,25 +1,16 @@
 % Test script for preset blending interface
 %close all
 
-
-
 % Miscellaneous Set-up Parameters
 
 appData = ApplicationDataBlendingInterface();
-
-screenSize = get(0,'Screensize');
-
-% Open UDP connection
-appData.u = udp('127.0.0.1',57120); 
-fopen(appData.u); 
 
 %----------------------------------------------------------%
 %----------Choose initial presets--------------------------%
 %----------------------------------------------------------%
 
-
 % Get nameStrings and TypeStrings    Maybe just save these in presetStore
-[~, appData.nameStrings, appData.typeStrings] = createPresetAforOSC();
+[testPreset, appData.nameStrings, appData.typeStrings] = createPresetAforOSC();
 
 % selectedIndeces = voronoiSelection('PresetStoreSC.mat', u, nameStrings, typeStrings);
 
@@ -42,28 +33,28 @@ sendAllStructParamsOverOSC(appData.P.presetA, appData.nameStrings, appData.typeS
 %----------------------------------------------------------%
 %----------------------Figures & Plots---------------------%
 %----------------------------------------------------------%
-% Plot all geometry for Blending Interface
-figure(1)
-appData.G = createBlendingGeometry();
-% Blending Interface Callbacks
-set (gca, 'ButtonDownFcn', {@mouseClickedBlending, appData});
-set (gcf, 'WindowButtonMotionFcn', {@mouseMovedBlending, appData});
-
+createBlendingInterface(appData)
 createPauseButton(appData)
 createSaveButton(appData)
 createFreezeSectionUI(appData)
-
-% Create all necessary parameters visualisations
+% Create all necessary parameters visualisations % Reqirues knowing a
+% preset
 if appData.displayBarGraphs == true
     figure(2)
-    appData.barStruct = createBarGraphsStruct(P.presetA, nameStrings);
+    appData.barStruct = createBarGraphsStruct(testPreset, appData.nameStrings);
+    screenSize = get(0,'Screensize');
     set(gcf,'Position',[-screenSize(3)/26,0,screenSize(3)/2.4,screenSize(4)/2])
 end
-figure(1)
 
+if appData.displayParameters == true
+    % Initialise the command line printing of parameter
+    dispstat('','init') 
+end
 
-% Initialsise the command line printing of parameter
-dispstat('','init')  
+% set(figure(1), 'Visible', 'off')
+% set(figure(2), 'Visible', 'off')
+% set(figure(3), 'Visible', 'off')
+% set(figure(4), 'Visible', 'off')
 
 function mouseMovedBlending (object, eventdata, appData)
     if appData.isPaused == false
@@ -71,7 +62,7 @@ function mouseMovedBlending (object, eventdata, appData)
         mousePos = MOUSE(1,1:2);
 
         if mousePosOutOfBlendingRange(mousePos)
-            disp('Mouse out of range');
+            %disp('Mouse out of range');
         else
             appData.G.P1 = mousePos';
             appData.G = updateGeometry(appData.G);
@@ -95,7 +86,7 @@ function mouseClickedBlending (object, eventdata, appData)
         appData.P = appData.P.iteratePresets(appData.G.P1);
 
         if appData.displayBarGraphs
-            appData.barStruct = updateBarGraphsStruct(P.presetA, appData.barStruct);
+            appData.barStruct = updateBarGraphsStruct(appData.P.presetA, appData.barStruct);
         end
     end
 end
@@ -109,6 +100,15 @@ B = mousePos(2) < -9 || mousePos(2) > 17;
     else
         isOutOfRange = false;
     end
+end
+
+function createBlendingInterface(appData)
+% Plot all geometry for Blending Interface
+figure(1)
+appData.G = createBlendingGeometry();
+% Blending Interface Callbacks
+set (gca, 'ButtonDownFcn', {@mouseClickedBlending, appData});
+set (gcf, 'WindowButtonMotionFcn', {@mouseMovedBlending, appData});
 end
 
 function createPauseButton(appData)

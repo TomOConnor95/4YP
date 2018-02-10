@@ -1,38 +1,42 @@
 classdef ApplicationDataBlendingInterface < handle
     properties (SetAccess = public, GetAccess = public)
-        MOUSE = [0,0];
+        
+        % Program State
         isPaused = true;
         isBlending = true;
         
+        markerIndex = 1;
+        currentMarkerIndex = 0;
+        presetsDoubleClicked = [];
+        
+        % Preset Structure
+        P;
         nameStrings;
         typeStrings;
         
-        P;
-        
+        % Geometry Structure
         G;
         
-        
+        % UDP conneection
         u;
         
         pauseButton;
         saveButton;
-        
-        p1;
-        p2;
         % Button Colours
         pauseColour = [0.6, 0.94, 0.6];
         normalButtonColour = [0.94, 0.94, 0.94];
         
+        % Freezing UI
+        p1;
+        p2;
         
         barStruct; 
         % Option parameters
         savePresetsToFile = true;
         displayParameters = true;
-        displayBarGraphs = false;
+        displayBarGraphs = true;
         
-        markerIndex = 1;
-        currentMarkerIndex = 0;
-        presetsDoubleClicked = [];
+        
 
     end
     
@@ -40,6 +44,10 @@ classdef ApplicationDataBlendingInterface < handle
         % Constructor
         function obj = ApplicationDataBlendingInterface()
             
+            % Open UDP connection
+            appData.u = udp('127.0.0.1',57120); 
+            fopen(appData.u); 
+
             %----------------------------------------------------------%
             %----------------------Presets-----------------------------%
             %----------------------------------------------------------%
