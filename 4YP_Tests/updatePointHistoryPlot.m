@@ -4,8 +4,8 @@ if nargin <5
     lineColour = [0.4,0.5,0.9];
 end
 
-figure(3);
-
+figure(3, 'Visible', 'off');
+%set(gcf, 'Visible', 'off');
 phPlot.vector_tree = phPlot.vector_tree.addnode(oldIndex, mousePos');
 
 phPlot.sum_tree = phPlot.sum_tree.addnode(oldIndex, phPlot.sum_tree.get(oldIndex) + phPlot.vector_tree.get(newIndex));

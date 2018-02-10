@@ -10,6 +10,8 @@ pointHistoryPlot.plot_markers_tree = tree(plot(0,0, 'ro','MarkerSize',25,'Marker
 
 title('Selection Location History')
 set(gca,'color',[0.7 0.9 1])
+set(gca,'YTickLabel',[])
+set(gca,'XTickLabel',[])
 %set(gca,'color',[0.5, 0.5, 0.5])
 hold on
 

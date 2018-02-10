@@ -46,7 +46,7 @@ set(gca,'color',[0.7 0.9 1])
 hold off
 
 set(gca,'YTickLabel',[])
-
+set(gca,'XTickLabel',[])
 
 % Listen for mouse clicks mouse clicks
 child_handles = allchild(gca);

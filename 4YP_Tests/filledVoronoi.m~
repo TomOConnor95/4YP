@@ -1,8 +1,14 @@
-function patches = filledVoronoi(D, colours, ax)
+function patches = filledVoronoi(D, colours)
 % Colour unbounded cells of voronoi diagram in MATLAB
 % https://stackoverflow.com/questions/40932015/color-unbounded-cells-of-voronoi-diagram-in-matlab
     [v,c]=voronoin(D);
-        
+    
+    ax = axes('position',[0,0.2,1,0.8],...
+        'Units','Normalized',...
+        'XGrid','off',...
+        'XMinorGrid','off',...
+        );
+    
     h = voronoi(D(:,1), D(:,2));
     v1 = shiftdim(reshape([h(2).XData;h(2).YData],2,3,[]),2); % Arranged one edge per row, one vertex per slice in the third dimension
 
@@ -36,5 +42,8 @@ function patches = filledVoronoi(D, colours, ax)
         patches{p} = patch(ax, vPatch(:,1),vPatch(:,2),colours{p}, 'HitTest', 'off');
     end
 
+    axis([0 1 0 1]);
+    set(gca,'YTickLabel',[])
+    set(gca,'XTickLabel',[])
 
 end

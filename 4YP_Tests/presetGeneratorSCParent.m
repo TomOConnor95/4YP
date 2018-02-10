@@ -71,17 +71,17 @@ classdef (Abstract) presetGeneratorSCParent
             obj.appData = appData_in;
 
             % set up history plots
-            screenSize = get(0,'Screensize');
+            %screenSize = get(0,'Screensize');
             figure(3)
             set(figure(3), 'MenuBar', 'none', 'ToolBar' ,'none')
             clf
-            subplot(1,2,1)
-            obj.historyPlot = createStructHistoryPlot(obj.presetAHistory);
+            %subplot(1,2,1)
+            %obj.historyPlot = createStructHistoryPlot(obj.presetAHistory);
             
-            subplot(1,2,2)
+            %subplot(1,2,2)
             obj.P1HistoryPlot = createPointHistoryPlot(obj.appData);
             
-            set(gcf,'Position',[-screenSize(3)/26,screenSize(4)/1.6,screenSize(3)/2.4,screenSize(4)/2.5])
+            %set(gcf,'Position',[-screenSize(3)/26,screenSize(4)/1.6,screenSize(3)/2.4,screenSize(4)/2.5])
 
             % Set up freezing time/timbre
             obj.isTimeFrozen = false;
@@ -153,7 +153,7 @@ classdef (Abstract) presetGeneratorSCParent
             obj.P1HistoryPlot = updatePointHistoryPlot(obj.P1HistoryPlot,mousePointClicked, oldIndex, newIndex, obj.lineColour, obj.appData);
             
             % Update plot to show evolution of parameters
-            obj.historyPlot = updateStructPresetHistoryPlot(obj.historyPlot,obj.presetAHistory);
+            %obj.historyPlot = updateStructPresetHistoryPlot(obj.historyPlot,obj.presetAHistory);
               
             
         end

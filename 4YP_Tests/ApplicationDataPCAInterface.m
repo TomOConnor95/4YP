@@ -279,9 +279,16 @@ sendAllStructParamsOverOSC(appData.blendingAppData.P.presetA,...
     appData.blendingAppData.u);
 
 set(figure(1), 'Visible', 'on')
-set(figure(2), 'Visible', 'on')
-set(figure(3), 'Visible', 'on')
+if appData.blendingAppData.displayBarGraphs == true
+    set(figure(2), 'Visible', 'on')
+end
+%set(figure(3), 'Visible', 'on')
 set(figure(4), 'Visible', 'on')
+
+set(figure(5), 'Visible', 'off')
+%set(figure(6), 'Visible', 'off')
+%set(figure(7), 'Visible', 'off')
+
 
 figure(1)
 
@@ -535,20 +542,30 @@ end
 %----------------------------------------------------------%
 
 function createPresetVoronoi(appData)
-figure(5), clf, hold on
+figure(5), clf, 
+set(figure(5), 'MenuBar', 'none', 'ToolBar' ,'none')
 
-appData.patches = filledVoronoi(appData.presetPositions, appData.colours);
+ax = axes('position',[0,0.2,1,0.8],...
+        'Units','Normalized',...
+        'XGrid','off',...
+        'XMinorGrid','off',...
+        'XTickLabel',[],...
+        'YTickLabel',[],...
+        'Xlim', [0,1],...
+        'Ylim', [0,1]);
+hold on
+appData.patches = filledVoronoi(appData.presetPositions, appData.colours, ax);
 
 for i = 1:length(appData.presetStore(:,1))
     set(appData.patches{i}, 'ButtonDownFcn', {@patchClicked, i, appData})
     set(appData.patches{i}, 'HitTest', 'On')  
 end
 
-plot(appData.presetPositions(:,1), appData.presetPositions(:,2),...
+plot(ax, appData.presetPositions(:,1), appData.presetPositions(:,2),...
     'b+', 'HitTest', 'off', 'PickableParts', 'none')
 
 set(gcf, 'WindowButtonMotionFcn', {@mouseMoving, appData});
-set(gca, 'Position', [0.1300 0.2100 0.7750 0.7150]);
+%set(gca, 'Position', [0.1300 0.2100 0.7750 0.7150]);
 end
 
 function createSliders(appData)
@@ -629,18 +646,20 @@ end
 
 function createTimePlots(appData)
 figure(6), clf
+set(figure(6), 'MenuBar', 'none', 'ToolBar' ,'none')
 
 appData.timeData = timePlotDataFromPreset(appData.presetStore(1,:));
 appData.timePlots = createAllTimePlots(appData.timeData);
-set(figure(6), 'Position',(get(figure(5), 'Position') - [0, 420, 0, 0]))
+set(figure(6), 'Position',(get(figure(5), 'Position') - [550, 0, 0, 0]))
 end
 
 function createTimbrePlots(appData)
 figure(7), clf
+set(figure(7), 'MenuBar', 'none', 'ToolBar' ,'none')
 
 appData.timbreData = timbrePlotDataFromPreset(appData.presetStore(1,:));
 appData.timbrePlots = createAllTimbrePlots(appData.timbreData);
-set(figure(7), 'Position',(get(figure(5), 'Position') - [560, 420, 0, -420]))
+set(figure(7), 'Position',(get(figure(5), 'Position') - [550, 420, -550, 0]))
 end
 
 function initialiseMidiInput(appData)
