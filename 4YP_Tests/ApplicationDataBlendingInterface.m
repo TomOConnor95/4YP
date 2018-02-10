@@ -34,7 +34,7 @@ classdef ApplicationDataBlendingInterface < handle
         % Option parameters
         savePresetsToFile = true;
         displayParameters = true;
-        displayBarGraphs = true;
+        displayBarGraphs = false;
         
         
 
@@ -324,9 +324,9 @@ function saveButtonCallback (object, eventdata, appData)
 % writes continuous mouse position to base workspace
 disp('Save Button Clicked')
 
-if savePresetsToFile
+if appData.savePresetsToFile == true
     presetSave = matfile('PresetStoreSC.mat','Writable',true);
-    presetSave.presetStore(1+length(presetSave.presetStore(:,1)),:) = P.presetA;
+    presetSave.presetStore(1+length(presetSave.presetStore(:,1)),:) = appData.P.presetA;
 end
 
 end

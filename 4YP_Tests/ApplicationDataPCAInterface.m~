@@ -273,10 +273,7 @@ presetC = appData.presetStoreVaried(appData.idxSelected(3),:);
 
 appData.blendingAppData.P = presetGeneratorSCMonteCarloMV(presetA, presetB, presetC, appData.blendingAppData);
 
-sendAllStructParamsOverOSC(appData.blendingAppData.P.presetA,...
-    appData.blendingAppData.nameStrings,...
-    appData.blendingAppData.typeStrings,...
-    appData.blendingAppData.u);
+sendAllStructParamsOverOSC(appData.blendingAppData.P.presetA, appData.nameStrings, appData.typeStrings, appData.u);
 
 set(figure(1), 'Visible', 'on')
 set(figure(2), 'Visible', 'on')
