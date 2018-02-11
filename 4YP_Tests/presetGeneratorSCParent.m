@@ -72,9 +72,9 @@ classdef (Abstract) presetGeneratorSCParent
 
             % set up history plots
             %screenSize = get(0,'Screensize');
-            figure(3)
-            set(figure(3), 'MenuBar', 'none', 'ToolBar' ,'none')
-            clf
+            figure(1)
+%             set(figure(3), 'MenuBar', 'none', 'ToolBar' ,'none')
+%             clf
             %subplot(1,2,1)
             %obj.historyPlot = createStructHistoryPlot(obj.presetAHistory);
             
@@ -148,6 +148,9 @@ classdef (Abstract) presetGeneratorSCParent
                 obj.presetCHistory{i} = obj.presetCHistory{i}.addnode(oldIndex, obj.presetC{i});
             end
             obj.currentTreeIndex = newIndex;
+            
+            % Update blending plot, to show change
+            set(obj.appData.G.ax,'color',[0.7 0.9 1] + [(rand(1,2)*0.2)-0.1,0] )
             
             % update all trees for point history plot
             obj.P1HistoryPlot = updatePointHistoryPlot(obj.P1HistoryPlot,mousePointClicked, oldIndex, newIndex, obj.lineColour, obj.appData);
@@ -224,7 +227,7 @@ classdef (Abstract) presetGeneratorSCParent
             obj.P1HistoryPlot = updatePointHistoryPlotCombinePresets(obj.P1HistoryPlot, oldIndex, newIndex, presetsDoubleClicked, obj.appData);
             
             % Update plot to show evolution of parameters
-            obj.historyPlot = updateStructPresetHistoryPlot(obj.historyPlot,obj.presetAHistory);
+            %obj.historyPlot = updateStructPresetHistoryPlot(obj.historyPlot,obj.presetAHistory);
         end
         
         %-----Functions to freeze Time/Timbre -----------------------------

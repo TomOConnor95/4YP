@@ -289,7 +289,7 @@ set(figure(5), 'Visible', 'off')
 %set(figure(6), 'Visible', 'off')
 %set(figure(7), 'Visible', 'off')
 
-
+%set(appData.blendingAppData.G.panel, 'Selected', 'on')
 figure(1)
 
 end

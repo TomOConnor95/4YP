@@ -27,8 +27,9 @@ classdef ApplicationDataBlendingInterface < handle
         normalButtonColour = [0.94, 0.94, 0.94];
         
         
-       % Point history plot
-       phAxes;
+        % Point history plot
+        phAxes;
+        phPanel
         
         % Freezing UI
         p1;
@@ -37,7 +38,7 @@ classdef ApplicationDataBlendingInterface < handle
         barStruct; 
         % Option parameters
         savePresetsToFile = true;
-        displayParameters = true;
+        displayParameters = false;
         displayBarGraphs = false;
         
         
@@ -81,8 +82,9 @@ classdef ApplicationDataBlendingInterface < handle
             end
             
             set(figure(1), 'Visible', 'off')
-            set(figure(2), 'Visible', 'off')
-            set(figure(3), 'Visible', 'off')
+            %set(figure(2), 'Visible', 'off')
+            %set(figure(3), 'Visible', 'off')
+            
             set(figure(4), 'Visible', 'off')
             %----------------------------------------------------------%
             %----------------------Miscellaneous-----------------------%
@@ -101,7 +103,7 @@ end
 function mouseMovedBlending (object, eventdata, appData)
     if appData.isPaused == false
         MOUSE = get (gca, 'CurrentPoint');
-        mousePos = MOUSE(1,1:2);
+        mousePos = MOUSE(1,1:2)
 
         if mousePosOutOfBlendingRange(mousePos)
             %disp('Mouse out of range');
@@ -142,6 +144,9 @@ if appData.isPaused == true
 
         appData.isBlending = true;
         appData.isPaused = false;  
+        
+        appData.G.panel.Visible = 'on';
+        appData.phPanel.Visible = 'off';
 
         appData.pauseButton.String = 'Pause On Last Preset';
         appData.pauseButton.BackgroundColor = appData.normalButtonColour;
@@ -150,6 +155,9 @@ else
         
         appData.isBlending = false;
         appData.isPaused = true;
+        
+        appData.G.panel.Visible = 'off';
+        appData.phPanel.Visible = 'on';
         
         appData.pauseButton.String = 'Resume Searching';
         appData.pauseButton.BackgroundColor = appData.pauseColour;
@@ -182,6 +190,17 @@ disp('Freeze Time Button Clicked')
 appData.P = appData.P.toggleTimeState();
 correctlyColourFreezeButtons(appData);
 correctlyDisableFreezeToggles(appData);
+end
+
+function saveButtonCallback (object, eventdata, appData)
+% writes continuous mouse position to base workspace
+disp('Save Button Clicked')
+
+if appData.savePresetsToFile == true
+    presetSave = matfile('PresetStoreSC.mat','Writable',true);
+    presetSave.presetStore(1+length(presetSave.presetStore(:,1)),:) = appData.P.presetA;
+end
+
 end
 
 function freezeSectionsCallback (object, eventdata, appData)
@@ -283,7 +302,7 @@ end
 
 function createBlendingInterface(appData)
 % Plot all geometry for Blending Interface
-figure(1)
+figure(1), clf
 set(figure(1), 'MenuBar', 'none', 'ToolBar' ,'none')
 appData.G = createBlendingGeometry();
 % Blending Interface Callbacks
@@ -321,17 +340,6 @@ appData.saveButton = uicontrol('style', 'pushbutton',...
     'FontSize', 13);
 
 set(appData.saveButton,'HitTest','on')
-
-end
-
-function saveButtonCallback (object, eventdata, appData)
-% writes continuous mouse position to base workspace
-disp('Save Button Clicked')
-
-if appData.savePresetsToFile == true
-    presetSave = matfile('PresetStoreSC.mat','Writable',true);
-    presetSave.presetStore(1+length(presetSave.presetStore(:,1)),:) = appData.P.presetA;
-end
 
 end
 
