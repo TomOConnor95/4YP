@@ -26,6 +26,10 @@ classdef ApplicationDataBlendingInterface < handle
         pauseColour = [0.6, 0.94, 0.6];
         normalButtonColour = [0.94, 0.94, 0.94];
         
+        
+       % Point history plot
+       phAxes;
+        
         % Freezing UI
         p1;
         p2;

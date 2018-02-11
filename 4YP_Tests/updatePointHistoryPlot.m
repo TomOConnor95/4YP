@@ -4,8 +4,7 @@ if nargin <5
     lineColour = [0.4,0.5,0.9];
 end
 
-figure(3, 'Visible', 'off');
-%set(gcf, 'Visible', 'off');
+
 phPlot.vector_tree = phPlot.vector_tree.addnode(oldIndex, mousePos');
 
 phPlot.sum_tree = phPlot.sum_tree.addnode(oldIndex, phPlot.sum_tree.get(oldIndex) + phPlot.vector_tree.get(newIndex));
@@ -15,9 +14,9 @@ P1 = phPlot.sum_tree.get(oldIndex);
 P2 = phPlot.sum_tree.get(newIndex);
 
 
-phPlot.plot_tree = phPlot.plot_tree.addnode(oldIndex, plot([P1(1), P2(1)], [P1(2), P2(2)], 'Color', [lineColour, 0.9],'LineWidth', 4, 'PickableParts','none'));
+phPlot.plot_tree = phPlot.plot_tree.addnode(oldIndex, plot(appData.phAxes, [P1(1), P2(1)], [P1(2), P2(2)], 'Color', [lineColour, 0.9],'LineWidth', 4, 'PickableParts','none'));
 
-phPlot.plot_markers_tree = phPlot.plot_markers_tree.addnode(oldIndex, plot(P2(1), P2(2), 'ro','MarkerSize',12,'MarkerFaceColor',[0.0, 1.0, 1.0], 'ButtonDownFcn',{@markerClickedCallback2, newIndex, appData}, 'PickableParts','all'));
+phPlot.plot_markers_tree = phPlot.plot_markers_tree.addnode(oldIndex, plot(appData.phAxes, P2(1), P2(2), 'ro','MarkerSize',12,'MarkerFaceColor',[0.0, 1.0, 1.0], 'ButtonDownFcn',{@markerClickedCallback2, newIndex, appData}, 'PickableParts','all'));
 
 %recolour child node
 marker = phPlot.plot_markers_tree.get(oldIndex);
