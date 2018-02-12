@@ -147,7 +147,8 @@ if appData.isPaused == true
         
         appData.G.panel.Visible = 'on';
         appData.phPanel.Visible = 'off';
-
+        axes(appData.G.ax)
+        
         appData.pauseButton.String = 'Pause On Last Preset';
         appData.pauseButton.BackgroundColor = appData.normalButtonColour;
 
