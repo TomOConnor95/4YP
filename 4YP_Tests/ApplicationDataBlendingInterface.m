@@ -182,6 +182,8 @@ else
         
         appData.G.P1 = [0,0]';
         appData.G = updateGeometry(appData.G);
+        
+        
 end
 
 end
@@ -232,7 +234,29 @@ set(figure(4), 'Visible', 'off')
 set(figure(5), 'Visible', 'on')
 
 axes(appData.pcaAppData.ax)
+
+%Create Marker on voronoi diagram for combined preset
+presetPositions = appData.pcaAppData.presetPositions(appData.pcaAppData.idxSelected,:);
+PM = mean(presetPositions);
+P1a = presetPositions(1,:);
+P1b = presetPositions(2,:);
+P1c = presetPositions(3,:);
+
+lineColour = 'g';
+combinedLines = plot(appData.pcaAppData.ax,...
+                [PM(1), P1a(1), PM(1), P1b(1), PM(1), P1c(1), PM(1)],...
+                [PM(2), P1a(2), PM(2), P1b(2), PM(2), P1c(2), PM(2)],...
+                'Color', lineColour, 'LineStyle', ':','LineWidth',3, 'PickableParts','none');
+
+combinedMarker = plot(appData.pcaAppData.ax, PM(1), PM(2), 'ro','MarkerSize',12,'MarkerFaceColor',[0.1,1.0,0.1], 'ButtonDownFcn',{@combinedMarkerCallBack, appData}, 'PickableParts','all');
+
 end
+
+function combinedMarkerCallBack (object, eventdata, appData)
+% writes continuous mouse position to base workspace
+disp('Combined Marker Clicked')
+
+end  
 
 function freezeSectionsCallback (object, eventdata, appData)
 % writes continuous mouse position to base workspace
