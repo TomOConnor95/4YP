@@ -44,7 +44,11 @@ classdef ApplicationDataBlendingInterface < handle
         displayBarGraphs = false;
         
         pcaAppData;
-
+        
+        %Combined Preset Markers and data
+        combinedPresets;
+        combinedLines;
+        combinedMarkers;
     end
     
     methods
@@ -243,18 +247,41 @@ P1b = presetPositions(2,:);
 P1c = presetPositions(3,:);
 
 lineColour = 'g';
-combinedLines = plot(appData.pcaAppData.ax,...
+
+idx = length(appData.combinedPresets)+1;
+appData.combinedPresets{idx} = appData.P.presetA;
+
+appData.combinedLines{idx} = plot(appData.pcaAppData.ax,...
                 [PM(1), P1a(1), PM(1), P1b(1), PM(1), P1c(1), PM(1)],...
                 [PM(2), P1a(2), PM(2), P1b(2), PM(2), P1c(2), PM(2)],...
                 'Color', lineColour, 'LineStyle', ':','LineWidth',3, 'PickableParts','none');
 
-combinedMarker = plot(appData.pcaAppData.ax, PM(1), PM(2), 'ro','MarkerSize',12,'MarkerFaceColor',[0.1,1.0,0.1], 'ButtonDownFcn',{@combinedMarkerCallBack, appData}, 'PickableParts','all');
+appData.combinedMarkers{idx} = plot(appData.pcaAppData.ax, PM(1), PM(2), 'ro','MarkerSize',12,...
+    'MarkerFaceColor',[0.1,1.0,0.1], 'PickableParts','all',...
+    'ButtonDownFcn',{@combinedMarkerCallBack, appData.combinedPresets{idx}, appData});
 
 end
 
-function combinedMarkerCallBack (object, eventdata, appData)
+function combinedMarkerCallBack (object, eventdata, preset, appData)
 % writes continuous mouse position to base workspace
 disp('Combined Marker Clicked')
+
+
+sendAllStructParamsOverOSC(preset, appData.nameStrings, appData.typeStrings, appData.u);
+
+if appData.displayBarGraphs
+    appData.barStruct = updateBarGraphsStruct(appData.P.presetA, appData.barStruct);
+end
+
+% Update Time Plots
+appData.pcaAppData.timeData = timePlotDataFromPreset(appData.P.presetA);
+appData.pcaAppData.timePlots = updateTimePlots(appData.pcaAppData.timePlots,...
+                                                appData.pcaAppData.timeData); 
+
+% Update Timbre Plots
+appData.pcaAppData.timbreData = timbrePlotDataFromPreset(appData.P.presetA);
+appData.pcaAppData.timbrePlots = updateTimbrePlots(appData.pcaAppData.timbrePlots,...
+                                                    appData.pcaAppData.timbreData); 
 
 end  
 
