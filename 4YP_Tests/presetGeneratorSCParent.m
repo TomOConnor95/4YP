@@ -73,6 +73,9 @@ classdef (Abstract) presetGeneratorSCParent
             % set up history plots
             %screenSize = get(0,'Screensize');
             figure(1)
+%             if(~isempty(obj.appData.phAxes))
+%                 axes(obj.appData.phAxes)
+%             end
 %             set(figure(3), 'MenuBar', 'none', 'ToolBar' ,'none')
 %             clf
             %subplot(1,2,1)

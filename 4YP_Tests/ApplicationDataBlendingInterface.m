@@ -14,6 +14,7 @@ classdef ApplicationDataBlendingInterface < handle
         nameStrings;
         typeStrings;
         
+        Pversions;
         % Geometry Structure
         G;
         
@@ -22,6 +23,7 @@ classdef ApplicationDataBlendingInterface < handle
         
         pauseButton;
         saveButton;
+        returnButton;
         % Button Colours
         pauseColour = [0.6, 0.94, 0.6];
         normalButtonColour = [0.94, 0.94, 0.94];
@@ -41,13 +43,13 @@ classdef ApplicationDataBlendingInterface < handle
         displayParameters = false;
         displayBarGraphs = false;
         
-        
+        pcaAppData;
 
     end
     
     methods
         % Constructor
-        function obj = ApplicationDataBlendingInterface()
+        function obj = ApplicationDataBlendingInterface(pcaAppData_in)
             
             % Open UDP connection
             obj.u = udp('127.0.0.1',57120); 
@@ -65,6 +67,7 @@ classdef ApplicationDataBlendingInterface < handle
             createBlendingInterface(obj)
             createPauseButton(obj)
             createSaveButton(obj)
+            createReturnButton(obj)
             createFreezeSectionUI(obj)
             % Create all necessary parameters visualisations % Reqirues knowing a
             % preset
@@ -89,7 +92,7 @@ classdef ApplicationDataBlendingInterface < handle
             %----------------------------------------------------------%
             %----------------------Miscellaneous-----------------------%
             %----------------------------------------------------------%
-            
+            obj.pcaAppData = pcaAppData_in;
             
         end
         
@@ -103,9 +106,9 @@ end
 function mouseMovedBlending (object, eventdata, appData)
     if appData.isPaused == false
         MOUSE = get (gca, 'CurrentPoint');
-        mousePos = MOUSE(1,1:2)
-
-        if mousePosOutOfBlendingRange(mousePos)
+        mousePos = MOUSE(1,1:2);
+        
+        if mousePosOutOfBlendingRange(mousePos, get(gca, 'XLim'), get(gca, 'YLim'))
             %disp('Mouse out of range');
         else
             appData.G.P1 = mousePos';
@@ -119,7 +122,7 @@ function mouseMovedBlending (object, eventdata, appData)
 
             if appData.displayParameters
                 dispstat(sprintf(preset2string(appData.P.presetMix, appData.nameStrings)));
-            end
+            end    
         end
     end
 end
@@ -132,6 +135,15 @@ function mouseClickedBlending (object, eventdata, appData)
         if appData.displayBarGraphs
             appData.barStruct = updateBarGraphsStruct(appData.P.presetA, appData.barStruct);
         end
+        % Update Time Plots
+        appData.pcaAppData.timeData = timePlotDataFromPreset(appData.P.presetA);
+        appData.pcaAppData.timePlots = updateTimePlots(appData.pcaAppData.timePlots,...
+                                                        appData.pcaAppData.timeData); 
+
+        % Update Timbre Plots
+        appData.pcaAppData.timbreData = timbrePlotDataFromPreset(appData.P.presetA);
+        appData.pcaAppData.timbrePlots = updateTimbrePlots(appData.pcaAppData.timbrePlots,...
+                                                            appData.pcaAppData.timbreData); 
     end
 end
 
@@ -204,6 +216,24 @@ end
 
 end
 
+function returnButtonCallback (object, eventdata, appData)
+% writes continuous mouse position to base workspace
+disp('Return Button Clicked')
+
+appData.Pversions{length(appData.Pversions)+1} = appData.P;
+
+set(figure(1), 'Visible', 'off')
+if appData.displayBarGraphs == true
+    set(figure(2), 'Visible', 'off')
+end
+%set(figure(3), 'Visible', 'on')
+set(figure(4), 'Visible', 'off')
+
+set(figure(5), 'Visible', 'on')
+
+axes(appData.pcaAppData.ax)
+end
+
 function freezeSectionsCallback (object, eventdata, appData)
 % writes continuous mouse position to base workspace
 disp('Freeze Section Toggle Button Clicked')
@@ -216,10 +246,10 @@ end
 %----------------------Misc Functions----------------------%
 %----------------------------------------------------------%
 
-function [isOutOfRange] = mousePosOutOfBlendingRange(mousePos)
+function [isOutOfRange] = mousePosOutOfBlendingRange(mousePos, XLim, YLim)
 
-A = mousePos(1) < -16.4826 || mousePos(1) > 16.4826;
-B = mousePos(2) < -9 || mousePos(2) > 17;
+A = mousePos(1) < XLim(1) || mousePos(1) > XLim(2);
+B = mousePos(2) < YLim(1) || mousePos(2) > YLim(2);
     if A || B
         isOutOfRange = true;
     else
@@ -344,13 +374,38 @@ set(appData.saveButton,'HitTest','on')
 
 end
 
+function createReturnButton(appData)
+
+% create a "push button" user interface (UI) object
+appData.saveButton = uicontrol('style', 'pushbutton',...
+    'string', 'Return To Preset Selection',...
+    'units', 'normalized',...
+    'position', [0.6 0 0.3 0.11],...
+    'callback', {@returnButtonCallback, appData},...
+    'visible', 'on',...
+    'FontSize', 13);
+
+set(appData.returnButton,'HitTest','on')
+
+end
+
 function createFreezeSectionUI(appData)
 
 figure(4)
-set(figure(4), 'MenuBar', 'none', 'ToolBar' ,'none')
+clf
+f1Pos = appData.G.figurePosition;
+f4Pos = f1Pos;
+f4Pos(1) = f1Pos(1)+f1Pos(3);
+f4Pos(2) = f1Pos(2)-f1Pos(4);
+f4Pos(3) = ceil(f4Pos(3)/2);
+f4Pos(4) = f4Pos(4)*2;
+
+set(figure(4), 'MenuBar', 'none', 'ToolBar' ,'none',...
+    'Position', f4Pos);
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 appData.p1.panel = uipanel('Title','Timbre Controls',...
-             'Position',[.05 .05 .425 .9]);
+             'Position',[.05 .025 .9 .45]);
  
 appData.p1.freezeTimbreButton = uicontrol(appData.p1.panel,...
     'style', 'pushbutton',...
@@ -418,7 +473,7 @@ appData.p1.toggleLfoBDepth = uicontrol(appData.p1.panel,...
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 appData.p2.panel = uipanel('Title','Time Controls',...
-             'Position',[.5 .05 .45 .9]);
+             'Position',[.05 .5 .9 .475]);
          
         
 appData.p2.freezeTimeButton = uicontrol(appData.p2.panel,...

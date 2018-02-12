@@ -1,6 +1,8 @@
 function [pointHistoryPlot] = createPointHistoryPlot(appData)
 % Creates plot showing the history of the positions clicked on
-appData.phPanel = uipanel('Position',[0,0.15,1,0.85]);
+if(isempty(appData.phPanel))
+    appData.phPanel = uipanel('Position',[0,0.11,1,0.89]);
+end
 appData.phAxes = axes(appData.phPanel,...
         'position',[0.05, 0.05, 0.9, 0.9],...
         'Units','Normalized',...

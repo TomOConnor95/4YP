@@ -1,7 +1,7 @@
 function [G] = createBlendingGeometry()
 % Construct Equilateral triangle
 
-G.panel = uipanel('Position',[0,0.15,1,0.85]);
+G.panel = uipanel('Position',[0,0.11,1,0.89]);
 G.ax = axes(G.panel, 'Units','Normalized',...
         'position',[0.05, 0.05, 0.9, 0.9],...
         'XGrid','off',...
@@ -63,7 +63,7 @@ axis manual
 child_handles = allchild(gca);
 set(child_handles,'HitTest','off')
 
-
+G.figurePosition = get(figure(1), 'Position');
 end
 
 % function mouseClicked (object, eventdata)

@@ -27,6 +27,8 @@ classdef ApplicationDataPCAInterface < handle
         
         patches;
         
+        ax;     %Axes fot PCA plot
+        
         variedPresetMarkers;
         variedPresetLines;
         
@@ -132,7 +134,7 @@ classdef ApplicationDataPCAInterface < handle
             end
             
             % Set up Blending App
-            obj.blendingAppData = ApplicationDataBlendingInterface();
+            obj.blendingAppData = ApplicationDataBlendingInterface(obj);
             
         end
         
@@ -291,7 +293,14 @@ set(figure(5), 'Visible', 'off')
 
 figure(1)
 axes(appData.blendingAppData.G.ax)
+appData.blendingAppData.isBlending = false;
+appData.blendingAppData.isPaused = true;
 
+appData.blendingAppData.G.panel.Visible = 'on';
+appData.blendingAppData.phPanel.Visible = 'off';
+
+appData.blendingAppData.pauseButton.String = 'Begin Searching';
+appData.blendingAppData.pauseButton.BackgroundColor = appData.blendingAppData.pauseColour;
 end
 
 function midiCallback(midicontrolsObject, idx, appData)
@@ -545,7 +554,7 @@ function createPresetVoronoi(appData)
 figure(5), clf, 
 set(figure(5), 'MenuBar', 'none', 'ToolBar' ,'none')
 
-ax = axes('position',[0,0.2,1,0.8],...
+appData.ax = axes('position',[0,0.2,1,0.8],...
         'Units','Normalized',...
         'XGrid','off',...
         'XMinorGrid','off',...
@@ -554,14 +563,14 @@ ax = axes('position',[0,0.2,1,0.8],...
         'Xlim', [0,1],...
         'Ylim', [0,1]);
 hold on
-appData.patches = filledVoronoi(appData.presetPositions, appData.colours, ax);
+appData.patches = filledVoronoi(appData.presetPositions, appData.colours, appData.ax);
 
 for i = 1:length(appData.presetStore(:,1))
     set(appData.patches{i}, 'ButtonDownFcn', {@patchClicked, i, appData})
     set(appData.patches{i}, 'HitTest', 'On')  
 end
 
-plot(ax, appData.presetPositions(:,1), appData.presetPositions(:,2),...
+plot(appData.ax, appData.presetPositions(:,1), appData.presetPositions(:,2),...
     'b+', 'HitTest', 'off', 'PickableParts', 'none')
 
 set(gcf, 'WindowButtonMotionFcn', {@mouseMoving, appData});
