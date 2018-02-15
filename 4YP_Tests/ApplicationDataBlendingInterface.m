@@ -40,7 +40,7 @@ classdef ApplicationDataBlendingInterface < handle
         barStruct; 
         % Option parameters
         savePresetsToFile = true;
-        displayParameters = false;
+        displayParameters = true;
         displayBarGraphs = false;
         
         pcaAppData;

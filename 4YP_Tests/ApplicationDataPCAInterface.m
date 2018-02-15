@@ -128,7 +128,7 @@ classdef ApplicationDataPCAInterface < handle
             dispstat('','init')
             
             %Initilasise Midi CC input
-            isMidiEnabled = true;
+            isMidiEnabled = false;
             if isMidiEnabled == true
                 initialiseMidiInput(obj);
             end
