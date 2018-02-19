@@ -4,6 +4,8 @@ classdef ApplicationDataPCAInterface < handle
         presetStore;
         presetStoreVaried;
         
+        presetCategories;
+        
         presetPositions;
         
         nameStrings;
@@ -57,6 +59,16 @@ classdef ApplicationDataPCAInterface < handle
         
         blendModeButton;
         
+        categoriesPanel;
+        pianoKeysButton;
+        pluckedMalletButton;
+        bassButton;
+        synthLeadButton;
+        synthPadButton;
+        rhythmicButton;
+        
+        categoriesSelected = [0, 0, 0, 0, 0, 0];
+        
         idxCurrent = 1;
         idxSelected = [];
         idxPopupSelected = [];
@@ -102,6 +114,7 @@ classdef ApplicationDataPCAInterface < handle
             obj.variedPresetMarkers = cell(1,length(obj.presetStore(:,1)));
             obj.variedPresetLines = cell(1,length(obj.presetStore(:,1)));
             
+            obj.presetCategories = createPresetCategories();
             %----------------------------------------------------------%
             %------------------PCA Calculations------------------------%
             %----------------------------------------------------------%
@@ -134,6 +147,9 @@ classdef ApplicationDataPCAInterface < handle
             
             % Blend Mode Button
             createBlendModeButton(obj);
+            
+            % Category Buttons
+            createCategoryButtons(obj);
             
             %----------------------------------------------------------%
             %----------------------Miscellaneous-----------------------%
@@ -316,6 +332,78 @@ appData.blendingAppData.phPanel.Visible = 'off';
 
 appData.blendingAppData.pauseButton.String = 'Begin Searching';
 appData.blendingAppData.pauseButton.BackgroundColor = appData.blendingAppData.pauseColour;
+end
+
+function categoryButtonCallback (object, eventdata, idx, appData)
+
+appData.categoriesSelected(idx) = 1 - appData.categoriesSelected(idx);
+
+normalButtonColour = [0.94, 0.94, 0.94];
+
+categoryColours = {[1,0,0], [0,1,0], [0,0,1], [1,1,0], [1,0,1], [0,1,1]};
+switch idx
+    case 1
+        disp('Piano/Keys button Pressed')
+        if appData.categoriesSelected(idx) ==1
+            appData.pianoKeysButton.BackgroundColor = categoryColours{idx};
+        else
+            appData.pianoKeysButton.BackgroundColor = normalButtonColour;
+        end
+    case 2
+        disp('Plucked/Mallet button Pressed')
+        if appData.categoriesSelected(idx) ==1
+            appData.pluckedMalletButton.BackgroundColor = categoryColours{idx};
+        else
+            appData.pluckedMalletButton.BackgroundColor = normalButtonColour;
+        end
+    case 3
+        disp('Bass button Pressed')
+        if appData.categoriesSelected(idx) ==1
+            appData.bassButton.BackgroundColor = categoryColours{idx};
+        else
+            appData.bassButton.BackgroundColor = normalButtonColour;
+        end
+    case 4
+        disp('Synth Lead button Pressed')
+        if appData.categoriesSelected(idx) ==1
+            appData.synthLeadButton.BackgroundColor = categoryColours{idx};
+        else
+            appData.synthLeadButton.BackgroundColor = normalButtonColour;
+        end
+    case 5
+        disp('Synth Pad button Pressed')
+        if appData.categoriesSelected(idx) ==1
+            appData.synthPadButton.BackgroundColor = categoryColours{idx};
+        else
+            appData.synthPadButton.BackgroundColor = normalButtonColour;
+        end
+    case 6
+        disp('Rhythmic button Pressed')
+        if appData.categoriesSelected(idx) ==1
+            appData.rhythmicButton.BackgroundColor = categoryColours{idx};
+        else
+            appData.rhythmicButton.BackgroundColor = normalButtonColour;
+        end
+end
+
+if isequal(appData.categoriesSelected, [0,0,0,0,0,0])
+    for i = 1:length(appData.presetCategories)
+        appData.patches{i}.FaceColor = appData.colours{i};
+    end
+else
+    for i = 1:length(appData.presetCategories)
+        if isequal(appData.presetCategories{i}.*appData.categoriesSelected, [0,0,0,0,0,0])
+            appData.patches{i}.FaceColor = appData.colours{i}/2;
+        else
+        combinedColour = (appData.presetCategories{i}.*appData.categoriesSelected)*...
+            cell2mat(categoryColours')/length(nonzeros(appData.categoriesSelected));
+        combinedColour(combinedColour > 0) = mapRange(combinedColour(combinedColour > 0), 0,1,0.7,1);
+        appData.patches{i}.FaceColor = combinedColour.*([0.6, 0.6, 0.6]...
+                + 0.4*[appData.colours{i}(1), appData.colours{i}(2), appData.colours{i}(3)]);
+
+        end
+    end
+end
 end
 
 function midiCallback(midicontrolsObject, idx, appData)
@@ -673,7 +761,7 @@ function createPresetVoronoi(appData)
 figure(5), clf, 
 set(figure(5), 'MenuBar', 'none', 'ToolBar' ,'none')
 
-appData.ax = axes('position',[0,0.2,1,0.8],...
+appData.ax = axes('position',[0,0.2,1,0.7],...
         'Units','Normalized',...
         'XGrid','off',...
         'XMinorGrid','off',...
@@ -770,6 +858,58 @@ appData.blendModeButton = uicontrol('style', 'pushbutton',...
     'FontSize', 13,...
     'Enable', 'off');
 
+end
+
+function createCategoryButtons(appData)
+appData.categoriesPanel = uipanel('Position',[0, 0.9, 1, 0.1]);
+
+appData.pianoKeysButton = uicontrol(appData.categoriesPanel,...
+    'style', 'pushbutton',...
+    'string', 'Piano/Keys',...
+    'units', 'normalized',...
+    'position', [0, 0, 1/6 1],...
+    'callback', {@categoryButtonCallback, 1, appData},...
+    'FontSize', 13);
+
+appData.pluckedMalletButton = uicontrol(appData.categoriesPanel,...
+    'style', 'pushbutton',...
+    'string', 'Plucked/Mallet',...
+    'units', 'normalized',...
+    'position', [1/6, 0, 1/6 1],...
+    'callback', {@categoryButtonCallback, 2, appData},...
+    'FontSize', 13);
+
+appData.bassButton = uicontrol(appData.categoriesPanel,...
+    'style', 'pushbutton',...
+    'string', 'Bass',...
+    'units', 'normalized',...
+    'position', [2/6, 0, 1/6 1],...
+    'callback', {@categoryButtonCallback, 3, appData},...
+    'FontSize', 13);
+
+appData.synthLeadButton = uicontrol(appData.categoriesPanel,...
+    'style', 'pushbutton',...
+    'string', 'Synth Lead',...
+    'units', 'normalized',...
+    'position', [3/6, 0, 1/6 1],...
+    'callback', {@categoryButtonCallback, 4, appData},...
+    'FontSize', 13);
+
+appData.synthPadButton = uicontrol(appData.categoriesPanel,...
+    'style', 'pushbutton',...
+    'string', 'SynthPad',...
+    'units', 'normalized',...
+    'position', [4/6, 0, 1/6 1],...
+    'callback', {@categoryButtonCallback, 5, appData},...
+    'FontSize', 13);
+
+appData.rhythmicButton = uicontrol(appData.categoriesPanel,...
+    'style', 'pushbutton',...
+    'string', 'Rhythmic',...
+    'units', 'normalized',...
+    'position', [5/6, 0, 1/6 1],...
+    'callback', {@categoryButtonCallback, 6, appData},...
+    'FontSize', 13);
 end
 
 function createTimePlots(appData)
