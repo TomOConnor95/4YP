@@ -14,6 +14,18 @@ classdef ApplicationDataPCAInterface < handle
         score;
         latent;
         
+        idxX = 1;
+        idxY = 2;
+        idxR = 3;
+        idxG = 4;
+        idxB = 5;
+        
+        minX; maxX;
+        minY; maxY;
+        minR; maxR;
+        minG; maxG;
+        minB; maxB;
+        
         coeffCell;
         
         presetPCAParams;
@@ -22,6 +34,9 @@ classdef ApplicationDataPCAInterface < handle
         selectedColour = [1.0, 0, 0];
         mouseOverColour = [0, 0, 1.0];
         mouseOverSelectedColour = [1.0, 0.4, 0.75];
+        
+        normaliseHistogram = true;
+        histParams;
         
         colours;
         
@@ -408,14 +423,38 @@ alteredPresetFlattened = cell2mat(appData.presetStoreVaried(appData.idxCurrent,:
 mu = mean(cell2mat(appData.presetStoreVaried));
 alteredPresetFlattened = alteredPresetFlattened - mu;
 
-testScore = alteredPresetFlattened*appData.coeff(:,1:5);
+idxMax = max([appData.idxX, appData.idxY, appData.idxR, appData.idxG, appData.idxB]);
+testScore = alteredPresetFlattened*appData.coeff(:,1:idxMax);
 
-% Maybe should store the minimum and maximum value to avoid recalculation
-x = mapRange(testScore(1), min(appData.score(:,1)), max(appData.score(:,1)), 0.05, 0.95);
-y = mapRange(testScore(2), min(appData.score(:,2)), max(appData.score(:,2)), 0.05, 0.95);
-R = bound(mapRange(testScore(3), min(appData.score(:,3)), max(appData.score(:,3)), 0.1, 1), 0, 1);
-G = bound(mapRange(testScore(4), min(appData.score(:,4)), max(appData.score(:,4)), 0.1, 1), 0, 1);
-B = bound(mapRange(testScore(5), min(appData.score(:,5)), max(appData.score(:,5)), 0.1, 1), 0, 1);
+idxX = appData.idxX; 
+idxY = appData.idxY; 
+idxR = appData.idxR;
+idxG = appData.idxG;
+idxB = appData.idxB;
+
+if appData.normaliseHistogram == true
+    % Need to apply the same historam normalisation to the new positition
+    testScore(idxX) = newPointHistogramNormalisation(...
+        testScore(idxX),appData.histParams.nX, appData.histParams.edgesX);
+    
+    testScore(idxY) = newPointHistogramNormalisation(...
+        testScore(idxY),appData.histParams.nY, appData.histParams.edgesY);
+    
+    testScore(idxR) = newPointHistogramNormalisation(...
+        testScore(idxR),appData.histParams.nR, appData.histParams.edgesR);
+    
+    testScore(idxG) = newPointHistogramNormalisation(...
+        testScore(idxG),appData.histParams.nG, appData.histParams.edgesG);
+    
+    testScore(idxB) = newPointHistogramNormalisation(...
+        testScore(idxB),appData.histParams.nB, appData.histParams.edgesB);
+end
+    % Maybe should store the minimum and maximum value to avoid recalculation
+    x = mapRange(testScore(idxX), appData.minX, appData.maxX, 0.05, 0.95);
+    y = mapRange(testScore(idxY), appData.minY, appData.maxY, 0.05, 0.95);
+    R = bound(mapRange(testScore(idxR), appData.minR, appData.maxR, 0.1, 1), 0, 1);
+    G = bound(mapRange(testScore(idxG), appData.minG, appData.maxG, 0.1, 1), 0, 1);
+    B = bound(mapRange(testScore(idxB), appData.minB, appData.maxB, 0.1, 1), 0, 1);
 
 if isempty(appData.variedPresetMarkers{appData.idxCurrent})
     appData.variedPresetLines{appData.idxCurrent} = plot(...
@@ -432,8 +471,8 @@ else
     appData.variedPresetMarkers{appData.idxCurrent}.YData = y;
     appData.variedPresetMarkers{appData.idxCurrent}.MarkerFaceColor = [R,G,B];
     
-    appData.variedPresetLines{appData.idxCurrent}.XData(2) = x;
-    appData.variedPresetLines{appData.idxCurrent}.YData(2) = y;
+    appData.variedPresetLines{appData.idxCurrent}.XData(1) = x;
+    appData.variedPresetLines{appData.idxCurrent}.YData(1) = y;
 end
 end
 
@@ -524,16 +563,59 @@ appData.latent = latent;
 
 %appData.coeffCell = createCoeffCell(appData.coeff);
 
-x = score(:,1:2);
+x = score(:,[appData.idxX, appData.idxY]);
+
+if appData.normaliseHistogram == true
+    [xNorm, nX, edgesX] = histogramNormalisation(x(:,1));
+    [yNorm, nY, edgesY] = histogramNormalisation(x(:,2));
+    
+    appData.histParams.nX = nX;
+    appData.histParams.nY = nY;
+    appData.histParams.edgesX = edgesX;
+    appData.histParams.edgesY = edgesY;
+    
+    x = [xNorm, yNorm];
+end
+
+appData.minX = min(x(:,1));
+appData.maxX = max(x(:,1));
+appData.minY = min(x(:,2));
+appData.maxY = max(x(:,2));
+
 x(:,1) = mapVectorRange(x(:,1), 0.05,0.95);
 x(:,2) = mapVectorRange(x(:,2), 0.05,0.95);
 
 appData.presetPositions = x;
 
 % Colours
-R = mapVectorRange(score(:,3), 0.1,1);
-G = mapVectorRange(score(:,4), 0.1,1);
-B = mapVectorRange(score(:,5), 0.1,1);
+R = score(:,appData.idxR);
+G = score(:,appData.idxG);
+B = score(:,appData.idxB);
+
+if appData.normaliseHistogram == true
+    [R, nR, edgesR] = histogramNormalisation(R);
+    [G, nG, edgesG] = histogramNormalisation(G);
+    [B, nB, edgesB] = histogramNormalisation(B);
+    
+    appData.histParams.nR = nR;
+    appData.histParams.nG = nG;
+    appData.histParams.nB = nB;
+    appData.histParams.edgesR = edgesR;
+    appData.histParams.edgesG = edgesG;
+    appData.histParams.edgesB = edgesB;
+end
+
+appData.minR = min(R);
+appData.maxR = max(R);
+appData.minG = min(G);
+appData.maxG = max(G);
+appData.minB = min(B);
+appData.maxB = max(B);
+
+R = mapVectorRange(R, 0.1,1);
+G = mapVectorRange(G, 0.1,1);
+B = mapVectorRange(B, 0.1,1);
+
 appData.colours = num2cell([R,G,B],2);
 
 % Perform PCA on presets - timbre parameters
@@ -545,6 +627,43 @@ appData.colours = num2cell([R,G,B],2);
 coeffCombined = [timbreCoeff(:,1:4), zeros(size(timbreCoeff(:,1:4)));...
                  zeros(size(timeCoeff(:,1:4))), timeCoeff(:,1:4), ];
 appData.coeffCell = createCoeffCell(coeffCombined);
+end
+
+function [xOut, n, edges] = histogramNormalisation(xIn, numBins)
+
+if nargin == 1
+    numBins =6;
+end
+
+[n, edges] = histcounts(xIn, numBins);
+
+xNorm = xIn;
+
+nSumX = 0;
+
+for i = 1:numBins
+    xNorm(xIn >= edges(i) & xIn < edges(i+1)) = ...
+    	mapRange(xIn(xIn >= edges(i) & xIn < edges(i+1)),...
+        edges(i), edges(i+1), nSumX, nSumX + n(i));
+    
+    nSumX = nSumX + n(i);
+end
+
+xOut = xNorm;
+end
+
+function [score] = newPointHistogramNormalisation(scoreIn, n, edges)
+    lowerEdgeIdx = find(edges < scoreIn, 1, 'last' );
+    
+    if lowerEdgeIdx == 0
+        lowerSum = 0;
+    else
+        lowerSum = sum(n(1:lowerEdgeIdx-1));
+    end
+    
+    score = mapRange(scoreIn,...
+                    edges(lowerEdgeIdx), edges(lowerEdgeIdx + 1),...
+                    lowerSum, lowerSum + n(lowerEdgeIdx));
 end
 %----------------------------------------------------------%
 %----------------------UI Objects--------------------------%
