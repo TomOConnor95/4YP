@@ -395,11 +395,11 @@ else
         if isequal(appData.presetCategories{i}.*appData.categoriesSelected, [0,0,0,0,0,0])
             appData.patches{i}.FaceColor = appData.colours{i}/2;
         else
-        combinedColour = (appData.presetCategories{i}.*appData.categoriesSelected)*...
-            cell2mat(categoryColours')/length(nonzeros(appData.categoriesSelected));
+        combinedColour = sqrt((appData.presetCategories{i}.*appData.categoriesSelected)*...
+            (cell2mat(categoryColours')).^2/length(nonzeros(appData.categoriesSelected)));
         combinedColour(combinedColour > 0) = mapRange(combinedColour(combinedColour > 0), 0,1,0.7,1);
-        appData.patches{i}.FaceColor = combinedColour.*([0.6, 0.6, 0.6]...
-                + 0.4*[appData.colours{i}(1), appData.colours{i}(2), appData.colours{i}(3)]);
+        appData.patches{i}.FaceColor = combinedColour.*([0.7, 0.7, 0.7]...
+                + 0.3*[appData.colours{i}(1), appData.colours{i}(2), appData.colours{i}(3)]);
 
         end
     end
@@ -749,6 +749,7 @@ function [score] = newPointHistogramNormalisation(scoreIn, n, edges)
         lowerSum = sum(n(1:lowerEdgeIdx-1));
     end
     
+    % Some kind of bug here when moving the macross
     score = mapRange(scoreIn,...
                     edges(lowerEdgeIdx), edges(lowerEdgeIdx + 1),...
                     lowerSum, lowerSum + n(lowerEdgeIdx));
