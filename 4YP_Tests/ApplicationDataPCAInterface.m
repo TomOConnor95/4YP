@@ -39,6 +39,7 @@ classdef ApplicationDataPCAInterface < handle
         
         normaliseHistogram = true;
         histParams;
+        histBlend = 0.9;
         
         colours;
         
@@ -523,19 +524,19 @@ idxB = appData.idxB;
 if appData.normaliseHistogram == true
     % Need to apply the same historam normalisation to the new positition
     testScore(idxX) = newPointHistogramNormalisation(...
-        testScore(idxX),appData.histParams.nX, appData.histParams.edgesX);
+        testScore(idxX),appData.histParams.nX, appData.histParams.edgesX, appData.histBlend);
     
     testScore(idxY) = newPointHistogramNormalisation(...
-        testScore(idxY),appData.histParams.nY, appData.histParams.edgesY);
+        testScore(idxY),appData.histParams.nY, appData.histParams.edgesY, appData.histBlend);
     
     testScore(idxR) = newPointHistogramNormalisation(...
-        testScore(idxR),appData.histParams.nR, appData.histParams.edgesR);
+        testScore(idxR),appData.histParams.nR, appData.histParams.edgesR, appData.histBlend);
     
     testScore(idxG) = newPointHistogramNormalisation(...
-        testScore(idxG),appData.histParams.nG, appData.histParams.edgesG);
+        testScore(idxG),appData.histParams.nG, appData.histParams.edgesG, appData.histBlend);
     
     testScore(idxB) = newPointHistogramNormalisation(...
-        testScore(idxB),appData.histParams.nB, appData.histParams.edgesB);
+        testScore(idxB),appData.histParams.nB, appData.histParams.edgesB, appData.histBlend);
 end
     % Maybe should store the minimum and maximum value to avoid recalculation
     x = mapRange(testScore(idxX), appData.minX, appData.maxX, 0.05, 0.95);
@@ -654,8 +655,8 @@ appData.latent = latent;
 x = score(:,[appData.idxX, appData.idxY]);
 
 if appData.normaliseHistogram == true
-    [xNorm, nX, edgesX] = histogramNormalisation(x(:,1));
-    [yNorm, nY, edgesY] = histogramNormalisation(x(:,2));
+    [xNorm, nX, edgesX] = histogramNormalisation(x(:,1), appData.histBlend);
+    [yNorm, nY, edgesY] = histogramNormalisation(x(:,2), appData.histBlend);
     
     appData.histParams.nX = nX;
     appData.histParams.nY = nY;
@@ -681,9 +682,9 @@ G = score(:,appData.idxG);
 B = score(:,appData.idxB);
 
 if appData.normaliseHistogram == true
-    [R, nR, edgesR] = histogramNormalisation(R);
-    [G, nG, edgesG] = histogramNormalisation(G);
-    [B, nB, edgesB] = histogramNormalisation(B);
+    [R, nR, edgesR] = histogramNormalisation(R, appData.histBlend);
+    [G, nG, edgesG] = histogramNormalisation(G, appData.histBlend);
+    [B, nB, edgesB] = histogramNormalisation(B, appData.histBlend);
     
     appData.histParams.nR = nR;
     appData.histParams.nG = nG;
@@ -717,9 +718,9 @@ coeffCombined = [timbreCoeff(:,1:4), zeros(size(timbreCoeff(:,1:4)));...
 appData.coeffCell = createCoeffCell(coeffCombined);
 end
 
-function [xOut, n, edges] = histogramNormalisation(xIn, numBins)
+function [xOut, n, edges] = histogramNormalisation(xIn, histBlend, numBins)
 
-if nargin == 1
+if nargin == 2
     numBins =6;
 end
 
@@ -737,28 +738,35 @@ for i = 1:numBins
     nSumX = nSumX + n(i);
 end
 
-xOut = xNorm;
+%xOut = xNorm;
+xOut = histBlend*xNorm + (1-histBlend)*xIn;
+
 end
 
-function [score] = newPointHistogramNormalisation(scoreIn, n, edges)
+function [score] = newPointHistogramNormalisation(scoreIn, n, edges, histBlend)
     lowerEdgeIdx = find(edges < scoreIn, 1, 'last' );
     
-    if lowerEdgeIdx == 0
+    if isempty(lowerEdgeIdx)
+        score = 0;
+    else
+        if lowerEdgeIdx == 0
         lowerSum = 0;
-    else
-        lowerSum = sum(n(1:lowerEdgeIdx-1));
-    end
-    
-    if lowerEdgeIdx == length(edges)
-        disp('Out of range')
+        else
+            lowerSum = sum(n(1:lowerEdgeIdx-1));
+        end
+
+        if lowerEdgeIdx == length(edges)
+            %disp('Out of range')
+            score = mapRange(scoreIn,...
+                        edges(lowerEdgeIdx), edges(lowerEdgeIdx)*1.1,...
+                        lowerSum, lowerSum*1.1);
+        else
         score = mapRange(scoreIn,...
-                    edges(lowerEdgeIdx), edges(lowerEdgeIdx)*1.1,...
-                    lowerSum, lowerSum*1.1);
-    else
-    score = mapRange(scoreIn,...
-                    edges(lowerEdgeIdx), edges(lowerEdgeIdx + 1),...
-                    lowerSum, lowerSum + n(lowerEdgeIdx));
+                        edges(lowerEdgeIdx), edges(lowerEdgeIdx + 1),...
+                        lowerSum, lowerSum + n(lowerEdgeIdx));
+        end
     end
+    score = histBlend*score + (1-histBlend)*scoreIn;
 end
 %----------------------------------------------------------%
 %----------------------UI Objects--------------------------%
