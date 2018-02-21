@@ -393,7 +393,7 @@ if isequal(appData.categoriesSelected, [0,0,0,0,0,0])
 else
     for i = 1:length(appData.presetCategories)
         if isequal(appData.presetCategories{i}.*appData.categoriesSelected, [0,0,0,0,0,0])
-            appData.patches{i}.FaceColor = appData.colours{i}/2;
+            appData.patches{i}.FaceColor = appData.colours{i}/3;
         else
         combinedColour = sqrt((appData.presetCategories{i}.*appData.categoriesSelected)*...
             (cell2mat(categoryColours')).^2/length(nonzeros(appData.categoriesSelected)));
@@ -749,10 +749,16 @@ function [score] = newPointHistogramNormalisation(scoreIn, n, edges)
         lowerSum = sum(n(1:lowerEdgeIdx-1));
     end
     
-    % Some kind of bug here when moving the macross
+    if lowerEdgeIdx == length(edges)
+        disp('Out of range')
+        score = mapRange(scoreIn,...
+                    edges(lowerEdgeIdx), edges(lowerEdgeIdx)*1.1,...
+                    lowerSum, lowerSum*1.1);
+    else
     score = mapRange(scoreIn,...
                     edges(lowerEdgeIdx), edges(lowerEdgeIdx + 1),...
                     lowerSum, lowerSum + n(lowerEdgeIdx));
+    end
 end
 %----------------------------------------------------------%
 %----------------------UI Objects--------------------------%
