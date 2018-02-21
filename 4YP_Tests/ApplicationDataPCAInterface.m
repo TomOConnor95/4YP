@@ -65,6 +65,8 @@ classdef ApplicationDataPCAInterface < handle
         popup;
         
         blendModeButton;
+        macroTypeButton;
+        macroType = 'TimbreTime';
         
         categoriesPanel;
         pianoKeysButton;
@@ -136,8 +138,7 @@ classdef ApplicationDataPCAInterface < handle
             % Create voronoi diagram from global PCA preset locations
             createPresetVoronoi(obj);
             
-            % Add number to display the selected Preset
-            % Create pop-up menu
+            % Add pop-up menu to display the selected Preset
             createPopup(obj);
             
             % Sliders - To adjust the principal components of presets
@@ -146,18 +147,20 @@ classdef ApplicationDataPCAInterface < handle
             % NumberDisplays
             createNumDisplays(obj);
             
+            % Blend Mode Button
+            createBlendModeButton(obj);
+            
+            % Macro Type Button
+            createMacroTypeButton(obj);
+            
+            % Category Buttons
+            createCategoryButtons(obj);
+            
             % Time plots
             createTimePlots(obj);
             
             % Timbre plots
             createTimbrePlots(obj);
-            
-            % Blend Mode Button
-            createBlendModeButton(obj);
-            
-            % Category Buttons
-            createCategoryButtons(obj);
-            
             %----------------------------------------------------------%
             %----------------------Miscellaneous-----------------------%
             %----------------------------------------------------------%
@@ -340,6 +343,23 @@ appData.blendingAppData.phPanel.Visible = 'off';
 appData.blendingAppData.pauseButton.String = 'Begin Searching';
 appData.blendingAppData.pauseButton.BackgroundColor = appData.blendingAppData.pauseColour;
 end
+
+function macroTypeButtonCallback (object, eventdata, appData)
+disp('Macro Type Button Clicked');
+
+if strcmp(appData.macroType, 'TimbreTime') == true
+    appData.macroType = 'Global';
+    appData.leftSlidersPanel.Visible = 'off';
+    appData.rightSlidersPanel.Visible = 'off';
+elseif strcmp(appData.macroType, 'Global') == true
+    appData.macroType = 'TimbreTime';
+    appData.leftSlidersPanel.Visible = 'on';
+    appData.rightSlidersPanel.Visible = 'on';
+else
+    disp('Invalid MacroType Selected')
+end
+end
+
 
 function categoryButtonCallback (object, eventdata, idx, appData)
 
@@ -806,10 +826,10 @@ set(gcf, 'WindowButtonMotionFcn', {@mouseMoving, appData});
 end
 
 function createSliders(appData)
-appData.leftSlidersPanel = uipanel('Title', 'Timbre PCA 1-4',...
+appData.leftSlidersPanel = uipanel('Title', 'Timbre PCA Macros 1-4',...
                                 'TitlePosition','righttop',...
                                 'Position',[0.2, 0, 0.39, 0.2]);
-appData.rightSlidersPanel = uipanel('Title', 'Time PCA 1-4',...
+appData.rightSlidersPanel = uipanel('Title', 'Time PCA Macros 1-4',...
                                 'TitlePosition','lefttop',...
                                 'Position',[0.6, 0, 0.39, 0.2]);
 
@@ -820,7 +840,7 @@ appData.leftSliders{i} = uicontrol(appData.leftSlidersPanel,...
     'style', 'slider',...
     'string', 'Slider1',...
     'units', 'normalized',...
-    'position', [0 (0.76 -0.25*(i-1)) 0.7 0.25],...
+    'position', [0.02 (0.76 -0.25*(i-1)) 0.7 0.25],...
     'callback', {@leftSliderCallback, i, appData},...
     'visible', 'on',...
     'FontSize', 13,...
@@ -832,7 +852,7 @@ appData.rightSliders{i} = uicontrol(appData.rightSlidersPanel,...
     'style', 'slider',...
     'string', 'Slider1',...
     'units', 'normalized',...
-    'position', [0.27 (0.75 -0.25*(i-1)) 0.7 0.25],...
+    'position', [0.29 (0.75 -0.25*(i-1)) 0.7 0.25],...
     'callback', {@rightSliderCallback, i, appData},...
     'visible', 'on',...
     'FontSize', 13,...
@@ -840,19 +860,6 @@ appData.rightSliders{i} = uicontrol(appData.rightSlidersPanel,...
     'max', 5);
 end
 
-end
-
-function createPopup(appData)
-popupString = cell(1,length(appData.presetStore(:,1)));
-for i = 1:length(popupString)
-   popupString{i} = num2str(i);    
-end
-
-appData.popup = uicontrol('Style', 'popup',...
-           'String', popupString,...
-           'units', 'normalized',...
-           'Position', [0,0.12, 0.12, 0.05],...
-           'Callback', {@numPopupCallback, appData});
 end
 
 function createNumDisplays(appData)
@@ -883,11 +890,35 @@ function createBlendModeButton(appData)
 appData.blendModeButton = uicontrol('style', 'pushbutton',...
     'string', 'Blend Mode',...
     'units', 'normalized',...
-    'position', [0.0 0.0 0.14 0.08],...
+    'position', [0.0 0.12 0.14 0.08],...
     'callback', {@blendModeButtonCallback, appData},...
     'visible', 'on',...
     'FontSize', 13,...
     'Enable', 'off');
+
+end
+
+function createPopup(appData)
+popupString = cell(1,length(appData.presetStore(:,1)));
+for i = 1:length(popupString)
+   popupString{i} = num2str(i);    
+end
+
+appData.popup = uicontrol('Style', 'popup',...
+           'String', popupString,...
+           'units', 'normalized',...
+           'Position', [0,0.07, 0.14, 0.05],...
+           'Callback', {@numPopupCallback, appData});
+end
+
+function createMacroTypeButton(appData)
+appData.macroTypeButton = uicontrol('style', 'pushbutton',...
+    'string', 'Macro Type',...
+    'units', 'normalized',...
+    'position', [0.0 0.0 0.14 0.08],...
+    'callback', {@macroTypeButtonCallback, appData},...
+    'visible', 'on',...
+    'FontSize', 13);
 
 end
 
