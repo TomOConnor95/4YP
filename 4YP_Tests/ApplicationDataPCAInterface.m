@@ -54,9 +54,15 @@ classdef ApplicationDataPCAInterface < handle
         rightSlidersPanel;
         leftSliders;
         rightSliders;
-        
         leftNumDisplays;
         rightNumDisplays;
+        
+        leftGlobalSlidersPanel;
+        rightGlobalSlidersPanel;
+        leftGlobalSliders;
+        rightGlobalSliders;
+        leftGlobalNumDisplays;
+        rightGlobalNumDisplays;
         
         timeColour = [0.94, 0.6, 0.6];
         timbreColour = [0.94, 0.94, 0.6];
@@ -146,6 +152,12 @@ classdef ApplicationDataPCAInterface < handle
             
             % NumberDisplays
             createNumDisplays(obj);
+            
+            % Sliders - for Global PCA
+            createGlobalSliders(obj);
+            
+            % NumberDisplays - for Global PCA
+            createGlobalNumDisplays(obj);
             
             % Blend Mode Button
             createBlendModeButton(obj);
@@ -269,6 +281,39 @@ dispstat(sprintf(preset2string(appData.presetStoreVaried(appData.idxCurrent, :),
                                 appData.nameStrings)));
 end
 
+function leftGlobalSliderCallback (object, eventdata, idx, appData)
+appData.leftGlobalNumDisplays{idx}.String = num2str(appData.leftGlobalSliders{idx}.Value);
+
+% storeLeftSliderPosition(appData)
+
+% updatePCAWeightsAndSendParams(appData)
+% 
+% updatePresetVariedMarker(appData)
+% 
+% % Update Timbre Plots
+% appData.timbreData = timbrePlotDataFromPreset(appData.presetStoreVaried(appData.idxCurrent,:));
+% appData.timbrePlots = updateTimbrePlots(appData.timbrePlots, appData.timbreData); 
+% 
+% dispstat(sprintf(preset2string(appData.presetStoreVaried(appData.idxCurrent, :),...
+%                                 appData.nameStrings)));
+end
+function rightGlobalSliderCallback (object, eventdata, idx, appData)
+appData.rightGlobalNumDisplays{idx}.String = num2str(appData.rightGlobalSliders{idx}.Value);
+
+% storeRightSliderPosition(appData)
+% 
+% updatePCAWeightsAndSendParams(appData)
+% 
+% updatePresetVariedMarker(appData)
+% 
+% % Update Time Plots
+% appData.timeData = timePlotDataFromPreset(appData.presetStoreVaried(appData.idxCurrent,:));
+% appData.timePlots = updateTimePlots(appData.timePlots, appData.timeData); 
+% 
+% dispstat(sprintf(preset2string(appData.presetStoreVaried(appData.idxCurrent, :),...
+%                                 appData.nameStrings)));
+end
+
 function leftTextCallback (object, eventdata, idx, appData)
 % Works with Right click
 appData.leftNumDisplays{idx}.String = num2str(0);
@@ -305,6 +350,44 @@ appData.timePlots = updateTimePlots(appData.timePlots, appData.timeData);
 dispstat(sprintf(preset2string(appData.presetStoreVaried(appData.idxCurrent, :),...
                                 appData.nameStrings)));
 end
+
+function leftGlobalTextCallback (object, eventdata, idx, appData)
+% Works with Right click
+appData.leftGlobalNumDisplays{idx}.String = num2str(0);
+appData.leftGlobalSliders{idx}.Value = 0;
+
+% storeLeftSliderPosition(appData)
+% 
+% updatePCAWeightsAndSendParams(appData)
+% 
+% updatePresetVariedMarker(appData)
+% 
+% % Update Timbre Plots
+% appData.timbreData = timbrePlotDataFromPreset(appData.presetStoreVaried(appData.idxCurrent,:));
+% appData.timbrePlots = updateTimbrePlots(appData.timbrePlots, appData.timbreData); 
+% 
+% dispstat(sprintf(preset2string(appData.presetStoreVaried(appData.idxCurrent, :),...
+%                                 appData.nameStrings)));
+end
+function rightGlobalTextCallback (object, eventdata, idx, appData)
+% Works with Right click
+appData.rightGlobalNumDisplays{idx}.String = num2str(0);
+appData.rightGlobalSliders{idx}.Value = 0;
+
+% storeRightSliderPosition(appData)
+% 
+% updatePCAWeightsAndSendParams(appData)
+% 
+% updatePresetVariedMarker(appData)
+% 
+% % Update Time Plots
+% appData.timeData = timePlotDataFromPreset(appData.presetStoreVaried(appData.idxCurrent,:));
+% appData.timePlots = updateTimePlots(appData.timePlots, appData.timeData); 
+% 
+% dispstat(sprintf(preset2string(appData.presetStoreVaried(appData.idxCurrent, :),...
+%                                 appData.nameStrings)));
+end
+
 
 function blendModeButtonCallback (object, eventdata, appData)
 disp('Blend Mode Button Clicked');
@@ -351,10 +434,17 @@ if strcmp(appData.macroType, 'TimbreTime') == true
     appData.macroType = 'Global';
     appData.leftSlidersPanel.Visible = 'off';
     appData.rightSlidersPanel.Visible = 'off';
+    
+    appData.leftGlobalSlidersPanel.Visible = 'on';
+    appData.rightGlobalSlidersPanel.Visible = 'on';
 elseif strcmp(appData.macroType, 'Global') == true
     appData.macroType = 'TimbreTime';
     appData.leftSlidersPanel.Visible = 'on';
     appData.rightSlidersPanel.Visible = 'on';
+    
+    appData.leftGlobalSlidersPanel.Visible = 'off';
+    appData.rightGlobalSlidersPanel.Visible = 'off';
+    
 else
     disp('Invalid MacroType Selected')
 end
@@ -862,6 +952,45 @@ end
 
 end
 
+function createGlobalSliders(appData)
+appData.leftGlobalSlidersPanel = uipanel('Title', 'Global PCA Macros 1-4',...
+                                'TitlePosition','righttop',...
+                                'Position',[0.2, 0, 0.39, 0.2],...
+                                'Visible', 'off');
+appData.rightGlobalSlidersPanel = uipanel('Title', 'Global PCA Macros 5-8',...
+                                'TitlePosition','lefttop',...
+                                'Position',[0.6, 0, 0.39, 0.2],...
+                                'Visible', 'off');
+
+appData.leftGlobalSliders = cell(1,4);
+appData.rightGlobalSliders = cell(1,4);
+for i = 1:length(appData.leftGlobalSliders)
+appData.leftGlobalSliders{i} = uicontrol(appData.leftGlobalSlidersPanel,...
+    'style', 'slider',...
+    'string', 'Slider1',...
+    'units', 'normalized',...
+    'position', [0.02 (0.76 -0.25*(i-1)) 0.7 0.25],...
+    'callback', {@leftGlobalSliderCallback, i, appData},...
+    'visible', 'on',...
+    'FontSize', 13,...
+    'min', -5,...
+    'max', 5);
+end
+for i = 1:length(appData.rightGlobalSliders)
+appData.rightGlobalSliders{i} = uicontrol(appData.rightGlobalSlidersPanel,...
+    'style', 'slider',...
+    'string', 'Slider1',...
+    'units', 'normalized',...
+    'position', [0.29 (0.75 -0.25*(i-1)) 0.7 0.25],...
+    'callback', {@rightGlobalSliderCallback, i, appData},...
+    'visible', 'on',...
+    'FontSize', 13,...
+    'min', -5,...
+    'max', 5);
+end
+
+end
+
 function createNumDisplays(appData)
 appData.leftNumDisplays = cell(1,4);
 appData.rightNumDisplays = cell(1,4);
@@ -882,6 +1011,30 @@ appData.rightNumDisplays{i} = uicontrol(appData.rightSlidersPanel,...
     'BackgroundColor', appData.timeColour,...
     'ButtonDownFcn', {@rightTextCallback, i, appData},...
     'String',num2str(appData.rightSliders{i}.Value),...
+    'Position',[0.0,(0.78 -0.25*(i-1)),0.25,0.26]);
+end
+end
+
+function createGlobalNumDisplays(appData)
+appData.leftGlobalNumDisplays = cell(1,4);
+appData.rightGlobalNumDisplays = cell(1,4);
+
+for i = 1:length(appData.leftGlobalSliders)
+appData.leftGlobalNumDisplays{i} = uicontrol(appData.leftGlobalSlidersPanel,...
+    'Style','text',...
+    'units', 'normalized',...
+    'BackgroundColor', appData.normalColour,...
+    'ButtonDownFcn', {@leftGlobalTextCallback, i, appData},...
+    'String',num2str(appData.leftGlobalSliders{i}.Value),...
+    'Position',[0.75,(0.78 -0.25*(i-1)),0.25,0.26]);
+end
+for i = 1:length(appData.rightGlobalSliders)
+appData.rightGlobalNumDisplays{i} = uicontrol(appData.rightGlobalSlidersPanel,...
+    'Style','text',...
+    'units', 'normalized',...
+    'BackgroundColor', appData.normalColour,...
+    'ButtonDownFcn', {@rightGlobalTextCallback, i, appData},...
+    'String',num2str(appData.rightGlobalSliders{i}.Value),...
     'Position',[0.0,(0.78 -0.25*(i-1)),0.25,0.26]);
 end
 end
