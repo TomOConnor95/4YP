@@ -29,6 +29,7 @@ classdef ApplicationDataPCAInterface < handle
         minB; maxB;
         
         coeffCell;
+        globalCoeffCell;
         
         presetPCAParams;
         
@@ -38,7 +39,7 @@ classdef ApplicationDataPCAInterface < handle
         mouseOverSelectedColour = [1.0, 0.4, 0.75];
         
         normaliseHistogram = true;
-        histBlend = 0.9;
+        histBlend = 1.0;
         histParams;
         
         colours;
@@ -124,7 +125,7 @@ classdef ApplicationDataPCAInterface < handle
             
             obj.presetStoreVaried = obj.presetStore;
             
-            obj.presetPCAParams = repmat({zeros(2,4)},1,length(obj.presetStore(:,1)));
+            obj.presetPCAParams = repmat({zeros(4,4)},1,length(obj.presetStore(:,1)));
             
             obj.variedPresetMarkers = cell(1,length(obj.presetStore(:,1)));
             obj.variedPresetLines = cell(1,length(obj.presetStore(:,1)));
@@ -284,34 +285,42 @@ end
 function leftGlobalSliderCallback (object, eventdata, idx, appData)
 appData.leftGlobalNumDisplays{idx}.String = num2str(appData.leftGlobalSliders{idx}.Value);
 
-% storeLeftSliderPosition(appData)
+storeLeftGlobalSliderPosition(appData)
 
-% updatePCAWeightsAndSendParams(appData)
-% 
-% updatePresetVariedMarker(appData)
-% 
-% % Update Timbre Plots
-% appData.timbreData = timbrePlotDataFromPreset(appData.presetStoreVaried(appData.idxCurrent,:));
-% appData.timbrePlots = updateTimbrePlots(appData.timbrePlots, appData.timbreData); 
-% 
-% dispstat(sprintf(preset2string(appData.presetStoreVaried(appData.idxCurrent, :),...
-%                                 appData.nameStrings)));
+updatePCAWeightsAndSendParams(appData)
+ 
+updatePresetVariedMarker(appData)
+ 
+% Update Timbre Plots
+appData.timbreData = timbrePlotDataFromPreset(appData.presetStoreVaried(appData.idxCurrent,:));
+appData.timbrePlots = updateTimbrePlots(appData.timbrePlots, appData.timbreData); 
+
+% Update Time Plots
+appData.timeData = timePlotDataFromPreset(appData.presetStoreVaried(appData.idxCurrent,:));
+appData.timePlots = updateTimePlots(appData.timePlots, appData.timeData); 
+
+dispstat(sprintf(preset2string(appData.presetStoreVaried(appData.idxCurrent, :),...
+                                appData.nameStrings)));
 end
 function rightGlobalSliderCallback (object, eventdata, idx, appData)
 appData.rightGlobalNumDisplays{idx}.String = num2str(appData.rightGlobalSliders{idx}.Value);
 
-% storeRightSliderPosition(appData)
-% 
-% updatePCAWeightsAndSendParams(appData)
-% 
-% updatePresetVariedMarker(appData)
-% 
-% % Update Time Plots
-% appData.timeData = timePlotDataFromPreset(appData.presetStoreVaried(appData.idxCurrent,:));
-% appData.timePlots = updateTimePlots(appData.timePlots, appData.timeData); 
-% 
-% dispstat(sprintf(preset2string(appData.presetStoreVaried(appData.idxCurrent, :),...
-%                                 appData.nameStrings)));
+storeRightGlobalSliderPosition(appData)
+
+updatePCAWeightsAndSendParams(appData)
+
+updatePresetVariedMarker(appData)
+
+% Update Timbre Plots
+appData.timbreData = timbrePlotDataFromPreset(appData.presetStoreVaried(appData.idxCurrent,:));
+appData.timbrePlots = updateTimbrePlots(appData.timbrePlots, appData.timbreData); 
+
+% Update Time Plots
+appData.timeData = timePlotDataFromPreset(appData.presetStoreVaried(appData.idxCurrent,:));
+appData.timePlots = updateTimePlots(appData.timePlots, appData.timeData); 
+
+dispstat(sprintf(preset2string(appData.presetStoreVaried(appData.idxCurrent, :),...
+                                appData.nameStrings)));
 end
 
 function leftTextCallback (object, eventdata, idx, appData)
@@ -356,36 +365,45 @@ function leftGlobalTextCallback (object, eventdata, idx, appData)
 appData.leftGlobalNumDisplays{idx}.String = num2str(0);
 appData.leftGlobalSliders{idx}.Value = 0;
 
-% storeLeftSliderPosition(appData)
-% 
-% updatePCAWeightsAndSendParams(appData)
-% 
-% updatePresetVariedMarker(appData)
-% 
-% % Update Timbre Plots
-% appData.timbreData = timbrePlotDataFromPreset(appData.presetStoreVaried(appData.idxCurrent,:));
-% appData.timbrePlots = updateTimbrePlots(appData.timbrePlots, appData.timbreData); 
-% 
-% dispstat(sprintf(preset2string(appData.presetStoreVaried(appData.idxCurrent, :),...
-%                                 appData.nameStrings)));
+storeLeftGlobalSliderPosition(appData)
+
+updatePCAWeightsAndSendParams(appData)
+
+updatePresetVariedMarker(appData)
+
+% Update Timbre Plots
+appData.timbreData = timbrePlotDataFromPreset(appData.presetStoreVaried(appData.idxCurrent,:));
+appData.timbrePlots = updateTimbrePlots(appData.timbrePlots, appData.timbreData); 
+
+% Update Time Plots
+appData.timeData = timePlotDataFromPreset(appData.presetStoreVaried(appData.idxCurrent,:));
+appData.timePlots = updateTimePlots(appData.timePlots, appData.timeData); 
+
+
+dispstat(sprintf(preset2string(appData.presetStoreVaried(appData.idxCurrent, :),...
+                                appData.nameStrings)));
 end
 function rightGlobalTextCallback (object, eventdata, idx, appData)
 % Works with Right click
 appData.rightGlobalNumDisplays{idx}.String = num2str(0);
 appData.rightGlobalSliders{idx}.Value = 0;
 
-% storeRightSliderPosition(appData)
-% 
-% updatePCAWeightsAndSendParams(appData)
-% 
-% updatePresetVariedMarker(appData)
-% 
-% % Update Time Plots
-% appData.timeData = timePlotDataFromPreset(appData.presetStoreVaried(appData.idxCurrent,:));
-% appData.timePlots = updateTimePlots(appData.timePlots, appData.timeData); 
-% 
-% dispstat(sprintf(preset2string(appData.presetStoreVaried(appData.idxCurrent, :),...
-%                                 appData.nameStrings)));
+storeRightGlobalSliderPosition(appData)
+
+updatePCAWeightsAndSendParams(appData)
+
+updatePresetVariedMarker(appData)
+
+% Update Timbre Plots
+appData.timbreData = timbrePlotDataFromPreset(appData.presetStoreVaried(appData.idxCurrent,:));
+appData.timbrePlots = updateTimbrePlots(appData.timbrePlots, appData.timbreData); 
+
+% Update Time Plots
+appData.timeData = timePlotDataFromPreset(appData.presetStoreVaried(appData.idxCurrent,:));
+appData.timePlots = updateTimePlots(appData.timePlots, appData.timeData); 
+
+dispstat(sprintf(preset2string(appData.presetStoreVaried(appData.idxCurrent, :),...
+                                appData.nameStrings)));
 end
 
 
@@ -591,13 +609,18 @@ end
 
 function updatePCAWeightsAndSendParams(appData)
           % Reshape is column elementwise so use the transpose!
-pcaWeights = reshape(appData.presetPCAParams{appData.idxCurrent}',...   
-            1, 2*length(appData.presetPCAParams{appData.idxCurrent}));
+pcaWeightsTT = reshape(appData.presetPCAParams{appData.idxCurrent}([1,2],:)',...   
+            1, 2*length(appData.presetPCAParams{appData.idxCurrent}([1,2],:)));
             
+pcaWeightsGlobal = reshape(appData.presetPCAParams{appData.idxCurrent}([3 4],:)',...   
+            1, 2*length(appData.presetPCAParams{appData.idxCurrent}([3 4],:)));
+            
+        
 % Alter Selected preset
 appData.presetStoreVaried(appData.idxCurrent,:) = adjustPresetWithPCA(...
-    appData.presetStore(appData.idxCurrent,:), appData.coeffCell,...
-    pcaWeights);
+    appData.presetStore(appData.idxCurrent,:),...
+    appData.coeffCell, pcaWeightsTT,...
+    appData.globalCoeffCell, pcaWeightsGlobal);
 
 sendAllStructParamsOverOSC(appData.presetStoreVaried(appData.idxCurrent,:),...
     appData.nameStrings, appData.typeStrings, appData.u);
@@ -620,6 +643,26 @@ appData.presetPCAParams{appData.idxCurrent}(2,:) = [...
                                 appData.rightSliders{2}.Value,...
                                 appData.rightSliders{3}.Value,...
                                 appData.rightSliders{4}.Value,...
+                                ];
+end
+
+function storeLeftGlobalSliderPosition(appData)
+% Store left slider position for the currently selected preset
+appData.presetPCAParams{appData.idxCurrent}(3,:) = [...
+                                appData.leftGlobalSliders{1}.Value,...
+                                appData.leftGlobalSliders{2}.Value,...
+                                appData.leftGlobalSliders{3}.Value,...
+                                appData.leftGlobalSliders{4}.Value,...
+                                ];
+end
+
+function storeRightGlobalSliderPosition(appData)
+% Store right slider position for the currently selected preset
+appData.presetPCAParams{appData.idxCurrent}(4,:) = [...
+                                appData.rightGlobalSliders{1}.Value,...
+                                appData.rightGlobalSliders{2}.Value,...
+                                appData.rightGlobalSliders{3}.Value,...
+                                appData.rightGlobalSliders{4}.Value,...
                                 ];
 end
 
@@ -736,7 +779,17 @@ function switchToPreset(idx, appData)
     appData.rightSliders{3}.Value = appData.presetPCAParams{idx}(2,3);
     appData.rightSliders{4}.Value = appData.presetPCAParams{idx}(2,4);
     
-    % Update NumDisplays top new preset
+    appData.leftGlobalSliders{1}.Value = appData.presetPCAParams{idx}(3,1);
+    appData.leftGlobalSliders{2}.Value = appData.presetPCAParams{idx}(3,2);
+    appData.leftGlobalSliders{3}.Value = appData.presetPCAParams{idx}(3,3);
+    appData.leftGlobalSliders{4}.Value = appData.presetPCAParams{idx}(3,4);
+    
+    appData.rightGlobalSliders{1}.Value = appData.presetPCAParams{idx}(4,1);
+    appData.rightGlobalSliders{2}.Value = appData.presetPCAParams{idx}(4,2);
+    appData.rightGlobalSliders{3}.Value = appData.presetPCAParams{idx}(4,3);
+    appData.rightGlobalSliders{4}.Value = appData.presetPCAParams{idx}(4,4);
+    
+    % Update NumDisplays to new preset
     appData.leftNumDisplays{1}.String = num2str(appData.presetPCAParams{idx}(1,1));
     appData.leftNumDisplays{2}.String = num2str(appData.presetPCAParams{idx}(1,2));
     appData.leftNumDisplays{3}.String = num2str(appData.presetPCAParams{idx}(1,3));
@@ -746,6 +799,16 @@ function switchToPreset(idx, appData)
     appData.rightNumDisplays{2}.String = num2str(appData.presetPCAParams{idx}(2,2));
     appData.rightNumDisplays{3}.String = num2str(appData.presetPCAParams{idx}(2,3));
     appData.rightNumDisplays{4}.String = num2str(appData.presetPCAParams{idx}(2,4));
+    
+    appData.leftGlobalNumDisplays{1}.String = num2str(appData.presetPCAParams{idx}(3,1));
+    appData.leftGlobalNumDisplays{2}.String = num2str(appData.presetPCAParams{idx}(3,2));
+    appData.leftGlobalNumDisplays{3}.String = num2str(appData.presetPCAParams{idx}(3,3));
+    appData.leftGlobalNumDisplays{4}.String = num2str(appData.presetPCAParams{idx}(3,4));
+    
+    appData.rightGlobalNumDisplays{1}.String = num2str(appData.presetPCAParams{idx}(4,1));
+    appData.rightGlobalNumDisplays{2}.String = num2str(appData.presetPCAParams{idx}(4,2));
+    appData.rightGlobalNumDisplays{3}.String = num2str(appData.presetPCAParams{idx}(4,3));
+    appData.rightGlobalNumDisplays{4}.String = num2str(appData.presetPCAParams{idx}(4,4));
     
     appData.idxCurrent = idx;
     %drawnow()
@@ -765,6 +828,8 @@ presetStoreFlattened = presetStoreFlattened - mu;
 appData.coeff = coeff;
 appData.score = score;
 appData.latent = latent;
+
+appData.globalCoeffCell = createCoeffCell(coeff);
 
 %appData.coeffCell = createCoeffCell(appData.coeff);
 
