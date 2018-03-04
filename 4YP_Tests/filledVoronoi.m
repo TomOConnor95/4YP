@@ -4,7 +4,11 @@ function patches = filledVoronoi(D,ax)
     [v,c]=voronoin(D);
         
     %This is needed to find all of the edges, 
+    if nargin ==2
     h = voronoi(ax, D(:,1), D(:,2));    %This plots the diagram, so be careful!
+    else
+    h = voronoi(D(:,1), D(:,2));  
+    end
     
     v1 = shiftdim(reshape([h(2).XData;h(2).YData],2,3,[]),2); % Arranged one edge per row, one vertex per slice in the third dimension
 

@@ -413,7 +413,6 @@ dispstat(sprintf(preset2string(appData.presetStoreVaried(appData.idxCurrent, :),
                                 appData.nameStrings)));
 end
 
-
 function blendModeButtonCallback (object, eventdata, appData)
 disp('Blend Mode Button Clicked');
 appData.idxSelected;
@@ -474,7 +473,6 @@ else
     disp('Invalid MacroType Selected')
 end
 end
-
 
 function categoryButtonCallback (object, eventdata, idx, appData)
 appData.categoriesSelected(idx) = 1 - appData.categoriesSelected(idx);
@@ -1419,6 +1417,3 @@ function initialiseMidiInput(appData)
         midicallback(appData.midiControls{i},functionHandle);
     end
 end
-
-
-
