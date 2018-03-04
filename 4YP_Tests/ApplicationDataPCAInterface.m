@@ -5,8 +5,10 @@ classdef ApplicationDataPCAInterface < handle
         presetStoreVaried;
         
         presetCategories;
+        categoryIndeces;
         
         presetPositions;
+        currentPresetPositions;
         
         nameStrings;
         typeStrings;
@@ -45,8 +47,11 @@ classdef ApplicationDataPCAInterface < handle
         colours;
         
         patches;
+        patchCorners;
+        presetCrosses;
         
         ax;     %Axes fot PCA plot
+        hiddenAxes;
         
         variedPresetMarkers;
         variedPresetLines;
@@ -75,6 +80,7 @@ classdef ApplicationDataPCAInterface < handle
         macroTypeButton;
         macroType = 'TimbreTime';
         
+        categoryDisplayType = 'Subset';%'Subset'
         categoriesPanel;
         pianoKeysButton;
         pluckedMalletButton;
@@ -130,7 +136,7 @@ classdef ApplicationDataPCAInterface < handle
             obj.variedPresetMarkers = cell(1,length(obj.presetStore(:,1)));
             obj.variedPresetLines = cell(1,length(obj.presetStore(:,1)));
             
-            obj.presetCategories = createPresetCategories();
+            [obj.presetCategories, obj.categoryIndeces] = createPresetCategories();
             %----------------------------------------------------------%
             %------------------PCA Calculations------------------------%
             %----------------------------------------------------------%
@@ -174,6 +180,7 @@ classdef ApplicationDataPCAInterface < handle
             
             % Timbre plots
             createTimbrePlots(obj);
+            
             %----------------------------------------------------------%
             %----------------------Miscellaneous-----------------------%
             %----------------------------------------------------------%
@@ -235,7 +242,7 @@ mousePos = MOUSE(1,1:2);
 if ~isempty(appData.idxSelected) && mousePosOutOfRange(mousePos)
     idx = appData.idxSelected(length(appData.idxSelected));
 else
-    closestPoint=bsxfun(@minus,appData.presetPositions,mousePos);
+    closestPoint=bsxfun(@minus,appData.currentPresetPositions,mousePos);
     [~,idx]=min(hypot(closestPoint(:,1),closestPoint(:,2)));
     %disp(['Index: ', num2str(idx)])
 end
@@ -470,9 +477,7 @@ end
 
 
 function categoryButtonCallback (object, eventdata, idx, appData)
-
 appData.categoriesSelected(idx) = 1 - appData.categoriesSelected(idx);
-
 normalButtonColour = [0.94, 0.94, 0.94];
 
 categoryColours = {[1,0,0], [0,1,0], [0,0,1], [1,1,0], [1,0,1], [0,1,1]};
@@ -520,25 +525,47 @@ switch idx
             appData.rhythmicButton.BackgroundColor = normalButtonColour;
         end
 end
+    
 
-if isequal(appData.categoriesSelected, [0,0,0,0,0,0])
-    for i = 1:length(appData.presetCategories)
-        appData.patches{i}.FaceColor = appData.colours{i};
-    end
-else
-    for i = 1:length(appData.presetCategories)
-        if isequal(appData.presetCategories{i}.*appData.categoriesSelected, [0,0,0,0,0,0])
-            appData.patches{i}.FaceColor = appData.colours{i}/3;
-        else
-        combinedColour = sqrt((appData.presetCategories{i}.*appData.categoriesSelected)*...
-            (cell2mat(categoryColours')).^2/length(nonzeros(appData.categoriesSelected)));
-        combinedColour(combinedColour > 0) = mapRange(combinedColour(combinedColour > 0), 0,1,0.7,1);
-        appData.patches{i}.FaceColor = combinedColour.*([0.7, 0.7, 0.7]...
-                + 0.3*[appData.colours{i}(1), appData.colours{i}(2), appData.colours{i}(3)]);
+if isequal(appData.categoryDisplayType,'Highlight')
 
+    if isequal(appData.categoriesSelected, [0,0,0,0,0,0])
+        for i = 1:length(appData.presetCategories)
+            appData.patches{i}.FaceColor = appData.colours{i};
+        end
+    else
+        for i = 1:length(appData.presetCategories)
+            if isequal(appData.presetCategories{i}.*appData.categoriesSelected, [0,0,0,0,0,0])
+                appData.patches{i}.FaceColor = appData.colours{i}/3;
+            else
+            combinedColour = sqrt((appData.presetCategories{i}.*appData.categoriesSelected)*...
+                (cell2mat(categoryColours')).^2/length(nonzeros(appData.categoriesSelected)));
+            combinedColour(combinedColour > 0) = mapRange(combinedColour(combinedColour > 0), 0,1,0.7,1);
+            appData.patches{i}.FaceColor = combinedColour.*([0.7, 0.7, 0.7]...
+                    + 0.3*[appData.colours{i}(1), appData.colours{i}(2), appData.colours{i}(3)]);
+
+            end
         end
     end
+elseif isequal(appData.categoryDisplayType,'Subset')
+    
+    if isequal(appData.categoriesSelected, [0,0,0,0,0,0])
+        categorySelectAll(appData);
+    else
+        
+    categoryIndeces = [];     
+    for i = nonzeros((1:6).*appData.categoriesSelected)'
+        if appData.categoriesSelected(i) == 1
+            categoryIndeces = union(categoryIndeces, appData.categoryIndeces{i});
+        end
+    end
+    categorySelect(appData, categoryIndeces)
+    end
+    
+else
+    error('Incorrect Category Setting')
 end
+
 end
 
 function midiCallback(midicontrolsObject, idx, appData)
@@ -856,6 +883,7 @@ x(:,1) = mapVectorRange(x(:,1), 0.05,0.95);
 x(:,2) = mapVectorRange(x(:,2), 0.05,0.95);
 
 appData.presetPositions = x;
+appData.currentPresetPositions = x;
 
 % Colours
 R = score(:,appData.idxR);
@@ -897,6 +925,93 @@ appData.colours = num2cell([R,G,B],2);
 coeffCombined = [timbreCoeff(:,1:4), zeros(size(timbreCoeff(:,1:4)));...
                  zeros(size(timeCoeff(:,1:4))), timeCoeff(:,1:4), ];
 appData.coeffCell = createCoeffCell(coeffCombined);
+end
+
+function positions = calculatePresetSubsetPCA(appData, subsetIndeces)
+
+%presetStoreFlattened = cell2mat(appData.presetStore(subsetIndeces,:));
+presetStoreFlattened = cell2mat(appData.presetStore);
+
+mu = mean(presetStoreFlattened);
+
+presetStoreFlattened = presetStoreFlattened - mu;
+
+[coeff, score, latent] = pca(presetStoreFlattened);
+% 
+% appData.coeff = coeff;
+% appData.score = score;
+% appData.latent = latent;
+% 
+% appData.globalCoeffCell = createCoeffCell(coeff);
+% 
+% %appData.coeffCell = createCoeffCell(appData.coeff);
+
+x = score(subsetIndeces,[appData.idxX, appData.idxY]);
+
+if appData.normaliseHistogram == true
+    [xNorm, nX, edgesX] = histogramNormalisation(x(:,1), appData.histBlend);
+    [yNorm, nY, edgesY] = histogramNormalisation(x(:,2), appData.histBlend);
+    
+%     appData.histParams.nX = nX;
+%     appData.histParams.nY = nY;
+%     appData.histParams.edgesX = edgesX;
+%     appData.histParams.edgesY = edgesY;
+%     
+    x = [xNorm, yNorm];
+end
+
+% appData.minX = min(x(:,1));
+% appData.maxX = max(x(:,1));
+% appData.minY = min(x(:,2));
+% appData.maxY = max(x(:,2));
+
+x(:,1) = mapVectorRange(x(:,1), 0.05,0.95);
+x(:,2) = mapVectorRange(x(:,2), 0.05,0.95);
+
+positions = x;
+
+% appData.presetPositions = x;
+% 
+% % Colours
+% R = score(:,appData.idxR);
+% G = score(:,appData.idxG);
+% B = score(:,appData.idxB);
+% 
+% if appData.normaliseHistogram == true
+%     [R, nR, edgesR] = histogramNormalisation(R, appData.histBlend);
+%     [G, nG, edgesG] = histogramNormalisation(G, appData.histBlend);
+%     [B, nB, edgesB] = histogramNormalisation(B, appData.histBlend);
+%     
+%     appData.histParams.nR = nR;
+%     appData.histParams.nG = nG;
+%     appData.histParams.nB = nB;
+%     appData.histParams.edgesR = edgesR;
+%     appData.histParams.edgesG = edgesG;
+%     appData.histParams.edgesB = edgesB;
+% end
+% 
+% appData.minR = min(R);
+% appData.maxR = max(R);
+% appData.minG = min(G);
+% appData.maxG = max(G);
+% appData.minB = min(B);
+% appData.maxB = max(B);
+% 
+% R = mapVectorRange(R, 0.1,1);
+% G = mapVectorRange(G, 0.1,1);
+% B = mapVectorRange(B, 0.1,1);
+% 
+% appData.colours = num2cell([R,G,B],2);
+% 
+% % Perform PCA on presets - timbre parameters
+% [timbreCoeff, timbreScore, timbreLatent] = pca(presetStoreFlattened(:,1:72));
+% 
+% % Perform PCA on presets - time parameters
+% [timeCoeff, timeScore, timeLatent] = pca(presetStoreFlattened(:,73:94));
+% 
+% coeffCombined = [timbreCoeff(:,1:4), zeros(size(timbreCoeff(:,1:4)));...
+%                  zeros(size(timeCoeff(:,1:4))), timeCoeff(:,1:4), ];
+% appData.coeffCell = createCoeffCell(coeffCombined);
 end
 
 function [xOut, n, edges] = histogramNormalisation(xIn, histBlend, numBins)
@@ -949,6 +1064,50 @@ function [score] = newPointHistogramNormalisation(scoreIn, n, edges, histBlend)
     end
     score = histBlend*score + (1-histBlend)*scoreIn;
 end
+
+function categorySelect(appData, categoryIndeces)
+    
+categoryPositions = calculatePresetSubsetPCA(appData, categoryIndeces);
+patchCorners = filledVoronoi(categoryPositions, appData.hiddenAxes);
+cla(appData.hiddenAxes);
+appData.currentPresetPositions = appData.presetPositions + 10;
+appData.currentPresetPositions(categoryIndeces,:) = categoryPositions;
+for i = 1:length(appData.patches)
+    
+    if isempty(categoryIndeces(categoryIndeces ==i))
+        %appData.patches{i}.FaceColor = [0,0,0];
+        appData.patches{i}.Vertices = appData.patches{i}.Vertices + 10;
+        appData.presetCrosses{i}.Visible = 'off';
+    else
+        %appData.patches{i}.FaceColor = [1,1,1];
+        appData.patches{i}.Vertices = patchCorners{find(categoryIndeces==i)};
+        appData.patches{i}.Faces = 1:length(patchCorners{find(categoryIndeces==i)});
+        
+%         appData.presetCrosses{i}.XData = categoryPositions(find(categoryIndeces==i),1);
+%         appData.presetCrosses{i}.YData = categoryPositions(find(categoryIndeces==i),2);
+        appData.presetCrosses{i}.Visible = 'on';
+    end
+    appData.presetCrosses{i}.XData = appData.currentPresetPositions(i,1);
+	appData.presetCrosses{i}.YData = appData.currentPresetPositions(i,2);
+end
+end
+
+function categorySelectAll(appData)
+    
+% categoryPositions = calculatePresetSubsetPCA(appData, categoryIndeces);
+% patchCorners = filledVoronoi(categoryPositions, appData.hiddenAxes);
+
+for i = 1:length(appData.patches)
+        appData.patches{i}.Vertices = appData.patchCorners{i};
+        appData.patches{i}.Faces = 1:length(appData.patchCorners{i});
+        
+        appData.presetCrosses{i}.XData = appData.presetPositions(i,1);
+        appData.presetCrosses{i}.YData = appData.presetPositions(i,2);
+        appData.presetCrosses{i}.Visible = 'on';
+end
+    
+appData.currentPresetPositions = appData.presetPositions;
+end
 %----------------------------------------------------------%
 %----------------------UI Objects--------------------------%
 %----------------------------------------------------------%
@@ -957,6 +1116,14 @@ function createPresetVoronoi(appData)
 figure(5), clf, 
 set(figure(5), 'MenuBar', 'none', 'ToolBar' ,'none')
 
+appData.hiddenAxes = axes('position',[0,0.2,1,0.7],...
+        'Units','Normalized',...
+        'XGrid','off',...
+        'XMinorGrid','off',...
+        'XTickLabel',[],...
+        'YTickLabel',[],...
+        'Visible', 'off');
+    
 appData.ax = axes('position',[0,0.2,1,0.7],...
         'Units','Normalized',...
         'XGrid','off',...
@@ -966,19 +1133,53 @@ appData.ax = axes('position',[0,0.2,1,0.7],...
         'Xlim', [0,1],...
         'Ylim', [0,1]);
 hold on
-appData.patches = filledVoronoi(appData.presetPositions, appData.colours, appData.ax);
 
-for i = 1:length(appData.presetStore(:,1))
+%patches = filledVoronoi(appData.presetPositions, appData.colours, appData.ax);
+patchCorners = filledVoronoi(appData.presetPositions, appData.hiddenAxes);
+appData.patchCorners = patchCorners;
+appData.presetCrosses = cell(1,length(patchCorners));
+for i = 1:length(patchCorners)
+    appData.patches{i} = patch(appData.ax, patchCorners{i}(:,1),patchCorners{i}(:,2),appData.colours{i});
     set(appData.patches{i}, 'ButtonDownFcn', {@patchClicked, i, appData})
-    set(appData.patches{i}, 'HitTest', 'On')  
+    set(appData.patches{i}, 'HitTest', 'On') 
+    
+    appData.presetCrosses{i} = plot(appData.ax, appData.presetPositions(i,1), appData.presetPositions(i,2),...
+    'b+', 'HitTest', 'off', 'PickableParts', 'none');
 end
-
-plot(appData.ax, appData.presetPositions(:,1), appData.presetPositions(:,2),...
-    'b+', 'HitTest', 'off', 'PickableParts', 'none')
 
 set(gcf, 'WindowButtonMotionFcn', {@mouseMoving, appData});
 %set(gca, 'Position', [0.1300 0.2100 0.7750 0.7150]);
 end
+
+% function createPresetCategoriesVoronoi(appData)
+% figure(5)
+% 
+% appData.axCategories = axes('position',[0,0.2,1,0.7],...
+%         'Units','Normalized',...
+%         'XGrid','off',...
+%         'XMinorGrid','off',...
+%         'XTickLabel',[],...
+%         'YTickLabel',[],...
+%         'Xlim', [0,1],...
+%         'Ylim', [0,1]);
+% hold on
+% 
+% %patches = filledVoronoi(appData.presetPositions, appData.colours, appData.ax);
+% 
+% positions = calculatePresetSubsetPCA(appData, [4, 6, 7, 8, 21, 28, 29]);
+% patchCorners = filledVoronoi(positions);
+% for i = 1:length(patchCorners)
+%     appData.patches{i} = patch(appData.ax, patchCorners{i}(:,1),patchCorners{i}(:,2),appData.colours{i});
+%     set(appData.patches{i}, 'ButtonDownFcn', {@patchClicked, i, appData})
+%     set(appData.patches{i}, 'HitTest', 'On')  
+% end
+% 
+% plot(appData.ax, appData.presetPositions(:,1), appData.presetPositions(:,2),...
+%     'b+', 'HitTest', 'off', 'PickableParts', 'none')
+% 
+% set(gcf, 'WindowButtonMotionFcn', {@mouseMoving, appData});
+% %set(gca, 'Position', [0.1300 0.2100 0.7750 0.7150]);
+% end
 
 function createSliders(appData)
 appData.leftSlidersPanel = uipanel('Title', 'Timbre PCA Macros 1-4',...

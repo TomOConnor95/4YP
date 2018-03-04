@@ -1,4 +1,4 @@
-function [presetCategories] = createPresetCategories()
+function [presetCategories, categoryIndeces] = createPresetCategories()
 
 % divide the presets into categories
 
@@ -28,4 +28,5 @@ function presetGroups = toggleGroupIndeces(presetGroups, index, group)
     end
 end
 
+categoryIndeces = {pianoKeys, pluckedMallet, bass, synthLead, synthPad, rhythmic};
 end
