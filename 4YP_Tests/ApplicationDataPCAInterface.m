@@ -80,7 +80,7 @@ classdef ApplicationDataPCAInterface < handle
         macroTypeButton;
         macroType = 'TimbreTime';
         
-        categoryDisplayType = 'Subset';%'Subset'
+        categoryDisplayType = 'Highlight';%'Subset'
         categoriesPanel;
         pianoKeysButton;
         pluckedMalletButton;
@@ -88,8 +88,11 @@ classdef ApplicationDataPCAInterface < handle
         synthLeadButton;
         synthPadButton;
         rhythmicButton;
+        displayModeButton;
         
         categoriesSelected = [0, 0, 0, 0, 0, 0];
+        categoryColours = {[1,0,0], [0,1,0], [0,0,1], [1,1,0], [1,0,1], [0,1,1]};
+
         
         idxCurrent = 1;
         idxSelected = [];
@@ -478,92 +481,117 @@ function categoryButtonCallback (object, eventdata, idx, appData)
 appData.categoriesSelected(idx) = 1 - appData.categoriesSelected(idx);
 normalButtonColour = [0.94, 0.94, 0.94];
 
-categoryColours = {[1,0,0], [0,1,0], [0,0,1], [1,1,0], [1,0,1], [0,1,1]};
+% appData.categoryColours = {[1,0,0], [0,1,0], [0,0,1], [1,1,0], [1,0,1], [0,1,1]};
 switch idx
     case 1
         disp('Piano/Keys button Pressed')
         if appData.categoriesSelected(idx) ==1
-            appData.pianoKeysButton.BackgroundColor = categoryColours{idx};
+            appData.pianoKeysButton.BackgroundColor = appData.categoryColours{idx};
         else
             appData.pianoKeysButton.BackgroundColor = normalButtonColour;
         end
     case 2
         disp('Plucked/Mallet button Pressed')
         if appData.categoriesSelected(idx) ==1
-            appData.pluckedMalletButton.BackgroundColor = categoryColours{idx};
+            appData.pluckedMalletButton.BackgroundColor = appData.categoryColours{idx};
         else
             appData.pluckedMalletButton.BackgroundColor = normalButtonColour;
         end
     case 3
         disp('Bass button Pressed')
         if appData.categoriesSelected(idx) ==1
-            appData.bassButton.BackgroundColor = categoryColours{idx};
+            appData.bassButton.BackgroundColor = appData.categoryColours{idx};
         else
             appData.bassButton.BackgroundColor = normalButtonColour;
         end
     case 4
         disp('Synth Lead button Pressed')
         if appData.categoriesSelected(idx) ==1
-            appData.synthLeadButton.BackgroundColor = categoryColours{idx};
+            appData.synthLeadButton.BackgroundColor = appData.categoryColours{idx};
         else
             appData.synthLeadButton.BackgroundColor = normalButtonColour;
         end
     case 5
         disp('Synth Pad button Pressed')
         if appData.categoriesSelected(idx) ==1
-            appData.synthPadButton.BackgroundColor = categoryColours{idx};
+            appData.synthPadButton.BackgroundColor = appData.categoryColours{idx};
         else
             appData.synthPadButton.BackgroundColor = normalButtonColour;
         end
     case 6
         disp('Rhythmic button Pressed')
         if appData.categoriesSelected(idx) ==1
-            appData.rhythmicButton.BackgroundColor = categoryColours{idx};
+            appData.rhythmicButton.BackgroundColor = appData.categoryColours{idx};
         else
             appData.rhythmicButton.BackgroundColor = normalButtonColour;
         end
 end
     
+updateCatgoryDisplays(appData);
 
-if isequal(appData.categoryDisplayType,'Highlight')
+% if isequal(appData.categoryDisplayType,'Highlight')
+% 
+%     if isequal(appData.categoriesSelected, [0,0,0,0,0,0])
+%         for i = 1:length(appData.presetCategories)
+%             appData.patches{i}.FaceColor = appData.colours{i};
+%         end
+%     else
+%         for i = 1:length(appData.presetCategories)
+%             if isequal(appData.presetCategories{i}.*appData.categoriesSelected, [0,0,0,0,0,0])
+%                 appData.patches{i}.FaceColor = appData.colours{i}/3;
+%             else
+%             combinedColour = sqrt((appData.presetCategories{i}.*appData.categoriesSelected)*...
+%                 (cell2mat(categoryColours')).^2/length(nonzeros(appData.categoriesSelected)));
+%             combinedColour(combinedColour > 0) = mapRange(combinedColour(combinedColour > 0), 0,1,0.7,1);
+%             appData.patches{i}.FaceColor = combinedColour.*([0.7, 0.7, 0.7]...
+%                     + 0.3*[appData.colours{i}(1), appData.colours{i}(2), appData.colours{i}(3)]);
+% 
+%             end
+%         end
+%     end
+% elseif isequal(appData.categoryDisplayType,'Subset')
+%     
+%     if isequal(appData.categoriesSelected, [0,0,0,0,0,0])
+%         categorySelectAll(appData);
+%     else
+%         
+%     categoryIndeces = [];     
+%     for i = nonzeros((1:6).*appData.categoriesSelected)'
+%         if appData.categoriesSelected(i) == 1
+%             categoryIndeces = union(categoryIndeces, appData.categoryIndeces{i});
+%         end
+%     end
+%     categorySelect(appData, categoryIndeces)
+%     end
+%     
+% else
+%     error('Incorrect Category Setting')
+% end
 
-    if isequal(appData.categoriesSelected, [0,0,0,0,0,0])
-        for i = 1:length(appData.presetCategories)
-            appData.patches{i}.FaceColor = appData.colours{i};
-        end
-    else
-        for i = 1:length(appData.presetCategories)
-            if isequal(appData.presetCategories{i}.*appData.categoriesSelected, [0,0,0,0,0,0])
-                appData.patches{i}.FaceColor = appData.colours{i}/3;
-            else
-            combinedColour = sqrt((appData.presetCategories{i}.*appData.categoriesSelected)*...
-                (cell2mat(categoryColours')).^2/length(nonzeros(appData.categoriesSelected)));
-            combinedColour(combinedColour > 0) = mapRange(combinedColour(combinedColour > 0), 0,1,0.7,1);
-            appData.patches{i}.FaceColor = combinedColour.*([0.7, 0.7, 0.7]...
-                    + 0.3*[appData.colours{i}(1), appData.colours{i}(2), appData.colours{i}(3)]);
-
-            end
-        end
-    end
-elseif isequal(appData.categoryDisplayType,'Subset')
-    
-    if isequal(appData.categoriesSelected, [0,0,0,0,0,0])
-        categorySelectAll(appData);
-    else
-        
-    categoryIndeces = [];     
-    for i = nonzeros((1:6).*appData.categoriesSelected)'
-        if appData.categoriesSelected(i) == 1
-            categoryIndeces = union(categoryIndeces, appData.categoryIndeces{i});
-        end
-    end
-    categorySelect(appData, categoryIndeces)
-    end
-    
-else
-    error('Incorrect Category Setting')
 end
 
+function displayModeButtonCallback (object, eventdata, appData)
+if isequal(appData.categoryDisplayType, 'Subset')
+    appData.categoryDisplayType = 'Highlight';
+    
+    appData.displayModeButton.BackgroundColor = [0.7,1,0.7];
+    
+    % Reset Category Subsetting
+    categorySelectAll(appData);
+    
+    updateCatgoryDisplays(appData);
+else
+    appData.categoryDisplayType = 'Subset';
+    
+    appData.displayModeButton.BackgroundColor = appData.normalColour;
+    
+    % Reset Highlighting
+    for i = 1:length(appData.presetCategories)
+            appData.patches{i}.FaceColor = appData.colours{i};
+    end
+    
+    updateCatgoryDisplays(appData);
+end
 end
 
 function midiCallback(midicontrolsObject, idx, appData)
@@ -731,8 +759,8 @@ end
 
 if isempty(appData.variedPresetMarkers{appData.idxCurrent})
     appData.variedPresetLines{appData.idxCurrent} = plot(...
-        [x, appData.presetPositions(appData.idxCurrent, 1)],...
-        [y, appData.presetPositions(appData.idxCurrent, 2)],...
+        [x, appData.currentPresetPositions(appData.idxCurrent, 1)],...
+        [y, appData.currentPresetPositions(appData.idxCurrent, 2)],...
         'Color', [0,0,0], 'LineWidth', 1.5);
     
     appData.variedPresetMarkers{appData.idxCurrent} =  plot(x, y, 'o',...
@@ -1088,6 +1116,28 @@ for i = 1:length(appData.patches)
     appData.presetCrosses{i}.XData = appData.currentPresetPositions(i,1);
 	appData.presetCrosses{i}.YData = appData.currentPresetPositions(i,2);
 end
+
+% Need to update positions of varied presetMarkers
+for i = 1:length(appData.variedPresetMarkers)
+   if~isempty(appData.variedPresetMarkers{i})
+       
+      if isempty(categoryIndeces(categoryIndeces ==i))
+          appData.variedPresetLines{i}.Visible = 'off';
+           appData.variedPresetMarkers{i}.Visible = 'off';
+       else
+           appData.variedPresetLines{i}.Visible = 'on';
+          appData.variedPresetMarkers{i}.Visible = 'on';
+
+          appData.variedPresetLines{i}.XData(2) = appData.currentPresetPositions(i,1);
+          appData.variedPresetLines{i}.YData(2) = appData.currentPresetPositions(i,2);
+
+          %appData.variedPresetLines{i}.XData(1) = appData.currentPresetPositions(i,1);
+          %appData.variedPresetLines{i}.YData(1) = appData.currentPresetPositions(i,2);
+          %appData.variedPresetMarkers{i}.XData =
+          %appData.variedPresetMarkers{i}.YData =
+      end
+   end
+end
 end
 
 function categorySelectAll(appData)
@@ -1096,15 +1146,67 @@ function categorySelectAll(appData)
 % patchCorners = filledVoronoi(categoryPositions, appData.hiddenAxes);
 
 for i = 1:length(appData.patches)
-        appData.patches{i}.Vertices = appData.patchCorners{i};
-        appData.patches{i}.Faces = 1:length(appData.patchCorners{i});
-        
-        appData.presetCrosses{i}.XData = appData.presetPositions(i,1);
-        appData.presetCrosses{i}.YData = appData.presetPositions(i,2);
-        appData.presetCrosses{i}.Visible = 'on';
+    appData.patches{i}.Vertices = appData.patchCorners{i};
+    appData.patches{i}.Faces = 1:length(appData.patchCorners{i});
+
+    appData.presetCrosses{i}.XData = appData.presetPositions(i,1);
+    appData.presetCrosses{i}.YData = appData.presetPositions(i,2);
+    appData.presetCrosses{i}.Visible = 'on';
 end
     
 appData.currentPresetPositions = appData.presetPositions;
+
+% Need to update positions of varied presetMarkers
+for i = 1:length(appData.variedPresetMarkers)
+    if~isempty(appData.variedPresetMarkers{i})
+        appData.variedPresetLines{i}.XData(2) = appData.currentPresetPositions(i,1);
+        appData.variedPresetLines{i}.YData(2) = appData.currentPresetPositions(i,2);
+
+        appData.variedPresetLines{i}.Visible = 'on';
+        appData.variedPresetMarkers{i}.Visible = 'on';
+    end
+end
+end
+
+function updateCatgoryDisplays(appData)
+if isequal(appData.categoryDisplayType,'Highlight')
+
+    if isequal(appData.categoriesSelected, [0,0,0,0,0,0])
+        for i = 1:length(appData.presetCategories)
+            appData.patches{i}.FaceColor = appData.colours{i};
+        end
+    else
+        for i = 1:length(appData.presetCategories)
+            if isequal(appData.presetCategories{i}.*appData.categoriesSelected, [0,0,0,0,0,0])
+                appData.patches{i}.FaceColor = appData.colours{i}/3;
+            else
+            combinedColour = sqrt((appData.presetCategories{i}.*appData.categoriesSelected)*...
+                (cell2mat(appData.categoryColours')).^2/length(nonzeros(appData.categoriesSelected)));
+            combinedColour(combinedColour > 0) = mapRange(combinedColour(combinedColour > 0), 0,1,0.7,1);
+            appData.patches{i}.FaceColor = combinedColour.*([0.7, 0.7, 0.7]...
+                    + 0.3*[appData.colours{i}(1), appData.colours{i}(2), appData.colours{i}(3)]);
+
+            end
+        end
+    end
+elseif isequal(appData.categoryDisplayType,'Subset')
+
+    if isequal(appData.categoriesSelected, [0,0,0,0,0,0])
+        categorySelectAll(appData);
+    else
+
+    categoryIndeces = [];     
+    for i = nonzeros((1:6).*appData.categoriesSelected)'
+        if appData.categoriesSelected(i) == 1
+            categoryIndeces = union(categoryIndeces, appData.categoryIndeces{i});
+        end
+    end
+    categorySelect(appData, categoryIndeces)
+    end
+
+else
+    error('Incorrect Category Setting')
+end
 end
 %----------------------------------------------------------%
 %----------------------UI Objects--------------------------%
@@ -1148,36 +1250,6 @@ end
 set(gcf, 'WindowButtonMotionFcn', {@mouseMoving, appData});
 %set(gca, 'Position', [0.1300 0.2100 0.7750 0.7150]);
 end
-
-% function createPresetCategoriesVoronoi(appData)
-% figure(5)
-% 
-% appData.axCategories = axes('position',[0,0.2,1,0.7],...
-%         'Units','Normalized',...
-%         'XGrid','off',...
-%         'XMinorGrid','off',...
-%         'XTickLabel',[],...
-%         'YTickLabel',[],...
-%         'Xlim', [0,1],...
-%         'Ylim', [0,1]);
-% hold on
-% 
-% %patches = filledVoronoi(appData.presetPositions, appData.colours, appData.ax);
-% 
-% positions = calculatePresetSubsetPCA(appData, [4, 6, 7, 8, 21, 28, 29]);
-% patchCorners = filledVoronoi(positions);
-% for i = 1:length(patchCorners)
-%     appData.patches{i} = patch(appData.ax, patchCorners{i}(:,1),patchCorners{i}(:,2),appData.colours{i});
-%     set(appData.patches{i}, 'ButtonDownFcn', {@patchClicked, i, appData})
-%     set(appData.patches{i}, 'HitTest', 'On')  
-% end
-% 
-% plot(appData.ax, appData.presetPositions(:,1), appData.presetPositions(:,2),...
-%     'b+', 'HitTest', 'off', 'PickableParts', 'none')
-% 
-% set(gcf, 'WindowButtonMotionFcn', {@mouseMoving, appData});
-% %set(gca, 'Position', [0.1300 0.2100 0.7750 0.7150]);
-% end
 
 function createSliders(appData)
 appData.leftSlidersPanel = uipanel('Title', 'Timbre PCA Macros 1-4',...
@@ -1346,7 +1418,7 @@ appData.pianoKeysButton = uicontrol(appData.categoriesPanel,...
     'style', 'pushbutton',...
     'string', 'Piano/Keys',...
     'units', 'normalized',...
-    'position', [0, 0, 1/6 1],...
+    'position', [0, 0, 1/7 1],...
     'callback', {@categoryButtonCallback, 1, appData},...
     'FontSize', 13);
 
@@ -1354,7 +1426,7 @@ appData.pluckedMalletButton = uicontrol(appData.categoriesPanel,...
     'style', 'pushbutton',...
     'string', 'Plucked/Mallet',...
     'units', 'normalized',...
-    'position', [1/6, 0, 1/6 1],...
+    'position', [1/7, 0, 1/7 1],...
     'callback', {@categoryButtonCallback, 2, appData},...
     'FontSize', 13);
 
@@ -1362,7 +1434,7 @@ appData.bassButton = uicontrol(appData.categoriesPanel,...
     'style', 'pushbutton',...
     'string', 'Bass',...
     'units', 'normalized',...
-    'position', [2/6, 0, 1/6 1],...
+    'position', [2/7, 0, 1/7 1],...
     'callback', {@categoryButtonCallback, 3, appData},...
     'FontSize', 13);
 
@@ -1370,7 +1442,7 @@ appData.synthLeadButton = uicontrol(appData.categoriesPanel,...
     'style', 'pushbutton',...
     'string', 'Synth Lead',...
     'units', 'normalized',...
-    'position', [3/6, 0, 1/6 1],...
+    'position', [3/7, 0, 1/7 1],...
     'callback', {@categoryButtonCallback, 4, appData},...
     'FontSize', 13);
 
@@ -1378,7 +1450,7 @@ appData.synthPadButton = uicontrol(appData.categoriesPanel,...
     'style', 'pushbutton',...
     'string', 'SynthPad',...
     'units', 'normalized',...
-    'position', [4/6, 0, 1/6 1],...
+    'position', [4/7, 0, 1/7 1],...
     'callback', {@categoryButtonCallback, 5, appData},...
     'FontSize', 13);
 
@@ -1386,9 +1458,19 @@ appData.rhythmicButton = uicontrol(appData.categoriesPanel,...
     'style', 'pushbutton',...
     'string', 'Rhythmic',...
     'units', 'normalized',...
-    'position', [5/6, 0, 1/6 1],...
+    'position', [5/7, 0, 1/7 1],...
     'callback', {@categoryButtonCallback, 6, appData},...
     'FontSize', 13);
+
+appData.displayModeButton = uicontrol(appData.categoriesPanel,...
+    'style', 'pushbutton',...
+    'string', 'Display Mode',...
+    'units', 'normalized',...
+    'position', [(6/7), 0, (1/7), 1],...
+    'callback', {@displayModeButtonCallback, appData},...
+    'FontSize', 13);
+
+appData.displayModeButton.BackgroundColor = appData.normalColour;
 end
 
 function createTimePlots(appData)
