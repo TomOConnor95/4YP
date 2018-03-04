@@ -9,11 +9,6 @@ function patches = filledVoronoiFix(D,ax)
     else
     h = voronoi(D(:,1), D(:,2));  
     end
-%     xlim([-3,3])
-%     ylim([-3,3])
-
-    xlim([0,1])
-    ylim([0,1])
 
     v1 = shiftdim(reshape([h(2).XData;h(2).YData],2,3,[]),2); % Arranged one edge per row, one vertex per slice in the third dimension
 
@@ -41,19 +36,29 @@ function patches = filledVoronoiFix(D,ax)
             if idx
                 cPatch = circshift(cPatch,-idx); % Move the 1 to the end of the list of vertex indices
                 
+                % Replace Inf values at idx with coordinates from the unbounded
+                % edges that meet the two adjacent finite vertices
+                % - 
+                % Lots of awkward corner cases
+                
                 if length(vPatch) ==2
+                    % only one bounded point so must be connected to 2 points
+                    % which can directly be used
                     vPatch = [vPatch(1:idx-1,:)         % Values before inf
                     vUnbounded(iBounded == cPatch(end-1),:)
                     vPatch(idx+1:end,:)];  
                     
                 elseif isequal(size(vUnbounded(iBounded == cPatch(end-1),:)),[1,2])...
                         && isequal(size(vUnbounded(iBounded == cPatch(1),:)),[1,2])
-                % Replace Inf values at idx with coordinates from the unbounded edges that meet the two adjacent finite vertices
-                vPatch = [vPatch(1:idx-1,:)         % Values before inf
-                    vUnbounded(iBounded == cPatch(end-1),:)
-                    vUnbounded(iBounded == cPatch(1),:)
-                    vPatch(idx+1:end,:)];           % Values after inf
+                    % only one unbounded point connected to the 2 bounded points
+                    % which can directly be used
+                    vPatch = [vPatch(1:idx-1,:)         % Values before inf
+                        vUnbounded(iBounded == cPatch(end-1),:)
+                        vUnbounded(iBounded == cPatch(1),:)
+                        vPatch(idx+1:end,:)];           % Values after inf
+
                 else
+                    % Must check which are the correct points to use
                     vertecesA = vUnbounded(iBounded == cPatch(end-1),:);
                     vertecesB = vUnbounded(iBounded == cPatch(1),:);
                     
@@ -71,8 +76,15 @@ function patches = filledVoronoiFix(D,ax)
                     for i = 1:length(closestPointsA(:,1))
                         for j = 1:length(closestPointsB(:,1))
                             if ~isempty(intersect(closestPointsA(i,:),closestPointsB(j,:)))
+                                
+                                if intersect(closestPointsA(i,:),closestPointsB(j,:)) == p
                                 correctIndexA = i;
                                 correctIndexB = j;
+                                else
+                                % Only get here if length of A and B = 2
+                                correctIndexA = rem(i,2)+1;
+                                correctIndexB = rem(j,2)+1;    
+                                end
                                 break
                             end 
                         end
