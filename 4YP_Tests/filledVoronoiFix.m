@@ -27,9 +27,6 @@ function patches = filledVoronoiFix(D,ax)
 
     for p=1:length(D(:,1))
         
-        %for s=1:length(c{p})
-
-
         cPatch = c{p}; % List of vertex indices
             vPatch = v(cPatch,:); % Vertex coordinates which may contain Inf
             idx = find(cPatch==1); % Check if cell has unbounded edges
@@ -97,10 +94,8 @@ function patches = filledVoronoiFix(D,ax)
                     
                 end
             end
-        %end
-        
+
         patches{p} = patch(vPatch(:,1),vPatch(:,2),rand(1,3), 'HitTest', 'off');
     end
-
 
 end
