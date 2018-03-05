@@ -239,6 +239,17 @@ set(figure(5), 'Visible', 'on')
 
 axes(appData.pcaAppData.ax)
 
+
+% Deselect the previously selected presets
+%%%%%%% THIS STILL NEDEDS WORK
+for idx = length(appData.pcaAppData.idxSelected):-1:1
+    appData.pcaAppData.patches{idx}.EdgeColor = [0,0,0];
+    appData.pcaAppData.patches{idx}.LineWidth = 0.5;
+    
+    appData.pcaAppData.idxSelected(appData.pcaAppData.idxSelected == idx) = [];
+end
+                
+
 %Create Marker on voronoi diagram for combined preset
 presetPositions = appData.pcaAppData.presetPositions(appData.pcaAppData.idxSelected,:);
 PM = mean(presetPositions);

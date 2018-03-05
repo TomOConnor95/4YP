@@ -218,15 +218,18 @@ function patchClicked (object, eventdata, idx, appData)
                 %appData.patches{idx}.FaceColor = appData.selectedColour;
                 appData.patches{idx}.EdgeColor = appData.selectedColour;
 
-                if length(appData.idxSelected) == 3
+                if length(appData.idxSelected) >= 3
                     
                     disp('3 Presets Selected!');
                     appData.blendModeButton.Enable = 'on';
+                else
+                    if isequal(appData.blendModeButton.Enable, 'on')
+                        appData.blendModeButton.Enable = 'off';
+                    end
                 end
-            
+    else
                 
-            else
-
+                % THIS STILL NEEDS WORK!!!!!
                 appData.idxSelected(appData.idxSelected == idx) = [];
 
                 %appData.patches{idx}.FaceColor = appData.mouseOverColour;
