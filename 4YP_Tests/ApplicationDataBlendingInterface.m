@@ -275,6 +275,9 @@ if ~isempty(appData.pcaAppData.combinedMarkersSelected)
 end
 appData.pcaAppData.combinedMarkersSelected = idx;
 appData.pcaAppData.combinedMarkerLastClicked = idx;
+
+% Disable blend mode button
+appData.pcaAppData.blendModeButton.Enable = 'off';
 end
 
 function combinedMarkerCallBack (object, eventdata, preset, appData, idx)

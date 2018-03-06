@@ -222,7 +222,7 @@ if ~ismember(idx, appData.idxSelected)
     appData.idxSelected = [appData.idxSelected, idx];
     
     %appData.patches{idx}.FaceColor = appData.selectedColour;
-    appData.patches{idx}.EdgeColor = appData.selectedColour;
+    appData.patches{idx}.EdgeColor = appData.mouseOverSelectedColour;
 else
     appData.idxSelected(appData.idxSelected == idx) = [];
     
@@ -231,11 +231,16 @@ else
     
 end
 
-if length(appData.idxSelected) >= 3
+if length(appData.idxSelected) == 3
     if isequal(appData.blendModeButton.Enable, 'off')
         appData.blendModeButton.Enable = 'on';
         disp('3 Presets Selected!');
     end
+elseif length(appData.idxSelected) > 3
+    % Only allow 3 presets to be selected at once
+    appData.patches{appData.idxSelected(1)}.EdgeColor = [0,0,0];
+    appData.patches{appData.idxSelected(1)}.LineWidth = 0.5;
+    appData.idxSelected(1) = [];
 else
     if isequal(appData.blendModeButton.Enable, 'on')
         appData.blendModeButton.Enable = 'off';
@@ -276,6 +281,16 @@ if idx ~= appData.idxCurrent
     
     switchToPreset(idx, appData);
 
+end
+
+% Deselect previous combined marker if necessary
+if ~isempty(appData.combinedMarkers)
+    if isempty(appData.combinedMarkersSelected(appData.combinedMarkersSelected == appData.combinedMarkerLastClicked))...
+            && (appData.combinedMarkerLastClicked > 0)
+        appData.combinedMarkers{appData.combinedMarkerLastClicked}.LineWidth = 1;
+        appData.combinedMarkers{appData.combinedMarkerLastClicked}.Color = [1,0,0];
+        appData.combinedMarkerLastClicked = -1;
+    end
 end
 
 end
