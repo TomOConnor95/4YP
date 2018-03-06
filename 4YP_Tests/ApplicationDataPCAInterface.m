@@ -102,6 +102,7 @@ classdef ApplicationDataPCAInterface < handle
         combinedPresets;
         combinedLines;
         combinedMarkers;
+        combinedMarkerPositions;
         combinedMarkerLastClicked;
         combinedMarkersSelected;
         % UI elements - time/timbre
@@ -463,9 +464,27 @@ function blendModeButtonCallback (object, eventdata, appData)
 disp('Blend Mode Button Clicked');
 appData.idxSelected;
 
-presetA = appData.presetStoreVaried(appData.idxSelected(1),:);
-presetB = appData.presetStoreVaried(appData.idxSelected(2),:);
-presetC = appData.presetStoreVaried(appData.idxSelected(3),:);
+% There must be 3 selected presets when this funciton is called
+assert(((length(appData.idxSelected) + length(appData.combinedMarkersSelected)) == 3),'3 presets needed for blending')
+
+switch length(appData.idxSelected)
+    case 3
+        presetA = appData.presetStoreVaried(appData.idxSelected(1),:);
+        presetB = appData.presetStoreVaried(appData.idxSelected(2),:);
+        presetC = appData.presetStoreVaried(appData.idxSelected(3),:);
+    case 2
+        presetA = appData.presetStoreVaried(appData.idxSelected(1),:);
+        presetB = appData.presetStoreVaried(appData.idxSelected(2),:);
+        presetC = appData.combinedPresets{appData.combinedMarkersSelected(1)};
+    case 1
+        presetA = appData.presetStoreVaried(appData.idxSelected(1),:);
+        presetB = appData.combinedPresets{appData.combinedMarkersSelected(1)};
+        presetC = appData.combinedPresets{appData.combinedMarkersSelected(2)};
+    case 0
+        presetA = appData.combinedPresets{appData.combinedMarkersSelected(1)};
+        presetB = appData.combinedPresets{appData.combinedMarkersSelected(2)};
+        presetC = appData.combinedPresets{appData.combinedMarkersSelected(3)};
+end
 
 appData.blendingAppData.P = presetGeneratorSCMonteCarloMV(presetA, presetB, presetC, appData.blendingAppData);
 

@@ -233,7 +233,8 @@ set(figure(5), 'Visible', 'on')
 axes(appData.pcaAppData.ax)          
 
 %Create Marker on voronoi diagram for combined preset
-presetPositions = appData.pcaAppData.presetPositions(appData.pcaAppData.idxSelected,:);
+presetPositions = [appData.pcaAppData.presetPositions(appData.pcaAppData.idxSelected,:);
+                   appData.pcaAppData.combinedMarkerPositions(appData.pcaAppData.combinedMarkersSelected,:)];
 PM = mean(presetPositions);
 P1a = presetPositions(1,:);
 P1b = presetPositions(2,:);
@@ -244,7 +245,7 @@ lineColour = 'g';
 idx = length(appData.pcaAppData.combinedPresets)+1;
 
 appData.pcaAppData.combinedPresets{idx} = appData.P.presetA;
-
+appData.pcaAppData.combinedMarkerPositions(idx,:) = PM;
 appData.pcaAppData.combinedLines{idx} = plot(appData.pcaAppData.ax,...
                 [PM(1), P1a(1), PM(1), P1b(1), PM(1), P1c(1), PM(1)],...
                 [PM(2), P1a(2), PM(2), P1b(2), PM(2), P1c(2), PM(2)],...
