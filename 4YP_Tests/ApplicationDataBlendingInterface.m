@@ -304,6 +304,26 @@ if appData.combinedMarkerLastClicked == idx
         appData.combinedMarkersSelected = [appData.combinedMarkersSelected, idx];
         appData.combinedMarkers{idx}.LineWidth = 3;
         appData.combinedMarkers{idx}.Color = appData.mouseOverSelectedColour;
+        if (length(appData.idxSelected) + length(appData.combinedMarkersSelected)) < 3
+            % No need to do anything else
+        elseif (length(appData.idxSelected) + length(appData.combinedMarkersSelected)) == 3
+            % Correct number of presets for blending
+            if isequal(appData.blendModeButton.Enable, 'off')
+                appData.blendModeButton.Enable = 'on';
+                disp('3 Presets Selected!');
+            end
+        else
+            % Too many presets for blending, remove one
+            if ~isempty(appData.idxSelected)
+                appData.patches{appData.idxSelected(1)}.EdgeColor = [0,0,0];
+                appData.patches{appData.idxSelected(1)}.LineWidth = 0.5;
+                appData.idxSelected(1) = [];
+            else
+                appData.combinedMarkers{appData.combinedMarkersSelected(1)}.Color = [1,0,0];
+                appData.combinedMarkers{appData.combinedMarkersSelected(1)}.LineWidth = 1;
+                appData.combinedMarkersSelected(1) = [];
+            end
+        end
     else
         % Current marker has already been selected
         appData.combinedMarkersSelected(appData.combinedMarkersSelected == idx) = [];

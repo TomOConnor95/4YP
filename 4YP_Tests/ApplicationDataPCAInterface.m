@@ -231,16 +231,22 @@ else
     
 end
 
-if length(appData.idxSelected) == 3
+if (length(appData.idxSelected) + length(appData.combinedMarkersSelected)) == 3
     if isequal(appData.blendModeButton.Enable, 'off')
         appData.blendModeButton.Enable = 'on';
         disp('3 Presets Selected!');
     end
-elseif length(appData.idxSelected) > 3
+elseif (length(appData.idxSelected) + length(appData.combinedMarkersSelected)) > 3
     % Only allow 3 presets to be selected at once
-    appData.patches{appData.idxSelected(1)}.EdgeColor = [0,0,0];
-    appData.patches{appData.idxSelected(1)}.LineWidth = 0.5;
-    appData.idxSelected(1) = [];
+    if ~isempty(appData.combinedMarkersSelected)
+        appData.combinedMarkers{appData.combinedMarkersSelected(1)}.Color = [1,0,0];
+        appData.combinedMarkers{appData.combinedMarkersSelected(1)}.LineWidth = 1;
+        appData.combinedMarkersSelected(1) = [];
+    else
+        appData.patches{appData.idxSelected(1)}.EdgeColor = [0,0,0];
+        appData.patches{appData.idxSelected(1)}.LineWidth = 0.5;
+        appData.idxSelected(1) = [];
+    end
 else
     if isequal(appData.blendModeButton.Enable, 'on')
         appData.blendModeButton.Enable = 'off';
@@ -291,6 +297,7 @@ if ~isempty(appData.combinedMarkers)
         appData.combinedMarkers{appData.combinedMarkerLastClicked}.Color = [1,0,0];
         appData.combinedMarkerLastClicked = -1;
     end
+    
 end
 
 end
