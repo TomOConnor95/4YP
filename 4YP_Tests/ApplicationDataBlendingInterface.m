@@ -45,10 +45,7 @@ classdef ApplicationDataBlendingInterface < handle
         
         pcaAppData;
         
-        %Combined Preset Markers and data
-        combinedPresets;
-        combinedLines;
-        combinedMarkers;
+        
     end
     
     methods
@@ -153,7 +150,6 @@ end
 
 
 function pauseButtonCallback (object, eventdata, appData)
-% writes continuous mouse position to base workspace
 disp('Pause Button Clicked')
 
 if appData.isPaused == true
@@ -194,7 +190,6 @@ end
 
 
 function timbreButtonCallback (object, eventdata, appData)
-% writes continuous mouse position to base workspace
 disp('Freeze Timbre Button Clicked')
 
 appData.P = appData.P.toggleTimbreState();
@@ -203,7 +198,6 @@ correctlyDisableFreezeToggles(appData);
 end
 
 function timeButtonCallback (object, eventdata, appData)
-% writes continuous mouse position to base workspace
 disp('Freeze Time Button Clicked')
 
 appData.P = appData.P.toggleTimeState();
@@ -223,7 +217,6 @@ end
 end
 
 function returnButtonCallback (object, eventdata, appData)
-% writes continuous mouse position to base workspace
 disp('Return Button Clicked')
 
 appData.Pversions{length(appData.Pversions)+1} = appData.P;
@@ -237,18 +230,7 @@ set(figure(4), 'Visible', 'off')
 
 set(figure(5), 'Visible', 'on')
 
-axes(appData.pcaAppData.ax)
-
-
-% Deselect the previously selected presets
-%%%%%%% THIS STILL NEDEDS WORK
-for idx = length(appData.pcaAppData.idxSelected):-1:1
-    appData.pcaAppData.patches{idx}.EdgeColor = [0,0,0];
-    appData.pcaAppData.patches{idx}.LineWidth = 0.5;
-    
-    appData.pcaAppData.idxSelected(appData.pcaAppData.idxSelected == idx) = [];
-end
-                
+axes(appData.pcaAppData.ax)          
 
 %Create Marker on voronoi diagram for combined preset
 presetPositions = appData.pcaAppData.presetPositions(appData.pcaAppData.idxSelected,:);
@@ -259,43 +241,97 @@ P1c = presetPositions(3,:);
 
 lineColour = 'g';
 
-idx = length(appData.combinedPresets)+1;
-appData.combinedPresets{idx} = appData.P.presetA;
+idx = length(appData.pcaAppData.combinedPresets)+1;
 
-appData.combinedLines{idx} = plot(appData.pcaAppData.ax,...
+appData.pcaAppData.combinedPresets{idx} = appData.P.presetA;
+
+appData.pcaAppData.combinedLines{idx} = plot(appData.pcaAppData.ax,...
                 [PM(1), P1a(1), PM(1), P1b(1), PM(1), P1c(1), PM(1)],...
                 [PM(2), P1a(2), PM(2), P1b(2), PM(2), P1c(2), PM(2)],...
                 'Color', lineColour, 'LineStyle', ':','LineWidth',3, 'PickableParts','none');
 
-appData.combinedMarkers{idx} = plot(appData.pcaAppData.ax, PM(1), PM(2), 'ro','MarkerSize',12,...
-    'MarkerFaceColor',[0.1,1.0,0.1], 'PickableParts','all',...
-    'ButtonDownFcn',{@combinedMarkerCallBack, appData.combinedPresets{idx}, appData});
+appData.pcaAppData.combinedMarkers{idx} = plot(appData.pcaAppData.ax, PM(1), PM(2), 'o','MarkerSize',12,...
+    'MarkerFaceColor',[0.1,1.0,0.1],...
+    'Color', appData.pcaAppData.mouseOverSelectedColour,...
+    'LineWidth', 3,...
+    'PickableParts','all',...
+    'ButtonDownFcn',{@combinedMarkerCallBack, appData.pcaAppData.combinedPresets{idx}, appData.pcaAppData, idx});
 
+
+% Deselect the previously selected presets
+for i = length(appData.pcaAppData.idxSelected):-1:1
+    appData.pcaAppData.patches{appData.pcaAppData.idxSelected(i)}.EdgeColor = [0,0,0];
+    appData.pcaAppData.patches{appData.pcaAppData.idxSelected(i)}.LineWidth = 0.5;
+    
+    appData.pcaAppData.idxSelected(i) = [];
+end
+      
+%Deselect previous combined markers
+if ~isempty(appData.pcaAppData.combinedMarkersSelected)
+    for i = 1:length(appData.pcaAppData.combinedMarkersSelected)
+        appData.pcaAppData.combinedMarkers{appData.pcaAppData.combinedMarkersSelected(i)}.LineWidth = 1;
+        appData.pcaAppData.combinedMarkers{appData.pcaAppData.combinedMarkersSelected(i)}.Color = [1,0,0];
+    end
+end
+appData.pcaAppData.combinedMarkersSelected = idx;
+appData.pcaAppData.combinedMarkerLastClicked = idx;
 end
 
-function combinedMarkerCallBack (object, eventdata, preset, appData)
-% writes continuous mouse position to base workspace
-disp('Combined Marker Clicked')
+function combinedMarkerCallBack (object, eventdata, preset, appData, idx)
+% appData for this function is an ApplicatinoDataPCAInterface class
 
+disp('Combined Marker Clicked')
 
 sendAllStructParamsOverOSC(preset, appData.nameStrings, appData.typeStrings, appData.u);
 
-if appData.displayBarGraphs
-    appData.barStruct = updateBarGraphsStruct(appData.P.presetA, appData.barStruct);
-end
-
 % Update Time Plots
-appData.pcaAppData.timeData = timePlotDataFromPreset(appData.P.presetA);
-appData.pcaAppData.timePlots = updateTimePlots(appData.pcaAppData.timePlots,...
-                                                appData.pcaAppData.timeData); 
+appData.timeData = timePlotDataFromPreset(appData.blendingAppData.P.presetA);
+appData.timePlots = updateTimePlots(appData.timePlots,...
+                                                appData.timeData); 
 
 % Update Timbre Plots
-appData.pcaAppData.timbreData = timbrePlotDataFromPreset(appData.P.presetA);
-appData.pcaAppData.timbrePlots = updateTimbrePlots(appData.pcaAppData.timbrePlots,...
-                                                    appData.pcaAppData.timbreData); 
+appData.timbreData = timbrePlotDataFromPreset(appData.blendingAppData.P.presetA);
+appData.timbrePlots = updateTimbrePlots(appData.timbrePlots,...
+                                                    appData.timbreData); 
+     
+if appData.combinedMarkerLastClicked == idx
+    % Current marker has just been double clicked
+    if isempty(appData.combinedMarkersSelected(appData.combinedMarkersSelected == idx))
+        % Current marker hasn't already been selected
+        appData.combinedMarkersSelected = [appData.combinedMarkersSelected, idx];
+        appData.combinedMarkers{idx}.LineWidth = 3;
+        appData.combinedMarkers{idx}.Color = appData.mouseOverSelectedColour;
+    else
+        % Current marker has already been selected
+        appData.combinedMarkersSelected(appData.combinedMarkersSelected == idx) = [];
+        appData.combinedMarkers{idx}.LineWidth = 3;
+        appData.combinedMarkers{idx}.Color = appData.mouseOverColour;
+    end  
+else
+    % Current marker has not just been double clicked
+    if isempty(appData.combinedMarkersSelected(appData.combinedMarkersSelected == idx))
+        % Current marker hasn't already been selected
+        appData.combinedMarkers{idx}.LineWidth = 3;
+        appData.combinedMarkers{idx}.Color = appData.mouseOverColour;
+    else
+        % Current marker has already been selected
+        appData.combinedMarkers{idx}.LineWidth = 3;
+        appData.combinedMarkers{idx}.Color = appData.mouseOverSelectedColour;
+    end
+    
+    % Deselect previous combined marker if necessary
+    if isempty(appData.combinedMarkersSelected(appData.combinedMarkersSelected == appData.combinedMarkerLastClicked))...
+            && (appData.combinedMarkerLastClicked > 0)
+        appData.combinedMarkers{appData.combinedMarkerLastClicked}.LineWidth = 1;
+        appData.combinedMarkers{appData.combinedMarkerLastClicked}.Color = [1,0,0];
+    elseif (appData.combinedMarkerLastClicked > 0)
+        appData.combinedMarkers{appData.combinedMarkerLastClicked}.Color = appData.selectedColour;
+    end
+end
 
-end  
+appData.combinedMarkerLastClicked = idx;
 
+end
 function freezeSectionsCallback (object, eventdata, appData)
 % writes continuous mouse position to base workspace
 disp('Freeze Section Toggle Button Clicked')

@@ -98,6 +98,12 @@ classdef ApplicationDataPCAInterface < handle
         idxSelected = [];
         idxPopupSelected = [];
         
+        %Combined Preset Markers and data
+        combinedPresets;
+        combinedLines;
+        combinedMarkers;
+        combinedMarkerLastClicked;
+        combinedMarkersSelected;
         % UI elements - time/timbre
         timeData;
         timePlots;
@@ -209,35 +215,47 @@ end
 %----------------------Callbacks---------------------------%
 %----------------------------------------------------------%
 function patchClicked (object, eventdata, idx, appData)
-    % writes continuous mouse position to base workspace
-    disp(['Patch ', num2str(idx), ' Clicked'])
+% writes continuous mouse position to base workspace
+disp(['Patch ', num2str(idx), ' Clicked'])
 
-    if ~ismember(idx, appData.idxSelected)
-                appData.idxSelected = [appData.idxSelected, idx];
-
-                %appData.patches{idx}.FaceColor = appData.selectedColour;
-                appData.patches{idx}.EdgeColor = appData.selectedColour;
-
-                if length(appData.idxSelected) >= 3
-                    
-                    disp('3 Presets Selected!');
-                    appData.blendModeButton.Enable = 'on';
-                else
-                    if isequal(appData.blendModeButton.Enable, 'on')
-                        appData.blendModeButton.Enable = 'off';
-                    end
-                end
-    else
-                
-                % THIS STILL NEEDS WORK!!!!!
-                appData.idxSelected(appData.idxSelected == idx) = [];
-
-                %appData.patches{idx}.FaceColor = appData.mouseOverColour;
-                appData.patches{idx}.EdgeColor = appData.mouseOverColour;
-
-    end   
-    %drawnow()
+if ~ismember(idx, appData.idxSelected)
+    appData.idxSelected = [appData.idxSelected, idx];
     
+    %appData.patches{idx}.FaceColor = appData.selectedColour;
+    appData.patches{idx}.EdgeColor = appData.selectedColour;
+else
+    appData.idxSelected(appData.idxSelected == idx) = [];
+    
+    %appData.patches{idx}.FaceColor = appData.mouseOverColour;
+    appData.patches{idx}.EdgeColor = appData.mouseOverColour;
+    
+end
+
+if length(appData.idxSelected) >= 3
+    if isequal(appData.blendModeButton.Enable, 'off')
+        appData.blendModeButton.Enable = 'on';
+        disp('3 Presets Selected!');
+    end
+else
+    if isequal(appData.blendModeButton.Enable, 'on')
+        appData.blendModeButton.Enable = 'off';
+    end
+end
+%drawnow()
+
+% Deselect previous combined marker if necessary
+if ~isempty(appData.combinedMarkers)
+    if isempty(appData.combinedMarkersSelected(appData.combinedMarkersSelected == appData.combinedMarkerLastClicked))...
+            && (appData.combinedMarkerLastClicked > 0)
+        appData.combinedMarkers{appData.combinedMarkerLastClicked}.LineWidth = 1;
+        appData.combinedMarkers{appData.combinedMarkerLastClicked}.Color = [1,0,0];
+    elseif (appData.combinedMarkerLastClicked > 0)
+        appData.combinedMarkers{appData.combinedMarkerLastClicked}.Color = appData.selectedColour;
+    end
+end
+
+appData.combinedMarkerLastClicked = -1;
+
 end
 
 function mouseMoving (object, eventdata, appData)
