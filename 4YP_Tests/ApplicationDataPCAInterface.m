@@ -1532,7 +1532,7 @@ appData.displayModeButton = uicontrol(appData.categoriesPanel,...
     'callback', {@displayModeButtonCallback, appData},...
     'FontSize', 13);
 
-appData.displayModeButton.BackgroundColor = appData.normalColour;
+appData.displayModeButton.BackgroundColor = [0.7,1,0.7];
 end
 
 function createTimePlots(appData)
