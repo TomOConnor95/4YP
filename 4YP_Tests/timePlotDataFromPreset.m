@@ -19,14 +19,16 @@ ampA = preset{10}(1);
 ampD = preset{10}(2);
 ampS = preset{10}(3);
 ampR = preset{10}(4);
+ampC = preset{10}(5);
 
 modA = preset{11}(1);
 modD = preset{11}(2);
 modS = preset{11}(3);
 modR = preset{11}(4);
+modC = preset{11}(5);
 
-[Tdata.xAmp, Tdata.yAmp] = ADSR(ampA, ampD, ampS, ampR);
-[Tdata.xMod, Tdata.yMod] = ADSR(modA, modD, modS, modR);
+[Tdata.xAmp, Tdata.yAmp] = ADSR(ampA, ampD, ampS, ampR, ampC);
+[Tdata.xMod, Tdata.yMod] = ADSR(modA, modD, modS, modR, modC);
 
 % VibratoPlot - A sine wave wave changing in amplitude and frequency
 

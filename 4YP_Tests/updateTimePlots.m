@@ -1,10 +1,10 @@
 function Tplots = updateTimePlots(Tplots, Tdata)
 
-Tplots.modFill.Vertices(1:5,1) = Tdata.xMod';
-Tplots.modFill.Vertices(1:5,2) = Tdata.yMod';
+Tplots.modFill.Vertices(1:8,1) = Tdata.xMod';
+Tplots.modFill.Vertices(1:8,2) = Tdata.yMod';
 
-Tplots.ampFill.Vertices(1:5,1) = Tdata.xAmp';
-Tplots.ampFill.Vertices(1:5,2) = Tdata.yAmp';
+Tplots.ampFill.Vertices(1:8,1) = Tdata.xAmp';
+Tplots.ampFill.Vertices(1:8,2) = Tdata.yAmp';
 
 Tplots.vibratoWavePlot.XData = Tdata.xVib;
 Tplots.vibratoWavePlot.YData = Tdata.yVib;
