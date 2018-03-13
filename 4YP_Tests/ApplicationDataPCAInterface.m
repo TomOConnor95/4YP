@@ -101,6 +101,7 @@ classdef ApplicationDataPCAInterface < handle
         %Combined Preset Markers and data
         combinedPresets;
         combinedPresetsVaried;
+        combinedPresetPCAParams;
         combinedLines;
         combinedMarkers;
         combinedMarkerPositions;
@@ -342,8 +343,21 @@ updatePresetVariedMarker(appData)
 appData.timbreData = timbrePlotDataFromPreset(appData.presetStoreVaried(appData.idxCurrent,:));
 appData.timbrePlots = updateTimbrePlots(appData.timbrePlots, appData.timbreData); 
 
-dispstat(sprintf(preset2string(appData.presetStoreVaried(appData.idxCurrent, :),...
-                                appData.nameStrings)));
+if  isequal(appData.lastSelectedPresetType, 'Original')
+    % Update Timbre Plots
+    appData.timbreData = timbrePlotDataFromPreset(appData.presetStoreVaried(appData.idxCurrent,:));
+    appData.timbrePlots = updateTimbrePlots(appData.timbrePlots, appData.timbreData); 
+    
+    dispstat(sprintf(preset2string(appData.presetStoreVaried(appData.idxCurrent, :),...
+                                   appData.nameStrings)));
+elseif isequal(appData.lastSelectedPresetType, 'Combined')
+    % Update Timbre Plots
+    appData.timbreData = timbrePlotDataFromPreset(appData.combinedPresetsVaried{appData.combinedMarkerLastClicked});
+    appData.timbrePlots = updateTimbrePlots(appData.timbrePlots, appData.timbreData); 
+    
+    dispstat(sprintf(preset2string(appData.combinedPresetsVaried{appData.combinedMarkerLastClicked},...
+                                   appData.nameStrings)));
+end
 end
 function rightSliderCallback (object, eventdata, idx, appData)
 appData.rightNumDisplays{idx}.String = num2str(appData.rightSliders{idx}.Value);
@@ -354,12 +368,21 @@ updatePCAWeightsAndSendParams(appData)
 
 updatePresetVariedMarker(appData)
 
-% Update Time Plots
-appData.timeData = timePlotDataFromPreset(appData.presetStoreVaried(appData.idxCurrent,:));
-appData.timePlots = updateTimePlots(appData.timePlots, appData.timeData); 
+if  isequal(appData.lastSelectedPresetType, 'Original')
+    % Update Time Plots
+    appData.timeData = timePlotDataFromPreset(appData.presetStoreVaried(appData.idxCurrent,:));
+    appData.timePlots = updateTimePlots(appData.timePlots, appData.timeData); 
 
-dispstat(sprintf(preset2string(appData.presetStoreVaried(appData.idxCurrent, :),...
+    dispstat(sprintf(preset2string(appData.presetStoreVaried(appData.idxCurrent, :),...
                                 appData.nameStrings)));
+elseif isequal(appData.lastSelectedPresetType, 'Combined')
+    % Update Time Plots
+    appData.timeData = timePlotDataFromPreset(appData.combinedPresetsVaried{appData.combinedMarkerLastClicked});
+    appData.timePlots = updateTimePlots(appData.timePlots, appData.timeData); 
+
+    dispstat(sprintf(preset2string(appData.combinedPresetsVaried{appData.combinedMarkerLastClicked},...
+                                appData.nameStrings)));
+end
 end
 
 function leftGlobalSliderCallback (object, eventdata, idx, appData)
@@ -370,17 +393,9 @@ storeLeftGlobalSliderPosition(appData)
 updatePCAWeightsAndSendParams(appData)
  
 updatePresetVariedMarker(appData)
- 
-% Update Timbre Plots
-appData.timbreData = timbrePlotDataFromPreset(appData.presetStoreVaried(appData.idxCurrent,:));
-appData.timbrePlots = updateTimbrePlots(appData.timbrePlots, appData.timbreData); 
 
-% Update Time Plots
-appData.timeData = timePlotDataFromPreset(appData.presetStoreVaried(appData.idxCurrent,:));
-appData.timePlots = updateTimePlots(appData.timePlots, appData.timeData); 
-
-dispstat(sprintf(preset2string(appData.presetStoreVaried(appData.idxCurrent, :),...
-                                appData.nameStrings)));
+updateTimeAndTimbrePlots(appData)
+                            
 end
 function rightGlobalSliderCallback (object, eventdata, idx, appData)
 appData.rightGlobalNumDisplays{idx}.String = num2str(appData.rightGlobalSliders{idx}.Value);
@@ -391,16 +406,7 @@ updatePCAWeightsAndSendParams(appData)
 
 updatePresetVariedMarker(appData)
 
-% Update Timbre Plots
-appData.timbreData = timbrePlotDataFromPreset(appData.presetStoreVaried(appData.idxCurrent,:));
-appData.timbrePlots = updateTimbrePlots(appData.timbrePlots, appData.timbreData); 
-
-% Update Time Plots
-appData.timeData = timePlotDataFromPreset(appData.presetStoreVaried(appData.idxCurrent,:));
-appData.timePlots = updateTimePlots(appData.timePlots, appData.timeData); 
-
-dispstat(sprintf(preset2string(appData.presetStoreVaried(appData.idxCurrent, :),...
-                                appData.nameStrings)));
+updateTimeAndTimbrePlots(appData)
 end
 
 function leftTextCallback (object, eventdata, idx, appData)
@@ -749,119 +755,226 @@ end
 %----------------------------------------------------------%
 
 function updatePCAWeightsAndSendParams(appData)
-          % Reshape is column elementwise so use the transpose!
-pcaWeightsTT = reshape(appData.presetPCAParams{appData.idxCurrent}([1,2],:)',...   
-            1, 2*length(appData.presetPCAParams{appData.idxCurrent}([1,2],:)));
-            
-pcaWeightsGlobal = reshape(appData.presetPCAParams{appData.idxCurrent}([3 4],:)',...   
-            1, 2*length(appData.presetPCAParams{appData.idxCurrent}([3 4],:)));
-            
-        
-% Alter Selected preset
-appData.presetStoreVaried(appData.idxCurrent,:) = adjustPresetWithPCA(...
-    appData.presetStore(appData.idxCurrent,:),...
-    appData.coeffCell, pcaWeightsTT,...
-    appData.globalCoeffCell, pcaWeightsGlobal);
+if isequal(appData.lastSelectedPresetType, 'Original')
+              % Reshape is column elementwise so use the transpose!
+    pcaWeightsTT = reshape(appData.presetPCAParams{appData.idxCurrent}([1,2],:)',...   
+                1, 2*length(appData.presetPCAParams{appData.idxCurrent}([1,2],:)));
 
-sendAllStructParamsOverOSC(appData.presetStoreVaried(appData.idxCurrent,:),...
-    appData.nameStrings, appData.typeStrings, appData.u);
+    pcaWeightsGlobal = reshape(appData.presetPCAParams{appData.idxCurrent}([3 4],:)',...   
+                1, 2*length(appData.presetPCAParams{appData.idxCurrent}([3 4],:)));
+
+
+    % Alter Selected preset
+    appData.presetStoreVaried(appData.idxCurrent,:) = adjustPresetWithPCA(...
+        appData.presetStore(appData.idxCurrent,:),...
+        appData.coeffCell, pcaWeightsTT,...
+        appData.globalCoeffCell, pcaWeightsGlobal);
+
+    sendAllStructParamsOverOSC(appData.presetStoreVaried(appData.idxCurrent,:),...
+      appData.nameStrings, appData.typeStrings, appData.u);
+  
+elseif  isequal(appData.lastSelectedPresetType, 'Combined')
+              % Reshape is column elementwise so use the transpose!
+    pcaWeightsTT = reshape(appData.combinedPresetPCAParams{appData.combinedMarkerLastClicked}([1,2],:)',...   
+                1, 2*length(appData.combinedPresetPCAParams{appData.combinedMarkerLastClicked}([1,2],:)));
+
+    pcaWeightsGlobal = reshape(appData.combinedPresetPCAParams{appData.combinedMarkerLastClicked}([3,4],:)',...   
+                1, 2*length(appData.combinedPresetPCAParams{appData.combinedMarkerLastClicked}([3,4],:)));
+
+    % Alter Selected preset
+    appData.combinedPresetsVaried{appData.combinedMarkerLastClicked} = adjustPresetWithPCA(...
+        appData.combinedPresets{appData.combinedMarkerLastClicked},...
+        appData.coeffCell, pcaWeightsTT,...
+        appData.globalCoeffCell, pcaWeightsGlobal);
+
+    sendAllStructParamsOverOSC(appData.combinedPresetsVaried{appData.combinedMarkerLastClicked},...
+      appData.nameStrings, appData.typeStrings, appData.u);    
+    
+else
+    error('Incorrect Preset Type'); 
+end
 end
 
+function updateTimeAndTimbrePlots(appData)
+if  isequal(appData.lastSelectedPresetType, 'Original')
+    % Update Timbre Plots
+    appData.timbreData = timbrePlotDataFromPreset(appData.presetStoreVaried(appData.idxCurrent,:));
+    appData.timbrePlots = updateTimbrePlots(appData.timbrePlots, appData.timbreData); 
+
+    % Update Time Plots
+    appData.timeData = timePlotDataFromPreset(appData.presetStoreVaried(appData.idxCurrent,:));
+    appData.timePlots = updateTimePlots(appData.timePlots, appData.timeData); 
+
+    dispstat(sprintf(preset2string(appData.presetStoreVaried(appData.idxCurrent, :),...
+                                    appData.nameStrings)));
+
+elseif isequal(appData.lastSelectedPresetType, 'Combined')
+    % Update Timbre Plots
+    appData.timbreData = timbrePlotDataFromPreset(appData.combinedPresetsVaried{appData.combinedMarkerLastClicked});
+    appData.timbrePlots = updateTimbrePlots(appData.timbrePlots, appData.timbreData); 
+
+    % Update Time Plots
+    appData.timeData = timePlotDataFromPreset(appData.combinedPresetsVaried{appData.combinedMarkerLastClicked});
+    appData.timePlots = updateTimePlots(appData.timePlots, appData.timeData); 
+
+    dispstat(sprintf(preset2string(appData.combinedPresetsVaried{appData.combinedMarkerLastClicked},...
+                                    appData.nameStrings)));
+
+end
+
+end
 function storeLeftSliderPosition(appData)
 % Store left slider position for the currently selected preset
-appData.presetPCAParams{appData.idxCurrent}(1,:) = [...
-                                appData.leftSliders{1}.Value,...
-                                appData.leftSliders{2}.Value,...
-                                appData.leftSliders{3}.Value,...
-                                appData.leftSliders{4}.Value,...
-                                ];
+if isequal(appData.lastSelectedPresetType, 'Original')
+    appData.presetPCAParams{appData.idxCurrent}(1,:) = ...
+                                        leftSliderValues(appData);
+    
+elseif isequal(appData.lastSelectedPresetType, 'Combined')
+    appData.combinedPresetPCAParams{appData.combinedMarkerLastClicked}(1,:) =...
+                                        leftSliderValues(appData);
+else
+   error('Incorrect Preset Type'); 
+end
+                            
 end
 
 function storeRightSliderPosition(appData)
 % Store right slider position for the currently selected preset
-appData.presetPCAParams{appData.idxCurrent}(2,:) = [...
-                                appData.rightSliders{1}.Value,...
-                                appData.rightSliders{2}.Value,...
-                                appData.rightSliders{3}.Value,...
-                                appData.rightSliders{4}.Value,...
-                                ];
+if isequal(appData.lastSelectedPresetType, 'Original')
+    appData.presetPCAParams{appData.idxCurrent}(2,:) = ...
+                                            rightSliderValues(appData);
+elseif isequal(appData.lastSelectedPresetType, 'Combined')
+    appData.combinedPresetPCAParams{appData.combinedMarkerLastClicked}(2,:) = ...
+                                            rightSliderValues(appData);
+else
+   error('Incorrect Preset Type'); 
+end
+                            
 end
 
 function storeLeftGlobalSliderPosition(appData)
 % Store left slider position for the currently selected preset
-appData.presetPCAParams{appData.idxCurrent}(3,:) = [...
-                                appData.leftGlobalSliders{1}.Value,...
-                                appData.leftGlobalSliders{2}.Value,...
-                                appData.leftGlobalSliders{3}.Value,...
-                                appData.leftGlobalSliders{4}.Value,...
-                                ];
+if isequal(appData.lastSelectedPresetType, 'Original')
+    appData.presetPCAParams{appData.idxCurrent}(3,:) = ...
+                                        leftGlobalSliderValues(appData);
+elseif isequal(appData.lastSelectedPresetType, 'Combined')
+    appData.combinedPresetPCAParams{appData.combinedMarkerLastClicked}(3,:) = ...
+                                        leftGlobalSliderValues(appData);             
+else
+   error('Incorrect Preset Type'); 
+end
+
 end
 
 function storeRightGlobalSliderPosition(appData)
 % Store right slider position for the currently selected preset
-appData.presetPCAParams{appData.idxCurrent}(4,:) = [...
-                                appData.rightGlobalSliders{1}.Value,...
-                                appData.rightGlobalSliders{2}.Value,...
-                                appData.rightGlobalSliders{3}.Value,...
-                                appData.rightGlobalSliders{4}.Value,...
-                                ];
+if isequal(appData.lastSelectedPresetType, 'Original')
+    appData.presetPCAParams{appData.idxCurrent}(4,:) = ...
+                                        rightGlobalSliderValues(appData);  
+elseif isequal(appData.lastSelectedPresetType, 'Combined')
+    appData.combinedPresetPCAParams{appData.combinedMarkerLastClicked}(4,:) = ...
+                                        rightGlobalSliderValues(appData);                               
+else
+   error('Incorrect Preset Type'); 
+end   
+
+end
+
+function values = leftSliderValues(appData)
+values = [...
+            appData.leftSliders{1}.Value,...
+            appData.leftSliders{2}.Value,...
+            appData.leftSliders{3}.Value,...
+            appData.leftSliders{4}.Value,...
+         ];
+end
+function values = rightSliderValues(appData)
+values = [...
+            appData.rightSliders{1}.Value,...
+            appData.rightSliders{2}.Value,...
+            appData.rightSliders{3}.Value,...
+            appData.rightSliders{4}.Value,...
+         ];
+end
+function values = leftGlobalSliderValues(appData)
+values = [...
+            appData.leftGlobalSliders{1}.Value,...
+            appData.leftGlobalSliders{2}.Value,...
+            appData.leftGlobalSliders{3}.Value,...
+            appData.leftGlobalSliders{4}.Value,...
+         ];
+end
+function values = rightGlobalSliderValues(appData)
+values = [...
+            appData.rightGlobalSliders{1}.Value,...
+            appData.rightGlobalSliders{2}.Value,...
+            appData.rightGlobalSliders{3}.Value,...
+            appData.rightGlobalSliders{4}.Value,...
+         ];
 end
 
 function updatePresetVariedMarker(appData)
-alteredPresetFlattened = cell2mat(appData.presetStoreVaried(appData.idxCurrent,:));
-mu = mean(cell2mat(appData.presetStoreVaried));
-alteredPresetFlattened = alteredPresetFlattened - mu;
+if isequal(appData.lastSelectedPresetType, 'Original')
 
-idxMax = max([appData.idxX, appData.idxY, appData.idxR, appData.idxG, appData.idxB]);
-testScore = alteredPresetFlattened*appData.coeff(:,1:idxMax);
+    alteredPresetFlattened = cell2mat(appData.presetStoreVaried(appData.idxCurrent,:));
+    mu = mean(cell2mat(appData.presetStoreVaried));
+    alteredPresetFlattened = alteredPresetFlattened - mu;
 
-idxX = appData.idxX; 
-idxY = appData.idxY; 
-idxR = appData.idxR;
-idxG = appData.idxG;
-idxB = appData.idxB;
+    idxMax = max([appData.idxX, appData.idxY, appData.idxR, appData.idxG, appData.idxB]);
+    testScore = alteredPresetFlattened*appData.coeff(:,1:idxMax);
 
-if appData.normaliseHistogram == true
-    % Need to apply the same historam normalisation to the new positition
-    testScore(idxX) = newPointHistogramNormalisation(...
-        testScore(idxX),appData.histParams.nX, appData.histParams.edgesX, appData.histBlend);
-    
-    testScore(idxY) = newPointHistogramNormalisation(...
-        testScore(idxY),appData.histParams.nY, appData.histParams.edgesY, appData.histBlend);
-    
-    testScore(idxR) = newPointHistogramNormalisation(...
-        testScore(idxR),appData.histParams.nR, appData.histParams.edgesR, appData.histBlend);
-    
-    testScore(idxG) = newPointHistogramNormalisation(...
-        testScore(idxG),appData.histParams.nG, appData.histParams.edgesG, appData.histBlend);
-    
-    testScore(idxB) = newPointHistogramNormalisation(...
-        testScore(idxB),appData.histParams.nB, appData.histParams.edgesB, appData.histBlend);
-end
-    % Maybe should store the minimum and maximum value to avoid recalculation
-    x = mapRange(testScore(idxX), appData.minX, appData.maxX, 0.05, 0.95);
-    y = mapRange(testScore(idxY), appData.minY, appData.maxY, 0.05, 0.95);
-    R = bound(mapRange(testScore(idxR), appData.minR, appData.maxR, 0.1, 1), 0, 1);
-    G = bound(mapRange(testScore(idxG), appData.minG, appData.maxG, 0.1, 1), 0, 1);
-    B = bound(mapRange(testScore(idxB), appData.minB, appData.maxB, 0.1, 1), 0, 1);
+    idxX = appData.idxX; 
+    idxY = appData.idxY; 
+    idxR = appData.idxR;
+    idxG = appData.idxG;
+    idxB = appData.idxB;
 
-if isempty(appData.variedPresetMarkers{appData.idxCurrent})
-    appData.variedPresetLines{appData.idxCurrent} = plot(...
-        [x, appData.currentPresetPositions(appData.idxCurrent, 1)],...
-        [y, appData.currentPresetPositions(appData.idxCurrent, 2)],...
-        'Color', [0,0,0], 'LineWidth', 1.5);
-    
-    appData.variedPresetMarkers{appData.idxCurrent} =  plot(x, y, 'o',...
-        'MarkerFaceColor', [R, G, B],...
-        'MarkerEdgeColor', [0,0,0],...
-        'MarkerSize', 15);
+    if appData.normaliseHistogram == true
+        % Need to apply the same historam normalisation to the new positition
+        testScore(idxX) = newPointHistogramNormalisation(...
+            testScore(idxX),appData.histParams.nX, appData.histParams.edgesX, appData.histBlend);
+
+        testScore(idxY) = newPointHistogramNormalisation(...
+            testScore(idxY),appData.histParams.nY, appData.histParams.edgesY, appData.histBlend);
+
+        testScore(idxR) = newPointHistogramNormalisation(...
+            testScore(idxR),appData.histParams.nR, appData.histParams.edgesR, appData.histBlend);
+
+        testScore(idxG) = newPointHistogramNormalisation(...
+            testScore(idxG),appData.histParams.nG, appData.histParams.edgesG, appData.histBlend);
+
+        testScore(idxB) = newPointHistogramNormalisation(...
+            testScore(idxB),appData.histParams.nB, appData.histParams.edgesB, appData.histBlend);
+    end
+        % Maybe should store the minimum and maximum value to avoid recalculation
+        x = mapRange(testScore(idxX), appData.minX, appData.maxX, 0.05, 0.95);
+        y = mapRange(testScore(idxY), appData.minY, appData.maxY, 0.05, 0.95);
+        R = bound(mapRange(testScore(idxR), appData.minR, appData.maxR, 0.1, 1), 0, 1);
+        G = bound(mapRange(testScore(idxG), appData.minG, appData.maxG, 0.1, 1), 0, 1);
+        B = bound(mapRange(testScore(idxB), appData.minB, appData.maxB, 0.1, 1), 0, 1);
+
+    if isempty(appData.variedPresetMarkers{appData.idxCurrent})
+        appData.variedPresetLines{appData.idxCurrent} = plot(...
+            [x, appData.currentPresetPositions(appData.idxCurrent, 1)],...
+            [y, appData.currentPresetPositions(appData.idxCurrent, 2)],...
+            'Color', [0,0,0], 'LineWidth', 1.5);
+
+        appData.variedPresetMarkers{appData.idxCurrent} =  plot(x, y, 'o',...
+            'MarkerFaceColor', [R, G, B],...
+            'MarkerEdgeColor', [0,0,0],...
+            'MarkerSize', 15);
+    else
+        appData.variedPresetMarkers{appData.idxCurrent}.XData = x; 
+        appData.variedPresetMarkers{appData.idxCurrent}.YData = y;
+        appData.variedPresetMarkers{appData.idxCurrent}.MarkerFaceColor = [R,G,B];
+
+        appData.variedPresetLines{appData.idxCurrent}.XData(1) = x;
+        appData.variedPresetLines{appData.idxCurrent}.YData(1) = y;
+    end
+elseif isequal(appData.lastSelectedPresetType, 'Combined')
+    appData.combinedMarkers{appData.combinedMarkerLastClicked}.MarkerFaceColor = [0.3,0.3,1];
 else
-    appData.variedPresetMarkers{appData.idxCurrent}.XData = x; 
-    appData.variedPresetMarkers{appData.idxCurrent}.YData = y;
-    appData.variedPresetMarkers{appData.idxCurrent}.MarkerFaceColor = [R,G,B];
-    
-    appData.variedPresetLines{appData.idxCurrent}.XData(1) = x;
-    appData.variedPresetLines{appData.idxCurrent}.YData(1) = y;
+    error('Incorrent Preset Type')
 end
 end
 
@@ -952,58 +1065,13 @@ function switchToCombinedPreset(idx, appData)
     appData.combinedMarkers{idx}.Color = appData.mouseOverSelectedColour;
     
     % Update sliders to new preset
-    updateSliders(appData.presetPCAParams{idx}, appData);
+    updateSliders(appData.combinedPresetPCAParams{idx}, appData);
 
     % Update NumDisplays to new preset
-    updateNumDisplays(appData.presetPCAParams{idx}, appData);
+    updateNumDisplays(appData.combinedPresetPCAParams{idx}, appData);
 
     appData.idxCurrent = idx;
     %drawnow()
-end
-
-function updateSliders(PCAParams, appData)
-
-appData.leftSliders{1}.Value = PCAParams(1,1);
-appData.leftSliders{2}.Value = PCAParams(1,2);
-appData.leftSliders{3}.Value = PCAParams(1,3);
-appData.leftSliders{4}.Value = PCAParams(1,4);
-
-appData.rightSliders{1}.Value = PCAParams(2,1);
-appData.rightSliders{2}.Value = PCAParams(2,2);
-appData.rightSliders{3}.Value = PCAParams(2,3);
-appData.rightSliders{4}.Value = PCAParams(2,4);
-
-appData.leftGlobalSliders{1}.Value = PCAParams(3,1);
-appData.leftGlobalSliders{2}.Value = PCAParams(3,2);
-appData.leftGlobalSliders{3}.Value = PCAParams(3,3);
-appData.leftGlobalSliders{4}.Value = PCAParams(3,4);
-
-appData.rightGlobalSliders{1}.Value = PCAParams(4,1);
-appData.rightGlobalSliders{2}.Value = PCAParams(4,2);
-appData.rightGlobalSliders{3}.Value = PCAParams(4,3);
-appData.rightGlobalSliders{4}.Value = PCAParams(4,4);
-
-end
-function updateNumDisplays(PCAParams, appData)
-appData.leftNumDisplays{1}.String = num2str(PCAParams(1,1));
-appData.leftNumDisplays{2}.String = num2str(PCAParams(1,2));
-appData.leftNumDisplays{3}.String = num2str(PCAParams(1,3));
-appData.leftNumDisplays{4}.String = num2str(PCAParams(1,4));
-
-appData.rightNumDisplays{1}.String = num2str(PCAParams(2,1));
-appData.rightNumDisplays{2}.String = num2str(PCAParams(2,2));
-appData.rightNumDisplays{3}.String = num2str(PCAParams(2,3));
-appData.rightNumDisplays{4}.String = num2str(PCAParams(2,4));
-
-appData.leftGlobalNumDisplays{1}.String = num2str(PCAParams(3,1));
-appData.leftGlobalNumDisplays{2}.String = num2str(PCAParams(3,2));
-appData.leftGlobalNumDisplays{3}.String = num2str(PCAParams(3,3));
-appData.leftGlobalNumDisplays{4}.String = num2str(PCAParams(3,4));
-
-appData.rightGlobalNumDisplays{1}.String = num2str(PCAParams(4,1));
-appData.rightGlobalNumDisplays{2}.String = num2str(PCAParams(4,2));
-appData.rightGlobalNumDisplays{3}.String = num2str(PCAParams(4,3));
-appData.rightGlobalNumDisplays{4}.String = num2str(PCAParams(4,4));
 end
 
 function calculatePresetPCA(appData)
