@@ -100,11 +100,15 @@ classdef ApplicationDataPCAInterface < handle
         
         %Combined Preset Markers and data
         combinedPresets;
+        combinedPresetsVaried;
         combinedLines;
         combinedMarkers;
         combinedMarkerPositions;
         combinedMarkerLastClicked;
         combinedMarkersSelected;
+        
+        lastSelectedPresetType = 'Original';
+        
         % UI elements - time/timbre
         timeData;
         timePlots;
@@ -218,6 +222,7 @@ end
 function patchClicked (object, eventdata, idx, appData)
 % writes continuous mouse position to base workspace
 disp(['Patch ', num2str(idx), ' Clicked'])
+appData.lastSelectedPresetType = 'Original';
 
 if ~ismember(idx, appData.idxSelected)
     appData.idxSelected = [appData.idxSelected, idx];
@@ -276,18 +281,39 @@ MOUSE = get (gca, 'CurrentPoint');
 mousePos = MOUSE(1,1:2);
 
 if ~isempty(appData.idxSelected) && mousePosOutOfRange(mousePos)
-    idx = appData.idxSelected(length(appData.idxSelected));
+    idx = appData.idxSelected(end);
 else
     closestPoint=bsxfun(@minus,appData.currentPresetPositions,mousePos);
     [~,idx]=min(hypot(closestPoint(:,1),closestPoint(:,2)));
     %disp(['Index: ', num2str(idx)])
 end
 
-% Has index changed?
-if idx ~= appData.idxCurrent
-    
-    switchToPreset(idx, appData);
 
+if mousePosOutOfRange(mousePos)
+    if isequal(appData.lastSelectedPresetType, 'Original')
+        if idx ~= appData.idxCurrent
+            switchToPreset(idx, appData);
+        end
+    elseif isequal(appData.lastSelectedPresetType, 'Combined')
+        if appData.combinedMarkerLastClicked ~= appData.popup.Value
+            
+            if appData.combinedMarkerLastClicked > 0
+                switchToCombinedPreset(appData.combinedMarkerLastClicked, appData);
+            elseif ~isempty(appData.combinedMarkersSelected)
+                appData.combinedMarkerLastClicked  = appData.combinedMarkersSelected(end);
+                switchToCombinedPreset(appData.combinedMarkerLastClicked, appData);
+            else
+                appData.lastSelectedPresetType = 'Original';
+            end
+        end
+    else
+        error('Incorrect last preset Type')
+    end
+    
+else
+    if idx ~= appData.idxCurrent
+        switchToPreset(idx, appData);
+    end
 end
 
 % Deselect previous combined marker if necessary
@@ -475,15 +501,15 @@ switch length(appData.idxSelected)
     case 2
         presetA = appData.presetStoreVaried(appData.idxSelected(1),:);
         presetB = appData.presetStoreVaried(appData.idxSelected(2),:);
-        presetC = appData.combinedPresets{appData.combinedMarkersSelected(1)};
+        presetC = appData.combinedPresetsVaried{appData.combinedMarkersSelected(1)};
     case 1
         presetA = appData.presetStoreVaried(appData.idxSelected(1),:);
-        presetB = appData.combinedPresets{appData.combinedMarkersSelected(1)};
-        presetC = appData.combinedPresets{appData.combinedMarkersSelected(2)};
+        presetB = appData.combinedPresetsVaried{appData.combinedMarkersSelected(1)};
+        presetC = appData.combinedPresetsVaried{appData.combinedMarkersSelected(2)};
     case 0
-        presetA = appData.combinedPresets{appData.combinedMarkersSelected(1)};
-        presetB = appData.combinedPresets{appData.combinedMarkersSelected(2)};
-        presetC = appData.combinedPresets{appData.combinedMarkersSelected(3)};
+        presetA = appData.combinedPresetsVaried{appData.combinedMarkersSelected(1)};
+        presetB = appData.combinedPresetsVaried{appData.combinedMarkersSelected(2)};
+        presetC = appData.combinedPresetsVaried{appData.combinedMarkersSelected(3)};
 end
 
 appData.blendingAppData.P = presetGeneratorSCMonteCarloMV(presetA, presetB, presetC, appData.blendingAppData);
@@ -855,6 +881,7 @@ function switchToPreset(idx, appData)
     
     % Update Preset number popup
     appData.popup.Value = idx;
+    appData.popup.FontAngle = 'normal';
     
     % Display Parameter Values to Command Line
     dispstat(sprintf(preset2string(appData.presetStoreVaried(appData.idxCurrent, :),...
@@ -872,7 +899,6 @@ function switchToPreset(idx, appData)
     
     % New patch
     if ~ismember(idx, appData.idxSelected)
-        
         %appData.patches{idx}.FaceColor = appData.mouseOverColour;
         appData.patches{idx}.EdgeColor = appData.mouseOverColour;
         appData.patches{idx}.LineWidth = 5;
@@ -884,49 +910,100 @@ function switchToPreset(idx, appData)
     end
     
     % Update sliders to new preset
-    appData.leftSliders{1}.Value = appData.presetPCAParams{idx}(1,1);
-    appData.leftSliders{2}.Value = appData.presetPCAParams{idx}(1,2);
-    appData.leftSliders{3}.Value = appData.presetPCAParams{idx}(1,3);
-    appData.leftSliders{4}.Value = appData.presetPCAParams{idx}(1,4);
-    
-    appData.rightSliders{1}.Value = appData.presetPCAParams{idx}(2,1);
-    appData.rightSliders{2}.Value = appData.presetPCAParams{idx}(2,2);
-    appData.rightSliders{3}.Value = appData.presetPCAParams{idx}(2,3);
-    appData.rightSliders{4}.Value = appData.presetPCAParams{idx}(2,4);
-    
-    appData.leftGlobalSliders{1}.Value = appData.presetPCAParams{idx}(3,1);
-    appData.leftGlobalSliders{2}.Value = appData.presetPCAParams{idx}(3,2);
-    appData.leftGlobalSliders{3}.Value = appData.presetPCAParams{idx}(3,3);
-    appData.leftGlobalSliders{4}.Value = appData.presetPCAParams{idx}(3,4);
-    
-    appData.rightGlobalSliders{1}.Value = appData.presetPCAParams{idx}(4,1);
-    appData.rightGlobalSliders{2}.Value = appData.presetPCAParams{idx}(4,2);
-    appData.rightGlobalSliders{3}.Value = appData.presetPCAParams{idx}(4,3);
-    appData.rightGlobalSliders{4}.Value = appData.presetPCAParams{idx}(4,4);
-    
+    updateSliders(appData.presetPCAParams{idx}, appData);
+
     % Update NumDisplays to new preset
-    appData.leftNumDisplays{1}.String = num2str(appData.presetPCAParams{idx}(1,1));
-    appData.leftNumDisplays{2}.String = num2str(appData.presetPCAParams{idx}(1,2));
-    appData.leftNumDisplays{3}.String = num2str(appData.presetPCAParams{idx}(1,3));
-    appData.leftNumDisplays{4}.String = num2str(appData.presetPCAParams{idx}(1,4));
-    
-    appData.rightNumDisplays{1}.String = num2str(appData.presetPCAParams{idx}(2,1));
-    appData.rightNumDisplays{2}.String = num2str(appData.presetPCAParams{idx}(2,2));
-    appData.rightNumDisplays{3}.String = num2str(appData.presetPCAParams{idx}(2,3));
-    appData.rightNumDisplays{4}.String = num2str(appData.presetPCAParams{idx}(2,4));
-    
-    appData.leftGlobalNumDisplays{1}.String = num2str(appData.presetPCAParams{idx}(3,1));
-    appData.leftGlobalNumDisplays{2}.String = num2str(appData.presetPCAParams{idx}(3,2));
-    appData.leftGlobalNumDisplays{3}.String = num2str(appData.presetPCAParams{idx}(3,3));
-    appData.leftGlobalNumDisplays{4}.String = num2str(appData.presetPCAParams{idx}(3,4));
-    
-    appData.rightGlobalNumDisplays{1}.String = num2str(appData.presetPCAParams{idx}(4,1));
-    appData.rightGlobalNumDisplays{2}.String = num2str(appData.presetPCAParams{idx}(4,2));
-    appData.rightGlobalNumDisplays{3}.String = num2str(appData.presetPCAParams{idx}(4,3));
-    appData.rightGlobalNumDisplays{4}.String = num2str(appData.presetPCAParams{idx}(4,4));
-    
+    updateNumDisplays(appData.presetPCAParams{idx}, appData);
+
     appData.idxCurrent = idx;
     %drawnow()
+end
+function switchToCombinedPreset(idx, appData)
+    
+    % Change parameters to this preset
+    sendAllStructParamsOverOSC(appData.combinedPresetsVaried{idx},...
+        appData.nameStrings, appData.typeStrings, appData.u);
+    
+    % Update Time Plots
+    appData.timeData = timePlotDataFromPreset(appData.combinedPresetsVaried{idx});
+    appData.timePlots = updateTimePlots(appData.timePlots, appData.timeData); 
+    
+    % Update Timbre Plots
+    appData.timbreData = timbrePlotDataFromPreset(appData.combinedPresetsVaried{idx});
+    appData.timbrePlots = updateTimbrePlots(appData.timbrePlots, appData.timbreData); 
+    
+    % Update Preset number popup
+    appData.popup.Value = idx;
+    appData.popup.FontAngle = 'italic';
+    
+    % Display Parameter Values to Command Line
+    dispstat(sprintf(preset2string(appData.combinedPresetsVaried{idx},...
+                                appData.nameStrings)));
+    % Old Patch
+    if ~ismember(appData.idxCurrent, appData.idxSelected)
+        appData.patches{appData.idxCurrent}.EdgeColor = [0,0,0];
+        appData.patches{appData.idxCurrent}.LineWidth = 0.5;
+    else
+        appData.patches{appData.idxCurrent}.EdgeColor = appData.selectedColour;
+    end
+    
+    % Combined patch
+    appData.combinedMarkers{idx}.LineWidth = 3;
+    appData.combinedMarkers{idx}.Color = appData.mouseOverSelectedColour;
+    
+    % Update sliders to new preset
+    updateSliders(appData.presetPCAParams{idx}, appData);
+
+    % Update NumDisplays to new preset
+    updateNumDisplays(appData.presetPCAParams{idx}, appData);
+
+    appData.idxCurrent = idx;
+    %drawnow()
+end
+
+function updateSliders(PCAParams, appData)
+
+appData.leftSliders{1}.Value = PCAParams(1,1);
+appData.leftSliders{2}.Value = PCAParams(1,2);
+appData.leftSliders{3}.Value = PCAParams(1,3);
+appData.leftSliders{4}.Value = PCAParams(1,4);
+
+appData.rightSliders{1}.Value = PCAParams(2,1);
+appData.rightSliders{2}.Value = PCAParams(2,2);
+appData.rightSliders{3}.Value = PCAParams(2,3);
+appData.rightSliders{4}.Value = PCAParams(2,4);
+
+appData.leftGlobalSliders{1}.Value = PCAParams(3,1);
+appData.leftGlobalSliders{2}.Value = PCAParams(3,2);
+appData.leftGlobalSliders{3}.Value = PCAParams(3,3);
+appData.leftGlobalSliders{4}.Value = PCAParams(3,4);
+
+appData.rightGlobalSliders{1}.Value = PCAParams(4,1);
+appData.rightGlobalSliders{2}.Value = PCAParams(4,2);
+appData.rightGlobalSliders{3}.Value = PCAParams(4,3);
+appData.rightGlobalSliders{4}.Value = PCAParams(4,4);
+
+end
+function updateNumDisplays(PCAParams, appData)
+appData.leftNumDisplays{1}.String = num2str(PCAParams(1,1));
+appData.leftNumDisplays{2}.String = num2str(PCAParams(1,2));
+appData.leftNumDisplays{3}.String = num2str(PCAParams(1,3));
+appData.leftNumDisplays{4}.String = num2str(PCAParams(1,4));
+
+appData.rightNumDisplays{1}.String = num2str(PCAParams(2,1));
+appData.rightNumDisplays{2}.String = num2str(PCAParams(2,2));
+appData.rightNumDisplays{3}.String = num2str(PCAParams(2,3));
+appData.rightNumDisplays{4}.String = num2str(PCAParams(2,4));
+
+appData.leftGlobalNumDisplays{1}.String = num2str(PCAParams(3,1));
+appData.leftGlobalNumDisplays{2}.String = num2str(PCAParams(3,2));
+appData.leftGlobalNumDisplays{3}.String = num2str(PCAParams(3,3));
+appData.leftGlobalNumDisplays{4}.String = num2str(PCAParams(3,4));
+
+appData.rightGlobalNumDisplays{1}.String = num2str(PCAParams(4,1));
+appData.rightGlobalNumDisplays{2}.String = num2str(PCAParams(4,2));
+appData.rightGlobalNumDisplays{3}.String = num2str(PCAParams(4,3));
+appData.rightGlobalNumDisplays{4}.String = num2str(PCAParams(4,4));
 end
 
 function calculatePresetPCA(appData)

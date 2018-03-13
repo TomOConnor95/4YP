@@ -245,6 +245,8 @@ lineColour = 'g';
 idx = length(appData.pcaAppData.combinedPresets)+1;
 
 appData.pcaAppData.combinedPresets{idx} = appData.P.presetA;
+appData.pcaAppData.combinedPresetsVaried{idx} = appData.P.presetA;
+
 appData.pcaAppData.combinedMarkerPositions(idx,:) = PM;
 appData.pcaAppData.combinedLines{idx} = plot(appData.pcaAppData.ax,...
                 [PM(1), P1a(1), PM(1), P1b(1), PM(1), P1c(1), PM(1)],...
@@ -257,6 +259,8 @@ appData.pcaAppData.combinedMarkers{idx} = plot(appData.pcaAppData.ax, PM(1), PM(
     'LineWidth', 3,...
     'PickableParts','all',...
     'ButtonDownFcn',{@combinedMarkerCallBack, appData.pcaAppData.combinedPresets{idx}, appData.pcaAppData, idx});
+
+appData.pcaAppData.lastSelectedPresetType = 'Combined';
 
 
 % Deselect the previously selected presets
@@ -305,6 +309,7 @@ if appData.combinedMarkerLastClicked == idx
         appData.combinedMarkersSelected = [appData.combinedMarkersSelected, idx];
         appData.combinedMarkers{idx}.LineWidth = 3;
         appData.combinedMarkers{idx}.Color = appData.mouseOverSelectedColour;
+        appData.lastSelectedPresetType = 'Combined';
         if (length(appData.idxSelected) + length(appData.combinedMarkersSelected)) < 3
             % No need to do anything else
         elseif (length(appData.idxSelected) + length(appData.combinedMarkersSelected)) == 3
