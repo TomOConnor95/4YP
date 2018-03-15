@@ -245,6 +245,7 @@ lineColour = 'g';
 idx = length(appData.pcaAppData.combinedPresets)+1;
 
 appData.pcaAppData.combinedPresets{idx} = appData.P.presetA;
+appData.pcaAppData.combinedPresetsEdited{idx} = appData.P.presetA;
 appData.pcaAppData.combinedPresetsVaried{idx} = appData.P.presetA;
 
 appData.pcaAppData.combinedMarkerPositions(idx,:) = PM;

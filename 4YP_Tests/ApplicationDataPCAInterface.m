@@ -63,6 +63,7 @@ classdef ApplicationDataPCAInterface < handle
         
         %Combined Preset Markers and data
         combinedPresets;
+        combinedPresetsEdited;
         combinedPresetsVaried;
         combinedPresetPCAParams;
         combinedLines;
@@ -569,7 +570,6 @@ if isequal(appData.lastSelectedPresetType, 'Original')
     preset = appData.presetStoreVaried(appData.idxSelected(end),:);  
 elseif isequal(appData.lastSelectedPresetType, 'Combined')
     preset = appData.combinedPresetsVaried{appData.combinedMarkerLastClicked};
-
 else
     error('Incorrect Preset Type')
 end
@@ -598,7 +598,7 @@ if isequal(appData.lastSelectedPresetType, 'Original')
     
 elseif isequal(appData.lastSelectedPresetType, 'Combined')
     appData.combinedPresetsVaried{appData.combinedMarkerLastClicked} =...
-            appData.combinedPresets{appData.combinedMarkerLastClicked};
+            appData.combinedPresetsEdited{appData.combinedMarkerLastClicked};
         
     sendAllStructParamsOverOSC(appData.combinedPresetsVaried{appData.combinedMarkerLastClicked},...
       appData.nameStrings, appData.typeStrings, appData.u);
@@ -626,7 +626,24 @@ end
 
 function undoEditButtonCallback (object, eventdata, appData)
 disp('Undo Edit Button Clicked');
+if isequal(appData.lastSelectedPresetType, 'Original')
+    appData.presetStoreEdited(appData.idxSelected(end),:) = ...
+        appData.presetStore(appData.idxSelected(end),:);  
+    
+    switchToPreset(appData.idxSelected(end), appData);
+    
+elseif isequal(appData.lastSelectedPresetType, 'Combined')
+    appData.combinedPresetsEdited{appData.combinedMarkerLastClicked} = ...
+        appData.combinedPresets{appData.combinedMarkerLastClicked};
+    
+    switchToCombinedPreset(appData.combinedMarkerLastClicked, appData)
+    
+else
+    error('Incorrect Preset Type')
+end
+updatePCAWeightsAndSendParams(appData);
 
+appData.undoEditButton.Enable = 'off';
 end
 
 function macroTypeButtonCallback (object, eventdata, appData)
@@ -874,7 +891,7 @@ elseif  isequal(appData.lastSelectedPresetType, 'Combined')
 
     % Alter Selected preset
     appData.combinedPresetsVaried{appData.combinedMarkerLastClicked} = adjustPresetWithPCA(...
-        appData.combinedPresets{appData.combinedMarkerLastClicked},...
+        appData.combinedPresetsEdited{appData.combinedMarkerLastClicked},...
         appData.coeffCell, pcaWeightsTT,...
         appData.globalCoeffCell, pcaWeightsGlobal);
 

@@ -4,13 +4,13 @@ function [presetCategories, categoryIndeces] = createPresetCategories()
 
 % Categories: Piano/Keys, Mallet/Plucked, Bass, Synth Lead, Synth Pad,
 % Rhythmic
-numPresets = 34;
+numPresets = 35;
 
-pianoKeys = [14, 15, 17, 19, 26, 33];
+pianoKeys = [14, 15, 17, 19, 26, 33, 35];
 pluckedMallet = [4, 6, 7, 8, 21, 28, 29, 34];
 bass = [1, 11, 12, 15, 25];
 synthLead = [1, 2, 9, 13, 20, 21, 24, 30, 31, 32];
-synthPad = [3, 5, 10, 16, 17, 18, 22, 23, 25, 26, 27];
+synthPad = [3, 5, 10, 16, 17, 18, 22, 23, 25, 26, 27, 35];
 rhythmic = [7, 17, 22, 23, 25, 27, 31, 34];
 
 presetCategories = repmat({zeros(1,6)}, 1, numPresets);
