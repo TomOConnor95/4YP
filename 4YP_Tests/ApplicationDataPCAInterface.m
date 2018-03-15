@@ -2,6 +2,7 @@ classdef ApplicationDataPCAInterface < handle
     properties (SetAccess = public, GetAccess = public)
         % Preset Data
         presetStore;
+        presetStoreEdited;
         presetStoreVaried;
         
         presetCategories;
@@ -151,7 +152,7 @@ classdef ApplicationDataPCAInterface < handle
             % Load Presets
             presetRead = matfile('PresetStoreSC.mat');
             obj.presetStore = presetRead.presetStore;
-            
+            obj.presetStoreEdited = obj.presetStore;
             obj.presetStoreVaried = obj.presetStore;
             
             obj.presetPCAParams = repmat({zeros(4,4)},1,length(obj.presetStore(:,1)));
@@ -564,8 +565,18 @@ function editModeButtonCallback (object, eventdata, appData)
 disp('Edit Mode Button Clicked');
 
 % Find current Preset, vith macro variations
+if isequal(appData.lastSelectedPresetType, 'Original')
+    preset = appData.presetStoreVaried(appData.idxSelected(end),:);  
+elseif isequal(appData.lastSelectedPresetType, 'Combined')
+    preset = appData.combinedPresetsVaried{appData.combinedMarkerLastClicked};
 
+else
+    error('Incorrect Preset Type')
+end
 % send preset to traditional UI
+appData.UIapp = loadPreset(appData.UIapp, preset);
+appData.UIapp.PresetSpinner.Limits(1) = 0;
+appData.UIapp.PresetSpinner.Value = 0;
 
 % Hide/show necessary windows
 appData.UIapp.UIFigure.Visible = 'on';
@@ -578,7 +589,7 @@ disp('Reset Macros Button Clicked');
 % Reset macro Controls
 if isequal(appData.lastSelectedPresetType, 'Original')
     appData.presetStoreVaried(appData.idxSelected(end),:) =...
-            appData.presetStore(appData.idxSelected(end),:);
+            appData.presetStoreEdited(appData.idxSelected(end),:);
 
     appData.presetPCAParams{appData.idxSelected(end)} = zeros(4);
     
@@ -846,7 +857,7 @@ if isequal(appData.lastSelectedPresetType, 'Original')
 
     % Alter Selected preset
     appData.presetStoreVaried(appData.idxCurrent,:) = adjustPresetWithPCA(...
-        appData.presetStore(appData.idxCurrent,:),...
+        appData.presetStoreEdited(appData.idxCurrent,:),...
         appData.coeffCell, pcaWeightsTT,...
         appData.globalCoeffCell, pcaWeightsGlobal);
 
