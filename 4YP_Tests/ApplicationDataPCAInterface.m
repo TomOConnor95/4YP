@@ -92,6 +92,8 @@ classdef ApplicationDataPCAInterface < handle
         controlPanel;
         popup;
         blendModeButton;
+        editModeButton;
+        resetPresetButton;
         macroTypeButton;
         macroType = 'TimbreTime';
         
@@ -257,7 +259,9 @@ else
         appData.blendModeButton.Enable = 'off';
     end
 end
-%drawnow()
+
+%Correctly Enable/Disable Edit Mode Button
+correctlyEnableDisableEditModeButton(appData);
 
 % Deselect previous combined marker if necessary
 if ~isempty(appData.combinedMarkers)
@@ -492,7 +496,7 @@ end
 
 function blendModeButtonCallback (object, eventdata, appData)
 disp('Blend Mode Button Clicked');
-appData.idxSelected;
+%appData.idxSelected;
 
 % There must be 3 selected presets when this funciton is called
 assert(((length(appData.idxSelected) + length(appData.combinedMarkersSelected)) == 3),'3 presets needed for blending')
@@ -546,6 +550,24 @@ appData.blendingAppData.pauseButton.String = 'Begin Searching';
 appData.blendingAppData.pauseButton.BackgroundColor = appData.blendingAppData.pauseColour;
 end
 
+function editModeButtonCallback (object, eventdata, appData)
+disp('Edit Mode Button Clicked');
+
+% Find current Preset, vith macro variations
+
+% send preset to traditional UI
+
+% Hide/show necessary windows
+end
+
+function resetPresetButtonCallback (object, eventdata, appData)
+disp('Reset Preset Button Clicked');
+
+% Reset Edits from edit mode
+
+% Reset macro Controls
+end
+
 function macroTypeButtonCallback (object, eventdata, appData)
 disp('Macro Type Button Clicked');
 
@@ -567,6 +589,31 @@ elseif strcmp(appData.macroType, 'Global') == true
 else
     disp('Invalid MacroType Selected')
 end
+end
+
+function numPopupCallback(object, eventdata, appData)
+    idx = appData.popup.Value;
+    
+    switchToPreset(idx, appData);
+    
+    if ~ismember(idx, appData.idxSelected)
+        appData.idxSelected = [appData.idxSelected, idx];
+
+        appData.patches{idx}.EdgeColor = appData.selectedColour;
+    end
+    
+    if ~isempty(appData.idxPopupSelected)
+        appData.idxSelected(appData.idxSelected == appData.idxPopupSelected) = [];
+        
+        appData.patches{appData.idxPopupSelected}.FaceColor = appData.colours{appData.idxPopupSelected};
+        appData.patches{appData.idxPopupSelected}.EdgeColor = [0,0,0];
+        appData.patches{appData.idxPopupSelected}.LineWidth = 0.5;
+    end
+     
+    appData.idxPopupSelected = idx;
+
+    appData.patches{idx}.EdgeColor = appData.selectedColour;
+    
 end
 
 function categoryButtonCallback (object, eventdata, idx, appData)
@@ -712,42 +759,25 @@ updatePresetVariedMarker(appData)
 
 if idx < 5
     % Update Timbre Plots
-    appData.timbreData = timbrePlotDataFromPreset(appData.presetStoreVaried(appData.idxCurrent,:));
+    if isequal(appData.lastSelectedPresetType, 'Original')
+        appData.timbreData = timbrePlotDataFromPreset(appData.presetStoreVaried(appData.idxCurrent,:));
+    else
+        appData.timbreData = timbrePlotDataFromPreset(appData.combinedPresetsVaried{appData.combinedMarkerLastClicked});
+    end
     appData.timbrePlots = updateTimbrePlots(appData.timbrePlots, appData.timbreData); 
 else
     % Update Time Plots
-    appData.timeData = timePlotDataFromPreset(appData.presetStoreVaried(appData.idxCurrent,:));
+    if isequal(appData.lastSelectedPresetType, 'Original')
+        appData.timeData = timePlotDataFromPreset(appData.presetStoreVaried(appData.idxCurrent,:));
+    else
+        appData.timeData = timePlotDataFromPreset(appData.combinedPresetsVaried{appData.combinedMarkerLastClicked});
+    end
     appData.timePlots = updateTimePlots(appData.timePlots, appData.timeData);  
 end
 dispstat(sprintf(preset2string(appData.presetStoreVaried(appData.idxCurrent, :),...
                                 appData.nameStrings)));
- 
 end
 
-function numPopupCallback(object, eventdata, appData)
-    idx = appData.popup.Value;
-    
-    switchToPreset(idx, appData);
-    
-    if ~ismember(idx, appData.idxSelected)
-        appData.idxSelected = [appData.idxSelected, idx];
-
-        appData.patches{idx}.EdgeColor = appData.selectedColour;
-    end
-    
-    if ~isempty(appData.idxPopupSelected)
-        appData.idxSelected(appData.idxSelected == appData.idxPopupSelected) = [];
-        
-        appData.patches{appData.idxPopupSelected}.FaceColor = appData.colours{appData.idxPopupSelected};
-        appData.patches{appData.idxPopupSelected}.EdgeColor = [0,0,0];
-        appData.patches{appData.idxPopupSelected}.LineWidth = 0.5;
-    end
-     
-    appData.idxPopupSelected = idx;
-
-    appData.patches{idx}.EdgeColor = appData.selectedColour;
-    
-end
 %----------------------------------------------------------%
 %----------------------Misc Functions----------------------%
 %----------------------------------------------------------%
@@ -1413,6 +1443,7 @@ else
     error('Incorrect Category Setting')
 end
 end
+
 %----------------------------------------------------------%
 %----------------------UI Objects--------------------------%
 %----------------------------------------------------------%
@@ -1604,6 +1635,12 @@ appData.controlPanel = uipanel('Position',[0.0, 0.0, 0.3, 0.2]);
 % Blend Mode Button
 createBlendModeButton(appData, appData.controlPanel);
 
+% Edit Mode Button
+createEditModeButton(appData, appData.controlPanel);
+
+% Reset Preset Button
+createResetPresetButton(appData, appData.controlPanel);
+
 % Macro Type Button
 createMacroTypeButton(appData, appData.controlPanel);
 
@@ -1616,8 +1653,34 @@ appData.blendModeButton = uicontrol(panel,...
     'style', 'pushbutton',...
     'string', 'Blend Mode',...
     'units', 'normalized',...
-    'position', [0.0 0.6 0.5 0.4],...
+    'position', [0.0 0.625 0.5 0.375],...
     'callback', {@blendModeButtonCallback, appData},...
+    'visible', 'on',...
+    'FontSize', 13,...
+    'Enable', 'off');
+
+end
+
+function createEditModeButton(appData, panel)
+appData.editModeButton = uicontrol(panel,...
+    'style', 'pushbutton',...
+    'string', 'Edit Mode',...
+    'units', 'normalized',...
+    'position', [0.0 0.3 0.5 0.375],...
+    'callback', {@editModeButtonCallback, appData},...
+    'visible', 'on',...
+    'FontSize', 13,...
+    'Enable', 'off');
+
+end
+
+function createResetPresetButton(appData, panel)
+appData.resetPresetButton = uicontrol(panel,...
+    'style', 'pushbutton',...
+    'string', 'Reset Preset',...
+    'units', 'normalized',...
+    'position', [0.0 0.0 0.5 0.35],...
+    'callback', {@resetPresetButtonCallback, appData},...
     'visible', 'on',...
     'FontSize', 13,...
     'Enable', 'off');

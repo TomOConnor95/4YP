@@ -336,6 +336,8 @@ if appData.combinedMarkerLastClicked == idx
         appData.combinedMarkers{idx}.LineWidth = 3;
         appData.combinedMarkers{idx}.Color = appData.mouseOverColour;
     end  
+    %Correctly Enable/Disable Edit Mode Button
+    correctlyEnableDisableEditModeButton(appData);
 else
     % Current marker has not just been double clicked
     if isempty(appData.combinedMarkersSelected(appData.combinedMarkersSelected == idx))
@@ -360,11 +362,11 @@ end
 
 appData.combinedMarkerLastClicked = idx;
 
-    % Update sliders to new preset
-    updateSliders(appData.combinedPresetPCAParams{idx}, appData);
+% Update sliders to new preset
+updateSliders(appData.combinedPresetPCAParams{idx}, appData);
 
-    % Update NumDisplays to new preset
-    updateNumDisplays(appData.combinedPresetPCAParams{idx}, appData);
+% Update NumDisplays to new preset
+updateNumDisplays(appData.combinedPresetPCAParams{idx}, appData);
 
 
 end
