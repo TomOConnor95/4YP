@@ -129,12 +129,13 @@ classdef ApplicationDataPCAInterface < handle
         
         midiControls;
         
+        UIapp;
         blendingAppData;
     end
     
     methods
         % Constructor
-        function obj = ApplicationDataPCAInterface()
+        function obj = ApplicationDataPCAInterface(UIapp_in)
             
             % Open UDP connection
             obj.u = udp('127.0.0.1',57120);
@@ -178,15 +179,6 @@ classdef ApplicationDataPCAInterface < handle
             
             % Create control panel - buttons to move to different UIs
             createControlPanel(obj);
-%             % Blend Mode Button
-%             createBlendModeButton(obj);
-%             
-%             % Macro Type Button
-%             createMacroTypeButton(obj);
-%             
-%             % Add pop-up menu to display the selected Preset
-%             createPopup(obj);
-            
             
             % Category Buttons
             createCategoryButtons(obj);
@@ -212,6 +204,7 @@ classdef ApplicationDataPCAInterface < handle
             
             % Set up Blending App
             obj.blendingAppData = ApplicationDataBlendingInterface(obj);
+            obj.UIapp = UIapp_in;
             
         end
         
@@ -575,6 +568,8 @@ disp('Edit Mode Button Clicked');
 % send preset to traditional UI
 
 % Hide/show necessary windows
+appData.UIapp.UIFigure.Visible = 'on';
+
 end
 
 function resetMacrosButtonCallback (object, eventdata, appData)
