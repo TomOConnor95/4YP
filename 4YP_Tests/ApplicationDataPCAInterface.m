@@ -56,44 +56,6 @@ classdef ApplicationDataPCAInterface < handle
         variedPresetMarkers;
         variedPresetLines;
         
-        leftSlidersPanel;
-        rightSlidersPanel;
-        leftSliders;
-        rightSliders;
-        leftNumDisplays;
-        rightNumDisplays;
-        
-        leftGlobalSlidersPanel;
-        rightGlobalSlidersPanel;
-        leftGlobalSliders;
-        rightGlobalSliders;
-        leftGlobalNumDisplays;
-        rightGlobalNumDisplays;
-        
-        timeColour = [0.94, 0.6, 0.6];
-        timbreColour = [0.94, 0.94, 0.6];
-        normalColour = [0.4,0.5,0.9];
-        
-        popup;
-        
-        blendModeButton;
-        macroTypeButton;
-        macroType = 'TimbreTime';
-        
-        categoryDisplayType = 'Highlight';%'Subset'
-        categoriesPanel;
-        pianoKeysButton;
-        pluckedMalletButton;
-        bassButton;
-        synthLeadButton;
-        synthPadButton;
-        rhythmicButton;
-        displayModeButton;
-        
-        categoriesSelected = [0, 0, 0, 0, 0, 0];
-        categoryColours = {[1,0,0], [0,1,0], [0,0,1], [1,1,0], [1,0,1], [0,1,1]};
-
-        
         idxCurrent = 1;
         idxSelected = [];
         idxPopupSelected = [];
@@ -110,12 +72,54 @@ classdef ApplicationDataPCAInterface < handle
         
         lastSelectedPresetType = 'Original';
         
+        
+        % Macro Controls UI elements
+        leftSlidersPanel;
+        rightSlidersPanel;
+        leftSliders;
+        rightSliders;
+        leftNumDisplays;
+        rightNumDisplays;
+        
+        leftGlobalSlidersPanel;
+        rightGlobalSlidersPanel;
+        leftGlobalSliders;
+        rightGlobalSliders;
+        leftGlobalNumDisplays;
+        rightGlobalNumDisplays;
+        
+        % Conrol Panel
+        controlPanel;
+        popup;
+        blendModeButton;
+        macroTypeButton;
+        macroType = 'TimbreTime';
+        
+        % Categories Panel
+        categoryDisplayType = 'Highlight';%'Subset'
+        categoriesPanel;
+        pianoKeysButton;
+        pluckedMalletButton;
+        bassButton;
+        synthLeadButton;
+        synthPadButton;
+        rhythmicButton;
+        displayModeButton;
+        
+        categoriesSelected = [0, 0, 0, 0, 0, 0];
+        categoryColours = {[1,0,0], [0,1,0], [0,0,1], [1,1,0], [1,0,1], [0,1,1]};
+        
+        
         % UI elements - time/timbre
         timeData;
         timePlots;
         
         timbreData;
         timbrePlots;
+        
+        timeColour = [0.94, 0.6, 0.6];
+        timbreColour = [0.94, 0.94, 0.6];
+        normalColour = [0.4,0.5,0.9];
         
         % Connectivity
         u; % UDP adress
@@ -166,26 +170,20 @@ classdef ApplicationDataPCAInterface < handle
             % Create voronoi diagram from global PCA preset locations
             createPresetVoronoi(obj);
             
-            % Add pop-up menu to display the selected Preset
-            createPopup(obj);
+            % Create Macro control sliders and NumDisplays to edit presets
+            createMacroControls(obj);
             
-            % Sliders - To adjust the principal components of presets
-            createSliders(obj);
+            % Create control panel - buttons to move to different UIs
+            createControlPanel(obj);
+%             % Blend Mode Button
+%             createBlendModeButton(obj);
+%             
+%             % Macro Type Button
+%             createMacroTypeButton(obj);
+%             
+%             % Add pop-up menu to display the selected Preset
+%             createPopup(obj);
             
-            % NumberDisplays
-            createNumDisplays(obj);
-            
-            % Sliders - for Global PCA
-            createGlobalSliders(obj);
-            
-            % NumberDisplays - for Global PCA
-            createGlobalNumDisplays(obj);
-            
-            % Blend Mode Button
-            createBlendModeButton(obj);
-            
-            % Macro Type Button
-            createMacroTypeButton(obj);
             
             % Category Buttons
             createCategoryButtons(obj);
@@ -1458,18 +1456,43 @@ set(gcf, 'WindowButtonMotionFcn', {@mouseMoving, appData});
 %set(gca, 'Position', [0.1300 0.2100 0.7750 0.7150]);
 end
 
-function createSliders(appData)
+% Macro Controls
+function createMacroControls(appData)
+% Create Macro control sliders and NumDisplays to edit presets
 appData.leftSlidersPanel = uipanel('Title', 'Timbre PCA Macros 1-4',...
                                 'TitlePosition','righttop',...
-                                'Position',[0.2, 0, 0.39, 0.2]);
+                                'Position',[0.3, 0, 0.35, 0.2]);
 appData.rightSlidersPanel = uipanel('Title', 'Time PCA Macros 1-4',...
                                 'TitlePosition','lefttop',...
-                                'Position',[0.6, 0, 0.39, 0.2]);
+                                'Position',[0.65, 0, 0.35, 0.2]);
 
+appData.leftGlobalSlidersPanel = uipanel('Title', 'Global PCA Macros 1-4',...
+                                'TitlePosition','righttop',...
+                                'Position',[0.3, 0, 0.35, 0.2],...
+                                'Visible', 'off');
+appData.rightGlobalSlidersPanel = uipanel('Title', 'Global PCA Macros 5-8',...
+                                'TitlePosition','lefttop',...
+                                'Position',[0.65, 0, 0.35, 0.2],...
+                                'Visible', 'off');
+                            
+% Sliders - To adjust the principal components of presets
+createSliders(appData, appData.leftSlidersPanel, appData.rightSlidersPanel);
+
+% NumberDisplays
+createNumDisplays(appData, appData.leftSlidersPanel, appData.rightSlidersPanel);
+
+% Sliders - for Global PCA
+createGlobalSliders(appData, appData.leftGlobalSlidersPanel, appData.rightGlobalSlidersPanel);
+
+% NumberDisplays - for Global PCA
+createGlobalNumDisplays(appData, appData.leftGlobalSlidersPanel, appData.rightGlobalSlidersPanel);  
+end
+
+function createSliders(appData, leftPanel, rightPanel)
 appData.leftSliders = cell(1,4);
 appData.rightSliders = cell(1,4);
 for i = 1:length(appData.leftSliders)
-appData.leftSliders{i} = uicontrol(appData.leftSlidersPanel,...
+appData.leftSliders{i} = uicontrol(leftPanel,...
     'style', 'slider',...
     'string', 'Slider1',...
     'units', 'normalized',...
@@ -1481,7 +1504,7 @@ appData.leftSliders{i} = uicontrol(appData.leftSlidersPanel,...
     'max', 5);
 end
 for i = 1:length(appData.rightSliders)
-appData.rightSliders{i} = uicontrol(appData.rightSlidersPanel,...
+appData.rightSliders{i} = uicontrol(rightPanel,...
     'style', 'slider',...
     'string', 'Slider1',...
     'units', 'normalized',...
@@ -1495,20 +1518,11 @@ end
 
 end
 
-function createGlobalSliders(appData)
-appData.leftGlobalSlidersPanel = uipanel('Title', 'Global PCA Macros 1-4',...
-                                'TitlePosition','righttop',...
-                                'Position',[0.2, 0, 0.39, 0.2],...
-                                'Visible', 'off');
-appData.rightGlobalSlidersPanel = uipanel('Title', 'Global PCA Macros 5-8',...
-                                'TitlePosition','lefttop',...
-                                'Position',[0.6, 0, 0.39, 0.2],...
-                                'Visible', 'off');
-
+function createGlobalSliders(appData, leftPanel, rightPanel)
 appData.leftGlobalSliders = cell(1,4);
 appData.rightGlobalSliders = cell(1,4);
 for i = 1:length(appData.leftGlobalSliders)
-appData.leftGlobalSliders{i} = uicontrol(appData.leftGlobalSlidersPanel,...
+appData.leftGlobalSliders{i} = uicontrol(leftPanel,...
     'style', 'slider',...
     'string', 'Slider1',...
     'units', 'normalized',...
@@ -1520,7 +1534,7 @@ appData.leftGlobalSliders{i} = uicontrol(appData.leftGlobalSlidersPanel,...
     'max', 5);
 end
 for i = 1:length(appData.rightGlobalSliders)
-appData.rightGlobalSliders{i} = uicontrol(appData.rightGlobalSlidersPanel,...
+appData.rightGlobalSliders{i} = uicontrol(rightPanel,...
     'style', 'slider',...
     'string', 'Slider1',...
     'units', 'normalized',...
@@ -1534,12 +1548,12 @@ end
 
 end
 
-function createNumDisplays(appData)
+function createNumDisplays(appData, leftPanel, rightPanel)
 appData.leftNumDisplays = cell(1,4);
 appData.rightNumDisplays = cell(1,4);
 
 for i = 1:length(appData.leftSliders)
-appData.leftNumDisplays{i} = uicontrol(appData.leftSlidersPanel,...
+appData.leftNumDisplays{i} = uicontrol(leftPanel,...
     'Style','text',...
     'units', 'normalized',...
     'BackgroundColor', appData.timbreColour,...
@@ -1548,7 +1562,7 @@ appData.leftNumDisplays{i} = uicontrol(appData.leftSlidersPanel,...
     'Position',[0.75,(0.78 -0.25*(i-1)),0.25,0.26]);
 end
 for i = 1:length(appData.rightSliders)
-appData.rightNumDisplays{i} = uicontrol(appData.rightSlidersPanel,...
+appData.rightNumDisplays{i} = uicontrol(rightPanel,...
     'Style','text',...
     'units', 'normalized',...
     'BackgroundColor', appData.timeColour,...
@@ -1558,12 +1572,12 @@ appData.rightNumDisplays{i} = uicontrol(appData.rightSlidersPanel,...
 end
 end
 
-function createGlobalNumDisplays(appData)
+function createGlobalNumDisplays(appData, leftPanel, rightPanel)
 appData.leftGlobalNumDisplays = cell(1,4);
 appData.rightGlobalNumDisplays = cell(1,4);
 
 for i = 1:length(appData.leftGlobalSliders)
-appData.leftGlobalNumDisplays{i} = uicontrol(appData.leftGlobalSlidersPanel,...
+appData.leftGlobalNumDisplays{i} = uicontrol(leftPanel,...
     'Style','text',...
     'units', 'normalized',...
     'BackgroundColor', appData.normalColour,...
@@ -1572,7 +1586,7 @@ appData.leftGlobalNumDisplays{i} = uicontrol(appData.leftGlobalSlidersPanel,...
     'Position',[0.75,(0.78 -0.25*(i-1)),0.25,0.26]);
 end
 for i = 1:length(appData.rightGlobalSliders)
-appData.rightGlobalNumDisplays{i} = uicontrol(appData.rightGlobalSlidersPanel,...
+appData.rightGlobalNumDisplays{i} = uicontrol(rightPanel,...
     'Style','text',...
     'units', 'normalized',...
     'BackgroundColor', appData.normalColour,...
@@ -1582,11 +1596,27 @@ appData.rightGlobalNumDisplays{i} = uicontrol(appData.rightGlobalSlidersPanel,..
 end
 end
 
-function createBlendModeButton(appData)
-appData.blendModeButton = uicontrol('style', 'pushbutton',...
+%Control Panel
+function createControlPanel(appData)
+% Create control panel - buttons to control UI
+appData.controlPanel = uipanel('Position',[0.0, 0.0, 0.3, 0.2]);
+
+% Blend Mode Button
+createBlendModeButton(appData, appData.controlPanel);
+
+% Macro Type Button
+createMacroTypeButton(appData, appData.controlPanel);
+
+% Add pop-up menu to display the selected Preset
+createPopup(appData, appData.controlPanel);
+end
+
+function createBlendModeButton(appData, panel)
+appData.blendModeButton = uicontrol(panel,...
+    'style', 'pushbutton',...
     'string', 'Blend Mode',...
     'units', 'normalized',...
-    'position', [0.0 0.12 0.14 0.08],...
+    'position', [0.0 0.6 0.5 0.4],...
     'callback', {@blendModeButtonCallback, appData},...
     'visible', 'on',...
     'FontSize', 13,...
@@ -1594,30 +1624,33 @@ appData.blendModeButton = uicontrol('style', 'pushbutton',...
 
 end
 
-function createPopup(appData)
+function createPopup(appData, panel)
 popupString = cell(1,length(appData.presetStore(:,1)));
 for i = 1:length(popupString)
    popupString{i} = num2str(i);    
 end
 
-appData.popup = uicontrol('Style', 'popup',...
-           'String', popupString,...
-           'units', 'normalized',...
-           'Position', [0,0.07, 0.14, 0.05],...
-           'Callback', {@numPopupCallback, appData});
+appData.popup = uicontrol(panel,...
+    'Style', 'popup',...
+    'String', popupString,...
+    'units', 'normalized',...
+    'Position', [0.5, 0.6, 0.5, 0.3],...
+    'Callback', {@numPopupCallback, appData});
 end
 
-function createMacroTypeButton(appData)
-appData.macroTypeButton = uicontrol('style', 'pushbutton',...
+function createMacroTypeButton(appData, panel)
+appData.macroTypeButton = uicontrol(panel,...
+    'style', 'pushbutton',...
     'string', 'Macro Type',...
     'units', 'normalized',...
-    'position', [0.0 0.0 0.14 0.08],...
+    'position', [0.5 0.0 0.5 0.4],...
     'callback', {@macroTypeButtonCallback, appData},...
     'visible', 'on',...
     'FontSize', 13);
 
 end
 
+% Category Buttons
 function createCategoryButtons(appData)
 appData.categoriesPanel = uipanel('Position',[0, 0.9, 1, 0.1]);
 
@@ -1680,6 +1713,7 @@ appData.displayModeButton = uicontrol(appData.categoriesPanel,...
 appData.displayModeButton.BackgroundColor = [0.7,1,0.7];
 end
 
+% Time-Timbre Plots
 function createTimePlots(appData)
 figure(6), clf
 set(figure(6), 'MenuBar', 'none', 'ToolBar' ,'none')
@@ -1698,6 +1732,7 @@ appData.timbrePlots = createAllTimbrePlots(appData.timbreData);
 set(figure(7), 'Position',(get(figure(5), 'Position') - [550, 420, -550, 0]))
 end
 
+% Midi Input
 function initialiseMidiInput(appData)
     appData.midiControls = cell(1,8);
     for i = 1:8
