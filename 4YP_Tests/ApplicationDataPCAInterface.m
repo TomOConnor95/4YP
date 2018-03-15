@@ -93,7 +93,8 @@ classdef ApplicationDataPCAInterface < handle
         popup;
         blendModeButton;
         editModeButton;
-        resetPresetButton;
+        resetMacrosButton;
+        undoEditButton;
         macroTypeButton;
         macroType = 'TimbreTime';
         
@@ -337,9 +338,11 @@ appData.leftNumDisplays{idx}.String = num2str(appData.leftSliders{idx}.Value);
 
 storeLeftSliderPosition(appData)
 
-updatePCAWeightsAndSendParams(appData)
+updatePCAWeightsAndSendParams(appData);
 
-updatePresetVariedMarker(appData)
+updatePresetVariedMarker(appData);
+
+correctlyEnableDisableResetPresetButton(appData);
 
 % Update Timbre Plots
 appData.timbreData = timbrePlotDataFromPreset(appData.presetStoreVaried(appData.idxCurrent,:));
@@ -364,11 +367,13 @@ end
 function rightSliderCallback (object, eventdata, idx, appData)
 appData.rightNumDisplays{idx}.String = num2str(appData.rightSliders{idx}.Value);
 
-storeRightSliderPosition(appData)
+storeRightSliderPosition(appData);
 
-updatePCAWeightsAndSendParams(appData)
+updatePCAWeightsAndSendParams(appData);
 
-updatePresetVariedMarker(appData)
+updatePresetVariedMarker(appData);
+
+correctlyEnableDisableResetPresetButton(appData);
 
 if  isequal(appData.lastSelectedPresetType, 'Original')
     % Update Time Plots
@@ -390,25 +395,29 @@ end
 function leftGlobalSliderCallback (object, eventdata, idx, appData)
 appData.leftGlobalNumDisplays{idx}.String = num2str(appData.leftGlobalSliders{idx}.Value);
 
-storeLeftGlobalSliderPosition(appData)
+storeLeftGlobalSliderPosition(appData);
 
-updatePCAWeightsAndSendParams(appData)
+updatePCAWeightsAndSendParams(appData);
  
-updatePresetVariedMarker(appData)
+updatePresetVariedMarker(appData);
 
-updateTimeAndTimbrePlots(appData)
+correctlyEnableDisableResetPresetButton(appData);
+
+updateTimeAndTimbrePlots(appData);
                             
 end
 function rightGlobalSliderCallback (object, eventdata, idx, appData)
 appData.rightGlobalNumDisplays{idx}.String = num2str(appData.rightGlobalSliders{idx}.Value);
 
-storeRightGlobalSliderPosition(appData)
+storeRightGlobalSliderPosition(appData);
 
-updatePCAWeightsAndSendParams(appData)
+updatePCAWeightsAndSendParams(appData);
 
-updatePresetVariedMarker(appData)
+updatePresetVariedMarker(appData);
 
-updateTimeAndTimbrePlots(appData)
+correctlyEnableDisableResetPresetButton(appData);
+
+updateTimeAndTimbrePlots(appData);
 end
 
 function leftTextCallback (object, eventdata, idx, appData)
@@ -416,11 +425,13 @@ function leftTextCallback (object, eventdata, idx, appData)
 appData.leftNumDisplays{idx}.String = num2str(0);
 appData.leftSliders{idx}.Value = 0;
 
-storeLeftSliderPosition(appData)
+storeLeftSliderPosition(appData);
 
-updatePCAWeightsAndSendParams(appData)
+updatePCAWeightsAndSendParams(appData);
 
-updatePresetVariedMarker(appData)
+updatePresetVariedMarker(appData);
+
+correctlyEnableDisableResetPresetButton(appData);
 
 % Update Timbre Plots
 appData.timbreData = timbrePlotDataFromPreset(appData.presetStoreVaried(appData.idxCurrent,:));
@@ -434,11 +445,13 @@ function rightTextCallback (object, eventdata, idx, appData)
 appData.rightNumDisplays{idx}.String = num2str(0);
 appData.rightSliders{idx}.Value = 0;
 
-storeRightSliderPosition(appData)
+storeRightSliderPosition(appData);
 
-updatePCAWeightsAndSendParams(appData)
+updatePCAWeightsAndSendParams(appData);
 
-updatePresetVariedMarker(appData)
+updatePresetVariedMarker(appData);
+
+correctlyEnableDisableResetPresetButton(appData);
 
 % Update Time Plots
 appData.timeData = timePlotDataFromPreset(appData.presetStoreVaried(appData.idxCurrent,:));
@@ -453,11 +466,13 @@ function leftGlobalTextCallback (object, eventdata, idx, appData)
 appData.leftGlobalNumDisplays{idx}.String = num2str(0);
 appData.leftGlobalSliders{idx}.Value = 0;
 
-storeLeftGlobalSliderPosition(appData)
+storeLeftGlobalSliderPosition(appData);
 
-updatePCAWeightsAndSendParams(appData)
+updatePCAWeightsAndSendParams(appData);
 
-updatePresetVariedMarker(appData)
+updatePresetVariedMarker(appData);
+
+correctlyEnableDisableResetPresetButton(appData);
 
 % Update Timbre Plots
 appData.timbreData = timbrePlotDataFromPreset(appData.presetStoreVaried(appData.idxCurrent,:));
@@ -476,11 +491,13 @@ function rightGlobalTextCallback (object, eventdata, idx, appData)
 appData.rightGlobalNumDisplays{idx}.String = num2str(0);
 appData.rightGlobalSliders{idx}.Value = 0;
 
-storeRightGlobalSliderPosition(appData)
+storeRightGlobalSliderPosition(appData);
 
-updatePCAWeightsAndSendParams(appData)
+updatePCAWeightsAndSendParams(appData);
 
-updatePresetVariedMarker(appData)
+updatePresetVariedMarker(appData);
+
+correctlyEnableDisableResetPresetButton(appData);
 
 % Update Timbre Plots
 appData.timbreData = timbrePlotDataFromPreset(appData.presetStoreVaried(appData.idxCurrent,:));
@@ -560,12 +577,50 @@ disp('Edit Mode Button Clicked');
 % Hide/show necessary windows
 end
 
-function resetPresetButtonCallback (object, eventdata, appData)
-disp('Reset Preset Button Clicked');
-
-% Reset Edits from edit mode
+function resetMacrosButtonCallback (object, eventdata, appData)
+disp('Reset Macros Button Clicked');
 
 % Reset macro Controls
+if isequal(appData.lastSelectedPresetType, 'Original')
+    appData.presetStoreVaried(appData.idxSelected(end),:) =...
+            appData.presetStore(appData.idxSelected(end),:);
+
+    appData.presetPCAParams{appData.idxSelected(end)} = zeros(4);
+    
+    sendAllStructParamsOverOSC(appData.presetStoreVaried(appData.idxCurrent,:),...
+      appData.nameStrings, appData.typeStrings, appData.u);
+    
+elseif isequal(appData.lastSelectedPresetType, 'Combined')
+    appData.combinedPresetsVaried{appData.combinedMarkerLastClicked} =...
+            appData.combinedPresetsVaried{appData.combinedMarkerLastClicked};
+        
+    sendAllStructParamsOverOSC(appData.combinedPresetStoreVaried{appData.combinedMarkerLastClicked},...
+      appData.nameStrings, appData.typeStrings, appData.u);
+  
+    appData.combinePresetPCAParams{appData.combinedMarkerLastClicked} = zeros(4);
+else
+    error('Incorrect Preset Type')
+end
+
+% Update Preset Markers
+updatePresetVariedMarker(appData)
+
+% Reset Sliders
+updateSliders(zeros(4), appData);
+
+% Reset NumDisplays
+updateNumDisplays(zeros(4), appData);
+
+% Update Time and Timbre plots
+updateTimeAndTimbrePlots(appData)
+
+
+correctlyEnableDisableResetPresetButton(appData)
+end
+
+function undoEditButtonCallback (object, eventdata, appData)
+disp('Undo Edit Button Clicked');
+
 end
 
 function macroTypeButtonCallback (object, eventdata, appData)
@@ -743,19 +798,21 @@ if idx < 5
 
     appData.leftNumDisplays{idx}.String = num2str(appData.leftSliders{idx}.Value);
 
-    storeLeftSliderPosition(appData)
+    storeLeftSliderPosition(appData);
      
 else
     appData.rightSliders{idx-4}.Value = (midiCC * 10) - 5;
  
     appData.rightNumDisplays{idx-4}.String = num2str(appData.rightSliders{idx-4}.Value);
 
-    storeRightSliderPosition(appData)
+    storeRightSliderPosition(appData);
 end
 
-updatePCAWeightsAndSendParams(appData)
+updatePCAWeightsAndSendParams(appData);
 
-updatePresetVariedMarker(appData)
+updatePresetVariedMarker(appData);
+
+correctlyEnableDisableResetPresetButton(appData);
 
 if idx < 5
     % Update Timbre Plots
@@ -1444,6 +1501,43 @@ else
 end
 end
 
+function correctlyEnableDisableResetPresetButton(appData)
+
+    if isequal(appData.lastSelectedPresetType, 'Original')
+        if isempty(appData.idxSelected)
+            enable = 0;
+        else
+            if isequal(appData.presetPCAParams{appData.idxSelected(end)}, zeros(4))
+                enable = 0;
+            else
+                enable = 1; 
+            end 
+        end
+        
+    elseif isequal(appData.lastSelectedPresetType, 'Combined')
+        if isempty(appData.combinedMarkersSelected)
+            enable = 0;
+        else
+            if isequal(appData.combinedPresetPCAParams{appData.combinedMarkerLastClicked}, zeros(4))
+                enable = 0;
+            else
+                enable = 1; 
+            end 
+        end
+    else
+        error('Incorrect Preset Type')
+    end
+
+if enable == 0 && isequal(appData.resetMacrosButton.Enable, 'on')
+appData.resetMacrosButton.Enable = 'off';
+end
+
+
+if enable == 1 && isequal(appData.resetMacrosButton.Enable, 'off')
+    appData.resetMacrosButton.Enable = 'on';
+end
+
+end
 %----------------------------------------------------------%
 %----------------------UI Objects--------------------------%
 %----------------------------------------------------------%
@@ -1638,8 +1732,11 @@ createBlendModeButton(appData, appData.controlPanel);
 % Edit Mode Button
 createEditModeButton(appData, appData.controlPanel);
 
-% Reset Preset Button
-createResetPresetButton(appData, appData.controlPanel);
+% Reset Macros Button
+createResetMacrosButton(appData, appData.controlPanel);
+
+% Undo Edit Button
+createUndoEditButton(appData, appData.controlPanel);
 
 % Macro Type Button
 createMacroTypeButton(appData, appData.controlPanel);
@@ -1674,13 +1771,26 @@ appData.editModeButton = uicontrol(panel,...
 
 end
 
-function createResetPresetButton(appData, panel)
-appData.resetPresetButton = uicontrol(panel,...
+function createResetMacrosButton(appData, panel)
+appData.resetMacrosButton = uicontrol(panel,...
     'style', 'pushbutton',...
-    'string', 'Reset Preset',...
+    'string', 'Reset Macros',...
+    'units', 'normalized',...
+    'position', [0.5 0.0 0.5 0.35],...
+    'callback', {@resetMacrosButtonCallback, appData},...
+    'visible', 'on',...
+    'FontSize', 12,...
+    'Enable', 'off');
+
+end
+
+function createUndoEditButton(appData, panel)
+appData.undoEditButton = uicontrol(panel,...
+    'style', 'pushbutton',...
+    'string', 'Undo Edit',...
     'units', 'normalized',...
     'position', [0.0 0.0 0.5 0.35],...
-    'callback', {@resetPresetButtonCallback, appData},...
+    'callback', {@undoEditButtonCallback, appData},...
     'visible', 'on',...
     'FontSize', 13,...
     'Enable', 'off');
@@ -1706,7 +1816,7 @@ appData.macroTypeButton = uicontrol(panel,...
     'style', 'pushbutton',...
     'string', 'Macro Type',...
     'units', 'normalized',...
-    'position', [0.5 0.0 0.5 0.4],...
+    'position', [0.5 0.3 0.5 0.375],...
     'callback', {@macroTypeButtonCallback, appData},...
     'visible', 'on',...
     'FontSize', 13);
