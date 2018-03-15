@@ -592,12 +592,12 @@ if isequal(appData.lastSelectedPresetType, 'Original')
     
 elseif isequal(appData.lastSelectedPresetType, 'Combined')
     appData.combinedPresetsVaried{appData.combinedMarkerLastClicked} =...
-            appData.combinedPresetsVaried{appData.combinedMarkerLastClicked};
+            appData.combinedPresets{appData.combinedMarkerLastClicked};
         
-    sendAllStructParamsOverOSC(appData.combinedPresetStoreVaried{appData.combinedMarkerLastClicked},...
+    sendAllStructParamsOverOSC(appData.combinedPresetsVaried{appData.combinedMarkerLastClicked},...
       appData.nameStrings, appData.typeStrings, appData.u);
   
-    appData.combinePresetPCAParams{appData.combinedMarkerLastClicked} = zeros(4);
+    appData.combinedPresetPCAParams{appData.combinedMarkerLastClicked} = zeros(4);
 else
     error('Incorrect Preset Type')
 end
