@@ -51,6 +51,10 @@ classdef ApplicationDataBlendingInterface < handle
     methods
         % Constructor
         function obj = ApplicationDataBlendingInterface(pcaAppData_in)
+            %----------------------------------------------------------%
+            %----------------------Miscellaneous-----------------------%
+            %----------------------------------------------------------%
+            obj.pcaAppData = pcaAppData_in;
             
             % Open UDP connection
             obj.u = udp('127.0.0.1',57120); 
@@ -90,10 +94,7 @@ classdef ApplicationDataBlendingInterface < handle
             %set(figure(3), 'Visible', 'off')
             
             set(figure(4), 'Visible', 'off')
-            %----------------------------------------------------------%
-            %----------------------Miscellaneous-----------------------%
-            %----------------------------------------------------------%
-            obj.pcaAppData = pcaAppData_in;
+            
             
         end
         
@@ -471,7 +472,8 @@ end
 function createBlendingInterface(appData)
 % Plot all geometry for Blending Interface
 figure(1), clf
-set(figure(1), 'MenuBar', 'none', 'ToolBar' ,'none')
+set(figure(1), 'MenuBar', 'none', 'ToolBar' ,'none',...
+               'Position', appData.pcaAppData.UIapp.UIFigure.Position)
 appData.G = createBlendingGeometry();
 % Blending Interface Callbacks
 set (gca, 'ButtonDownFcn', {@mouseClickedBlending, appData});
@@ -531,11 +533,11 @@ function createFreezeSectionUI(appData)
 figure(4)
 clf
 f1Pos = appData.G.figurePosition;
-f4Pos = f1Pos;
+f4Pos = zeros(1,4);
 f4Pos(1) = f1Pos(1)+f1Pos(3);
-f4Pos(2) = f1Pos(2)-f1Pos(4);
-f4Pos(3) = ceil(f4Pos(3)/2);
-f4Pos(4) = f4Pos(4)*2;
+f4Pos(2) = f1Pos(2);
+f4Pos(3) = 250;
+f4Pos(4) = f1Pos(4);
 
 set(figure(4), 'MenuBar', 'none', 'ToolBar' ,'none',...
     'Position', f4Pos);

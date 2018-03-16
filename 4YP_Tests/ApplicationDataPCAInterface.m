@@ -138,6 +138,8 @@ classdef ApplicationDataPCAInterface < handle
     methods
         % Constructor
         function obj = ApplicationDataPCAInterface(UIapp_in)
+            % This UI is contained in UIapp
+            obj.UIapp = UIapp_in;
             
             % Open UDP connection
             obj.u = udp('127.0.0.1',57120);
@@ -206,7 +208,7 @@ classdef ApplicationDataPCAInterface < handle
             
             % Set up Blending App
             obj.blendingAppData = ApplicationDataBlendingInterface(obj);
-            obj.UIapp = UIapp_in;
+            
             
         end
         
@@ -642,6 +644,7 @@ else
     error('Incorrect Preset Type')
 end
 updatePCAWeightsAndSendParams(appData);
+updatePresetVariedMarker(appData);
 
 appData.undoEditButton.Enable = 'off';
 end
@@ -1567,7 +1570,8 @@ end
 
 function createPresetVoronoi(appData)
 figure(5), clf, 
-set(figure(5), 'MenuBar', 'none', 'ToolBar' ,'none')
+set(figure(5), 'MenuBar', 'none', 'ToolBar' ,'none',...
+                'Position', appData.UIapp.UIFigure.Position)
 
 appData.hiddenAxes = axes('position',[0,0.2,1,0.7],...
         'Units','Normalized',...
@@ -1916,7 +1920,7 @@ set(figure(6), 'MenuBar', 'none', 'ToolBar' ,'none')
 
 appData.timeData = timePlotDataFromPreset(appData.presetStore(1,:));
 appData.timePlots = createAllTimePlots(appData.timeData);
-set(figure(6), 'Position',(get(figure(5), 'Position') - [550, 0, 0, 0]))
+set(figure(6), 'Position',(appData.UIapp.UIFigure.Position - [250, 0, 450, 0]))
 end
 
 function createTimbrePlots(appData)
@@ -1925,7 +1929,7 @@ set(figure(7), 'MenuBar', 'none', 'ToolBar' ,'none')
 
 appData.timbreData = timbrePlotDataFromPreset(appData.presetStore(1,:));
 appData.timbrePlots = createAllTimbrePlots(appData.timbreData);
-set(figure(7), 'Position',(get(figure(5), 'Position') - [550, 420, -550, 0]))
+set(figure(7), 'Position',([0, (appData.UIapp.UIFigure.Position(2)-340), (appData.UIapp.UIFigure.Position(3)+250), 300]))
 end
 
 % Midi Input
