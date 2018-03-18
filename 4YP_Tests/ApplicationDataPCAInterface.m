@@ -520,18 +520,36 @@ switch length(appData.idxSelected)
         presetA = appData.presetStoreVaried(appData.idxSelected(1),:);
         presetB = appData.presetStoreVaried(appData.idxSelected(2),:);
         presetC = appData.presetStoreVaried(appData.idxSelected(3),:);
+        
+        colourA = appData.patches{appData.idxSelected(1)}.FaceColor;
+        colourB = appData.patches{appData.idxSelected(2)}.FaceColor;
+        colourC = appData.patches{appData.idxSelected(3)}.FaceColor;
     case 2
         presetA = appData.presetStoreVaried(appData.idxSelected(1),:);
         presetB = appData.presetStoreVaried(appData.idxSelected(2),:);
         presetC = appData.combinedPresetsVaried{appData.combinedMarkersSelected(1)};
+        
+        colourA = appData.patches{appData.idxSelected(1)}.FaceColor;
+        colourB = appData.patches{appData.idxSelected(2)}.FaceColor;
+        colourC = appData.combinedMarkers{appData.combinedMarkersSelected(1)}.MarkerFaceColor;
+        
     case 1
         presetA = appData.presetStoreVaried(appData.idxSelected(1),:);
         presetB = appData.combinedPresetsVaried{appData.combinedMarkersSelected(1)};
         presetC = appData.combinedPresetsVaried{appData.combinedMarkersSelected(2)};
+        
+        colourA = appData.patches{appData.idxSelected(1)}.FaceColor;
+        colourB = appData.combinedMarkers{appData.combinedMarkersSelected(1)}.MarkerFaceColor;
+        colourC = appData.combinedMarkers{appData.combinedMarkersSelected(2)}.MarkerFaceColor;
+        
     case 0
         presetA = appData.combinedPresetsVaried{appData.combinedMarkersSelected(1)};
         presetB = appData.combinedPresetsVaried{appData.combinedMarkersSelected(2)};
         presetC = appData.combinedPresetsVaried{appData.combinedMarkersSelected(3)};
+        
+        colourA = appData.combinedMarkers{appData.combinedMarkersSelected(1)}.MarkerFaceColor;
+        colourB = appData.combinedMarkers{appData.combinedMarkersSelected(2)}.MarkerFaceColor;
+        colourC = appData.combinedMarkers{appData.combinedMarkersSelected(3)}.MarkerFaceColor;
 end
 
 appData.blendingAppData.P = presetGeneratorSCMonteCarloMV(presetA, presetB, presetC, appData.blendingAppData);
@@ -559,6 +577,9 @@ appData.blendingAppData.isPaused = true;
 
 appData.blendingAppData.G.panel.Visible = 'on';
 appData.blendingAppData.phPanel.Visible = 'off';
+
+% Recolour Center triangle
+appData.blendingAppData.G.fillCenter.FaceVertexCData = [colourA; colourB; colourC];
 
 appData.blendingAppData.pauseButton.String = 'Begin Searching';
 appData.blendingAppData.pauseButton.BackgroundColor = appData.blendingAppData.pauseColour;

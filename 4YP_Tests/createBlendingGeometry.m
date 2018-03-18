@@ -20,16 +20,21 @@ G.C = [sideLength/2;sideLength*(sqrt(3)/2)];
 sides = [G.A,G.B,G.C,G.A];
 
 
-% Plot lines
 hold off;
-G.fillCenter = fill(G.ax, sides(1,:),sides(2,:),'c','FaceAlpha',0.3);
+% Shaded Centre Triangle
+
+
+% Plot lines
+G.fillCenter = fill(G.ax, sides(1,1:3),sides(2,1:3),'c','FaceAlpha',1);
+set(G.fillCenter, 'FaceVertexCData', [1,0,0; 1,1,1; 0,0,0.5],...
+                    'FaceColor','interp');
 hold on
 G.pointA = plot(G.ax, G.A(1),G.A(2), 'r+');
 G.pointB = plot(G.ax, G.B(1),G.B(2), 'r+');
 G.pointC = plot(G.ax, G.C(1),G.C(2), 'r+');
 G.lineSides = plot(G.ax, sides(1,:),sides(2,:), 'LineWidth',3);
 
-G.pointCenter = plot(G.ax, 0,sideLength*(sqrt(3)/2)*(2/3),'b+','MarkerSize',12);
+G.pointCenter = plot(G.ax, 0,sideLength*(sqrt(3)/2)*(2/3),'r+','MarkerSize',15);
 
 
 % guide lines outside of triangle
@@ -64,6 +69,7 @@ child_handles = allchild(gca);
 set(child_handles,'HitTest','off')
 
 G.figurePosition = get(figure(1), 'Position');
+
 end
 
 % function mouseClicked (object, eventdata)
