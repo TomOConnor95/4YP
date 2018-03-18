@@ -138,6 +138,22 @@ classdef (Abstract) presetGeneratorSCParent
             % Call Virtual method to generate new B and C
             obj = obj.generateNewBC();
             
+            % Calculate PCA scores for preset A, B, C
+            [~,  ~, RA, GA, BA] = calculatePCAScores(obj.appData.pcaAppData, obj.presetA);
+            [xB, ~, RB, GB, BB] = calculatePCAScores(obj.appData.pcaAppData, obj.presetB);
+            [xC, ~, RC, GC, BC] = calculatePCAScores(obj.appData.pcaAppData, obj.presetC);
+            
+            % We want the x axis of blending plot to correspond with PC 1,
+            % so swap B and C if B has larger PC1 score (x)
+            if xB > xC
+                temp = obj.presetB;
+                obj.presetB = obj.presetC;
+                obj.presetC = temp;
+            end
+            
+            % Change colour of central triangle in belding geometry
+            set(obj.appData.G.fillCenter, 'FaceVertexCData', [RA,GA,BA; RB,GB,BB; RC,GC,BC],...
+                    'FaceColor','interp');
             
             % Save presets to history
             oldIndex = obj.currentTreeIndex;
@@ -152,11 +168,12 @@ classdef (Abstract) presetGeneratorSCParent
             end
             obj.currentTreeIndex = newIndex;
             
-            % Update blending plot, to show change
-            set(obj.appData.G.ax,'color',[0.7 0.9 1] + [(rand(1,2)*0.2)-0.1,0] )
             
             % update all trees for point history plot
-            obj.P1HistoryPlot = updatePointHistoryPlot(obj.P1HistoryPlot,mousePointClicked, oldIndex, newIndex, obj.lineColour, obj.appData);
+            obj.P1HistoryPlot = updatePointHistoryPlot(obj.P1HistoryPlot,mousePointClicked, oldIndex, newIndex, [RA,GA,BA], obj.lineColour, obj.appData);
+            
+            % Update blending plot, to show change
+            set(obj.appData.G.ax,'color',[0.7 0.9 1] + [(rand(1,2)*0.2)-0.1,0] )
             
             % Update plot to show evolution of parameters
             %obj.historyPlot = updateStructPresetHistoryPlot(obj.historyPlot,obj.presetAHistory);
@@ -202,6 +219,14 @@ classdef (Abstract) presetGeneratorSCParent
                 obj.presetC{i} = obj.presetCHistory{i}.get(switchIndex);
             end
             
+            % Calculate PCA scores for preset A, B, C
+            [~,  ~, RA, GA, BA] = calculatePCAScores(obj.appData.pcaAppData, obj.presetA);
+            [~, ~, RB, GB, BB] = calculatePCAScores(obj.appData.pcaAppData, obj.presetB);
+            [~, ~, RC, GC, BC] = calculatePCAScores(obj.appData.pcaAppData, obj.presetC);
+            
+            % Change colour of central triangle in belding geometry
+            set(obj.appData.G.fillCenter, 'FaceVertexCData', [RA,GA,BA; RB,GB,BB; RC,GC,BC],...
+                    'FaceColor','interp');
             
         end
         
@@ -229,6 +254,15 @@ classdef (Abstract) presetGeneratorSCParent
             % update all trees for point history plot - Specialised 
             obj.P1HistoryPlot = updatePointHistoryPlotCombinePresets(obj.P1HistoryPlot, oldIndex, newIndex, presetsDoubleClicked, obj.appData);
             
+            % Calculate PCA scores for preset A, B, C
+            [~,  ~, RA, GA, BA] = calculatePCAScores(obj.appData.pcaAppData, obj.presetA);
+            [~, ~, RB, GB, BB] = calculatePCAScores(obj.appData.pcaAppData, obj.presetB);
+            [~, ~, RC, GC, BC] = calculatePCAScores(obj.appData.pcaAppData, obj.presetC);
+            
+            % Change colour of central triangle in belding geometry
+            set(obj.appData.G.fillCenter, 'FaceVertexCData', [RA,GA,BA; RB,GB,BB; RC,GC,BC],...
+                    'FaceColor','interp');
+                
             % Update plot to show evolution of parameters
             %obj.historyPlot = updateStructPresetHistoryPlot(obj.historyPlot,obj.presetAHistory);
         end

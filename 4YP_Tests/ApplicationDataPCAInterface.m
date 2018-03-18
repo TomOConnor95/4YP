@@ -559,6 +559,14 @@ sendAllStructParamsOverOSC(appData.blendingAppData.P.presetA,...
     appData.blendingAppData.typeStrings,...
     appData.blendingAppData.u);
 
+% Recolour Center triangle
+appData.blendingAppData.G.fillCenter.FaceVertexCData = [colourA; colourB; colourC];
+
+appData.blendingAppData.pauseButton.String = 'Begin Searching';
+appData.blendingAppData.pauseButton.BackgroundColor = appData.blendingAppData.pauseColour;
+
+% Hide/Show correct windows
+
 set(figure(1), 'Visible', 'on')
 if appData.blendingAppData.displayBarGraphs == true
     set(figure(2), 'Visible', 'on')
@@ -578,11 +586,7 @@ appData.blendingAppData.isPaused = true;
 appData.blendingAppData.G.panel.Visible = 'on';
 appData.blendingAppData.phPanel.Visible = 'off';
 
-% Recolour Center triangle
-appData.blendingAppData.G.fillCenter.FaceVertexCData = [colourA; colourB; colourC];
 
-appData.blendingAppData.pauseButton.String = 'Begin Searching';
-appData.blendingAppData.pauseButton.BackgroundColor = appData.blendingAppData.pauseColour;
 end
 
 function editModeButtonCallback (object, eventdata, appData)
@@ -1048,42 +1052,7 @@ end
 function updatePresetVariedMarker(appData)
 if isequal(appData.lastSelectedPresetType, 'Original')
 
-    alteredPresetFlattened = cell2mat(appData.presetStoreVaried(appData.idxCurrent,:));
-    mu = mean(cell2mat(appData.presetStoreVaried));
-    alteredPresetFlattened = alteredPresetFlattened - mu;
-
-    idxMax = max([appData.idxX, appData.idxY, appData.idxR, appData.idxG, appData.idxB]);
-    testScore = alteredPresetFlattened*appData.coeff(:,1:idxMax);
-
-    idxX = appData.idxX; 
-    idxY = appData.idxY; 
-    idxR = appData.idxR;
-    idxG = appData.idxG;
-    idxB = appData.idxB;
-
-    if appData.normaliseHistogram == true
-        % Need to apply the same historam normalisation to the new positition
-        testScore(idxX) = newPointHistogramNormalisation(...
-            testScore(idxX),appData.histParams.nX, appData.histParams.edgesX, appData.histBlend);
-
-        testScore(idxY) = newPointHistogramNormalisation(...
-            testScore(idxY),appData.histParams.nY, appData.histParams.edgesY, appData.histBlend);
-
-        testScore(idxR) = newPointHistogramNormalisation(...
-            testScore(idxR),appData.histParams.nR, appData.histParams.edgesR, appData.histBlend);
-
-        testScore(idxG) = newPointHistogramNormalisation(...
-            testScore(idxG),appData.histParams.nG, appData.histParams.edgesG, appData.histBlend);
-
-        testScore(idxB) = newPointHistogramNormalisation(...
-            testScore(idxB),appData.histParams.nB, appData.histParams.edgesB, appData.histBlend);
-    end
-        % Maybe should store the minimum and maximum value to avoid recalculation
-        x = mapRange(testScore(idxX), appData.minX, appData.maxX, 0.05, 0.95);
-        y = mapRange(testScore(idxY), appData.minY, appData.maxY, 0.05, 0.95);
-        R = bound(mapRange(testScore(idxR), appData.minR, appData.maxR, 0.1, 1), 0, 1);
-        G = bound(mapRange(testScore(idxG), appData.minG, appData.maxG, 0.1, 1), 0, 1);
-        B = bound(mapRange(testScore(idxB), appData.minB, appData.maxB, 0.1, 1), 0, 1);
+    [x, y, R, G, B] = calculatePCAScores(appData, appData.presetStoreVaried(appData.idxCurrent,:));
 
     if isempty(appData.variedPresetMarkers{appData.idxCurrent})
         appData.variedPresetLines{appData.idxCurrent} = plot(...
@@ -1104,7 +1073,10 @@ if isequal(appData.lastSelectedPresetType, 'Original')
         appData.variedPresetLines{appData.idxCurrent}.YData(1) = y;
     end
 elseif isequal(appData.lastSelectedPresetType, 'Combined')
-    appData.combinedMarkers{appData.combinedMarkerLastClicked}.MarkerFaceColor = [0.3,0.3,1];
+    
+    [~, ~, R, G, B] = calculatePCAScores(appData, appData.combinedPresets{appData.combinedMarkerLastClicked});
+    
+    appData.combinedMarkers{appData.combinedMarkerLastClicked}.MarkerFaceColor = [R,G,B];
 else
     error('Incorrent Preset Type')
 end
@@ -1402,32 +1374,6 @@ end
 %xOut = xNorm;
 xOut = histBlend*xNorm + (1-histBlend)*xIn;
 
-end
-
-function [score] = newPointHistogramNormalisation(scoreIn, n, edges, histBlend)
-    lowerEdgeIdx = find(edges < scoreIn, 1, 'last' );
-    
-    if isempty(lowerEdgeIdx)
-        score = 0;
-    else
-        if lowerEdgeIdx == 0
-        lowerSum = 0;
-        else
-            lowerSum = sum(n(1:lowerEdgeIdx-1));
-        end
-
-        if lowerEdgeIdx == length(edges)
-            %disp('Out of range')
-            score = mapRange(scoreIn,...
-                        edges(lowerEdgeIdx), edges(lowerEdgeIdx)*1.1,...
-                        lowerSum, lowerSum*1.1);
-        else
-        score = mapRange(scoreIn,...
-                        edges(lowerEdgeIdx), edges(lowerEdgeIdx + 1),...
-                        lowerSum, lowerSum + n(lowerEdgeIdx));
-        end
-    end
-    score = histBlend*score + (1-histBlend)*scoreIn;
 end
 
 function categorySelect(appData, categoryIndeces)

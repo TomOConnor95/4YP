@@ -21,8 +21,6 @@ sides = [G.A,G.B,G.C,G.A];
 
 
 hold off;
-% Shaded Centre Triangle
-
 
 % Plot lines
 G.fillCenter = fill(G.ax, sides(1,1:3),sides(2,1:3),'c','FaceAlpha',1);
