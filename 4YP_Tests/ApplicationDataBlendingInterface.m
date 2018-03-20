@@ -257,7 +257,7 @@ appData.pcaAppData.combinedMarkerPositions(idx,:) = PM;
 appData.pcaAppData.combinedLines{idx} = plot(appData.pcaAppData.ax,...
                 [PM(1), P1a(1), NaN, PM(1), P1b(1), NaN, PM(1), P1c(1)],...
                 [PM(2), P1a(2), NaN, PM(2), P1b(2), NaN, PM(2), P1c(2)],...
-                'Color', lineColour, 'LineStyle', ':','LineWidth',2, 'PickableParts','none');
+                'Color', lineColour, 'LineStyle', ':','LineWidth',3, 'PickableParts','none');
 
 appData.pcaAppData.combinedMarkers{idx} = plot(appData.pcaAppData.ax, PM(1), PM(2), 'o','MarkerSize',15,...
     'MarkerFaceColor',[R,G,B],...
@@ -282,8 +282,16 @@ if ~isempty(appData.pcaAppData.combinedMarkersSelected)
     for i = 1:length(appData.pcaAppData.combinedMarkersSelected)
         appData.pcaAppData.combinedMarkers{appData.pcaAppData.combinedMarkersSelected(i)}.LineWidth = 1;
         appData.pcaAppData.combinedMarkers{appData.pcaAppData.combinedMarkersSelected(i)}.Color = [1,0,0];
+        
+        appData.pcaAppData.combinedLines{appData.pcaAppData.combinedMarkersSelected(i)}.LineWidth = 2;
     end
 end
+
+% if length(appData.pcaAppData.combinedLines) > 1
+%     appData.pcaAppData.combinedLines{1:end ~= idx}.LineWidth = 2;
+%     % This isn't quite right!
+% end
+
 appData.pcaAppData.combinedMarkersSelected = idx;
 appData.pcaAppData.combinedMarkerLastClicked = idx;
 appData.pcaAppData.combinedPresetPCAParams{idx} = zeros(4);
@@ -350,6 +358,7 @@ else
         % Current marker hasn't already been selected
         appData.combinedMarkers{idx}.LineWidth = 3;
         appData.combinedMarkers{idx}.Color = appData.mouseOverColour;
+
     else
         % Current marker has already been selected
         appData.combinedMarkers{idx}.LineWidth = 3;
@@ -361,10 +370,15 @@ else
             && (appData.combinedMarkerLastClicked > 0)
         appData.combinedMarkers{appData.combinedMarkerLastClicked}.LineWidth = 1;
         appData.combinedMarkers{appData.combinedMarkerLastClicked}.Color = [1,0,0];
+        
     elseif (appData.combinedMarkerLastClicked > 0)
         appData.combinedMarkers{appData.combinedMarkerLastClicked}.Color = appData.selectedColour;
     end
 end
+
+       
+appData.combinedLines{idx}.LineWidth = 3;
+appData.combinedLines{1:end ~= idx}.LineWidth = 2;
 
 appData.combinedMarkerLastClicked = idx;
 

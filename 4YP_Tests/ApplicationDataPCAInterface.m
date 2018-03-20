@@ -272,6 +272,11 @@ if ~isempty(appData.combinedMarkers)
     end
 end
 
+% if ~isempty(appData.combinedLines)
+%     appData.combinedLines{1:end}.LineWidth = 2;
+%     % This isn't quite right. Probably need to do in for loop
+% end
+
 appData.combinedMarkerLastClicked = -1;
 
 end
@@ -1079,7 +1084,7 @@ if isequal(appData.lastSelectedPresetType, 'Original')
     end
 elseif isequal(appData.lastSelectedPresetType, 'Combined')
     
-    [~, ~, R, G, B] = calculatePCAScores(appData, appData.combinedPresets{appData.combinedMarkerLastClicked});
+    [~, ~, R, G, B] = calculatePCAScores(appData, appData.combinedPresetsVaried{appData.combinedMarkerLastClicked});
     
     appData.combinedMarkers{appData.combinedMarkerLastClicked}.MarkerFaceColor = [R,G,B];
 else

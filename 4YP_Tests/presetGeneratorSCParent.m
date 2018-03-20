@@ -132,25 +132,25 @@ classdef (Abstract) presetGeneratorSCParent
             [xB, ~, RB, GB, BB] = calculatePCAScores(obj.appData.pcaAppData, obj.presetB);
             [xC, ~, RC, GC, BC] = calculatePCAScores(obj.appData.pcaAppData, obj.presetC);
             
-%             % We want the x axis of blending plot to correspond with PC 1,
-%             % so swap B and C if B has larger PC1 score (x)
-%             if xB > xC
-%                 temp = obj.presetB;
-%                 obj.presetB = obj.presetC;
-%                 obj.presetC = temp;
-%                 
-%                 Rtemp = RB;
-%                 Gtemp = GB;
-%                 Btemp = BB;
-%                 
-%                 RB = RC;
-%                 GB = GC;
-%                 BB = BC;
-%                 
-%                 RC = Rtemp;
-%                 GC = Gtemp;
-%                 BC = Btemp;
-%             end
+            % We want the x axis of blending plot to correspond with PC 1,
+            % so swap B and C if B has larger PC1 score (x)
+            if xB > xC
+                temp = obj.presetB;
+                obj.presetB = obj.presetC;
+                obj.presetC = temp;
+                
+                Rtemp = RB;
+                Gtemp = GB;
+                Btemp = BB;
+                
+                RB = RC;
+                GB = GC;
+                BB = BC;
+                
+                RC = Rtemp;
+                GC = Gtemp;
+                BC = Btemp;
+            end
             
             col = calculateAllOuterPCAColours(obj.appData, obj.presetA, obj.presetB, obj.presetC);
             col.A = [RA,GA,BA];
