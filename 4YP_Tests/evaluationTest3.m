@@ -1,9 +1,9 @@
 % a test to simulate a perfect user using a traditional interface, vs an
-% imperfect user with random start and end point
-%% Setup
-presetRead = matfile('PresetStoreSC.mat');
-numPresets = 36;
+% imperfect user with random goal, and starting point as closest preset to
+% goal
 
+presetRead = matfile('PresetStoreSC.mat');
+numPresets = length(presetRead.presetStore(:,1));
 
 preset1 = presetRead.presetStore(1,:);
 presetLengths = zeros(1,12);
@@ -13,48 +13,63 @@ end
 presetLengthSum = [0, cumsum(presetLengths)];
 totalPresetLength = presetLengthSum(end);
 
-%% tests
-figure(11)
+%% Compute all costs between combinations of presets
+costs = zeros(36);
+% Costs are symmetric so exploit symmetry in computation
+for j = 1:numPresets
+    presetGoal  = presetRead.presetStore(j,:);
+    for i = j+1:numPresets
+            presetTest = presetRead.presetStore(i,:);
+            costs(j,i) = costFunction(presetTest, presetGoal);
+    end
+end
+costs = costs + costs';
+
+[sortedCosts, sortedIndeces] = sort(costs,2);
+
+%% Run Tests
+figure(12)
 clf
 subplot(3,2,1)
-title('Normalised Cost vs Iteration for Perfect User')
+title('Cost vs Iteration for Perfect User')
 hold on
 subplot(3,2,2)
-title('Normalised Cost vs Iteration for Perfect User, with random order')
+title('Cost vs Iteration for Perfect User, with random order')
 hold on
 subplot(3,2,3)
-title('Normalised Cost vs Iteration for Imperfect User')
+title('Cost vs Iteration for Imperfect User')
 hold on
 subplot(3,2,4)
-title('Normalised Cost vs Iteration for Imperfect User, with random order')
+title('Cost vs Iteration for Imperfect User, with random order')
 hold on
 
 meanInitialCost = 0;
 
-costHistoryPerfect = zeros(1,100);
-meanCostHistoryPerfect = zeros(1,100);
+plotLength = 100;
+costHistoryPerfect = zeros(1,plotLength);
+meanCostHistoryPerfect = zeros(1,plotLength);
 
-costHistoryPerfect2 = zeros(1,100);
-meanCostHistoryPerfect2 = zeros(1,100);
+costHistoryPerfect2 = zeros(1,plotLength);
+meanCostHistoryPerfect2 = zeros(1,plotLength);
 
-costHistoryImperfect = zeros(1,100);
-meanCostHistoryImperfect = zeros(1,100);
+costHistoryImperfect = zeros(1,plotLength);
+meanCostHistoryImperfect = zeros(1,plotLength);
 
-costHistoryImperfect2 = zeros(1,100);
-meanCostHistoryImperfect2 = zeros(1,100);
+costHistoryImperfect2 = zeros(1,plotLength);
+meanCostHistoryImperfect2 = zeros(1,plotLength);
 
 
 imperectStdDev = 0.3;
 
 numIterations = 25;
+
 for p = 1:numIterations
-numAB= randperm(36,2);
-numA = numAB(1);
-numB = numAB(2);
 
-presetStart = presetRead.presetStore(numA,:);
-presetGoal  = presetRead.presetStore(numB,:);
+% Start and Goal generation
+num = randperm(numPresets, 1);
+presetGoal  = presetRead.presetStore(num,:);
 
+presetStart  = presetRead.presetStore(sortedIndeces(num, 2),:);
 
 [initialCost, iMax, jMax] = costFunction(presetStart, presetGoal);
 
@@ -115,44 +130,45 @@ meanCostHistoryImperfect2 = meanCostHistoryImperfect2 + costHistoryImperfect2/nu
 
 
 subplot(3,2,1)
-plot((0:1:100), [initialCost, costHistoryPerfect]/initialCost, 'b')
+plot((0:1:plotLength), [initialCost, costHistoryPerfect], 'b')
 subplot(3,2,2)
-plot((0:1:100), [initialCost, costHistoryPerfect2]/initialCost, 'b')
+plot((0:1:plotLength), [initialCost, costHistoryPerfect2], 'b')
 
 subplot(3,2,3)
-plot((0:1:100), [initialCost, costHistoryImperfect]/initialCost, 'b')
+plot((0:1:plotLength), [initialCost, costHistoryImperfect], 'b')
 subplot(3,2,4)
-plot((0: 1:100), [initialCost, costHistoryImperfect2]/initialCost, 'b')
+plot((0: 1:plotLength), [initialCost, costHistoryImperfect2], 'b')
 
 
 end
 
 subplot(3,2,1)
-plot((0:1:100), [meanInitialCost, meanCostHistoryPerfect]/meanInitialCost, 'r', 'LineWidth', 3)
+plot((0:1:plotLength), [meanInitialCost, meanCostHistoryPerfect], 'r', 'LineWidth', 3)
 subplot(3,2,2)
-plot((0:1:100), [meanInitialCost, meanCostHistoryPerfect2]/meanInitialCost, 'r', 'LineWidth', 3)
+plot((0:1:plotLength), [meanInitialCost, meanCostHistoryPerfect2], 'r', 'LineWidth', 3)
 
 subplot(3,2,3)
-plot((0:1:100), [meanInitialCost, meanCostHistoryImperfect]/meanInitialCost, 'g', 'LineWidth', 3)
+plot((0:1:plotLength), [meanInitialCost, meanCostHistoryImperfect], 'g', 'LineWidth', 3)
 subplot(3,2,4)
-plot((0:1:100), [meanInitialCost, meanCostHistoryImperfect2]/meanInitialCost, 'g', 'LineWidth', 3)
+plot((0:1:plotLength), [meanInitialCost, meanCostHistoryImperfect2], 'g', 'LineWidth', 3)
 
 
 subplot(3,2,5)
 title('Perfect User vs Imperfect User Normalised Cost')
 hold on
-plot((0:1:100), [meanInitialCost, meanCostHistoryPerfect]/meanInitialCost, 'r', 'LineWidth', 3)
-plot((0:1:100), [meanInitialCost, meanCostHistoryPerfect2]/meanInitialCost, 'r:', 'LineWidth', 3)
-plot((0:1:100), [meanInitialCost, meanCostHistoryImperfect]/meanInitialCost, 'g', 'LineWidth', 3)
-plot((0:1:100), [meanInitialCost, meanCostHistoryImperfect2]/meanInitialCost, 'g:', 'LineWidth', 3)
+plot((0:1:plotLength), [meanInitialCost, meanCostHistoryPerfect]/meanInitialCost, 'r', 'LineWidth', 3)
+plot((0:1:plotLength), [meanInitialCost, meanCostHistoryPerfect2]/meanInitialCost, 'r:', 'LineWidth', 3)
+plot((0:1:plotLength), [meanInitialCost, meanCostHistoryImperfect]/meanInitialCost, 'g', 'LineWidth', 3)
+plot((0:1:plotLength), [meanInitialCost, meanCostHistoryImperfect2]/meanInitialCost, 'g:', 'LineWidth', 3)
 legend('Perfect', 'Perfect-Rand', ['Imperfect \sigma = ', num2str(imperectStdDev)], 'Imperfect-Rand')
 
 subplot(3,2,6)
 title('Perfect User vs Imperfect User Log Normalised Cost')
 hold on
-plot((0:1:100), log([meanInitialCost, meanCostHistoryPerfect]/meanInitialCost), 'r', 'LineWidth', 3)
-plot((0:1:100), log([meanInitialCost, meanCostHistoryPerfect2]/meanInitialCost), 'r:', 'LineWidth', 3)
-plot((0:1:100), log([meanInitialCost, meanCostHistoryImperfect]/meanInitialCost), 'g', 'LineWidth', 3)
-plot((0:1:100), log([meanInitialCost, meanCostHistoryImperfect2]/meanInitialCost), 'g:', 'LineWidth', 3)
+plot((0:1:plotLength), log([meanInitialCost, meanCostHistoryPerfect]/meanInitialCost), 'r', 'LineWidth', 3)
+plot((0:1:plotLength), log([meanInitialCost, meanCostHistoryPerfect2]/meanInitialCost), 'r:', 'LineWidth', 3)
+plot((0:1:plotLength), log([meanInitialCost, meanCostHistoryImperfect]/meanInitialCost), 'g', 'LineWidth', 3)
+plot((0:1:plotLength), log([meanInitialCost, meanCostHistoryImperfect2]/meanInitialCost), 'g:', 'LineWidth', 3)
 legend('Perfect', 'Perfect-Rand', ['Imperfect \sigma = ', num2str(imperectStdDev)], 'Imperfect-Rand')
+
 
