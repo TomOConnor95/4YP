@@ -152,7 +152,7 @@ classdef (Abstract) presetGeneratorSCParent
 %                 BC = Btemp;
 %             end
             
-            col = calculateAllOuterPCAColours(obj.appData);
+            col = calculateAllOuterPCAColours(obj.appData, obj.presetA, obj.presetB, obj.presetC);
             col.A = [RA,GA,BA];
             col.B = [RB,GB,BB];
             col.C = [RC,GC,BC];
@@ -289,7 +289,7 @@ classdef (Abstract) presetGeneratorSCParent
             [~, ~, RB, GB, BB] = calculatePCAScores(obj.appData.pcaAppData, obj.presetB);
             [~, ~, RC, GC, BC] = calculatePCAScores(obj.appData.pcaAppData, obj.presetC);
             
-            colours = calculateAllOuterPCAColours(obj.appData);
+            colours = calculateAllOuterPCAColours(obj.appData, obj.presetA, obj.presetB, obj.presetC);
             
             colours.A = [RA,GA,BA];
             colours.B = [RB,GB,BB];

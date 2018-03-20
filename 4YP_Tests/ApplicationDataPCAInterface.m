@@ -560,7 +560,7 @@ sendAllStructParamsOverOSC(appData.blendingAppData.P.presetA,...
     appData.blendingAppData.u);
 
 % Recolour Blending Interface
-colours = calculateAllOuterPCAColours(appData.blendingAppData);
+colours = calculateAllOuterPCAColours(appData.blendingAppData, presetA, presetB, presetC);
 colours.A = colourA;
 colours.B = colourB;
 colours.C = colourC;

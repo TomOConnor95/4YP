@@ -1,4 +1,4 @@
-function preset = mixPresets2(appData,ratios)
+function preset = mixPresets2(appData,ratios, presetA, presetB, presetC)
 %appData is a ApplicationDataBlendingInterface object
 
 alpha = ratios(1);
@@ -7,7 +7,7 @@ gamma = ratios(3);
 
 preset = cell(1,12);
 for i = appData.P.unfrozenIndeces
-    preset{i} = mixPresets(appData.P.presetA{i}, appData.P.presetB{i}, appData.P.presetC{i},...
+    preset{i} = mixPresets(presetA{i}, presetB{i}, presetC{i},...
         alpha,beta,gamma);
 end
 

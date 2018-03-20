@@ -1,4 +1,4 @@
-function colours = calculateAllOuterPCAColours(appData)
+function colours = calculateAllOuterPCAColours(appData, presetA, presetB, presetC)
             % appData is a ApplicationDataBlendingInterface object which
             % contains an ApplicationDataPCAInterface object
 
@@ -13,16 +13,16 @@ function colours = calculateAllOuterPCAColours(appData)
             BC = appData.G.ratios.BC;
             CA = appData.G.ratios.CA;
             
-            presetA1 = mixPresets2(appData, A1);
-            presetA2 = mixPresets2(appData, A2);
-            presetB1 = mixPresets2(appData, B1);
-            presetB2 = mixPresets2(appData, B2);
-            presetC1 = mixPresets2(appData, C1);
-            presetC2 = mixPresets2(appData, C2);
+            presetA1 = mixPresets2(appData, A1, presetA, presetB, presetC);
+            presetA2 = mixPresets2(appData, A2, presetA, presetB, presetC);
+            presetB1 = mixPresets2(appData, B1, presetA, presetB, presetC);
+            presetB2 = mixPresets2(appData, B2, presetA, presetB, presetC);
+            presetC1 = mixPresets2(appData, C1, presetA, presetB, presetC);
+            presetC2 = mixPresets2(appData, C2, presetA, presetB, presetC);
             
-            presetAB = mixPresets2(appData, AB);
-            presetBC = mixPresets2(appData, BC);
-            presetCA = mixPresets2(appData, CA);
+            presetAB = mixPresets2(appData, AB, presetA, presetB, presetC);
+            presetBC = mixPresets2(appData, BC, presetA, presetB, presetC);
+            presetCA = mixPresets2(appData, CA, presetA, presetB, presetC);
             
             [~,  ~, c.A1(1), c.A1(2), c.A1(3)] = calculatePCAScores(appData.pcaAppData, presetA1);
             [~,  ~, c.A2(1), c.A2(2), c.A2(3)] = calculatePCAScores(appData.pcaAppData, presetA2);
