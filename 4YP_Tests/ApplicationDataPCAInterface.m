@@ -559,8 +559,13 @@ sendAllStructParamsOverOSC(appData.blendingAppData.P.presetA,...
     appData.blendingAppData.typeStrings,...
     appData.blendingAppData.u);
 
-% Recolour Center triangle
-appData.blendingAppData.G.fillCenter.FaceVertexCData = [colourA; colourB; colourC];
+% Recolour Blending Interface
+colours = calculateAllOuterPCAColours(appData.blendingAppData);
+colours.A = colourA;
+colours.B = colourB;
+colours.C = colourC;
+
+appData.blendingAppData.P = recolourBlendingGeometry(appData.blendingAppData.P, colours);
 
 appData.blendingAppData.pauseButton.String = 'Begin Searching';
 appData.blendingAppData.pauseButton.BackgroundColor = appData.blendingAppData.pauseColour;

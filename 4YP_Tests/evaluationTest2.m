@@ -111,7 +111,7 @@ plot((0:1:100), [initialCost, costHistoryPerfect2]/initialCost, 'b')
 subplot(3,2,3)
 plot((0:1:100), [initialCost, costHistoryImperfect]/initialCost, 'b')
 subplot(3,2,4)
-plot((0:1:100), [initialCost, costHistoryImperfect2]/initialCost, 'b')
+plot((0: 1:100), [initialCost, costHistoryImperfect2]/initialCost, 'b')
 
 
 end
