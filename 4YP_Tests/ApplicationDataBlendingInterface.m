@@ -196,6 +196,9 @@ disp('Freeze Timbre Button Clicked')
 appData.P = appData.P.toggleTimbreState();
 correctlyColourFreezeButtons(appData);
 correctlyDisableFreezeToggles(appData);
+
+% Update colours correctly
+appData.P = appData.P.recolourPresets();
 end
 
 function timeButtonCallback (object, eventdata, appData)
@@ -204,6 +207,9 @@ disp('Freeze Time Button Clicked')
 appData.P = appData.P.toggleTimeState();
 correctlyColourFreezeButtons(appData);
 correctlyDisableFreezeToggles(appData);
+
+% Update colours correctly
+appData.P = appData.P.recolourPresets();
 end
 
 function saveButtonCallback (object, eventdata, appData)
@@ -287,10 +293,13 @@ if ~isempty(appData.pcaAppData.combinedMarkersSelected)
     end
 end
 
-% if length(appData.pcaAppData.combinedLines) > 1
-%     appData.pcaAppData.combinedLines{1:end ~= idx}.LineWidth = 2;
-%     % This isn't quite right!
-% end
+if length(appData.pcaAppData.combinedLines) > 1
+    for i = 1:length(appData.pcaAppData.combinedLines) 
+        if i ~= idx
+            appData.pcaAppData.combinedLines{i}.LineWidth = 2;
+        end
+    end
+end
 
 appData.pcaAppData.combinedMarkersSelected = idx;
 appData.pcaAppData.combinedMarkerLastClicked = idx;
@@ -376,9 +385,15 @@ else
     end
 end
 
-       
+% Control dotted line thickness
 appData.combinedLines{idx}.LineWidth = 3;
-appData.combinedLines{1:end ~= idx}.LineWidth = 2;
+if length(appData.combinedLines) > 1
+    for i = 1:length(appData.combinedLines) 
+        if i ~= idx
+            appData.combinedLines{i}.LineWidth = 2;
+        end
+    end
+end
 
 appData.combinedMarkerLastClicked = idx;
 
@@ -390,12 +405,16 @@ updateNumDisplays(appData.combinedPresetPCAParams{idx}, appData);
 
 
 end
+
 function freezeSectionsCallback (object, eventdata, appData)
 % writes continuous mouse position to base workspace
 disp('Freeze Section Toggle Button Clicked')
 
 appData.P = appData.P.setFreezeSectionsToggled(...
     checkFreezeToggles(appData.p1, appData.p2));
+
+% Update colours correctly
+appData.P = appData.P.recolourPresets();
 end  
 
 %----------------------------------------------------------%

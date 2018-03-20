@@ -5,7 +5,7 @@ alpha = ratios(1);
 beta = ratios(2);
 gamma = ratios(3);
 
-preset = cell(1,12);
+preset = presetA;
 for i = appData.P.unfrozenIndeces
     preset{i} = mixPresets(presetA{i}, presetB{i}, presetC{i},...
         alpha,beta,gamma);

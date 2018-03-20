@@ -138,26 +138,16 @@ classdef (Abstract) presetGeneratorSCParent
                 temp = obj.presetB;
                 obj.presetB = obj.presetC;
                 obj.presetC = temp;
-                
-                Rtemp = RB;
-                Gtemp = GB;
-                Btemp = BB;
-                
-                RB = RC;
-                GB = GC;
-                BB = BC;
-                
-                RC = Rtemp;
-                GC = Gtemp;
-                BC = Btemp;
             end
             
-            col = calculateAllOuterPCAColours(obj.appData, obj.presetA, obj.presetB, obj.presetC);
-            col.A = [RA,GA,BA];
-            col.B = [RB,GB,BB];
-            col.C = [RC,GC,BC];
+            obj = recolourPresets(obj);
             
-            obj = recolourBlendingGeometry(obj, col);
+%             col = calculateAllOuterPCAColours(obj.appData, obj.presetA, obj.presetB, obj.presetC);
+%             col.A = [RA,GA,BA];
+%             col.B = [RB,GB,BB];
+%             col.C = [RC,GC,BC];
+%             
+%             obj = recolourBlendingGeometry(obj, col);
             
             % Save presets to history
             oldIndex = obj.currentTreeIndex;
@@ -175,14 +165,7 @@ classdef (Abstract) presetGeneratorSCParent
             
             % update all trees for point history plot
             obj.P1HistoryPlot = updatePointHistoryPlot(obj.P1HistoryPlot,mousePointClicked, oldIndex, newIndex, [RA,GA,BA], obj.lineColour, obj.appData);
-            
-%             % Update blending plot, to show change
-%             set(obj.appData.G.ax,'color',[0.7 0.9 1] + [(rand(1,2)*0.2)-0.1,0] )
-            
-            % Update plot to show evolution of parameters
-            %obj.historyPlot = updateStructPresetHistoryPlot(obj.historyPlot,obj.presetAHistory);
               
-            
         end
         
         function obj = recolourBlendingGeometry(obj, col)
@@ -205,46 +188,6 @@ classdef (Abstract) presetGeneratorSCParent
                     'FaceColor','interp'); 
             
         end
-
-%         function colours = calculateAllOuterPCAColours(obj)
-%             % appData is a ApplicationDataBlendingInterface object which
-%             % contains an ApplicationDataPCAInterface object
-% 
-%             % relevant geometry ratios
-%             A1 = obj.appData.G.ratios.A1;
-%             A2 = obj.appData.G.ratios.A2;
-%             B1 = obj.appData.G.ratios.B1;
-%             B2 = obj.appData.G.ratios.B2;
-%             C1 = obj.appData.G.ratios.C1;
-%             C2 = obj.appData.G.ratios.C2;
-%             AB = obj.appData.G.ratios.AB;
-%             BC = obj.appData.G.ratios.BC;
-%             CA = obj.appData.G.ratios.CA;
-%             
-%             presetA1 = mixPresets2(obj.appData, A1);
-%             presetA2 = mixPresets2(obj.appData, A2);
-%             presetB1 = mixPresets2(obj.appData, B1);
-%             presetB2 = mixPresets2(obj.appData, B2);
-%             presetC1 = mixPresets2(obj.appData, C1);
-%             presetC2 = mixPresets2(obj.appData, C2);
-%             
-%             presetAB = mixPresets2(obj.appData, AB);
-%             presetBC = mixPresets2(obj.appData, BC);
-%             presetCA = mixPresets2(obj.appData, CA);
-%             
-%             [~,  ~, c.A1(1), c.A1(2), c.A1(3)] = calculatePCAScores(obj.appData.pcaAppData, presetA1);
-%             [~,  ~, c.A2(1), c.A2(2), c.A2(3)] = calculatePCAScores(obj.appData.pcaAppData, presetA2);
-%             [~,  ~, c.B1(1), c.B1(2), c.B1(3)] = calculatePCAScores(obj.appData.pcaAppData, presetB1);
-%             [~,  ~, c.B2(1), c.B2(2), c.B2(3)] = calculatePCAScores(obj.appData.pcaAppData, presetB2);
-%             [~,  ~, c.C1(1), c.C1(2), c.C1(3)] = calculatePCAScores(obj.appData.pcaAppData, presetC1);
-%             [~,  ~, c.C2(1), c.C2(2), c.C2(3)] = calculatePCAScores(obj.appData.pcaAppData, presetC2);
-%             
-%             [~,  ~, c.AB(1), c.AB(2), c.AB(3)] = calculatePCAScores(obj.appData.pcaAppData, presetAB);
-%             [~,  ~, c.BC(1), c.BC(2), c.BC(3)] = calculatePCAScores(obj.appData.pcaAppData, presetBC);
-%             [~,  ~, c.CA(1), c.CA(2), c.CA(3)] = calculatePCAScores(obj.appData.pcaAppData, presetCA);
-%             
-%             colours = c;
-%         end
         
         function obj = switchPresets(obj, switchIndex)
             
@@ -283,13 +226,28 @@ classdef (Abstract) presetGeneratorSCParent
                 obj.presetC{i} = obj.presetCHistory{i}.get(switchIndex);
             end
             
+            obj = recolourPresets(obj);
+   
+        end
+        
+        function obj = recolourPresets(obj)
+            %Recolour blending geomotery taking into account parameter freezing
+             
+            presetAFrozen = obj.presetA;
+            presetBFrozen = obj.presetA;
+            presetCFrozen = obj.presetA;
+            
+            for i = obj.unfrozenIndeces
+                presetBFrozen{i} = obj.presetB{i};
+                presetCFrozen{i} = obj.presetC{i};
+            end
             
             % Calculate PCA scores for preset A, B, C
-            [~, ~, RA, GA, BA] = calculatePCAScores(obj.appData.pcaAppData, obj.presetA);
-            [~, ~, RB, GB, BB] = calculatePCAScores(obj.appData.pcaAppData, obj.presetB);
-            [~, ~, RC, GC, BC] = calculatePCAScores(obj.appData.pcaAppData, obj.presetC);
+            [~, ~, RA, GA, BA] = calculatePCAScores(obj.appData.pcaAppData, presetAFrozen);
+            [~, ~, RB, GB, BB] = calculatePCAScores(obj.appData.pcaAppData, presetBFrozen);
+            [~, ~, RC, GC, BC] = calculatePCAScores(obj.appData.pcaAppData, presetCFrozen);
             
-            colours = calculateAllOuterPCAColours(obj.appData, obj.presetA, obj.presetB, obj.presetC);
+            colours = calculateAllOuterPCAColours(obj.appData, presetAFrozen, presetBFrozen, presetCFrozen);
             
             colours.A = [RA,GA,BA];
             colours.B = [RB,GB,BB];
@@ -323,15 +281,8 @@ classdef (Abstract) presetGeneratorSCParent
             % update all trees for point history plot - Specialised 
             obj.P1HistoryPlot = updatePointHistoryPlotCombinePresets(obj.P1HistoryPlot, oldIndex, newIndex, presetsDoubleClicked, obj.appData);
             
-            % Calculate PCA scores for preset A, B, C
-            [~,  ~, RA, GA, BA] = calculatePCAScores(obj.appData.pcaAppData, obj.presetA);
-            [~, ~, RB, GB, BB] = calculatePCAScores(obj.appData.pcaAppData, obj.presetB);
-            [~, ~, RC, GC, BC] = calculatePCAScores(obj.appData.pcaAppData, obj.presetC);
-            
-            % Change colour of central triangle in belding geometry
-            set(obj.appData.G.fillCenter, 'FaceVertexCData', [RA,GA,BA; RB,GB,BB; RC,GC,BC],...
-                    'FaceColor','interp');
-                
+            obj = recolourPresets(obj);
+
             % Update plot to show evolution of parameters
             %obj.historyPlot = updateStructPresetHistoryPlot(obj.historyPlot,obj.presetAHistory);
         end

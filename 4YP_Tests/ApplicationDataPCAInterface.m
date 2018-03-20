@@ -272,10 +272,12 @@ if ~isempty(appData.combinedMarkers)
     end
 end
 
-% if ~isempty(appData.combinedLines)
-%     appData.combinedLines{1:end}.LineWidth = 2;
-%     % This isn't quite right. Probably need to do in for loop
-% end
+% Control dotted line thickness
+if ~isempty(appData.combinedLines)
+    for i = 1:length(appData.combinedLines) 
+        appData.combinedLines{i}.LineWidth = 2;
+    end
+end
 
 appData.combinedMarkerLastClicked = -1;
 
