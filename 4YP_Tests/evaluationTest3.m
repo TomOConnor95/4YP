@@ -75,6 +75,8 @@ presetStart  = presetRead.presetStore(sortedIndeces(num, 2),:);
 
 meanInitialCost = meanInitialCost + initialCost/numIterations;
 
+
+
 presetCurrentPerfect = presetStart;
 for idx = 1:length(costHistoryPerfect)
     

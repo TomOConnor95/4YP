@@ -114,7 +114,6 @@ classdef (Abstract) presetGeneratorSCParent
             end
             
             % Apply any necessary parameter constraints
-            % Should make a function out of this!!!
             obj.presetMix = applyParameterConstraints(obj.presetMix);
         end
         
