@@ -31,16 +31,16 @@ costs = costs + costs';
 figure(12)
 clf
 subplot(3,2,1)
-title('Cost vs Iteration for Perfect User')
+title('Normalised Cost vs Iteration for Perfect User')
 hold on
 subplot(3,2,2)
-title('Cost vs Iteration for Perfect User, with random order')
+title('Normalised Cost vs Iteration for Perfect User, with random order')
 hold on
 subplot(3,2,3)
-title('Cost vs Iteration for Imperfect User')
+title('Normalised Cost vs Iteration for Imperfect User')
 hold on
 subplot(3,2,4)
-title('Cost vs Iteration for Imperfect User, with random order')
+title('Normalised Cost vs Iteration for Imperfect User, with random order')
 hold on
 
 meanInitialCost = 0;
@@ -61,23 +61,26 @@ meanCostHistoryImperfect2 = zeros(1,plotLength);
 
 imperectStdDev = 0.3;
 
-numIterations = 25;
+numIterations = numPresets;
 
 for p = 1:numIterations
 
 % Start and Goal generation
-num = randperm(numPresets, 1);
+%num = randperm(numPresets, 1);
+num = p;
 presetGoal  = presetRead.presetStore(num,:);
 
 presetStart  = presetRead.presetStore(sortedIndeces(num, 2),:);
 
-[initialCost, iMax, jMax] = costFunction(presetStart, presetGoal);
+[initialCost, iMaxInitial, jMaxInitial] = costFunction(presetStart, presetGoal);
 
 meanInitialCost = meanInitialCost + initialCost/numIterations;
 
 
 
 presetCurrentPerfect = presetStart;
+iMax = iMaxInitial;
+jMax = jMaxInitial;
 for idx = 1:length(costHistoryPerfect)
     
     presetCurrentPerfect{iMax}(jMax) = presetGoal{iMax}(jMax);
@@ -100,6 +103,8 @@ for idx = 1:length(costHistoryPerfect2)
 end
 
 presetCurrentImperfect = presetStart;
+iMax = iMaxInitial;
+jMax = jMaxInitial;
 for idx = 1:length(costHistoryImperfect)
     presetCurrentImperfect{iMax}(jMax) =...
             presetCurrentImperfect{iMax}(jMax)...
@@ -132,27 +137,33 @@ meanCostHistoryImperfect2 = meanCostHistoryImperfect2 + costHistoryImperfect2/nu
 
 
 subplot(3,2,1)
-plot((0:1:plotLength), [initialCost, costHistoryPerfect], 'b')
+plot((0:1:plotLength), [initialCost, costHistoryPerfect]/initialCost, 'b')
 subplot(3,2,2)
-plot((0:1:plotLength), [initialCost, costHistoryPerfect2], 'b')
+plot((0:1:plotLength), [initialCost, costHistoryPerfect2]/initialCost, 'b')
 
 subplot(3,2,3)
-plot((0:1:plotLength), [initialCost, costHistoryImperfect], 'b')
+plot((0:1:plotLength), [initialCost, costHistoryImperfect]/initialCost, 'b')
 subplot(3,2,4)
-plot((0: 1:plotLength), [initialCost, costHistoryImperfect2], 'b')
+plot((0: 1:plotLength), [initialCost, costHistoryImperfect2]/initialCost, 'b')
 
 
 end
 
 subplot(3,2,1)
-plot((0:1:plotLength), [meanInitialCost, meanCostHistoryPerfect], 'r', 'LineWidth', 3)
+plot((0:1:plotLength), [meanInitialCost, meanCostHistoryPerfect]/meanInitialCost, 'r', 'LineWidth', 3)
+ylim([0,1])
+
 subplot(3,2,2)
-plot((0:1:plotLength), [meanInitialCost, meanCostHistoryPerfect2], 'r', 'LineWidth', 3)
+plot((0:1:plotLength), [meanInitialCost, meanCostHistoryPerfect2]/meanInitialCost, 'r', 'LineWidth', 3)
+ylim([0,1])
 
 subplot(3,2,3)
-plot((0:1:plotLength), [meanInitialCost, meanCostHistoryImperfect], 'g', 'LineWidth', 3)
+plot((0:1:plotLength), [meanInitialCost, meanCostHistoryImperfect]/meanInitialCost, 'g', 'LineWidth', 3)
+ylim([0,1])
+
 subplot(3,2,4)
-plot((0:1:plotLength), [meanInitialCost, meanCostHistoryImperfect2], 'g', 'LineWidth', 3)
+plot((0:1:plotLength), [meanInitialCost, meanCostHistoryImperfect2]/meanInitialCost, 'g', 'LineWidth', 3)
+ylim([0,1])
 
 
 subplot(3,2,5)
