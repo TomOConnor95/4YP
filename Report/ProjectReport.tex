@@ -1,0 +1,183 @@
+\documentclass[11pt, oneside]{report}   	% use "amsart" instead of "article" for AMSLaTeX format
+\usepackage[margin = 1in]{geometry}                		% See geometry.pdf to learn the layout options. There are lots.
+\geometry{a4paper}                   		% ... or a4paper or a5paper or ... 
+%\geometry{landscape}                		% Activate for rotated page geometry
+\usepackage[parfill]{parskip}    		% Activate to begin paragraphs with an empty line rather than an indent
+\usepackage{graphicx}				% Use pdf, png, jpg, or eps§ with pdflatex; use eps in DVI mode
+								% TeX will automatically convert eps --> pdf in pdflatex	
+\usepackage{subcaption}									
+\usepackage{amsfonts, amsmath,amssymb}
+\usepackage[none]{hyphenat}
+\usepackage{fancyhdr}
+\usepackage{setspace}
+\usepackage{hyperref}
+%\usepackage[nottoc, notlot, notlof]{tocbibind}		%table of contents
+\usepackage{helvet}
+\renewcommand{\familydefault}{\sfdefault}
+
+\usepackage{titlesec}
+\titlespacing\section{0pt}{4pt plus 4pt minus 2pt}{0pt plus 2pt minus 2pt}
+\titlespacing\subsection{0pt}{4pt plus 4pt minus 2pt}{0pt plus 2pt minus 2pt}
+\titlespacing\subsubsection{0pt}{4pt plus 4pt minus 2pt}{0pt plus 2pt minus 2pt}
+
+\usepackage{sidecap}
+
+\pagestyle{fancy}
+\fancyhead{}
+\fancyfoot{}
+\fancyhead[L]{\slshape \MakeUppercase{4YP Report}}
+\fancyhead[R]{\slshape 355136}
+\fancyfoot[C]{\thepage}
+%\renewcommand{\headrulewidth}{0pt} %remove line in header
+
+\setlength{\parskip}{1em}
+\doublespacing
+
+% alternative margin for declaration page
+\newenvironment{changemargin}[3]{%
+\begin{list}{}{%
+\setlength{\topsep}{0pt}%
+\setlength{\leftmargin}{#1}%
+\setlength{\rightmargin}{#2}%
+\setlength{\topmargin}{#3}%
+\setlength{\listparindent}{\parindent}%
+\setlength{\itemindent}{\parindent}%
+\setlength{\parsep}{\parskip}%
+}%
+\item[]}{\end{list}}
+
+
+\usepackage{mathtools}
+\newcommand\SmallMatrix[1]{{%
+  \tiny\arraycolsep=0.3\arraycolsep\ensuremath{\begin{pmatrix}#1\end{pmatrix}}}}
+\DeclareMathOperator{\diag}{diag}
+%\DeclareMathOperator{\f}{f}
+
+
+
+
+\title{B1 Project Report}
+\author{Candidate Number: 355136}
+\date{}							% Activate to display a given date or no date
+
+\begin{document}
+
+\begin{titlepage}
+\begin{center}
+\vspace*{1cm}
+\Large {\textbf{The University of Oxford}}\\
+\Large{\textbf{Engineering Science}}\\
+\vfill
+\noindent\rule{5in}{0.6pt}\\[1mm]
+\huge{\textbf{4YP Project Report}}\\[3mm]
+\Large{\textbf{- Using Machine Learning to Control Software Synthesisers  -}}\\[1mm]
+\noindent\rule{5in}{0.6pt}\\[1mm]
+\vfill
+Candidate Number: 355136\\
+\today\\
+\end{center}
+\end{titlepage}
+
+%\newgeometry{left=0cm,right=0cm,top=0cm,bottom=0cm}
+\begin{changemargin}{-1in}{0in}{-1.5in}
+\includegraphics{Declaration_of_Authorship_form_2018.pdf}
+\thispagestyle{empty}
+\end{changemargin}
+
+\begin{abstract}
+\begin{flushleft}
+Software Synthesisers (Soft-Synths) are computer applications which create sounds in response to musical input typically in the form of MIDI messages. They are widely used in a variety of musical contexts. Typical soft-synths have hundreds or thousands of parameters which control the sound generation algorithm, allowing the user to create sounds that suit their musical needs. This results in a high dimensional, non-linear search space which the user must navigate in order. Research indicates that humans are bad at navigating such interfaces with serial controls, and that there is a strong link between interface design and the level of creativity that the user with experience when using the interface. \\
+This work describes a novel interface designed to help users control synthesisers in a quicker and more intuitive manner. It combines 3 interfaces together: a traditional 'knob and slider' interface, a search space visualisation interface, and an iterative blending interface.
+
+THIS ABSTRACT NEEDS A LOT MORE WORK, WILL WORK ON AFTER WRITING MORE OF THE REPORT
+\end{flushleft}
+\end{abstract}
+
+
+%\newgeometry{left=1in,right=1in,top=1in,bottom=1in}
+\tableofcontents
+%\thispagestyle{empty}
+\clearpage
+\setcounter{page}{1}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\chapter{Introduction}
+\section{Background Information}
+Software Synthesisers (Soft-Synths) are computer applications which create sounds in response to musical input typically in the form of MIDI messages. They are widely used in a variety of musical contexts. Typical soft-synths have hundreds or thousands of parameters which control the sound generation algorithm, allowing the user to create sounds that suit their musical needs. This results in a high dimensional, non-linear search space which the user must navigate in order. Research indicates that humans are bad at navigating such interfaces with serial controls, and that there is a strong link between interface design and the level of creativity that the user with experience when using the interface. \\
+This work describes a novel interface designed to help users control synthesisers in a quicker and more intuitive manner. It combines 3 interfaces together: a traditional 'knob and slider' interface, a search space visualisation interface, and an iterative blending interface.
+\section{Aims of the project}
+
+\section{Methodology}
+
+
+\chapter{Literature Review}
+\section{Previous studies of synthesiser parameter spaces}
+\section{Previous attempts of using machine learning to control synthesisers}
+\section{Description of HCI design principles for creative musical interfaces}
+
+\chapter{Description of Synthesiser and Image Processing Algorithms}
+\section{Synthesiser Algorithm}
+\subsection{Description}
+\subsection{Design choices and justification}
+\section{Image Processing Algorithm}
+\subsection{Description}
+\subsection{Design choices and justification}
+
+\chapter{Description of Full Interface}
+\section{Traditional Interface}
+\section{PCA Interface}
+\section{Blending Interface}
+\section{How the interfaces are combined}
+
+\chapter{Design and Evaluation of Interfaces}
+\section{Traditional Interface}
+\subsection{Detailed Description}
+\subsection{Strengths}
+\subsection{Weaknesses}
+
+\section{PCA interface}
+\subsection{Detailed Description}
+\subsection{Global PCA vs Time/Timbre PCA}
+\subsection{PCA + Histogram Equalisation Description}
+\subsection{Demonstrations of preset group clustering}
+\subsection{Investigate how the PCA mapping scales with number of presets}
+\subsection{Quantify the extra variance the macro controls give}
+\subsection{Investigate Permutation Ambiguity}
+
+\section{Blending Interface}
+\subsection{Detailed Description}
+\subsection{Strengths}
+\subsection{Weaknesses}
+\subsection{Development / Verification using Image Editing Interface}
+\subsubsection{Tests of Image Comparison Metric}
+\subsubsection{Convergence Tests for different preset generation algorithms}
+\subsection{Investigate Permutation Ambiguity}
+
+\section{Comparisons of interfaces}
+\subsection{Perfect /Imperfect User Model}
+\subsection{Comparison of isolated interfaces}
+\subsection{Comparison of combined interfaces}
+
+\chapter{User tests and Interviews}
+
+\chapter{Conclusion}
+The interface proposed in this project has many benefits over a traditional synthesiser interface, as has been designed following design heuristics from the fields of Human Computer Interaction and Creative Cognition. Based on simulated user studies, the interface has at least as good performance as a traditional interface when carrying out search based tasks, and based on real user feedback it has many advantages in terms of creativity.
+\section{Further Work}
+The evaluation of this interface was only carried out on a single synthesiser, due to the projects time constraints. The interface has been designed to be as general purpose as possible, allowing it to control arbitrary synths over the OSC protocol, but due to a lack of standardisation between soft synths, and lack of implementation time, more work needs to be done to create a truly general purpose soft synth controller. As many soft-synths are in the VST format, making a version of the interface with acts as a VST host, and uses the parameter retrieval and preset storage functionality of VSTs is a good next goal if this project is continued in the future.
+
+\begin{thebibliography}{9}
+\singlespacing
+\bibitem{CleanCode}
+Martin, R. (2009). Clean Code. 1st ed. Upper Saddle River, NJ: Prentice Hall, pp.36-52.
+\bibitem{WikiLM}
+En.wikipedia.org. (2017). Levenberg-Marquardt algorithm. \\
+\url{https://en.wikipedia.org/wiki/Levenberg-Marquardt_algorithm}
+\bibitem{WikiOp}
+En.wikipedia.org. (2017). Optimisation Algorithms \& Methods.
+\url{<https://en.wikipedia.org/wiki/Category:Optimization_algorithms_and_methods>}
+\bibitem{OOPMatlab}
+Introduction to Object Oriented Programming in Matlab\\
+\url{https://uk.mathworks.com/company/newsletters/articles/introduction-to-object-oriented-programming-in-matlab.html}
+\end{thebibliography}
+\end{document}  
