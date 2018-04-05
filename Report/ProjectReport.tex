@@ -7,6 +7,7 @@
 								% TeX will automatically convert eps --> pdf in pdflatex	
 \usepackage{subcaption}									
 \usepackage{amsfonts, amsmath,amssymb}
+\usepackage{siunitx}
 \usepackage[none]{hyphenat}
 \usepackage{fancyhdr}
 \usepackage{setspace}
@@ -124,7 +125,25 @@ A number of guidelines for creative musical interfaces
 \chapter{Description of Synthesiser and Image Processing Algorithms}
 \section{Synthesiser Algorithm}
 \subsection{Description}
-asdasdsadsa
+In order to develop the synthesiser controller, it was necessary to choose a synthesiser to work with. To remove some of the complexities of interfacing with many commercial synthesisers, a purpose built synth was made to make it as easy as possible to work with the interface, whilst being representative of typical soft-synths available.
+The programming language Supercollider was used to create a 6 operator Phase Modulation synthesiser, loosely based on the Yamaha DX7, a very famous synthesiser from the 1980s (CHECK DATE).
+ 
+The synthesis algorithm is based around the FM7 UGen for Supercolldier \cite{UGen}, which implements 6 operators with independent amplitudes and frequencies, whose outputs can be used to modulate the phase of any of the operators. The implementation can be simply described by the following discrete time equation:
+\begin{equation}
+y_i[t+1] = a_i*sin(2\pi T f_i + \sum_{j = 1}^{6} y_j[t]*m_{ij})
+\end{equation}
+$T$ is the sampling interval,  $y_i[t]$ is the output of operator $i$ at time $t$, $a_i$ and $f_i$ are the amplitude and frequency of operator$i$ and $m_{ij}$ is a scalar parameter determining the level of phase modulation from operator $j$ to operator $i$. This is a very flexible sound generation algorithm which can create a large number of different sounds. \\
+The full synthesiser architecture can be described as follows.\\
+ A MIDI Note ON message is received with a musical note number $N$ and a velocity $V$. This triggers the sound generations process for this particular note. the note number $N$ is converted into a base frequency $F$. The frequency of each operator is set using the equation $f_i = F*f_i^{coarse}*(1+f_i^{fine})$. 
+The coarse frequency parameter $f_i^{coarse}$ for operator $i$ can take discrete values \{0.5, 1, 2, 3, ...\}, allowing the operators to set to different harmonics of the base frequency. The fine frequency parameter $f_i^{coarse}$ for operator $i$ can take any value in the range [0,1], and is used to detune operators away from the perfect harmonic ratios.
+The base frequency F can be continually modulated by the MIDI PitchBend control, and by a vibrato envelope. 
+The operators' amplitudes $a_i$ are then continuously modulated by two low frequency oscillators (LFOs), and a modulation envelope. LFO A is a triangle wave oscillator with a frequency in the range [0,20\si{\hertz}], amplitude in the range [0,1], and phase spread in the range [0,1], a parameter which allows the LFO's initial phase to be randomly varied. LFO B is a square wave oscillator with a frequency in the range [0,20\si{\hertz}], amplitude in the range [0,1], and pulse width in the range [0,1]. The modulation envelope is an ADSR (Attack-Decay-Sustain-Release) style envelope generator, which is triggered by the MIDI Note ON message.
+This can be described by the equation $a_i[t] = 1 + LFO_a[t]*lfo_{a,i} + LFO_b[t]*lfo_{b,i}$ THIS NEEDS FINISHING
+
+
+
+All of the synths parameters can be easily adjusted in real time, by sending messages through the Open Sound Control (OSC) protocol, a UDP based protocol for sending messages between applications.
+
 \subsection{Design choices and justification}
 asdasdasdsa
 \section{Image Processing Algorithm}
@@ -214,5 +233,7 @@ En.wikipedia.org. (2017). Optimisation Algorithms \& Methods.
 \bibitem{OOPMatlab}
 Introduction to Object Oriented Programming in Matlab\\
 \url{https://uk.mathworks.com/company/newsletters/articles/introduction-to-object-oriented-programming-in-matlab.html}
+\bibitem{UGen}
+Stefan Kersten. skUG SuperCollider UGen library., 2008. \url{http://space.k- hornz.de/software/skug/}.
 \end{thebibliography}
 \end{document}  
