@@ -16,10 +16,17 @@
 \usepackage{helvet}
 \renewcommand{\familydefault}{\sfdefault}
 
+
+
 \usepackage{titlesec}
+%\titlespacing\chapter{0pt}{4pt plus 4pt minus 2pt}{4pt plus 2pt minus 2pt}
 \titlespacing\section{0pt}{4pt plus 4pt minus 2pt}{0pt plus 2pt minus 2pt}
 \titlespacing\subsection{0pt}{4pt plus 4pt minus 2pt}{0pt plus 2pt minus 2pt}
 \titlespacing\subsubsection{0pt}{4pt plus 4pt minus 2pt}{0pt plus 2pt minus 2pt}
+
+\titleformat{\chapter}[display]
+{\normalfont\huge\bfseries}{\chaptertitlename\ \thechapter}{0pt}{\Huge}
+\titlespacing*{\chapter}{0pt}{0pt}{0pt}
 
 \usepackage{sidecap}
 
@@ -62,6 +69,7 @@
 \date{}							% Activate to display a given date or no date
 
 \begin{document}
+\pagenumbering{Roman}
 
 \begin{titlepage}
 \begin{center}
@@ -99,6 +107,7 @@ THIS ABSTRACT NEEDS A LOT MORE WORK, WILL WORK ON AFTER WRITING MORE OF THE REPO
 \tableofcontents
 %\thispagestyle{empty}
 \clearpage
+\pagenumbering{arabic}
 \setcounter{page}{1}
 
 
@@ -119,8 +128,23 @@ dtsadfdsafdsaf
 Several previous...
 \section{Previous attempts of using machine learning to control synthesisers}
 There have been several previous attempts...
+
+Talk about the preset blending study, including the parameter freezing.
+
+
+
+Talk about the google sample mapping with TSNE (infinite drum machine).
+
+Talk about how taking a sound sample from each preset could be a good way to do the dimensionality reduction interface, but how a parameter based approach is preferable in many ways. Mention which sound metrics would be good to use, and the difficulties involved.
 \section{Description of HCI design principles for creative musical interfaces}
 A number of guidelines for creative musical interfaces
+
+\section{Principal Component Analysis}
+Describe the PCA algorithm, and dicuss the possible extention to using Sparse PCA. 
+
+\section{Principal Component Analysis}
+Describe the PCA algorithm, and dicuss the possible extention to using Sparse PCA. 
+
 
 \chapter{Description of Synthesiser and Image Processing Algorithms}
 \section{Synthesiser Algorithm}
@@ -185,27 +209,77 @@ asdasdasda
 asdasdas
 
 \chapter{Description of Full Interface}
+The full interface is a combination of 3 interfaces. Each interface has the ability to vary the entire set of parameters, and produce a wide variety of sounds, but they are designed to complement each other as well as possible. The user can easily move back and forth between the different intefaces, and there are consistent parameter visualtions in all interfaces.
 \section{Traditional Interface}
-asdasdasdasd
-\section{PCA Interface}
-asdasdasdsa
+The Traditional Interface is designed to be representative of a typical software and hardware synthesisers. It has a knob or slider for each parameter of the synthesiser, and has interactive visualisations for some parts of the architecture (namely the envelopes and LFOs). The interface is arranged in three seperate pages, two of which are shown in Figure \ref{fig:TraditionalInterface}. 
+If the full interface were to be extended to work with any VST, the traditional interface would be replaced by the VST's user interface. 
+\begin{figure}[h] 
+	\centering
+	\hspace*{-0.2cm}
+\includegraphics[width = 3in]{TraditionalUI1.png}
+\hspace*{0.2cm}
+	\includegraphics[width = 3in]{TraditionalUI3.png}
+	\caption{Traditional Interface - Screen 1 and 3}
+	\label{fig:TraditionalInterface}
+\end{figure}
+
+\section{Selection Interface}
+Typical Soft-Synths are supplied with a large number of presets, which are usually named and arranged into categories. They are usually displayed in a list which can be searched by name, or split into category. In many soft-synths, each preset is given a set (usually 8) of Macro Controls, which each vary single parameter or combinations of parameters, and aim to give the user a quick way to tweak each preset.\\
+The Selection Interface is a new approach to displaying presets, arranging the presets as cells of a 2D voronoi diagram, such that similar presets are close to each other and coloured similarly. The presets can quickly be compared by moving the mouse around the diagram, and presets are selected by clicking on the cells. Once a preset is selected it can be edited by macro controls. 
+The presets have been divided into a number of categories. Clicking the category buttons at the top of the interface highlights the selected category, as shown in Figure \ref{fig:PCAInterface}b.\\
+Both the 2D spacing of the presets, and the creating of the macro controls is calculated automatically from the set of presets' parameter values using Principal Component Analysis (PCA).
+
+\begin{figure}[h] 
+	\centering
+	\hspace*{-0.2cm}
+	\includegraphics[width = 3.0in]{PCAInterface1.png}
+	\hspace*{0.1cm}
+	\includegraphics[width = 3.0in]{PCAInterface2.png}
+	\caption{PCA Interface - Normal View, and Category Highlight View}
+	\label{fig:PCAInterface}
+\end{figure}
+
 \section{Blending Interface}
-asdasdasdsa
-\section{How the interfaces are combined}
-asdasdasdadas
+Preset Blending is a somewhat popular approach in synth interface design, where new presets are created by a linear combination of presets. The blending interface is an extension of this approach.\\
+Three initial presets (A, B, C) are selected, and are placed on the coreners of the triangle in the centre of the interface. As the cursor moves over the interface, a new preset is created as a weighted sum of the 3 presets, based on promixity to the corners. Once the user finds the optimal preset in the space, the user clicks. The preset clicked on then becomes the preset A (I.e is placed on the bottom corner of the triangle), and a new preset B and C are generated. \\
+This process is repeated as many times as desired, allowing the user to keep searching through the parameter space.\\
+If the user clicks on the 'Pause on Selected Preset Button', they are shown an interactive display of their past preset choices, which they can use to go back to previously selected settings and resume searching. It is also possible to select 3 if the previous presets, and assign them to preset A, B and C.
+The user has the option to freeze sections of the parameter space, which helps the search be more fine tuned to their needs.
+The colours of the blending interface are calculated to be consistent with the Selection interface.
+\begin{figure}[h] 
+	\centering
+	\hspace*{-0.2cm}
+	\includegraphics[width = 3.0in]{BlendingInterface1.png}
+	\hspace*{0.2cm}
+	\includegraphics[width = 3.0in]{BlendingInterface2.png}
+	\caption{Blending Interface - Normal View, and Selection History View}
+	\label{fig:BlendingInterface}
+\end{figure}
+
+\section{How the Interfaces are Combined}
+When the application is started, the Selection interface is displayed first. Once a preset has been selected and possibly modified with the Macro Controls, the user has the option to click the 'Edit Mode' button, which opens the Traditional Interface, allowing the currently selected preset to be further modified. The user can move back to the Selection Interface by clicking the 'Return to Selection UI' button. The varied preset is displayed on the Selection Interface with a marker, attatched to the original preset, which is positioned and coloured to be consistent with the PCA mapping. If the user wants to undo the edits made to the preset they can click the 'Undo Edit' button. In this way the user can move back and forth between the Blending and PCA interfaces as often as desired.\\
+Once three presets have been selected, the user has the option of clicking the 'Blend Mode' button which opens the blending interface, and assigns the three seceted presets to A, B and C. The user can then use the blending interface for as long as necessary, and then click the 'Return to Preset Selection' button. This time another marker is created, with dotted lines to the 3 initially selected presets.\\ 
+This marker can then be used in the same way as the cells of the voronoi diagram, I.e it can be previewed by clicking, selected by double clicking, can be edited with the Macro Controls or the Traditional Interface. There are a set of parameter visialisations that are diaplayed alongside all of the presets to give the user more feedback into what changes they are making, and to aid in understanding how the synthesis algorithm works.
+\begin{figure}[h] 
+	\centering
+	\hspace*{-1.5cm}
+	\includegraphics[width = 7.5in]{CombinedInterface1.png}
+	\caption{Combined Interface - PCA view}
+	\label{fig:CombinedInterface}
+\end{figure}
 
 \chapter{Design and Evaluation of Interfaces}
 \section{Traditional Interface}
 \subsection{Detailed Description}
-asdasdasd
+This interface was created in the MATLAB App Designer toolbox. As the parameters are varied, they are sent in real time over OSC to the synthesiser.
 \subsection{Strengths}
-asdasdad
+A skilled user can use knowledge of synthesis to construct any preset they can conceive of. The entire parameter space can be searched. For sectional of the synthesiser archececture that are more intuitive, such as the LFOs and envelopes, this works very well.
 \subsection{Weaknesses}
-asdasdsa
+Slow serial control of all of the parameters. Even if the user knows exactly what each parameter should be set to, it will still take several minutes to go through all of the 96 knobs and set them to the correct value. Parts of the synthesis architecture are non-intuitive and fiddly to use, In particular the 36 phase modulation routing parameters. If the user doesn't know exactly what they want, or how to acheive a particular sound, this interface can be extremely inefficient and frustrating.
 
 \section{PCA interface}
 \subsection{Detailed Description}
-asdasdassda
+This interface was created as a Matlab 'figure based application'.
 \subsection{Global PCA vs Time/Timbre PCA}
 asdasdasd
 \subsection{PCA + Histogram Equalisation Description}
@@ -221,7 +295,7 @@ asdasdsa
 
 \section{Blending Interface}
 \subsection{Detailed Description}
-asdasdasd
+This interface was created as a Matlab 'figure based application'.
 \subsection{Strengths}
 asdsadsa
 \subsection{Weaknesses}
@@ -252,6 +326,9 @@ The interface proposed in this project has many benefits over a traditional synt
 \section{Further Work}
 The evaluation of this interface was only carried out on a single synthesiser, due to the projects time constraints. The interface has been designed to be as general purpose as possible, allowing it to control arbitrary synths over the OSC protocol, but due to a lack of standardisation between soft synths, and lack of implementation time, more work needs to be done to create a truly general purpose soft synth controller. As many soft-synths are in the VST format, making a version of the interface with acts as a VST host, and uses the parameter retrieval and preset storage functionality of VSTs is a good next goal if this project is continued in the future.
 
+Talk about how the selections made in the blending interface could be used to create a large dataset of sound preferences, which could be used to train a more sophisticated method of preset generation in the blending interface.
+
+Talk about the hierarchical nature of synthesis parameters could be exploited to improve preset generation and comparison algorithms. 
 \begin{thebibliography}{9}
 \singlespacing
 \bibitem{CleanCode}
