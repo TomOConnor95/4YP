@@ -128,24 +128,47 @@ A number of guidelines for creative musical interfaces
 In order to develop the synthesiser controller, it was necessary to choose a synthesiser to work with. To remove some of the complexities of interfacing with many commercial synthesisers, a purpose built synth was made to make it as easy as possible to work with the interface, whilst being representative of typical soft-synths available.
 The programming language Supercollider was used to create a 6 operator Phase Modulation synthesiser, loosely based on the Yamaha DX7, a very famous synthesiser from the 1980s (CHECK DATE).
  
-The synthesis algorithm is based around the FM7 UGen for Supercolldier \cite{UGen}, which implements 6 operators with independent amplitudes and frequencies, whose outputs can be used to modulate the phase of any of the operators. The implementation can be simply described by the following discrete time equation:
+The synthesis algorithm is based around the FM7 UGen for Supercolldier \cite{UGen}, which implements 6 operators with independent amplitudes and frequencies, whose outputs can be used to modulate the phase of any of the operators. The implementation can be simply described by the following discrete time equation: FIND REFERENCE
 \begin{equation}
 y_i[t+1] = a_i*sin(2\pi T f_i + \sum_{j = 1}^{6} y_j[t]*m_{ij})
 \end{equation}
 $T$ is the sampling interval,  $y_i[t]$ is the output of operator $i$ at time $t$, $a_i$ and $f_i$ are the amplitude and frequency of operator$i$ and $m_{ij}$ is a scalar parameter determining the level of phase modulation from operator $j$ to operator $i$. This is a very flexible sound generation algorithm which can create a large number of different sounds. \\
 The full synthesiser architecture can be described as follows.\\
- A MIDI Note ON message is received with a musical note number $N$ and a velocity $V$. This triggers the sound generations process for this particular note. the note number $N$ is converted into a base frequency $F$. The frequency of each operator is set using the equation $f_i = F*f_i^{coarse}*(1+f_i^{fine})$. 
-The coarse frequency parameter $f_i^{coarse}$ for operator $i$ can take discrete values \{0.5, 1, 2, 3, ...\}, allowing the operators to set to different harmonics of the base frequency. The fine frequency parameter $f_i^{coarse}$ for operator $i$ can take any value in the range [0,1], and is used to detune operators away from the perfect harmonic ratios.
-The base frequency F can be continually modulated by the MIDI PitchBend control, and by a vibrato envelope. 
-The operators' amplitudes $a_i$ are then continuously modulated by two low frequency oscillators (LFOs), and a modulation envelope. LFO A is a triangle wave oscillator with a frequency in the range [0,20\si{\hertz}], amplitude in the range [0,1], and phase spread in the range [0,1], a parameter which allows the LFO's initial phase to be randomly varied. LFO B is a square wave oscillator with a frequency in the range [0,20\si{\hertz}], amplitude in the range [0,1], and pulse width in the range [0,1]. The modulation envelope is an ADSR (Attack-Decay-Sustain-Release) style envelope generator, which is triggered by the MIDI Note ON message.
-This can be described by the equation $a_i[t] = 1 + LFO_a[t]*lfo_{a,i} + LFO_b[t]*lfo_{b,i}$ THIS NEEDS FINISHING
+ A MIDI Note ON message is received with a musical note number $N$ and a velocity $V$. This triggers the sound generations process for this particular note. the note number $N$ is converted into a base frequency $F$. The frequency of each operator is set using the equation: 
+ \begin{equation}
+	f_i = F*f_i^{coarse}*(1+f_i^{fine})
+ \end{equation}
+The coarse frequency parameter $f_i^{coarse}$ for operator $i$ can take discrete values \{0.5, 1, 2, 3, ...\}, allowing the operators to set to different harmonics of the base frequency. The fine frequency parameter $f_i^{coarse}$ for operator $i$ can take any value in the range [0,1], and is used to detune operators away from the perfect harmonic ratios. This is the approach usually taken in typical synthesisers when setting frequencies, as usually the fine frequency values will be very small. REFINE THIS BIT\\
+The base frequency F can be continually modulated by the MIDI PitchBend control, and by a vibrato envelope (an exponential ramp from a start frequency and amplitude to an end frequency and amplitude, over a time period in the range [0,20] seconds).\\
+The operators' amplitudes $a_i$ are then continuously modulated by two low frequency oscillators (LFOs), and a modulation envelope. LFO A is a zero mean triangle wave oscillator with a frequency in the range [0, 20\si{\hertz}], amplitude in the range [0, 1], and phase spread in the range [0, 1] (a parameter which allows the LFO's initial phase to be randomly varied). LFO B is a zero mean square wave oscillator with a frequency in the range [0, 20\si{\hertz}], amplitude in the range [0, 1], and pulse width in the range [0, 1]. The modulation envelope is an ADSR (Attack-Decay-Sustain-Release) style envelope generator, which is triggered by the MIDI Note ON message.
+This can be described by the equation:
+ \begin{equation}
+ 	a_i[t] = (1 + LFO^a[t]*lfo^{a}_i)*(1 + LFO^b[t]*lfo^{b}_i)*(ENV^{mod}[t]*env^{mod}_i + (1-env^{mod}_i))
+ \end{equation}
+where $LFO^a[t]$ and $LFO^B[t]$ are the LFOs' output values at time $t$, ENV[t] is the modulation envelope's output value at time $t$, and $lfo^{a}_i$, $lfo^{b}_i$, and $env^{mod}_{i}$ are parameters which determine how much operator $i$ is affected by the respective signals.\\
+After amplitude modulation with the LFOs and the modulation envelope, the operators are fed into the previously described phase modulation algorithm. The 6 outputs from this algorithm are then mixed together, and multiplied by the Amplitude Envelope to form the output signal: $Y[t] = ENV^{amp}[t]*\sum_{i=1}^{6}y_i[t]*a_i^{output}$, where $a_i^{output}$ is the Output Level parameter for operator $i$, and the Amplitude Envelope is another ADSR Envelope generator, similar to the Modulation Envelope.
 
+All of the synths parameters can be easily adjusted in real time, by sending messages through the Open Sound Control (OSC) protocol, a UDP based protocol for sending messages between applications. CITE UDP
 
-
-All of the synths parameters can be easily adjusted in real time, by sending messages through the Open Sound Control (OSC) protocol, a UDP based protocol for sending messages between applications.
-
+A selection of 35 presets were created for this synth, to give a selection of all the different kinds of 'nice' sounds the synth can make, and to provide data to design the interface with.
 \subsection{Design choices and justification}
-asdasdasdsa
+Typical commercial synthesisers have a large number of parameters (Yamaha DX7 - 126 parameters, Omnisphere 2 - several thousand parameters), which can be discrete or continuous. Some synthesisers have Modular or Semi-Modular architectures, which allow for a lot of flexibility, but due to the combinational explosion of number of parameter combinations, and difficulty blending between presets, this type of architecture is not addressed in the work.
+Some synthesisers use short audio recordings, known as samples, as part of their sound creation algorithm. This creates difficulties blending between presets, so this type of architecture will not be considered in this work. (However both of these type of algorithms would be interesting to try as a follow up work).
+
+The type of synth that this work is aimed at is 'analogue-style' synths, in which there is a medium number of parameters, with a fixed internal routing. 
+The synthesiser features a combination of continuous and discrete parameters, both of which the interface must be able to cope with.
+
+The DX7 was chosen to base the synth off because it is a very famous and powerful synth, but is notoriously difficult to use due to the phase modulation algorithm being very un-intuitive. This means that an improved interface has the ability to al
+
+The synthesiser was designed to have access to as wide a range of sounds as possible with as few parameters as possible. For example instead of having a separate envelope generator for each oscillator (as in the Yamaha DX7), only 2 envelopes were included, with a blendable amount per operator. The synth has 96 total parameters, compared to the 126 of the DX7, but it can replicate most of the useful sounds of a DX7.
+
+In Yee King's thesis CITE PROPERLY, a similar FM7 Ugen based Supercollider synthesiser was used, but no envelopes or LFOs were included, so that it was limited to producing sounds with a static timbre. Whilst this had advantages for the timbre mapping approach of the work, it resulted in a synthesiser that was not very representative of ones typically used, as envelopes are such an important part of designing sounds. 
+
+
+
+
+
+An interesting property of this synthesiser design is that due to the 6 identical operators which can be configured in any combination, there is lots of possible permutation ambiguity, as if two operators have all of their parameters switched, the sound will remain identical. This presents a challenge as two presets can have very different parameters despite having the exact same sound. 
 \section{Image Processing Algorithm}
 \subsection{Description}
 asdasdasda
