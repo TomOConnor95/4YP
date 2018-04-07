@@ -227,7 +227,7 @@ If the full interface were to be extended to work with any VST, the traditional 
 \section{Selection Interface}
 Typical Soft-Synths are supplied with a large number of presets, which are usually named and arranged into categories. They are usually displayed in a list which can be searched by name, or split into category. In many soft-synths, each preset is given a set (usually 8) of Macro Controls, which each vary single parameter or combinations of parameters, and aim to give the user a quick way to tweak each preset.\\
 The Selection Interface is a new approach to displaying presets, arranging the presets as cells of a 2D voronoi diagram, such that similar presets are close to each other and coloured similarly. The presets can quickly be compared by moving the mouse around the diagram, and presets are selected by clicking on the cells. Once a preset is selected it can be edited by macro controls. 
-The presets have been divided into a number of categories. Clicking the category buttons at the top of the interface highlights the selected category, as shown in Figure \ref{fig:PCAInterface}b.\\
+The presets have been divided into a number of categories. Clicking the category buttons at the top of the interface highlights the selected category, as shown in Figure \ref{fig:PCAInterface}b. By clicking the 'Display Mode' button, it is also possible to limit the presets displayed to just the selected category(s), displayed in a recalculated voronoi diagram.\\
 Both the 2D spacing of the presets, and the creating of the macro controls is calculated automatically from the set of presets' parameter values using Principal Component Analysis (PCA).
 
 \begin{figure}[h] 
@@ -319,7 +319,7 @@ To fix this issue, a variant of an image processing method known as histogram eq
 		\caption{PCA + Histogram equalisation}
 		\label{fig:histEqAfter}
 	\end{subfigure}
-	\caption{Selection Interface before and after Histogram Equalisation}\label{fig:animals}
+	\caption{Selection Interface before and after Histogram Equalisation}\label{fig:PCAhistEq}
 \end{figure}
 
 The histogram equalisation in one dimension is described in Figure \ref{fig:HistEq}.
@@ -329,11 +329,60 @@ The histogram equalisation in one dimension is described in Figure \ref{fig:Hist
 	\caption{Histogram Equalisation}
 	\label{fig:HistEq}
 \end{figure}
-DESCRIBE IN MORE DETAIL
+A histogram is created by splitting the data into a number of eqully spaced bins (6 bins was empirically found to work well in this case). The bins are then rescaled, such that the bin width is equal to the number of data points in the bin).
 
+This process is carried out for the presets in all 5 of the XY-RGB dimensions, and then each dimension is mapped to the range $[0.05, 0.95]$, such that it will fit inside the axes of $[0, 1]$.
 
+This approach, although simple, effectively redistributes the presets. As long as one of the bins are empty, the mapping in each dimension is peicewise linear and continuous. This means that the Combined Preset Markers can be positioned correctly on the graph by first calculating the PCA scores, then passing these scores through the mapping function. Due to the continuity of the mapping function, the Macro Controls will cause the preset markers to move smootly across the graph. ... FINISH WRITING
 \subsection{Demonstrations of preset group clustering}
-asdasdsad
+Having divided the presets into a set of (non-exlusive) categories, the clustering nature of the PCA process can be tested by viewing where the categories are placed in the diagram, see Figure \ref{fig:Categories}. This demonstrates that the PCA process does indeed cluster the categories together, although some are better clustered than others. Part of this is due to the fact that the categorys are somewhat subjective, for example the decision between Synth Lead and Synth Pad, or between Piano/Keys and Plucked/Mallet.\\
+Some of the categories also include a wide range of sounds, especially Rhythmic and Synth Lead, and so have a less consistent pattern in their parameters.
+It is also hard to draw colcusions about the clustering performance, due to the small sample size of presets, and the fact that many of the presets were made by using the Blending interface, so potentially have overly similar paramaters than if they'd been made from scratch by a person. To validate this approach more thoroughly, it would need to be applied to many 'real world' sets of presets of pre-existing commercial synthesisers, but several technical challenges (In particular lack of standardisation of control interfaces MORE DETAIL HERE) prevented this being possible during the sort timescale of this project.
+
+\begin{figure}
+	\centering
+	\begin{subfigure}[b]{0.48\textwidth}
+		\includegraphics[width=\textwidth]{CategoryPianoKeys.png}
+		\caption{Piano/Keys}
+		\label{fig:categoriesPianoKeys}
+	\end{subfigure}
+	~ %add desired spacing between images, e. g. ~, \quad, \qquad, \hfill etc. 
+	%(or a blank line to force the subfigure onto a new line)
+	\begin{subfigure}[b]{0.48\textwidth}
+		\includegraphics[width=\textwidth]{CategoryPluckedMallet.png}
+		\caption{Plucked/Mallet}
+		\label{fig:categoriesPluckedMallet}
+	\end{subfigure}
+\\ 
+\begin{subfigure}[b]{0.48\textwidth}
+	\includegraphics[width=\textwidth]{CategoryBass.png}
+	\caption{Bass}
+	\label{fig:categoriesBass}
+\end{subfigure}
+~ %add desired spacing between images, e. g. ~, \quad, \qquad, \hfill etc. 
+%(or a blank line to force the subfigure onto a new line)
+\begin{subfigure}[b]{0.48\textwidth}
+	\includegraphics[width=\textwidth]{CategorySynthLead.png}
+	\caption{Synth Lead}
+	\label{fig:categoriesSynthLead}
+\end{subfigure}
+\\
+\begin{subfigure}[b]{0.48\textwidth}
+	\includegraphics[width=\textwidth]{CategorySynthPad.png}
+	\caption{Synth Pad}
+	\label{fig:categoriesSynthPad}
+\end{subfigure}
+~ %add desired spacing between images, e. g. ~, \quad, \qquad, \hfill etc. 
+%(or a blank line to force the subfigure onto a new line)
+\begin{subfigure}[b]{0.48\textwidth}
+	\includegraphics[width=\textwidth]{CategoryRhythmic.png}
+	\caption{Rhythmic}
+	\label{fig:categoriesRhythmic}
+\end{subfigure}
+	\caption{Preset Categories shown on Selection Interface}
+	\label{fig:Categories}
+\end{figure}
+
 \subsection{Investigate how the PCA mapping scales with number of presets}
 asdasdasdsad
 \subsection{Quantify the extra variance the macro controls give}
