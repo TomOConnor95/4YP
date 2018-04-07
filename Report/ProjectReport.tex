@@ -57,11 +57,11 @@
 
 \usepackage{mathtools}
 \newcommand\SmallMatrix[1]{{%
-  \tiny\arraycolsep=0.3\arraycolsep\ensuremath{\begin{pmatrix}#1\end{pmatrix}}}}
+  \big\arraycolsep=0.5\arraycolsep\ensuremath{\begin{pmatrix}#1\end{pmatrix}}}}
 \DeclareMathOperator{\diag}{diag}
 %\DeclareMathOperator{\f}{f}
 
-
+\renewcommand{\vec}[1]{\mathbf{#1}}
 
 
 \title{B1 Project Report}
@@ -241,10 +241,10 @@ Both the 2D spacing of the presets, and the creating of the macro controls is ca
 \end{figure}
 
 \section{Blending Interface}
-Preset Blending is a somewhat popular approach in synth interface design, where new presets are created by a linear combination of presets. The Blending Interface is an extension of this approach.\\
-Three initial presets (A, B, C) are selected, and are placed on the coreners of the triangle in the centre of the interface. As the cursor moves over the interface, a new preset is created as a weighted sum of the 3 presets, based on promixity to the corners. Once the user finds the optimal preset in the space, the user clicks. The preset clicked on then becomes the preset A (I.e is placed on the bottom corner of the triangle), and a new preset B and C are generated. \\
+Preset Blending is a somewhat popular approach in synth interface design, where new presets are created by a linear combination of presets. (EXAMPLES) The Blending Interface is an extension of this approach.\\
+Three initial presets (A, B, C) are selected, and are placed on the coreners of the triangle in the centre of the interface. As the cursor moves over the interface, a new preset is created as a weighted sum of the three presets, based on promixity to the corners. Once the user finds the optimal preset in the space, the user clicks. The preset clicked on then becomes the preset A (I.e is placed on the bottom corner of the triangle), and a new preset B and C are generated. \\
 This process is repeated as many times as desired, allowing the user to keep searching through the parameter space.\\
-If the user clicks on the 'Pause on Selected Preset Button', they are shown an interactive display of their past preset choices, which they can use to go back to previously selected settings and resume searching. It is also possible to select 3 if the previous presets, and assign them to preset A, B and C.
+If the user clicks on the 'Pause on Selected Preset Button', they are shown an interactive display of their past preset choices, which they can use to go back to previously selected settings and resume searching. It is also possible to select three of the previous presets, and assign them to preset A, B and C.
 The user has the option to freeze sections of the parameter space, which helps the search be more fine tuned to their needs.
 The colours of the Blending Interface are calculated to be consistent with the Selection Interface.
 \begin{figure}[h] 
@@ -391,8 +391,41 @@ asdasdasdsa
 asdasdsa
 
 \section{Blending Interface}
-%\subsection{Detailed Description}
+\subsection{Detailed Description}
 This interface was created as a Matlab 'figure based application'.
+
+\begin{figure}[h] 
+	\centering
+	\includegraphics[width = \textwidth]{BlendingAlgorithm.png}
+	\caption{Blending Algorithm flow chart}
+	\label{fig:BlendingAlgorithm}
+\end{figure}
+
+The blending of presets is calculated as a non orthogonal vetor decomposition: (REFERENCE!)
+\begin{equation}
+	\vec{P} = f(\alpha\vec{A} + \beta\vec{B} + \gamma\vec{C})
+\end{equation}
+Where $\vec{P}$ is the blended preset, $\vec{A}$, $\vec{B}$, $\vec{C}$ are presets A, B and C, $f$ is a function which applies parameter constraints, and $\alpha$, $\beta$ and $\gamma$ are calculated from the following matrix equation:
+\begin{equation}
+[\beta,  \gamma]^T = (\vec{M}^T*\vec{M})\\vec{M}^T*[x, y], 
+	\hspace{1in} \alpha = 1 - (\beta + \gamma)
+\end{equation}
+\begin{wrapfigure}{r}{0.35\textwidth}
+	\vspace{-30pt}
+	\includegraphics[width = \textwidth/3]{BlendVectors.png}
+	\caption{Non-orthogonal vector decomposition}
+	\label{fig:BlendingVectors}
+	%\vspace{-60pt}
+\end{wrapfigure}
+where $x$, and $y$ are the x and y coordinates of the current cursor position, and $\vec{M} =[\vec{b},  \vec{c}]$, where $\vec{b}$,  $\vec{c}$ are vectors from the A preset location to the B and C preset locations on the interface, as shown in Figure \ref{fig:BlendingVectors}.
+
+The parameter constraint function $f$, applies the relevant constraints to each parameter. Most parameters are continuous with an upper and lower bound, $[l, u]$. For these parameters: $f_i(P_i) = \min(\max(P_i, l), u)$. For the Coarse frequency parameters, the continuous blended value is discretised back into the set ${0.5, 1, 2, 3, ...}$, which the desicion boundary between neighbouring number falling equidistant to the numbers.
+
+Talk about using the PCA colours and PC! for B and C swap.
+
+
+Talk about the preset history plot.\\
+selected locations are joined end to end. Some information could potentially be gathered based on the wiggliiness of the path..... FINISH THIS
 \subsection{Strengths}
 asdsadsa
 \subsection{Weaknesses}
