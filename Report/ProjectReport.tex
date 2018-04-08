@@ -434,18 +434,25 @@ To make the iterative blending process more intuitive, and to maintain consisten
 
 Each time the presets ae iterated, and a new B and C are generated, the first principal component, $PC_{1}$ is calculated for B and C, and if $PC_{1}^B > PC_{1}^C $, then presets B and C are swapped. The effect of this is that the $x$ direction in the Blending Interface corresponds to a direction of increasing $PC_{1}$. This is done because $PC_{1}$ is also used in the Selection Interface for the $x$ coordinate of each preset, and so this process further maintains consistency between the two interfaces.
 
-\begin{wrapfigure}{r}{0.35\textwidth}
+\begin{wrapfigure}{R}{0.35\textwidth}
+	\centering
 	\vspace{-40pt}
 	\includegraphics[width = \textwidth/3]{SelectionHistory.png}
 	\caption{Selection History plot construction}
 	\label{fig:SelectionHistory}
+	
+	\includegraphics[width = \textwidth/3]{FreezeParams2.png}
+	\caption{Parameter Freezing}
+	\label{fig:FreezeParams}
+	
 	\vspace{-30pt}
+	
 \end{wrapfigure}
 The Selection History display, allows the user to browse their previously selected presets, by clicking on nodes of the graph. Each time presets are iterated, the vector from A to the selelected coordinates, $\vec{p}_i$ is recorded. The graph is constucted by joining these vectors head-to-tail, as shown in Figure \ref{fig:SelectionHistory}. The colours of each edge of the graph are chosen based on $PC_{3,4,5}$ of the presets. See Figure, \ref{fig:BlendingInterface} for a typical example of the Selection History plot.
 
 It may be possible to use some of the information contained in the graph (if the data from many users is collected), as a way to refine the preset generation algorithm. If the generation algorithm is producing good presets, then most of the choices should be somewhere between A, B and C on the interface. If the algorithm is producing bad presets, most of the choices will be very close to, or below A. MORE DETAIL HERE
 
-Talk about parameter freezing
+As part of the blending interface, the user has the option to freeze sections of the parameter space. The parameters are divided into 'Time' and 'Timbre' parameters, and then subdivided into a total of 12 smaller categories, see Figure \ref{fig:FreezeParams}. This makes the blending interface more useful, as it allows users with knowledge of synthesisers to fine-tune the blending process to their needs. This tends to lead to more useful generated presets, as it reduces the dimensionality of the search space (BACK THIS UP).
 \subsection{Strengths}
 asdsadsa
 \subsection{Weaknesses}
