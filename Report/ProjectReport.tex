@@ -116,6 +116,8 @@ THIS ABSTRACT NEEDS A LOT MORE WORK, WILL WORK ON AFTER WRITING MORE OF THE REPO
 \section{Background Information}
 Software Synthesisers (Soft-Synths) are computer applications which create sounds in response to musical input typically in the form of MIDI messages. They are widely used in a variety of musical contexts. Typical soft-synths have hundreds or thousands of parameters which control the sound generation algorithm, allowing the user to create sounds that suit their musical needs. This results in a high dimensional, non-linear search space which the user must navigate in order. Research indicates that humans are bad at navigating such interfaces with serial controls, and that there is a strong link between interface design and the level of creativity that the user with experience when using the interface. \\
 This work describes a novel interface designed to help users control synthesisers in a quicker and more intuitive manner. It combines 3 interfaces together: a traditional 'knob and slider' interface, a search space visualisation interface, and an iterative blending interface.
+
+A video of the full interface being used can be viewed at (LINK TO VIDEO).
 \section{Aims of the project}
 Aim to ...
 
@@ -467,9 +469,28 @@ asdasdasd
 asdasdsad
 
 \section{Comparisons of interfaces}
-asdasdsad
+Due to the subjectivity of interface design, and as the three interfaces have quite different purposes, there are not many obvious metrics to use to compare the interfaces with each other. However, the key challenge is to make the combined interface better than the traditional interface alone. MORE WRITING
 \subsection{Perfect /Imperfect User Model}
-asdasdsadad
+A way of evaluating the performance of the interface is to simulate a 'Perfect User', and an 'Imperfect User' carying out particular tasks. In particular the task is to use the interface to move from an initial preset, to a goal preset. This analysis won't account for any creativity based goals of the interface, but will help evaluate some of the practical comsiderations of the interface. (BAD WORDING< WORK ON THIS SECTION).
+ 
+The Perfect User has perfect knowledge of the synth and the interface, so can always choose the optimum position for a particular knob, or choose the optimum blend of presets in the Blending Interface.
+
+The Imperfect User has imperfect knowledge of the synth and the interface, so chooses interactions similarly to the Perfect User, but 'misses' by a certain ammount: $\Delta P_i = \Delta P_i^0 * (1 + \varepsilon)$, where $\Delta P_i^0$ is the Perfect parameter change, and $\varepsilon$ is a zero mean gaussian random variable with variance $\sigma^2$.
+
+A key consideration for the Traditional Interface is the order which parameters are varied. In the 'Perfect Order', parameters are visited in decreasing order of importance. In the 'Random Order', parameters are visiteed in o comploetely random order. Real users most likely operate somewhere in the middle of these regimes. (REFERENCE FOR THIS>???)
+
+\subsection{Error Metric}
+A parameter based error metric is used for these tasks due to the complexity of using a sound based error metric (AS DESCRIBED IN SECTION). 
+
+An $L_1$ norm is used on each parameter, and the parameters are weighted based on an approximate measure of importance. The total error is calculated as:
+\begin{equation}
+E = \sum_{i=1}^{N} \| p_i - p_i^{goal} \|_1 *w_i
+\end{equation}
+where $w_i$ is the scalar importance weighting for the $i$th parameter.
+
+The $L_1$ norm was chosen over the $L_2$ norm so that a few large parameter errors don't dominate the error metric and as no gradients are necessary.
+This is by no means a perfect metric for comparins synth settings, but it is good enough for our purposes. (IS IT?)
+
 \subsection{Comparison of isolated interfaces}
 asdasdsad
 \subsection{Comparison of combined interfaces}
