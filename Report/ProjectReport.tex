@@ -404,6 +404,7 @@ This interface was created as a Matlab 'figure based application'.
 The blending of presets is calculated as a non orthogonal vetor decomposition: (REFERENCE!)
 \begin{equation}
 	\vec{P} = f(\alpha\vec{A} + \beta\vec{B} + \gamma\vec{C})
+	\label{eq:PresetMix}
 \end{equation}
 Where $\vec{P}$ is the blended preset, $\vec{A}$, $\vec{B}$, $\vec{C}$ are presets A, B and C, $f$ is a function which applies parameter constraints, and $\alpha$, $\beta$ and $\gamma$ are calculated from the following matrix equation:
 \begin{equation}
@@ -416,16 +417,35 @@ Where $\vec{P}$ is the blended preset, $\vec{A}$, $\vec{B}$, $\vec{C}$ are prese
 	\caption{Non-orthogonal vector decomposition}
 	\label{fig:BlendingVectors}
 	%\vspace{-60pt}
+	\includegraphics[width = \textwidth/3]{FreqCoarse.png}
+	\caption{Mapping from continuous to coarse frequency}
+	\label{fig:Freq Coarse}
+	%\vspace{-60pt}
+	\includegraphics[width = \textwidth/3]{BlendingColours2.png}
+	\caption{$PC_{3,4,5}$ applied to RGB colour of blending interface}
+	\label{fig:BlendingColours}
+	\vspace{-60pt}
 \end{wrapfigure}
 where $x$, and $y$ are the x and y coordinates of the current cursor position, and $\vec{M} =[\vec{b},  \vec{c}]$, where $\vec{b}$,  $\vec{c}$ are vectors from the A preset location to the B and C preset locations on the interface, as shown in Figure \ref{fig:BlendingVectors}.
 
-The parameter constraint function $f$, applies the relevant constraints to each parameter. Most parameters are continuous with an upper and lower bound, $[l, u]$. For these parameters: $f_i(P_i) = \min(\max(P_i, l), u)$. For the Coarse frequency parameters, the continuous blended value is discretised back into the set ${0.5, 1, 2, 3, ...}$, which the desicion boundary between neighbouring number falling equidistant to the numbers.
+The parameter constraint function $f$, applies the relevant constraints to each parameter. Most parameters are continuous with an upper and lower bound, $[l, u]$. For these parameters: $f_i(P_i) = \min(\max(P_i, l), u)$. For the Coarse frequency parameters, the continuous blended value is discretised back into the set ${0.5, 1, 2, 3, ...}$, which the desicion boundary between neighbouring number falling equidistant to the numbers, as shown in Figure \ref{fig:Freq Coarse}.
 
-Talk about using the PCA colours and PC! for B and C swap.
+To make the iterative blending process more intuitive, and to maintain consistency between the interfaces, the RGB colouring using PCA from the Selection interface was used. This is done by using Equation \ref{eq:PresetMix} to calculate the blended preset at each of the points marked on Figure \ref{fig:BlendingColours}, then calculateing the PCA Scores for each of these points. $PC_{3,4,5}$ are mapped to RGB colour, and colour is linearly interpolated between the points. A more detailed colour space could be acheived by using more points, but there would be an associated performance tradeoff. 
 
+Each time the presets ae iterated, and a new B and C are generated, the first principal component, $PC_{1}$ is calculated for B and C, and if $PC_{1}^B > PC_{1}^C $, then presets B and C are swapped. The effect of this is that the $x$ direction in the Blending Interface corresponds to a direction of increasing $PC_{1}$. This is done because $PC_{1}$ is also used in the Selection Interface for the $x$ coordinate of each preset, and so this process further maintains consistency between the two interfaces.
 
-Talk about the preset history plot.\\
-selected locations are joined end to end. Some information could potentially be gathered based on the wiggliiness of the path..... FINISH THIS
+\begin{wrapfigure}{r}{0.35\textwidth}
+	\vspace{-40pt}
+	\includegraphics[width = \textwidth/3]{SelectionHistory.png}
+	\caption{Selection History plot construction}
+	\label{fig:SelectionHistory}
+	\vspace{-30pt}
+\end{wrapfigure}
+The Selection History display, allows the user to browse their previously selected presets, by clicking on nodes of the graph. Each time presets are iterated, the vector from A to the selelected coordinates, $\vec{p}_i$ is recorded. The graph is constucted by joining these vectors head-to-tail, as shown in Figure \ref{fig:SelectionHistory}. The colours of each edge of the graph are chosen based on $PC_{3,4,5}$ of the presets. See Figure, \ref{fig:BlendingInterface} for a typical example of the Selection History plot.
+
+It may be possible to use some of the information contained in the graph (if the data from many users is collected), as a way to refine the preset generation algorithm. If the generation algorithm is producing good presets, then most of the choices should be somewhere between A, B and C on the interface. If the algorithm is producing bad presets, most of the choices will be very close to, or below A. MORE DETAIL HERE
+
+Talk about parameter freezing
 \subsection{Strengths}
 asdsadsa
 \subsection{Weaknesses}
