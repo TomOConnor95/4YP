@@ -1,4 +1,4 @@
-% a test to simulate a perfect User using Blending Interface
+% a test to simulate a perfect User using PCA Interface
 
 presetRead = matfile('PresetStoreSC.mat');
 numPresets = length(presetRead.presetStore(:,1));
@@ -295,8 +295,7 @@ end
 
 subplot(4,2,1)
 plot(0:1:numIterations,meanCostHistoryPerfectCO/meanCostHistoryPerfectCO(1), 'r', 'LineWidth', 3)
-yLim = get(gca, 'YLim');
-ylim([0,yLim(2)]);
+ylim([0,1]);
 
 subplot(4,2,2)
 plot(0:1:numIterations,meanCostHistoryPerfectCR/meanCostHistoryPerfectCR(1), 'r', 'LineWidth', 3)
@@ -305,8 +304,7 @@ ylim([0,1]);
 
 subplot(4,2,3)
 plot(0:1:numIterations,meanCostHistoryPerfectCTTO/meanCostHistoryPerfectCTTO(1), 'r', 'LineWidth', 3)
-yLim = get(gca, 'YLim');
-ylim([0,yLim(2)]);
+ylim([0,1]);
 
 subplot(4,2,4)
 plot(0:1:numIterations,meanCostHistoryPerfectCTTR/meanCostHistoryPerfectCTTR(1), 'r', 'LineWidth', 3)
@@ -315,8 +313,7 @@ ylim([0,1]);
 
 subplot(4,2,5)
 plot(0:1:numIterations,meanCostHistoryPerfectCGO/meanCostHistoryPerfectCGO(1), 'r', 'LineWidth', 3)
-yLim = get(gca, 'YLim');
-ylim([0,yLim(2)]);
+ylim([0,1]);
 
 subplot(4,2,6)
 plot(0:1:numIterations,meanCostHistoryPerfectCGR/meanCostHistoryPerfectCGR(1), 'r', 'LineWidth', 3)
@@ -366,6 +363,35 @@ title('Mean Normalised Cost vs Iterations comparison')
 xlabel('Iterations')
 ylabel('Normalised Cost')
 
+%% Plots for report
+figure(16)
+
+for p = 1:numTests
+subplot(1,2,1)
+plot(0:1:numIterations,costHistoryPerfectCO{p}/costHistoryPerfectCO{p}(1))
+hold on
+
+subplot(1,2,2)
+plot(0:1:numIterations,costHistoryPerfectCR{p}/costHistoryPerfectCR{p}(1))
+hold on
+end
+
+
+subplot(1,2,1)
+plot(0:1:numIterations,meanCostHistoryPerfectCO/meanCostHistoryPerfectCO(1), 'r', 'LineWidth', 3)
+ylim([0.2,1]);
+title('\fontsize{16}Time/Timbre + Global PCA - Ordered')
+xlabel('\fontsize{16}Iterations')
+ylabel('\fontsize{16}Normalised Cost')
+
+subplot(1,2,2)
+plot(0:1:numIterations,meanCostHistoryPerfectCR/meanCostHistoryPerfectCR(1), 'r', 'LineWidth', 3)
+ylim([0.2,1]);
+title('\fontsize{16}Time/Timbre + Global PCA - Random')
+xlabel('\fontsize{16}Iterations')
+ylabel('\fontsize{16}Normalised Cost')
+
+
 %% Requires evaluationTest3 and evaluationTest4 to have been run 
 figure(15)
 plot(0:1:numIterations,meanCostHistoryPerfectCO/meanCostHistoryPerfectCO(1), 'r', 'LineWidth', 3)
@@ -378,9 +404,9 @@ plot(0:1:numIterations,meanCostHistoryPerfectCTTR/meanCostHistoryPerfectCTTR(1),
 plot(0:1:numIterations,meanCostHistoryPerfectCGO/meanCostHistoryPerfectCGO(1), 'b', 'LineWidth', 3)
 plot(0:1:numIterations,meanCostHistoryPerfectCGR/meanCostHistoryPerfectCGR(1), 'b:', 'LineWidth', 3)
 
-title('Mean Normalised Cost vs Iterations comparison')
-xlabel('Iterations')
-ylabel('Normalised Cost')
+title('\fontsize{16}Mean Normalised Cost vs Iterations comparison')
+xlabel('\fontsize{16}Iterations')
+ylabel('\fontsize{16}Normalised Cost')
 
 
 
@@ -391,6 +417,6 @@ plot((0:1:plotLength), [meanInitialCost, meanCostHistoryImperfect2]/meanInitialC
 plot(0:1:100,meanCostHistoryPerfectB/meanCostHistoryPerfectB(1), 'c', 'LineWidth', 2)
 plot(0:1:100,meanCostHistoryImperfectB/meanCostHistoryImperfectB(1), 'c:', 'LineWidth', 2)
 
-legend('Time/Timbre + Global PCA','... Random','Time/Timbre PCA','... Random', 'Global PCA','... Random',...
+legend({'Time/Timbre + Global PCA','... Random','Time/Timbre PCA','... Random', 'Global PCA','... Random',...
 'Perfect Traditional', 'Perfect Traditional - Random', 'Imperfect Traditional', 'Imperfect Traditional - Random',...
-'Perfect Blending', 'Imperfect Blending')
+'Perfect Blending', 'Imperfect Blending'}, 'FontSize', 14)

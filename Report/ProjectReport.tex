@@ -538,7 +538,7 @@ This is by no means a perfect metric for comparins synth settings, but it is goo
 \subsection{Blending Interface}
 \begin{wrapfigure}{r}{0.5\textwidth}
 	\centering
-	\vspace{-40pt}
+	\vspace{-100pt}
 	\includegraphics[width = \textwidth/2]{TradInterfaceTests1.eps}
 	\caption{Perfect/Imperfect user tests for Traditional Interface}
 	\label{fig:TradTest1}
@@ -547,12 +547,63 @@ This is by no means a perfect metric for comparins synth settings, but it is goo
 %	\caption{Parameter Freezing}
 %	\label{fig:FreezeParams}
 	
-	\vspace{-30pt}
+	\vspace{-140pt}
 	
 \end{wrapfigure}
-Perfect/Imperfect user tests were carrried out on the blending interface, using each of the 36 presets as a goal preset, and setting the starting preset to the closest preset to the goal preset. The results of these tests are shown in Figure \ref{fig:TradTest1}. Ineach of the plots, the cyan lines are individual instances of the Perfect Order test. The blue lines are individual instances of the Random Order test. The solid red line is the mean of the Perfect Order tests, and the red dotted line is the mean of the Random Order tests. 
+Perfect/Imperfect user tests were carrried out on the blending interface, using each of the 36 presets as a goal preset, and setting the starting preset to the closest preset to the goal preset. The results of these tests are shown in Figure \ref{fig:TradTest1}. In each of the plots, the cyan lines are individual instances of the Perfect Order test. The blue lines are individual instances of the Random Order test. The solid red line is the mean of the Perfect Order tests, and the red dotted line is the mean of the Random Order tests. 
 
-For low values of $\sigma$, the Perfect Order tests folllows a smooth, approximately exponentially decreasing, curve. For high values of $\sigma$, and when the random otder is used, the error decreases in a much less smooth manner. In all cases the Perfect Order gives a substantially faster convergence time. FINISH THIS
+For low values of $\sigma$, the Perfect Order tests folllows a smooth, approximately exponentially decreasing, curve. For high values of $\sigma$, and when the random otder is used, the error decreases in a much less smooth manner. In all cases the Perfect Order gives a substantially faster convergence time. A comparison of the mean error for various values of $\sigma$ is shown in Figure \ref{fig:TradTest2}. 
+\begin{figure}
+	\centering
+%	\vspace{-40pt}
+	\includegraphics[width = \textwidth/2]{TradInterfaceTests2.eps}
+	\caption{Perfect/Imperfect user tests for Traditional Interface}
+	\label{fig:TradTest2}
+	
+	%	\includegraphics[width = \textwidth/3]{FreezeParams2.png}
+	%	\caption{Parameter Freezing}
+	%	\label{fig:FreezeParams}
+	
+%	\vspace{-30pt}
+	
+\end{figure}
+
+\subsection{Selection Interface}
+A similar evaluation was carried out with the selection interface. Again all 36 presets were used as goal presets, with the closest preset used each time as the starting point. For each test, the PCA values were calculated for the remaining 35 presets, simulating the situation where the PCA Macros were being used to find a brand new preset. As before, two parameter orders were tested: the Macro Controls were visited cyclically in order of PCA number, or visited in a random order. For each iteration of the test, the MATLAB 'Patternsearch' search algorithm was used to minimise the cost function for a particular Macro Control. \\ 
+A key question with the interface is whether the 'Global' or 'Time/Timbre' version of the PCA Macro Controls should be used. The results for a test with the combination of both sets of macros is shown in Figure \ref{fig:PCAtest1}.
+\begin{figure}
+	\centering
+	%	\vspace{-40pt}
+	\includegraphics[width = \textwidth]{PCAInterfaceTests1.eps}
+	\caption{Ordered/Random user tests for Selection Interface}
+	\label{fig:PCAtest1}
+	%	\vspace{-30pt}
+\end{figure}
+
+A comparison of the results for the different macro configurations is shown in Figure \ref{fig:PCAtest2}.
+\begin{figure}
+	\centering
+	%	\vspace{-40pt}
+	\includegraphics[width = \textwidth]{PCAInterfaceTests2.eps}
+	\caption{Comparison of Macro Types}
+	\label{fig:PCAtest2}
+	%	\vspace{-30pt}
+\end{figure}
+MAYBE NEED TO DO THE IMPRERFECT USER TESTS ON THE MACRO CONTROLS.
+
+Some points to note from these results:
+
+As shown in Figure \ref{fig:PCAtest1}, for different preset goals, the effictiveness of the PCA Controls varies significantly. In the best case the error drops very rapidly, falling 50\% in the first 10 iterations. In the worst case the error doesn't decrease at all. This suggests that, for this particlar task at least, having the same Macro Controls for each preset may not be ideal, and so a new approach which in some way optimises the Macro Controls per preset would be worth pursuing. However, as previously stated (IN SECTION ????), this comes at the cost of the user being less farmiliar with what the Macro Controls are actually doing. 
+
+When the 'Global' Macro Controls are being used, after a large number of iterations, the random order manages to decrease the error past the cyclic order. It is likely that this is due to the cyclic order getting stuck in a local optimum due to the naive 'one parameter at a time' (BETTER NAME FOR THIS) search algorithm.
+
+Finally, each of the combinations of controls has a similar initial rate of error reduction, but the 'Global' Macro Controls appear to have a significant advantage over the 'Time/Timbre' Macro Controls over larger numbers of iterations. This is likely due to the fact that the Global Macro Controls have access to principal components 1 to 8, whereas the 'Time/Timbre' Macro Controls on have access to two sets of principal components 1 to 4. The combination of both sets of Macro Controls gives the lowest mean error overall, which is unsurprising as it has the most degrees of freedom, and it has a comparable error reduction rate as the 'Global' Controls.
+
+Based on this it is concluded that it is worth keeping both sets of macro controls for the user to be able to select between, especially as the 'Time/Timbre' Macro Controls may lead to more semantically meaningful controls due to the seperation of Time and Timbre. (JUSTIFY THIS MORE)
+
+\subsection{Blending Interface} 
+The Blending interface was evaluated in a similar manner. For each of the 36 possible goal presets, the closest three presets to it were found, and these used as preset A, B and C in the blending algorithm. Pattern search was agin used in each iteration to optimise the position of the mouse in the blending interface to minimise error. 
+
 \section{Comparison of combined interfaces}
 asdasdsadsa
 
