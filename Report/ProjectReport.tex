@@ -20,6 +20,9 @@
 
 \usepackage{multirow}
 
+\usepackage{epstopdf}
+\DeclareGraphicsExtensions{.pdf,.png,.jpg,.eps}
+
 \usepackage{titlesec}
 %\titlespacing\chapter{0pt}{4pt plus 4pt minus 2pt}{4pt plus 2pt minus 2pt}
 \titlespacing\section{0pt}{4pt plus 4pt minus 2pt}{0pt plus 2pt minus 2pt}
@@ -508,9 +511,9 @@ asdasdasd
 \subsection{Investigate Permutation Ambiguity}
 asdasdsad
 
-\section{Comparisons of interfaces}
+\chapter{Numerical Comparisons of Interfaces}
 Due to the subjectivity of interface design, and as the three interfaces have quite different purposes, there are not many obvious metrics to use to compare the interfaces with each other. However, the key challenge is to make the combined interface better than the traditional interface alone. MORE WRITING
-\subsection{Perfect /Imperfect User Model}
+\section{Perfect /Imperfect User Model}
 A way of evaluating the performance of the interface is to simulate a 'Perfect User', and an 'Imperfect User' carying out particular tasks. In particular the task is to use the interface to move from an initial preset, to a goal preset. This analysis won't account for any creativity based goals of the interface, but will help evaluate some of the practical comsiderations of the interface. (BAD WORDING< WORK ON THIS SECTION).
  
 The Perfect User has perfect knowledge of the synth and the interface, so can always choose the optimum position for a particular knob, or choose the optimum blend of presets in the Blending Interface.
@@ -519,7 +522,7 @@ The Imperfect User has imperfect knowledge of the synth and the interface, so ch
 
 A key consideration for the Traditional Interface is the order which parameters are varied. In the 'Perfect Order', parameters are visited in decreasing order of importance. In the 'Random Order', parameters are visited in a comploetely random order. Real users most likely operate somewhere in the middle of these regimes. (REFERENCE FOR THIS>???)
 
-\subsection{Error Metric}
+\section{Error Metric}
 A parameter based error metric is used for these tasks due to the complexity of using a sound based error metric (AS DESCRIBED IN SECTION). 
 
 For each parameter, $p_i$, a weighted $L_1$ norm is used. The parameters are weighted based on an approximate measure of importance, and normalised by their parameter ranges. The total error is calculated as:
@@ -531,9 +534,26 @@ where $w_i$ is the scalar importance weighting for the $i$th parameter, and $r_i
 The $L_1$ norm was chosen over the $L_2$ norm so that a few large parameter errors don't dominate the error metric and as no gradients are necessary.
 This is by no means a perfect metric for comparins synth settings, but it is good enough for our purposes. (IS IT?)
 
-\subsection{Comparison of isolated interfaces}
-asdasdsad
-\subsection{Comparison of combined interfaces}
+\section{Comparison of isolated interfaces}
+\subsection{Blending Interface}
+\begin{wrapfigure}{r}{0.5\textwidth}
+	\centering
+	\vspace{-40pt}
+	\includegraphics[width = \textwidth/2]{TradInterfaceTests1.eps}
+	\caption{Perfect/Imperfect user tests for Traditional Interface}
+	\label{fig:TradTest1}
+	
+%	\includegraphics[width = \textwidth/3]{FreezeParams2.png}
+%	\caption{Parameter Freezing}
+%	\label{fig:FreezeParams}
+	
+	\vspace{-30pt}
+	
+\end{wrapfigure}
+Perfect/Imperfect user tests were carrried out on the blending interface, using each of the 36 presets as a goal preset, and setting the starting preset to the closest preset to the goal preset. The results of these tests are shown in Figure \ref{fig:TradTest1}. Ineach of the plots, the cyan lines are individual instances of the Perfect Order test. The blue lines are individual instances of the Random Order test. The solid red line is the mean of the Perfect Order tests, and the red dotted line is the mean of the Random Order tests. 
+
+For low values of $\sigma$, the Perfect Order tests folllows a smooth, approximately exponentially decreasing, curve. For high values of $\sigma$, and when the random otder is used, the error decreases in a much less smooth manner. In all cases the Perfect Order gives a substantially faster convergence time. FINISH THIS
+\section{Comparison of combined interfaces}
 asdasdsadsa
 
 \chapter{User tests and Interviews}
