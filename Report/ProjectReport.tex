@@ -18,6 +18,8 @@
 
 \usepackage{wrapfig}
 
+\usepackage{multirow}
+
 \usepackage{titlesec}
 %\titlespacing\chapter{0pt}{4pt plus 4pt minus 2pt}{4pt plus 2pt minus 2pt}
 \titlespacing\section{0pt}{4pt plus 4pt minus 2pt}{0pt plus 2pt minus 2pt}
@@ -144,9 +146,8 @@ A number of guidelines for creative musical interfaces
 \section{Principal Component Analysis}
 Describe the PCA algorithm, and dicuss the possible extention to using Sparse PCA. 
 
-\section{Principal Component Analysis}
-Describe the PCA algorithm, and dicuss the possible extention to using Sparse PCA. 
-
+\section{Bayesian Optimisation}
+Discuss how this is a promising technique in this field, for example preference gallery interface, but due to large ammount of training data neccesary, and bad performance in high dimensions it wont be used.
 
 \chapter{Description of Synthesiser and Image Processing Algorithms}
 \section{Synthesiser Algorithm}
@@ -184,7 +185,46 @@ A selection of 35 presets were created for this synth, to give a selection of al
 	\caption{Synthesiser Schematic}
 \end{figure}
 
+\subsection{Synthesiser Parameters}
+This synthesiser has 96 parameters, as described in Table \ref{tab:Params}.
 
+\def\arraystretch{1.5}
+\begin{table}[]
+	\centering
+	\caption{Synthesiser Parameters}
+	\label{tab:Params}
+	\begin{tabular}{|l|l|l|l|l|}
+		\hline
+		\textbf{Parameter Group}                	 & \textbf{Parameter}     & \textbf{Domain}            & \textbf{Time/Timbre} & \textbf{Weighting} \\ \hline
+		Phase Modulation         						& 36 x $m_{ij}$               & $[0, 10]$                  		& Timbre                	& 3									\\ \hline
+		Coarse Frequency                            	& 6 x $f_{i}^{coarse}$     & $\{0.5, 1, 2, 3, 4, ...\}$ & Timbre                	& 10									  \\ \hline
+		Fine Frequency                                 	   & 6 x $f_{i}^{fine}$         & $[0, 1]$                   		& Timbre                	& 10									  \\ \hline
+		Output Levels                                  		& 6 x $a_{i}^{output}$     & $[0, 1]$                   	  & Timbre                	& 3								    	\\ \hline
+Modulation Envelope Amount                       & 6 x $ENV_{i}^{mod}$   & $[0, 1]$                   	     & Timbre                  & 1									  \\ \hline
+		LFO A Depth                                    		& 6 x $LFO_{i}^{a}$         & $[0, 1]$                   	   & Timbre                  & 1									\\ \hline
+		LFO B Depth                                    		& 6 x $LFO_{i}^{b}$        & $[0, 1]$                   	   & Timbre                  & 1									\\ \hline
+		\multirow{3}{*}{LFO A}      					& Rate                    		& $[0, 20]$ Hz               	 & \multirow{3}{*}{Time}& \multirow{3}{*}{3} \\
+																	  & Amplitude               	& $[0, 1]$                   		&                      				& \\
+																	  & Phase Spread         	& $[0, 1]$                   		&                       			&\\ \hline
+		\multirow{3}{*}{LFO B}      					& Rate                    		& $[0, 20]$ Hz               	& \multirow{3}{*}{Time}& \multirow{3}{*}{3} \\
+																	  & Amplitude               	& $[0, 1]$                   		&                       			&\\
+																	  & Pulse Width                & $[0, 1]$                   		&                       			&\\ \hline
+		\multirow{5}{*}{Amplitude Envelope}    & Attack (A)       				& $[0, 10]$ seconds        & \multirow{5}{*}{Time}& \multirow{3}{*}{10} \\
+																	  & Decay (D)               		& $[0, 10]$ seconds         &                       			&\\
+																	  & Sustain (S)             	 	 & $[0, 1]$                   		&                       			&\\
+																	  & Release (R)             		& $[0, 10]$ seconds        &                       			&\\
+																	  & Curve                   	   	   & $[-5, 5]$                  	&                       			&\\ \hline
+		Modulation Envelope        						& Same as previous           &                            			& Time              	& 10									\\ \hline
+		\multirow{6}{*}{Miscellaneous}             & Vibrato Start Amt.    		  & $[0, 1]$                   	& \multirow{6}{*}{Time}& \multirow{3}{*}{1} \\
+																	  & Vibrato End Amt.	         & $[0, 1]$                   		&                       			&\\
+																	  & Vibrato Start Freq.			  & $[0, 20]$ Hz               &                       			&\\
+																	  & Vibrato End Freq.		      & $[0, 20]$ Hz               &                       			&\\
+																	  & Vibrato Time            		& $[0, 20]$ seconds      &                       			&\\
+																	  & Stereo Spread           	  & $[0, 1]$                   		&                       			&\\ \hline
+	\end{tabular}
+\end{table}
+
+USE TABLE TO CLEAN UP PREVIOUS SECTION
 
 \subsection{Design choices and justification}
 Typical commercial synthesisers have a large number of parameters (Yamaha DX7 - 126 parameters, Omnisphere 2 - several thousand parameters), which can be discrete or continuous, and are usually contrained within a range. Some synthesisers have Modular or Semi-Modular architectures, which allow for a lot of flexibility, but due to the combinational explosion of number of parameter combinations, and difficulty blending between presets, this type of architecture is not addressed in the work.
@@ -477,16 +517,16 @@ The Perfect User has perfect knowledge of the synth and the interface, so can al
 
 The Imperfect User has imperfect knowledge of the synth and the interface, so chooses interactions similarly to the Perfect User, but 'misses' by a certain ammount: $\Delta P_i = \Delta P_i^0 * (1 + \varepsilon)$, where $\Delta P_i^0$ is the Perfect parameter change, and $\varepsilon$ is a zero mean gaussian random variable with variance $\sigma^2$.
 
-A key consideration for the Traditional Interface is the order which parameters are varied. In the 'Perfect Order', parameters are visited in decreasing order of importance. In the 'Random Order', parameters are visiteed in o comploetely random order. Real users most likely operate somewhere in the middle of these regimes. (REFERENCE FOR THIS>???)
+A key consideration for the Traditional Interface is the order which parameters are varied. In the 'Perfect Order', parameters are visited in decreasing order of importance. In the 'Random Order', parameters are visited in a comploetely random order. Real users most likely operate somewhere in the middle of these regimes. (REFERENCE FOR THIS>???)
 
 \subsection{Error Metric}
 A parameter based error metric is used for these tasks due to the complexity of using a sound based error metric (AS DESCRIBED IN SECTION). 
 
-An $L_1$ norm is used on each parameter, and the parameters are weighted based on an approximate measure of importance. The total error is calculated as:
+For each parameter, $p_i$, a weighted $L_1$ norm is used. The parameters are weighted based on an approximate measure of importance, and normalised by their parameter ranges. The total error is calculated as:
 \begin{equation}
-E = \sum_{i=1}^{N} \| p_i - p_i^{goal} \|_1 *w_i
+E = \sum_{i=1}^{N} \| p_i - p_i^{goal} \|_1 *\frac{w_i}{r_i}
 \end{equation}
-where $w_i$ is the scalar importance weighting for the $i$th parameter.
+where $w_i$ is the scalar importance weighting for the $i$th parameter, and $r_i$ is the range of values that parameter $i$ can take, see Table \ref{tab:Params}.
 
 The $L_1$ norm was chosen over the $L_2$ norm so that a few large parameter errors don't dominate the error metric and as no gradients are necessary.
 This is by no means a perfect metric for comparins synth settings, but it is good enough for our purposes. (IS IT?)
