@@ -52,20 +52,20 @@ costs = costs + costs';
 
 plotLength = 100;
 
-costHistoryImperfect = zeros(1,plotLength);
-meanCostHistoryImperfect = repmat({zeros(1,plotLength)},1,6);
+costHistoryImperfectC = zeros(1,plotLength);
+meanCostHistoryImperfectC = repmat({zeros(1,plotLength)},1,6);
 
-costHistoryImperfect2 = zeros(1,plotLength);
-meanCostHistoryImperfect2 = repmat({zeros(1,plotLength)},1,6);
+costHistoryImperfect2C = zeros(1,plotLength);
+meanCostHistoryImperfect2C = repmat({zeros(1,plotLength)},1,6);
 
-numIterations = numPresets;
+numIterationsB = numPresets;
 
 
 for index = 1:6
 meanInitialCost = 0;
 imperfectStdDev = (index-1)/5;
 
-for p = 1:numIterations
+for p = 1:numIterationsB
 
 % Start and Goal generation
 %num = randperm(numPresets, 1);
@@ -76,23 +76,23 @@ presetStart  = presetRead.presetStore(sortedIndeces(num, 2),:);
 
 [initialCost, iMaxInitial, jMaxInitial] = costFunction(presetStart, presetGoal);
 
-meanInitialCost = meanInitialCost + initialCost/numIterations;
+meanInitialCost = meanInitialCost + initialCost/numIterationsB;
 
 
 % Imperfect  --------------
 presetCurrentImperfect = presetStart;
 iMax = iMaxInitial;
 jMax = jMaxInitial;
-for idx = 1:length(costHistoryImperfect)
+for idx = 1:length(costHistoryImperfectC)
     presetCurrentImperfect{iMax}(jMax) =...
             presetCurrentImperfect{iMax}(jMax)...
             +(1+imperfectStdDev*randn)*(presetGoal{iMax}(jMax) - presetCurrentImperfect{iMax}(jMax));
     [cost, iMax, jMax] = costFunction(presetCurrentImperfect, presetGoal);
-    costHistoryImperfect(idx) = cost;
+    costHistoryImperfectC(idx) = cost;
 end
 
 presetCurrentImperfect2 = presetStart;
-for idx = 1:length(costHistoryImperfect2)
+for idx = 1:length(costHistoryImperfect2C)
     
     paramNum = randperm(totalPresetLength,1);
     [i,j] = paramToIJ(paramNum, presetLengthSum);
@@ -103,12 +103,12 @@ for idx = 1:length(costHistoryImperfect2)
         
     cost = costFunction(presetCurrentImperfect2, presetGoal);
     
-    costHistoryImperfect2(idx) = cost;
+    costHistoryImperfect2C(idx) = cost;
 end
 
 
-meanCostHistoryImperfect{index} = meanCostHistoryImperfect{index} + costHistoryImperfect/numIterations;
-meanCostHistoryImperfect2{index} = meanCostHistoryImperfect2{index} + costHistoryImperfect2/numIterations;
+meanCostHistoryImperfectC{index} = meanCostHistoryImperfectC{index} + costHistoryImperfectC/numIterationsB;
+meanCostHistoryImperfect2C{index} = meanCostHistoryImperfect2C{index} + costHistoryImperfect2C/numIterationsB;
 
 end
 end
@@ -123,20 +123,20 @@ colours = winter(6);
 
 ylim([0,1])
 
-plot((0:1:plotLength), [meanInitialCost, meanCostHistoryImperfect{6}]/meanInitialCost,'Color', colours(6,:), 'LineWidth', 3)
-plot((0:1:plotLength), [meanInitialCost, meanCostHistoryImperfect{5}]/meanInitialCost,'Color', colours(5,:), 'LineWidth', 2)
-plot((0:1:plotLength), [meanInitialCost, meanCostHistoryImperfect{4}]/meanInitialCost,'Color', colours(4,:), 'LineWidth', 2)
-plot((0:1:plotLength), [meanInitialCost, meanCostHistoryImperfect{3}]/meanInitialCost,'Color', colours(3,:), 'LineWidth', 2)
-plot((0:1:plotLength), [meanInitialCost, meanCostHistoryImperfect{2}]/meanInitialCost,'Color', colours(2,:), 'LineWidth', 2)
-plot((0:1:plotLength), [meanInitialCost, meanCostHistoryImperfect{1}]/meanInitialCost,'Color', colours(1,:), 'LineWidth', 2)
+plot((0:1:plotLength), [meanInitialCost, meanCostHistoryImperfectC{6}]/meanInitialCost,'Color', colours(6,:), 'LineWidth', 3)
+plot((0:1:plotLength), [meanInitialCost, meanCostHistoryImperfectC{5}]/meanInitialCost,'Color', colours(5,:), 'LineWidth', 2)
+plot((0:1:plotLength), [meanInitialCost, meanCostHistoryImperfectC{4}]/meanInitialCost,'Color', colours(4,:), 'LineWidth', 2)
+plot((0:1:plotLength), [meanInitialCost, meanCostHistoryImperfectC{3}]/meanInitialCost,'Color', colours(3,:), 'LineWidth', 2)
+plot((0:1:plotLength), [meanInitialCost, meanCostHistoryImperfectC{2}]/meanInitialCost,'Color', colours(2,:), 'LineWidth', 2)
+plot((0:1:plotLength), [meanInitialCost, meanCostHistoryImperfectC{1}]/meanInitialCost,'Color', colours(1,:), 'LineWidth', 2)
 
 
-plot((0:1:plotLength), [meanInitialCost, meanCostHistoryImperfect2{6}]/meanInitialCost, ':','Color', colours(6,:), 'LineWidth', 3)
-plot((0:1:plotLength), [meanInitialCost, meanCostHistoryImperfect2{5}]/meanInitialCost, ':','Color', colours(5,:), 'LineWidth', 3)
-plot((0:1:plotLength), [meanInitialCost, meanCostHistoryImperfect2{4}]/meanInitialCost, ':','Color', colours(4,:), 'LineWidth', 3)
-plot((0:1:plotLength), [meanInitialCost, meanCostHistoryImperfect2{3}]/meanInitialCost, ':','Color', colours(3,:), 'LineWidth', 3)
-plot((0:1:plotLength), [meanInitialCost, meanCostHistoryImperfect2{2}]/meanInitialCost, ':','Color', colours(2,:), 'LineWidth', 3)
-plot((0:1:plotLength), [meanInitialCost, meanCostHistoryImperfect2{1}]/meanInitialCost, ':','Color', colours(1,:), 'LineWidth', 3)
+plot((0:1:plotLength), [meanInitialCost, meanCostHistoryImperfect2C{6}]/meanInitialCost, ':','Color', colours(6,:), 'LineWidth', 3)
+plot((0:1:plotLength), [meanInitialCost, meanCostHistoryImperfect2C{5}]/meanInitialCost, ':','Color', colours(5,:), 'LineWidth', 3)
+plot((0:1:plotLength), [meanInitialCost, meanCostHistoryImperfect2C{4}]/meanInitialCost, ':','Color', colours(4,:), 'LineWidth', 3)
+plot((0:1:plotLength), [meanInitialCost, meanCostHistoryImperfect2C{3}]/meanInitialCost, ':','Color', colours(3,:), 'LineWidth', 3)
+plot((0:1:plotLength), [meanInitialCost, meanCostHistoryImperfect2C{2}]/meanInitialCost, ':','Color', colours(2,:), 'LineWidth', 3)
+plot((0:1:plotLength), [meanInitialCost, meanCostHistoryImperfect2C{1}]/meanInitialCost, ':','Color', colours(1,:), 'LineWidth', 3)
 
 
 legend( {'\sigma = 1.0',... 

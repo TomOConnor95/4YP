@@ -365,6 +365,7 @@ ylabel('Normalised Cost')
 
 %% Plots for report
 figure(16)
+numIterations = 100;
 
 for p = 1:numTests
 subplot(1,2,1)
@@ -394,6 +395,7 @@ ylabel('\fontsize{16}Normalised Cost')
 
 %% Requires evaluationTest3 and evaluationTest4 to have been run 
 figure(15)
+numIterations = 100;
 plot(0:1:numIterations,meanCostHistoryPerfectCO/meanCostHistoryPerfectCO(1), 'r', 'LineWidth', 3)
 hold on
 plot(0:1:numIterations,meanCostHistoryPerfectCR/meanCostHistoryPerfectCO(1), 'r:', 'LineWidth', 3)
@@ -408,15 +410,22 @@ title('\fontsize{16}Mean Normalised Cost vs Iterations comparison')
 xlabel('\fontsize{16}Iterations')
 ylabel('\fontsize{16}Normalised Cost')
 
+plot(0:1:100,meanCostHistoryPerfectB/meanCostHistoryPerfectB(1), 'c', 'LineWidth', 2)
+plot(0:1:100,meanCostHistoryImperfectB/meanCostHistoryImperfectB(1), 'c:', 'LineWidth', 2)
 
 
 plot((0:1:plotLength), [meanInitialCost, meanCostHistoryPerfect]/meanInitialCost, 'k', 'LineWidth', 2)
 plot((0:1:plotLength), [meanInitialCost, meanCostHistoryPerfect2]/meanInitialCost, 'k:', 'LineWidth', 2)
-plot((0:1:plotLength), [meanInitialCost, meanCostHistoryImperfect]/meanInitialCost, 'm', 'LineWidth', 2)
-plot((0:1:plotLength), [meanInitialCost, meanCostHistoryImperfect2]/meanInitialCost, 'm:', 'LineWidth', 2)
-plot(0:1:100,meanCostHistoryPerfectB/meanCostHistoryPerfectB(1), 'c', 'LineWidth', 2)
-plot(0:1:100,meanCostHistoryImperfectB/meanCostHistoryImperfectB(1), 'c:', 'LineWidth', 2)
+% plot((0:1:plotLength), [meanInitialCost, meanCostHistoryImperfect]/meanInitialCost, 'm', 'LineWidth', 2)
+% plot((0:1:plotLength), [meanInitialCost, meanCostHistoryImperfect2]/meanInitialCost, 'm:', 'LineWidth', 2)
+
+plot((0:1:plotLength), [meanInitialCost, meanCostHistoryImperfectC{5}]/meanInitialCost,'m', 'LineWidth', 2)
+plot((0:1:plotLength), [meanInitialCost, meanCostHistoryImperfect2C{5}]/meanInitialCost, 'm:', 'LineWidth', 3)
+
+
+
 
 legend({'Time/Timbre + Global PCA','... Random','Time/Timbre PCA','... Random', 'Global PCA','... Random',...
-'Perfect Traditional', 'Perfect Traditional - Random', 'Imperfect Traditional', 'Imperfect Traditional - Random',...
-'Perfect Blending', 'Imperfect Blending'}, 'FontSize', 14)
+'Perfect Blending', 'Imperfect Blending', 'Perfect Traditional', '... Random',...
+'Imperfect Trad. - \sigma = 0.8', '... Random',...
+}, 'FontSize', 14)

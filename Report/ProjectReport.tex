@@ -143,6 +143,8 @@ Talk about the preset blending study, including the parameter freezing.
 Talk about the google sample mapping with TSNE (infinite drum machine).
 
 Talk about how taking a sound sample from each preset could be a good way to do the dimensionality reduction interface, but how a parameter based approach is preferable in many ways. Mention which sound metrics would be good to use, and the difficulties involved.
+
+Talk about the stuff about multidemsional controlers having higher thoroughput, and it being desirable for the control dimensions when exploring creatively not neededing to be tied to single parameters.
 \section{Description of HCI design principles for creative musical interfaces}
 A number of guidelines for creative musical interfaces
 
@@ -595,6 +597,8 @@ Some points to note from these results:
 
 As shown in Figure \ref{fig:PCAtest1}, for different preset goals, the effictiveness of the PCA Controls varies significantly. In the best case the error drops very rapidly, falling 50\% in the first 10 iterations. In the worst case the error doesn't decrease at all. This suggests that, for this particlar task at least, having the same Macro Controls for each preset may not be ideal, and so a new approach which in some way optimises the Macro Controls per preset would be worth pursuing. However, as previously stated (IN SECTION ????), this comes at the cost of the user being less farmiliar with what the Macro Controls are actually doing. 
 
+In all cases the mean error converges to a non-zero steady state value. This is due to the limited degrees of freedom when using the Macro Controls. This means that the Macro Controls alone cannot be used to prefectly match a goal preset.
+
 When the 'Global' Macro Controls are being used, after a large number of iterations, the random order manages to decrease the error past the cyclic order. It is likely that this is due to the cyclic order getting stuck in a local optimum due to the naive 'one parameter at a time' (BETTER NAME FOR THIS) search algorithm.
 
 Finally, each of the combinations of controls has a similar initial rate of error reduction, but the 'Global' Macro Controls appear to have a significant advantage over the 'Time/Timbre' Macro Controls over larger numbers of iterations. This is likely due to the fact that the Global Macro Controls have access to principal components 1 to 8, whereas the 'Time/Timbre' Macro Controls on have access to two sets of principal components 1 to 4. The combination of both sets of Macro Controls gives the lowest mean error overall, which is unsurprising as it has the most degrees of freedom, and it has a comparable error reduction rate as the 'Global' Controls.
@@ -602,10 +606,39 @@ Finally, each of the combinations of controls has a similar initial rate of erro
 Based on this it is concluded that it is worth keeping both sets of macro controls for the user to be able to select between, especially as the 'Time/Timbre' Macro Controls may lead to more semantically meaningful controls due to the seperation of Time and Timbre. (JUSTIFY THIS MORE)
 
 \subsection{Blending Interface} 
-The Blending interface was evaluated in a similar manner. For each of the 36 possible goal presets, the closest three presets to it were found, and these used as preset A, B and C in the blending algorithm. Pattern search was agin used in each iteration to optimise the position of the mouse in the blending interface to minimise error. 
+The Blending interface was evaluated in a similar manner. For each of the 36 possible goal presets, the closest three presets to it were found, and these used as preset A, B and C in the blending algorithm. MATLAB's 'Patternsearch' was again used in each iteration to optimise the position of the mouse in the blending interface to minimise error. 
+
+
+DO THIS NEXT!
+
 
 \section{Comparison of combined interfaces}
-asdasdsadsa
+A comparison of the test results from all three interfaces is shown in Figure \ref{fig:CombinedTest1}. 
+
+The fastest converging test is the Perfect User with Perfect Order on the Traditional Interface, and the slowest converging test is the Imperfect User with Random Order on the Tradtional interface. Interestingly, the order at which the parameters are visited has a much more significant affect than the perfectness of the user. This is due to the Imperfect user model having a zero mean error, so after visiting a parameter several times, the value will converge to the correct value. This result demonstrates that the Traditional Interface can simultaneously be the best possible, and worst possible interface to control a synth with, depending on the experience level of the user, and the intuitiveness of the parameters.
+
+The initial error reduction rate of the Blending Interface is very fast, comparable with the Perfect User of the Traditional interface. The main reason for the initial speed of the blending interface is that in the first iteration, it blends between 3 presets, all close to the goal preset, allowing the first iteration to be a lot less random than subsequent steps. (EXPLAIN BETTER)\\
+ Over a larger number of iterations, Blending Interface is supassed by the Traditinonal interface with random order. This suggests that the preset generation algoithm is not optimal, as after a while it becomes faster to just sequentially offer the user a random parameter. However, as the user has the option to freeze parameters, and the option to switch to the other interfaces at any point, this may not be an issue. 
+
+Before converging to their steady stae value, the macro controls have quite a fast rate of error reduction - halfway betwen the Perfect User with Perfect or Random Order. This can be partially explained as the Macro Contols allow all of the synthesiser parameters to be varied at once. This also suggests that, as the PCA was carried out on a set of presets, it is likely that the principal components are pointed in a more useful direction than if they'd been selected randomly. (WRITE BETTER)
+
+These results suggest that a good workflow for editing synthesis parameters is as follows:
+\begin{itemize}
+	\item Find closest 3 presets to desired sound
+	\item Use Macro Controls to refine these presets further
+	\item Use Blending Interface to combine these presets together and further refine
+	\item Use Traditional interface for final refining of preset.
+\end{itemize}
+The full Interface allows such a process to be carried out, and allows the user to swicth back and forth between the interfaces as often as necessary.
+
+\begin{figure}
+	\centering
+	%	\vspace{-40pt}
+	\includegraphics[width = \textwidth]{comparisonOfAllInterfaceGraph2.eps}
+	\caption{Comparison of Interfaces, $\sigma = 0.3$}
+	\label{fig:CombinedTest1}
+	%	\vspace{-30pt}
+\end{figure}
 
 \chapter{User tests and Interviews}
 asdasdasdsadasd
