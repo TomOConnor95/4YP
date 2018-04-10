@@ -315,6 +315,12 @@ xlim([0,36])
 xlabel('Number of Presets')
 ylabel('PC_2 - Hist. Eq. & Correction')
 
+
+% Automatically switch PCAs test
+switchPCAtest(PCA4a);
+
+
+
 % 
 % 
 % % labels = cell(1,length(presetStore(:,1)));
