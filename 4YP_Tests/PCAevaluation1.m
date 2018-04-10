@@ -320,6 +320,39 @@ ylabel('PC_2 - Hist. Eq. & Correction')
 switchPCAtest(PCA4a);
 
 
+% Tests of the Latent value vs num of presets
+latentArray = zeros(36,length(presetStore)-1);
+
+for j = 1:36
+    for idx = (j+1):length(presetStore)
+        latentArray(j,idx-1) = latent{idx}(j);
+    end
+end
+
+figure(19), clf
+% subplot(3,1,1)
+% plot(2:length(presetStore), latentArray)
+% xlim([2,36])
+% 
+% subplot(3,1,2)
+% area(2:length(presetStore), latentArray')
+% xlim([2,36])
+% 
+% subplot(3,1,3)
+cumsum11plus = cumsum(latentArray(11:end, :));
+latentArray(11,:) = cumsum11plus(end, :);
+latentArray(12:end,:) = [];
+
+cumsumArray = cumsum(latentArray);
+
+
+area(2:length(presetStore), (latentArray./cumsumArray(end,:))')
+ylim([0,1])
+xlim([2,36])
+ylabel('\fontsize{16}Latent Fraction')
+xlabel('\fontsize{16}Number of Presets')
+legend({'1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11+'},'FontSize', 14)
+
 
 % 
 % 

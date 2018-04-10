@@ -349,7 +349,7 @@ A possible extension to this approach is to allow parameter freezing, as in the 
 Another possible extension is to create a unique set of macro controls for each preset, which may make macro controls more useful, but at the sacrifice of consistency between presets.
 
 \subsection{PCA + Histogram Equalisation Description}
-When using the Global PCA scores to calculate the XY-RGB position of each preset in the Voronoi diagram, there are some undesirable characteristics of the mapping produced. The sizes of the cells varies dramatically, and the majority of the presets usually get compressed into one of the corners, see Figure \ref{fig:histEqBefore} This is because PCA is linear, and so 'outliers' will skew the diagram, so after rescaling to $[0, 1]$ to fit in the diagram, the 'inliers' will be compressed to a smaller range'. A similar effect occurs with the colour mapping, causing many of the colours to be similar to each other minimising the dynamic range of the diagram. (MORE DETAIL HERE WITH REFERENCE). In user interface design, users usually associate larger icons with greater importance, therefore it would be preferable for all the presets to be of a similar size, so as not to give uninteded meaning to particular presets.\\
+When using the Global PCA scores to calculate the XY-RGB position of each preset in the Voronoi diagram, there are some undesirable characteristics of the mapping produced. The sizes of the cells varies dramatically, and the majority of the presets usually get compressed into one of the corners, see Figure \ref{fig:histEqBefore} This is because PCA is linear, and so 'outliers' will skew the diagram, so after rescaling to $[-1, 1]$ to fit in the diagram, the 'inliers' will be compressed to a smaller range'. A similar effect occurs with the colour mapping, causing many of the colours to be similar to each other minimising the dynamic range of the diagram. (MORE DETAIL HERE WITH REFERENCE). In user interface design, users usually associate larger icons with greater importance, therefore it would be preferable for all the presets to be of a similar size, so as not to give uninteded meaning to particular presets.\\
 To fix this issue, a variant of an image processing method known as histogram equalisation (REFERENCE) was used, resulting in the mapping shown in Figure \ref{fig:histEqAfter}.
 
 \begin{figure}
@@ -433,8 +433,6 @@ It is also hard to draw colcusions about the clustering performance, due to the 
 \subsection{Investigate how the PCA mapping scales with number of presets}
 The consistency of the PCA mapping as more presets are added is of importance to the usefulness of the interface. If the mapping radically changes every time a new preset is added, then any intuitition the user has learned about what the different components represent will be lost. This is one of the reasons for choosing PCA, as the linearity of the technique should lead to less surprising results (EXPLAIN BETTER).\\
 Figure \ref{fig:PCAnumPresets} shows the variation of the first two principal components as the presets are added one at a time in the order of creation. After Histogram Equalisation has been applied the components are relatively stable, except at certain points where the component flips sign. These can clearly be seen at preset 34 for $PC_1$, and presets 6, 9, 13, 15, 28, 31:36 for $PC_2$. The bottom row of the figure shows the components after this sign flipping has been corrected by flipping the sign of the component. This makes a dramatic improvement in the stability of the principal components, especially for $PC_2$. This phenomenon also occurs in $PC_{3,4,5}$ used for the RGB mapping of the presets.
-As PCA is very quick to compute, this graph can be constructed to cancel out all of the necessary sign reversals...
-
 \begin{figure}
 	\hspace{-80pt}
 	\includegraphics[width = 8.5in]{PCAnumPresets1.eps}
@@ -442,9 +440,33 @@ As PCA is very quick to compute, this graph can be constructed to cancel out all
 	\label{fig:PCAnumPresets}
 	%	\vspace{-30pt}
 \end{figure}
-talk about the detecting flips in the PCA plots. 
+As PCA is very quick to compute, the necessary sign reversals to correct the components can easily be computed using dynamic programming.\\ Defining $PCA_i^k$ to be the $i$th principal component computed with $k$ presets.
+\vspace{-10pt}
+\begin{itemize}
+		\setlength\itemsep{-1.2em}
+	\item 
+Iterate from $k = 1$, to $k = N-1$, where $N$ is the number of presets.
+	\item 
+If $\|PCA_i^{k+1} - PCA_i^k)\|_1 > \|PCA_i^{k+1} - (-PCA_i^k))\|_1$,  flip the sign of all remaining presets.
+\end{itemize}
+This algorithm is used on $PC_3$ in Figure \ref{fig:PCAnumPresets2}. To implement this checking in the interface, all that it necessary to do is keep track of which components have been flipped, and each time a new preset is added, check if $\|PCA_i^{k+1} - PCA_i^k)\|_1 > \|PCA_i^{k+1} - (-PCA_i^k))\|_1$ to determine whether or not to flip component $i$, and update the record of flipped components.
+\begin{figure}
+	\hspace{-40pt}
+	\includegraphics[width = 7in]{PCAnumPresets2.eps}
+	\caption{PCA Sign Flip Calculations}
+	\label{fig:PCAnumPresets2}
+	%	\vspace{-30pt}
+\end{figure}
 
-DO a graph of the Latent value for the first 10 or so components vs number of presets.
+DO a graph of the Latent value for the first 10 or so components vs number of presets. WRITE THIS SECTION
+\begin{figure}
+	\hspace{-40pt}
+	\includegraphics[width = 7in]{LatentFraction.eps}
+	\caption{Latent Fraction - Colour denotes Principal Component number}
+	\label{fig:PCAnumPresets2}
+	%	\vspace{-30pt}
+\end{figure}
+
 
 \subsection{Quantify the extra variance the macro controls give}
 asdasdasdsa
