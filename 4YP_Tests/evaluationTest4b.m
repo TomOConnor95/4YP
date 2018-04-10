@@ -228,11 +228,15 @@ end
 %% Plots
 figure(18), clf
 for p = 1:numTests
-subplot(1,2,1)
+subplot(1,3,1)
+plot(0:1:100,costHistoryPerfectB{p}/costHistoryPerfectB{p}(1))
+hold on  
+    
+subplot(1,3,2)
 plot(0:1:100,costHistoryImperfectB{p}/costHistoryPerfectB{p}(1))
 hold on
 
-subplot(1,2,2)
+subplot(1,3,3)
 plot(0:1:100,costHistoryImperfectB1{p}/costHistoryPerfectB{p}(1))
 hold on
 
@@ -262,14 +266,17 @@ end
 % plot(0:1:100,meanCostHistoryImperfectB, 'r', 'LineWidth', 3)
 % yLim = get(gca, 'YLim');
 % ylim([0,yLim(2)]);
+subplot(1,3,1)
+plot(0:1:100,meanCostHistoryPerfectB/meanCostHistoryPerfectB(1), 'r', 'LineWidth', 3)
+ylim([0.2,1]);
 
-subplot(1,2,1)
+subplot(1,3,2)
 plot(0:1:100,meanCostHistoryImperfectB/meanCostHistoryImperfectB(1), 'r', 'LineWidth', 3)
-ylim([0,1]);
+ylim([0.2,1]);
 
-subplot(1,2,2)
+subplot(1,3,3)
 plot(0:1:100,meanCostHistoryImperfectB1/meanCostHistoryImperfectB1(1), 'r', 'LineWidth', 3)
-ylim([0,1]);
+ylim([0.2,1]);
 
 % subplot(3,2,[5,6])
 % plot(0:1:100,meanCostHistoryPerfectB/meanCostHistoryPerfectB(1), 'r', 'LineWidth', 3)
@@ -278,12 +285,20 @@ ylim([0,1]);
 % ylim([0,1])
 
 
-subplot(1,2,1)
-title('Cost vs Iterations for blending interface')
-hold on
-subplot(1,2,2)
-title('Cost vs Iterations for blending interface - Imperfect User')
-hold on
+subplot(1,3,1)
+title('\fontsize{16}Perfect User')
+ylabel('\fontsize{16}Normalised Error')
+xlabel('\fontsize{16}Interations')
+
+subplot(1,3,2)
+title('\fontsize{16}Imperfect User - \sigma = 0.5')
+ylabel('\fontsize{16}Normalised Error')
+xlabel('\fontsize{16}Interations')
+
+subplot(1,3,3)
+title('\fontsize{16}Imperfect User - \sigma = 0.8')
+ylabel('\fontsize{16}Normalised Error')
+xlabel('\fontsize{16}Interations')
 
 %% Requires evaluationTest3 to have been run and the variables in scope
 plot((0:1:plotLength), [meanInitialCost, meanCostHistoryImperfect]/meanInitialCost, 'b', 'LineWidth', 3)

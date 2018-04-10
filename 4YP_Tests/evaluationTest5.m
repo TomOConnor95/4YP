@@ -395,9 +395,21 @@ ylabel('\fontsize{16}Normalised Cost')
 
 %% Requires evaluationTest3 and evaluationTest4 to have been run 
 figure(15)
+clf
 numIterations = 100;
-plot(0:1:numIterations,meanCostHistoryPerfectCO/meanCostHistoryPerfectCO(1), 'r', 'LineWidth', 3)
+
+% Traditional Interface
+plot((0:1:plotLength), [meanInitialCost, meanCostHistoryPerfect]/meanInitialCost, 'k', 'LineWidth', 3)
 hold on
+plot((0:1:plotLength), [meanInitialCost, meanCostHistoryPerfect2]/meanInitialCost, 'k:', 'LineWidth', 3)
+plot((0:1:plotLength), [meanInitialCost, meanCostHistoryImperfect]/meanInitialCost, 'Color', [0.3, 0.3, 0.3], 'LineWidth', 2.5)
+plot((0:1:plotLength), [meanInitialCost, meanCostHistoryImperfect2]/meanInitialCost, ':','Color', [0.3, 0.3, 0.3], 'LineWidth', 2.5)
+
+plot((0:1:plotLength), [meanInitialCost, meanCostHistoryImperfectC{5}]/meanInitialCost,'Color', [0.6, 0.6, 0.6], 'LineWidth', 2.5)
+plot((0:1:plotLength), [meanInitialCost, meanCostHistoryImperfect2C{5}]/meanInitialCost, ':','Color', [0.6, 0.6, 0.6], 'LineWidth', 2.5)
+
+% PCA Interface
+plot(0:1:numIterations,meanCostHistoryPerfectCO/meanCostHistoryPerfectCO(1), 'r', 'LineWidth', 3)
 plot(0:1:numIterations,meanCostHistoryPerfectCR/meanCostHistoryPerfectCO(1), 'r:', 'LineWidth', 3)
 
 plot(0:1:numIterations,meanCostHistoryPerfectCTTO/meanCostHistoryPerfectCTTO(1), 'g', 'LineWidth', 3)
@@ -406,26 +418,18 @@ plot(0:1:numIterations,meanCostHistoryPerfectCTTR/meanCostHistoryPerfectCTTR(1),
 plot(0:1:numIterations,meanCostHistoryPerfectCGO/meanCostHistoryPerfectCGO(1), 'b', 'LineWidth', 3)
 plot(0:1:numIterations,meanCostHistoryPerfectCGR/meanCostHistoryPerfectCGR(1), 'b:', 'LineWidth', 3)
 
-title('\fontsize{16}Mean Normalised Cost vs Iterations comparison')
+% Blending Interface
+plot(0:1:100,meanCostHistoryPerfectB/meanCostHistoryPerfectB(1), 'c', 'LineWidth', 3)
+plot(0:1:100,meanCostHistoryImperfectB/meanCostHistoryImperfectB(1), 'c:', 'LineWidth', 2.5)
+plot(0:1:100,meanCostHistoryImperfectB1/meanCostHistoryImperfectB1(1), 'c--', 'LineWidth', 2.5)
+
+
+
+title('\fontsize{16}Traditional vs Selection vs Blending Interfaces')
 xlabel('\fontsize{16}Iterations')
 ylabel('\fontsize{16}Normalised Cost')
 
-plot(0:1:100,meanCostHistoryPerfectB/meanCostHistoryPerfectB(1), 'c', 'LineWidth', 2)
-plot(0:1:100,meanCostHistoryImperfectB/meanCostHistoryImperfectB(1), 'c:', 'LineWidth', 2)
-
-
-plot((0:1:plotLength), [meanInitialCost, meanCostHistoryPerfect]/meanInitialCost, 'k', 'LineWidth', 2)
-plot((0:1:plotLength), [meanInitialCost, meanCostHistoryPerfect2]/meanInitialCost, 'k:', 'LineWidth', 2)
-% plot((0:1:plotLength), [meanInitialCost, meanCostHistoryImperfect]/meanInitialCost, 'm', 'LineWidth', 2)
-% plot((0:1:plotLength), [meanInitialCost, meanCostHistoryImperfect2]/meanInitialCost, 'm:', 'LineWidth', 2)
-
-plot((0:1:plotLength), [meanInitialCost, meanCostHistoryImperfectC{5}]/meanInitialCost,'m', 'LineWidth', 2)
-plot((0:1:plotLength), [meanInitialCost, meanCostHistoryImperfect2C{5}]/meanInitialCost, 'm:', 'LineWidth', 3)
-
-
-
-
-legend({'Time/Timbre + Global PCA','... Random','Time/Timbre PCA','... Random', 'Global PCA','... Random',...
-'Perfect Blending', 'Imperfect Blending', 'Perfect Traditional', '... Random',...
-'Imperfect Trad. - \sigma = 0.8', '... Random',...
-}, 'FontSize', 14)
+legend({'Perfect Traditional', '... Random', 'Imperfect Traditional - \sigma = 0.3', '... Random', 'Imperfect Traditional - \sigma = 0.8', '... Random',...
+ 'Time/Timbre + Global PCA','... Random','Time/Timbre PCA','... Random', 'Global PCA','... Random',...
+'Perfect Blending', 'Imperfect Blending - \sigma = 0.3','Imperfect Blending - \sigma = 0.8',...
+}, 'FontSize', 14, 'Location','SouthWest')

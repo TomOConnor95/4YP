@@ -195,9 +195,7 @@ This synthesiser has 96 parameters, as described in Table \ref{tab:Params}.
 
 \def\arraystretch{1.5}
 \begin{table}[]
-	\centering
-	\caption{Synthesiser Parameters}
-	\label{tab:Params}
+	\hspace{-2em}
 	\begin{tabular}{|l|l|l|l|l|}
 		\hline
 		\textbf{Parameter Group}                	 & \textbf{Parameter}     & \textbf{Domain}            & \textbf{Time/Timbre} & \textbf{Weighting} \\ \hline
@@ -227,6 +225,8 @@ Modulation Envelope Amount                       & 6 x $ENV_{i}^{mod}$   & $[0, 
 																	  & Vibrato Time            		& $[0, 20]$ seconds      &                       			&\\
 																	  & Stereo Spread           	  & $[0, 1]$                   		&                       			&\\ \hline
 	\end{tabular}
+\caption{Synthesiser Parameters}
+\label{tab:Params}
 \end{table}
 
 USE TABLE TO CLEAN UP PREVIOUS SECTION
@@ -438,7 +438,7 @@ asdasdasdsa
 asdasdsa
 
 \section{Blending Interface}
-\subsection{Detailed Description}
+\subsection{Detailed Description}\label{sec:BlendingDesription}.
 This interface was created as a Matlab 'figure based application'.
 
 \begin{figure}[h] 
@@ -479,7 +479,7 @@ The parameter constraint function $f$, applies the relevant constraints to each 
 
 To make the iterative blending process more intuitive, and to maintain consistency between the interfaces, the RGB colouring using PCA from the Selection interface was used. This is done by using Equation \ref{eq:PresetMix} to calculate the blended preset at each of the points marked on Figure \ref{fig:BlendingColours}, then calculateing the PCA Scores for each of these points. $PC_{3,4,5}$ are mapped to RGB colour, and colour is linearly interpolated between the points. A more detailed colour space could be acheived by using more points, but there would be an associated performance tradeoff. 
 
-Each time the presets ae iterated, and a new B and C are generated, the first principal component, $PC_{1}$ is calculated for B and C, and if $PC_{1}^B > PC_{1}^C $, then presets B and C are swapped. The effect of this is that the $x$ direction in the Blending Interface corresponds to a direction of increasing $PC_{1}$. This is done because $PC_{1}$ is also used in the Selection Interface for the $x$ coordinate of each preset, and so this process further maintains consistency between the two interfaces.
+Each time the presets are iterated, and a new B and C are generated, the first principal component, $PC_{1}$ is calculated for B and C, and if $PC_{1}^B > PC_{1}^C $, then presets B and C are swapped. The effect of this is that the $x$ direction in the Blending Interface corresponds to a direction of increasing $PC_{1}$. This is done because $PC_{1}$ is also used in the Selection Interface for the $x$ coordinate of each preset, and so this process further maintains consistency between the two interfaces.
 
 \begin{wrapfigure}{R}{0.35\textwidth}
 	\centering
@@ -520,7 +520,7 @@ A way of evaluating the performance of the interface is to simulate a 'Perfect U
  
 The Perfect User has perfect knowledge of the synth and the interface, so can always choose the optimum position for a particular knob, or choose the optimum blend of presets in the Blending Interface.
 
-The Imperfect User has imperfect knowledge of the synth and the interface, so chooses interactions similarly to the Perfect User, but 'misses' by a certain ammount: $\Delta P_i = \Delta P_i^0 * (1 + \varepsilon)$, where $\Delta P_i^0$ is the Perfect parameter change, and $\varepsilon$ is a zero mean gaussian random variable with variance $\sigma^2$.
+The Imperfect User has imperfect knowledge of the synth and the interface, so chooses interactions similarly to the Perfect User, but 'misses' by a certain ammount: $\Delta P_i = \Delta P_i^0 * (1 + \varepsilon)$, where $\Delta P_i^0$ is the Perfect parameter change, and $\varepsilon$ is a zero mean gaussian random variable with variance $\sigma^2$. Various values of $\sigma$ will be considered to account for the varying skill levels of users.
 
 A key consideration for the Traditional Interface is the order which parameters are varied. In the 'Perfect Order', parameters are visited in decreasing order of importance. In the 'Random Order', parameters are visited in a comploetely random order. Real users most likely operate somewhere in the middle of these regimes. (REFERENCE FOR THIS>???)
 
@@ -574,9 +574,9 @@ For low values of $\sigma$, the Perfect Order tests folllows a smooth, approxima
 A similar evaluation was carried out with the selection interface. Again all 36 presets were used as goal presets, with the closest preset used each time as the starting point. For each test, the PCA values were calculated for the remaining 35 presets, simulating the situation where the PCA Macros were being used to find a brand new preset. As before, two parameter orders were tested: the Macro Controls were visited cyclically in order of PCA number, or visited in a random order. For each iteration of the test, the MATLAB 'Patternsearch' search algorithm was used to minimise the cost function for a particular Macro Control. \\ 
 A key question with the interface is whether the 'Global' or 'Time/Timbre' version of the PCA Macro Controls should be used. The results for a test with the combination of both sets of macros is shown in Figure \ref{fig:PCAtest1}.
 \begin{figure}
-	\centering
-	%	\vspace{-40pt}
-	\includegraphics[width = \textwidth]{PCAInterfaceTests1.eps}
+
+\hspace{-60pt}
+	\includegraphics[width = 8in]{PCAInterfaceTests1.eps}
 	\caption{Ordered/Random user tests for Selection Interface}
 	\label{fig:PCAtest1}
 	%	\vspace{-30pt}
@@ -610,14 +610,15 @@ The Blending interface was evaluated in a similar manner. For each of the 36 pos
 
 Results of this test are shown in Figure \ref{fig:BlendingTest1}
 \begin{figure}
-	\centering
-	%	\vspace{-40pt}
-	\includegraphics[width = \textwidth]{PCAInterfaceTests1.eps}
+	%\centering
+	\hspace{-70pt}
+	\includegraphics[width = 8in]{BlendingInterfaceTests1.eps}
 	\caption{Perfect/Imperfect User tests for Blending Interface}
 	\label{fig:BlendingTest1}
 	%	\vspace{-30pt}
 \end{figure}
-
+On average, there is an rapid decrease in error during the first iteration, followed by an approxiamtely expenential decrease in error.
+As in the Selection Interface, there are some tests in which the error barely decreases at all, and some in which the error decreases very quickly, however the variance of the different tests is less than in the PCA interface. For the Perfect User, error is monotoically decreasing, but this is not always the case for the imperfect user, and for real users of the system(EVIDENCE?). This reinforces the need for the Selection History Plot (See Section \ref{sec:BlendingDesription}), which allows users to select several of the local minima in the error plot to resume blending with. (MAYBE MORE DETAIL)
 
 \section{Comparison of combined interfaces}
 A comparison of the test results from all three interfaces is shown in Figure \ref{fig:CombinedTest1}. 
@@ -632,25 +633,31 @@ A key advantage of the Blending Interface is that it removes the need for the us
 Before converging to their steady stae value, the macro controls have quite a fast rate of error reduction - halfway betwen the Perfect User with Perfect or Random Order. This can be partially explained as the Macro Contols allow all of the synthesiser parameters to be varied at once. This also suggests that, as the PCA was carried out on a set of presets, it is likely that the principal components are pointed in a more useful direction than if they'd been selected randomly. (WRITE BETTER)
 
 These results suggest that a good workflow for editing synthesis parameters is as follows:
+\vspace{-3em}
 \begin{itemize}
+	\setlength\itemsep{-1.2em}
 	\item Find closest 3 presets to desired sound
-	\item Use Macro Controls to refine these presets further
-	\item Use Blending Interface to combine these presets together and further refine
-	\item Use Traditional interface for final refining of preset.
+	\item Use Macro Controls to refine these presets further ($\approx$ 5 iterations per preset)
+	\item Use Blending Interface to combine these presets together and further refine ($\approx$ 10 iterations)
+	\item Use Traditional interface for final refining of preset. ($\approx$ 20 iterations)
 \end{itemize}
+\vspace{-0.5em}
 The full Interface allows such a process to be carried out, and allows the user to swicth back and forth between the interfaces as often as necessary.
 
+As these tests have only been carried out on one set of presets for one particular synthesiser, an important follow-up work to this project is to validate these results on other synthesisers. As these tests are purely parameter based, the tests could potentially be carried out before doing a full integration of the interface with other synthesisers, as only the set of presets for each synth are needed.
+
 \begin{figure}
-	\centering
-	%	\vspace{-40pt}
-	\includegraphics[width = \textwidth]{comparisonOfAllInterfaceGraph2.eps}
-	\caption{Comparison of Interfaces, $\sigma = 0.3$}
+	\hspace{-50pt}
+	\includegraphics[width = 7.6in]{comparisonOfAllInterfaceGraph3.eps}
+	\caption{Comparison of Interfaces}
 	\label{fig:CombinedTest1}
 	%	\vspace{-30pt}
 \end{figure}
 
 \chapter{User tests and Interviews}
-asdasdasdsadasd
+A rigourous user study would require time and resourses that this project is incapable of, however the interface has been shown to a number of musicians, and some feedback shown below:
+
+...
 
 \chapter{Conclusion}
 The interface proposed in this project has many benefits over a traditional synthesiser interface, as has been designed following design heuristics from the fields of Human Computer Interaction and Creative Cognition. Based on simulated user studies, the interface has at least as good performance as a traditional interface when carrying out search based tasks, and based on real user feedback it has many advantages in terms of creativity.
