@@ -45,6 +45,9 @@ costHistoryPerfectB = cell(1,numTests);
 meanCostHistoryImperfectB = zeros(1,numIterations+1);
 costHistoryImperfectB = cell(1,numTests);
 
+meanCostHistoryImperfectB1 = zeros(1,numIterations+1);
+costHistoryImperfectB1 = cell(1,numTests);
+
 for p = 1:numTests
 
 % Start and Goal generation
@@ -104,9 +107,9 @@ for i = 1:numIterations
 end
 
 
-% Imperfect Uer -------------------
+% Imperfect User -------------------
 % Generate new presets Setup
-imperfectStdDev = 0.3;
+imperfectStdDev = 0.5;
 
 presetA = presetAInitial;
 presetB = presetBInitial;
@@ -122,12 +125,65 @@ costHistoryImperfectB{p}(1) = sortedCosts(num, 2);
 for i = 1:numIterations
     f = @(xy)blendingCost(xy, presetA, presetB, presetC, presetGoal);
     [optimumParams,cost] = patternsearch(f,[x0,y0]);
+    %costHistoryImperfectB{p}(i+1) = cost;
     
     imperfectParams = optimumParams.*(ones(1,2) + imperfectStdDev*randn(1,2));
     
     presetA = blendXY(imperfectParams,presetA, presetB, presetC);
     cost = costFunction(presetA, presetGoal);
     costHistoryImperfectB{p}(i+1) = cost;
+    
+    
+    % Iterate Presets
+    for j = 1:length(presetA)
+        
+        if j == 1
+            weights = sigmoidWeights(length(presetAHistory{1}(:,1)), sigmoidCenterRatio);
+        end
+        
+        historyArray = presetAHistory{j};
+        
+        newPresetsMean = (lastValueWeighting*presetA{j} + (1-lastValueWeighting)*weights*historyArray);
+        
+        % Covariance matrix
+        sigma = diag(zeros(1,length(historyArray(1,:)))+std(historyArray).^stdExponent + tempOffset);
+        
+        sigma = tempScaling * sigma;         %.*randn(1,length(obj.presetA));
+        % Multivarite Normal distrubution samples
+        presetB{j} = mvnrnd(newPresetsMean,sigma);
+        presetC{j} = mvnrnd(newPresetsMean,sigma);
+        
+        presetAHistory{j} = [presetAHistory{j}; presetA{j}];
+    end
+    % Decay tempOffset
+    tempOffset = tempOffset*0.9;
+end
+
+% Imperfect User 2 -------------------
+% Generate new presets Setup
+imperfectStdDev = 0.8;
+
+presetA = presetAInitial;
+presetB = presetBInitial;
+presetC = presetCInitial;
+
+presetAHistory = presetA;
+tempOffset = initialTempOffset;
+
+costHistoryImperfectB1{p} = zeros(1,numIterations+1);
+costHistoryImperfectB1{p}(1) = sortedCosts(num, 2);
+
+
+for i = 1:numIterations
+    f = @(xy)blendingCost(xy, presetA, presetB, presetC, presetGoal);
+    [optimumParams,cost] = patternsearch(f,[x0,y0]);
+    %costHistoryImperfectB1{p}(i+1) = cost;
+    
+    imperfectParams = optimumParams.*(ones(1,2) + imperfectStdDev*randn(1,2));
+    
+    presetA = blendXY(imperfectParams,presetA, presetB, presetC);
+    cost = costFunction(presetA, presetGoal);
+    costHistoryImperfectB1{p}(i+1) = cost;
     
     % Iterate Presets
     for j = 1:length(presetA)
@@ -155,32 +211,39 @@ for i = 1:numIterations
 end
 
 
+
+
+
+
 meanCostHistoryPerfectB = meanCostHistoryPerfectB + costHistoryPerfectB{p}/numTests;
 
 meanCostHistoryImperfectB = meanCostHistoryImperfectB + costHistoryImperfectB{p}/numTests;
+
+meanCostHistoryImperfectB1 = meanCostHistoryImperfectB1 + costHistoryImperfectB1{p}/numTests;
+
 
 
 end
 
 %% Plots
-figure(13), clf
+figure(18), clf
 for p = 1:numTests
-subplot(3,2,1)
-plot(0:1:100,costHistoryPerfectB{p})
+subplot(1,2,1)
+plot(0:1:100,costHistoryImperfectB{p}/costHistoryPerfectB{p}(1))
 hold on
 
-subplot(3,2,2)
-plot(0:1:100,costHistoryImperfectB{p})
+subplot(1,2,2)
+plot(0:1:100,costHistoryImperfectB1{p}/costHistoryPerfectB{p}(1))
 hold on
 
 
-subplot(3,2,3)
-plot(0:1:100,costHistoryPerfectB{p}/costHistoryPerfectB{p}(1))
-hold on
-
-subplot(3,2,4)
-plot(0:1:100,costHistoryImperfectB{p}/costHistoryImperfectB{p}(1))
-hold on
+% subplot(3,2,3)
+% plot(0:1:100,costHistoryPerfectB{p}/costHistoryPerfectB{p}(1))
+% hold on
+% 
+% subplot(3,2,4)
+% plot(0:1:100,costHistoryImperfectB{p}/costHistoryImperfectB{p}(1))
+% hold on
 
 
 % subplot(3,2,[5,6])
@@ -190,46 +253,38 @@ hold on
 end
 
 
-subplot(3,2,1)
-plot(0:1:100,meanCostHistoryPerfectB, 'r', 'LineWidth', 3)
-yLim = get(gca, 'YLim');
-ylim([0,yLim(2)]);
+% subplot(3,2,1)
+% plot(0:1:100,meanCostHistoryPerfectB, 'r', 'LineWidth', 3)
+% yLim = get(gca, 'YLim');
+% ylim([0,yLim(2)]);
 
-subplot(3,2,2)
-plot(0:1:100,meanCostHistoryImperfectB, 'r', 'LineWidth', 3)
-yLim = get(gca, 'YLim');
-ylim([0,yLim(2)]);
+% subplot(3,2,2)
+% plot(0:1:100,meanCostHistoryImperfectB, 'r', 'LineWidth', 3)
+% yLim = get(gca, 'YLim');
+% ylim([0,yLim(2)]);
 
-subplot(3,2,3)
-plot(0:1:100,meanCostHistoryPerfectB/meanCostHistoryPerfectB(1), 'r', 'LineWidth', 3)
-ylim([0,1]);
-
-subplot(3,2,4)
+subplot(1,2,1)
 plot(0:1:100,meanCostHistoryImperfectB/meanCostHistoryImperfectB(1), 'r', 'LineWidth', 3)
 ylim([0,1]);
 
-subplot(3,2,[5,6])
-plot(0:1:100,meanCostHistoryPerfectB/meanCostHistoryPerfectB(1), 'r', 'LineWidth', 3)
-hold on
-plot(0:1:100,meanCostHistoryImperfectB/meanCostHistoryImperfectB(1), 'r:', 'LineWidth', 3)
-ylim([0,1])
+subplot(1,2,2)
+plot(0:1:100,meanCostHistoryImperfectB1/meanCostHistoryImperfectB1(1), 'r', 'LineWidth', 3)
+ylim([0,1]);
+
+% subplot(3,2,[5,6])
+% plot(0:1:100,meanCostHistoryPerfectB/meanCostHistoryPerfectB(1), 'r', 'LineWidth', 3)
+% hold on
+% plot(0:1:100,meanCostHistoryImperfectB/meanCostHistoryImperfectB(1), 'r:', 'LineWidth', 3)
+% ylim([0,1])
 
 
-subplot(3,2,1)
+subplot(1,2,1)
 title('Cost vs Iterations for blending interface')
 hold on
-subplot(3,2,2)
+subplot(1,2,2)
 title('Cost vs Iterations for blending interface - Imperfect User')
 hold on
-subplot(3,2,3)
-title('Normalised Cost vs Iterations for blending interface')
-hold on
-subplot(3,2,4)
-title('Normalised Cost vs Iterations for blending interface - Imperfect User')
-hold on
-subplot(3,2,[5,6])
-title('Mean Normalised Cost vs Iterations comparison')
-hold on
+
 %% Requires evaluationTest3 to have been run and the variables in scope
 plot((0:1:plotLength), [meanInitialCost, meanCostHistoryImperfect]/meanInitialCost, 'b', 'LineWidth', 3)
 plot((0:1:plotLength), [meanInitialCost, meanCostHistoryImperfect2]/meanInitialCost, 'b:', 'LineWidth', 3)

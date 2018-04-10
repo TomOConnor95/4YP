@@ -606,10 +606,17 @@ Finally, each of the combinations of controls has a similar initial rate of erro
 Based on this it is concluded that it is worth keeping both sets of macro controls for the user to be able to select between, especially as the 'Time/Timbre' Macro Controls may lead to more semantically meaningful controls due to the seperation of Time and Timbre. (JUSTIFY THIS MORE)
 
 \subsection{Blending Interface} 
-The Blending interface was evaluated in a similar manner. For each of the 36 possible goal presets, the closest three presets to it were found, and these used as preset A, B and C in the blending algorithm. MATLAB's 'Patternsearch' was again used in each iteration to optimise the position of the mouse in the blending interface to minimise error. 
+The Blending interface was evaluated in a similar manner. For each of the 36 possible goal presets, the closest three presets to it were found, and these used as preset A, B and C in the blending algorithm. MATLAB's 'Patternsearch' was again used in each iteration to optimise the position of the mouse in the blending interface to minimise the parameter based error metric. 
 
-
-DO THIS NEXT!
+Results of this test are shown in Figure \ref{fig:BlendingTest1}
+\begin{figure}
+	\centering
+	%	\vspace{-40pt}
+	\includegraphics[width = \textwidth]{PCAInterfaceTests1.eps}
+	\caption{Perfect/Imperfect User tests for Blending Interface}
+	\label{fig:BlendingTest1}
+	%	\vspace{-30pt}
+\end{figure}
 
 
 \section{Comparison of combined interfaces}
@@ -618,7 +625,9 @@ A comparison of the test results from all three interfaces is shown in Figure \r
 The fastest converging test is the Perfect User with Perfect Order on the Traditional Interface, and the slowest converging test is the Imperfect User with Random Order on the Tradtional interface. Interestingly, the order at which the parameters are visited has a much more significant affect than the perfectness of the user. This is due to the Imperfect user model having a zero mean error, so after visiting a parameter several times, the value will converge to the correct value. This result demonstrates that the Traditional Interface can simultaneously be the best possible, and worst possible interface to control a synth with, depending on the experience level of the user, and the intuitiveness of the parameters.
 
 The initial error reduction rate of the Blending Interface is very fast, comparable with the Perfect User of the Traditional interface. The main reason for the initial speed of the blending interface is that in the first iteration, it blends between 3 presets, all close to the goal preset, allowing the first iteration to be a lot less random than subsequent steps. (EXPLAIN BETTER)\\
+A key advantage of the Blending Interface is that it removes the need for the user to choose which order to alter the parameters which, as previously described, is the main factor in speed of the Traditional Interface. (MORE DETAIL?)\\
  Over a larger number of iterations, Blending Interface is supassed by the Traditinonal interface with random order. This suggests that the preset generation algoithm is not optimal, as after a while it becomes faster to just sequentially offer the user a random parameter. However, as the user has the option to freeze parameters, and the option to switch to the other interfaces at any point, this may not be an issue. 
+ 
 
 Before converging to their steady stae value, the macro controls have quite a fast rate of error reduction - halfway betwen the Perfect User with Perfect or Random Order. This can be partially explained as the Macro Contols allow all of the synthesiser parameters to be varied at once. This also suggests that, as the PCA was carried out on a set of presets, it is likely that the principal components are pointed in a more useful direction than if they'd been selected randomly. (WRITE BETTER)
 
