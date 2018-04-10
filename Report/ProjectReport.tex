@@ -431,7 +431,21 @@ It is also hard to draw colcusions about the clustering performance, due to the 
 \end{figure}
 
 \subsection{Investigate how the PCA mapping scales with number of presets}
-asdasdasdsad
+The consistency of the PCA mapping as more presets are added is of importance to the usefulness of the interface. If the mapping radically changes every time a new preset is added, then any intuitition the user has learned about what the different components represent will be lost. This is one of the reasons for choosing PCA, as the linearity of the technique should lead to less surprising results (EXPLAIN BETTER).\\
+Figure \ref{fig:PCAnumPresets} shows the variation of the first two principal components as the presets are added one at a time in the order of creation. After Histogram Equalisation has been applied the components are relatively stable, except at certain points where the component flips sign. These can clearly be seen at preset 34 for $PC_1$, and presets 6, 9, 13, 15, 28, 31:36 for $PC_2$. The bottom row of the figure shows the components after this sign flipping has been corrected by flipping the sign of the component. This makes a dramatic improvement in the stability of the principal components, especially for $PC_2$. This phenomenon also occurs in $PC_{3,4,5}$ used for the RGB mapping of the presets.
+As PCA is very quick to compute, this graph can be constructed to cancel out all of the necessary sign reversals...
+
+\begin{figure}
+	\hspace{-80pt}
+	\includegraphics[width = 8.5in]{PCAnumPresets1.eps}
+	\caption{PCA stability with number of presets}
+	\label{fig:PCAnumPresets}
+	%	\vspace{-30pt}
+\end{figure}
+talk about the detecting flips in the PCA plots. 
+
+DO a graph of the Latent value for the first 10 or so components vs number of presets.
+
 \subsection{Quantify the extra variance the macro controls give}
 asdasdasdsa
 \subsection{Investigate Permutation Ambiguity}
@@ -630,7 +644,7 @@ A key advantage of the Blending Interface is that it removes the need for the us
  Over a larger number of iterations, Blending Interface is supassed by the Traditinonal interface with random order. This suggests that the preset generation algoithm is not optimal, as after a while it becomes faster to just sequentially offer the user a random parameter. However, as the user has the option to freeze parameters, and the option to switch to the other interfaces at any point, this may not be an issue. 
  
 
-Before converging to their steady stae value, the macro controls have quite a fast rate of error reduction - halfway betwen the Perfect User with Perfect or Random Order. This can be partially explained as the Macro Contols allow all of the synthesiser parameters to be varied at once. This also suggests that, as the PCA was carried out on a set of presets, it is likely that the principal components are pointed in a more useful direction than if they'd been selected randomly. (WRITE BETTER)
+Before converging to their steady state value, the macro controls have quite a fast rate of error reduction - halfway betwen the Perfect User with Perfect or Random Order. This can be partially explained as the Macro Contols allow all of the synthesiser parameters to be varied at once. This also suggests that, as the PCA was carried out on a set of presets, it is likely that the principal components are pointed in a more useful direction than if they'd been selected randomly. (WRITE BETTER)
 
 These results suggest that a good workflow for editing synthesis parameters is as follows:
 \vspace{-3em}

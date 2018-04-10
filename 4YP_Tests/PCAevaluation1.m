@@ -22,6 +22,8 @@ presetStoreFlattened = presetStoreFlattened - mu;
 
 end
 
+% PCA only
+
 PCA1 = zeros(length(presetStore))*NaN;
 PCA2 = zeros(length(presetStore))*NaN;
 PCA3 = zeros(length(presetStore))*NaN;
@@ -30,34 +32,32 @@ PCA5 = zeros(length(presetStore))*NaN;
 PCA6 = zeros(length(presetStore))*NaN;
 
 for idx = 2:length(presetStore)
-    PCA1(idx, 1:idx) = mapVectorRange(histogramNormalisation(score{idx}(:,1)'), -0.95,0.95);
+    PCA1(idx, 1:idx) = score{idx}(:,1)';
 end
 
 for idx = 3:length(presetStore)
-    PCA2(idx, 1:idx) = mapVectorRange(histogramNormalisation(score{idx}(:,2)'), -0.95,0.95);
+    PCA2(idx, 1:idx) = score{idx}(:,2)';
 end
 
 for idx = 4:length(presetStore)
-    PCA3(idx, 1:idx) = mapVectorRange(histogramNormalisation(score{idx}(:,3)'), -0.95,0.95);
+    PCA3(idx, 1:idx) = score{idx}(:,3)';
 end
 
 for idx = 5:length(presetStore)
-    PCA4(idx, 1:idx) = mapVectorRange(histogramNormalisation(score{idx}(:,4)'), -0.95,0.95);
+    PCA4(idx, 1:idx) = score{idx}(:,4)';
 end
 
 for idx = 6:length(presetStore)
-    PCA5(idx, 1:idx) = mapVectorRange(histogramNormalisation(score{idx}(:,5)'), -0.95,0.95);
+    PCA5(idx, 1:idx) = score{idx}(:,5)';
 end
 
 for idx = 7:length(presetStore)
-    PCA6(idx, 1:idx) = mapVectorRange(histogramNormalisation(score{idx}(:,6)'), -0.95,0.95);
+    PCA6(idx, 1:idx) = score{idx}(:,6)';
 end
 
 
-
-figure(13)
+figure(12)
 clf, 
-title('sdsadsda')
 subplot(3,2,1), hold on,
 for idx = 1:length(presetStore)
 plot(1:36, PCA1(:,idx))
@@ -108,26 +108,111 @@ ylabel('PCA 6')
 
 
 
+
+% PCA + histogram equalisation
+PCA1a = zeros(length(presetStore))*NaN;
+PCA2a = zeros(length(presetStore))*NaN;
+PCA3a = zeros(length(presetStore))*NaN;
+PCA4a = zeros(length(presetStore))*NaN;
+PCA5a = zeros(length(presetStore))*NaN;
+PCA6a = zeros(length(presetStore))*NaN;
+
+for idx = 2:length(presetStore)
+    PCA1a(idx, 1:idx) = mapVectorRange(histogramNormalisation(score{idx}(:,1)'), -0.95,0.95);
+end
+
+for idx = 3:length(presetStore)
+    PCA2a(idx, 1:idx) = mapVectorRange(histogramNormalisation(score{idx}(:,2)'), -0.95,0.95);
+end
+
+for idx = 4:length(presetStore)
+    PCA3a(idx, 1:idx) = mapVectorRange(histogramNormalisation(score{idx}(:,3)'), -0.95,0.95);
+end
+
+for idx = 5:length(presetStore)
+    PCA4a(idx, 1:idx) = mapVectorRange(histogramNormalisation(score{idx}(:,4)'), -0.95,0.95);
+end
+
+for idx = 6:length(presetStore)
+    PCA5a(idx, 1:idx) = mapVectorRange(histogramNormalisation(score{idx}(:,5)'), -0.95,0.95);
+end
+
+for idx = 7:length(presetStore)
+    PCA6a(idx, 1:idx) = mapVectorRange(histogramNormalisation(score{idx}(:,6)'), -0.95,0.95);
+end
+
+
+figure(13)
+clf, 
+subplot(3,2,1), hold on,
+for idx = 1:length(presetStore)
+plot(1:36, PCA1a(:,idx))
+end
+xlim([0,36])
+xlabel('Number of Presets')
+ylabel('PCA 1')
+
+subplot(3,2,2), hold on,
+for idx = 1:length(presetStore)
+plot(1:36, PCA2a(:,idx))
+end
+xlim([0,36])
+xlabel('Number of Presets')
+ylabel('PCA 2')
+
+subplot(3,2,3), hold on,
+for idx = 1:length(presetStore)
+plot(1:36, PCA3a(:,idx))
+end
+xlim([0,36])
+xlabel('Number of Presets')
+ylabel('PCA 3')
+
+subplot(3,2,4), hold on,
+for idx = 1:length(presetStore)
+plot(1:36, PCA4a(:,idx))
+end
+xlim([0,36])
+xlabel('Number of Presets')
+ylabel('PCA 4')
+
+subplot(3,2,5), hold on,
+for idx = 1:length(presetStore)
+plot(1:36, PCA5a(:,idx))
+end
+xlim([0,36])
+xlabel('Number of Presets')
+ylabel('PCA 5')
+
+subplot(3,2,6), hold on,
+for idx = 1:length(presetStore)
+plot(1:36, PCA6a(:,idx))
+end
+xlim([0,36])
+xlabel('Number of Presets')
+ylabel('PCA 6')
+
+
+
 % Manually corrected PCs
 figure(14)
 clf, 
-
-PCA1b = PCA1;
+PCA1b = PCA1a;
 PCA1b([35:36], :) = -PCA1b([35:36], :);
 
-PCA2b = PCA2;
+PCA2b = PCA2a;
 PCA2b([6, 9, 13, 15, 28, 31:36], :) = -PCA2b([6, 9, 13, 15, 28, 31:36], :);
 
-PCA3b = PCA3;
+PCA3b = PCA3a;
 PCA3b([16], :) = -PCA3b([16], :);
 
-PCA4b = PCA4;
+PCA4b = PCA4a;
 PCA4b([23:36], :) = -PCA4b([23:36], :);
 
-PCA5b = PCA5;
+PCA5b = PCA5a;
 PCA5b([6:8, 14, 16:17, 19:20], :) = -PCA5b([6:8, 14, 16:17, 19:20], :);
 
-PCA6b = PCA6;
+PCA6b = PCA6a;
 PCA6b([9, 12:14, 26:36], :) = -PCA6b([9, 12:14, 26:36], :);
 
 subplot(3,2,1), hold on,
@@ -177,6 +262,58 @@ end
 xlim([0,36])
 xlabel('Number of Presets')
 ylabel('PCA 6 - Corrected')
+
+
+% PLot of PCA 1&2 for all 3 versions
+figure(15)
+clf, 
+subplot(3,2,1), hold on,
+for idx = 1:length(presetStore)
+plot(1:36, PCA1(:,idx))
+end
+xlim([0,36])
+xlabel('Number of Presets')
+ylabel('PC_1')
+
+subplot(3,2,2), hold on,
+for idx = 1:length(presetStore)
+plot(1:36, PCA2(:,idx))
+end
+xlim([0,36])
+xlabel('Number of Presets')
+ylabel('PC_2')
+
+subplot(3,2,3), hold on,
+for idx = 1:length(presetStore)
+plot(1:36, PCA1a(:,idx))
+end
+xlim([0,36])
+xlabel('Number of Presets')
+ylabel('PC_1 - Hist. Equalisation')
+
+subplot(3,2,4), hold on,
+for idx = 1:length(presetStore)
+plot(1:36, PCA2a(:,idx))
+end
+xlim([0,36])
+xlabel('Number of Presets')
+ylabel('PC_2 - Hist. Equalisation')
+
+subplot(3,2,5), hold on,
+for idx = 1:length(presetStore)
+plot(1:36, PCA1b(:,idx))
+end
+xlim([0,36])
+xlabel('Number of Presets')
+ylabel('PC_1 - Hist. Eq. & Correction')
+
+subplot(3,2,6), hold on,
+for idx = 1:length(presetStore)
+plot(1:36, PCA2b(:,idx))
+end
+xlim([0,36])
+xlabel('Number of Presets')
+ylabel('PC_2 - Hist. Eq. & Correction')
 
 % 
 % 
