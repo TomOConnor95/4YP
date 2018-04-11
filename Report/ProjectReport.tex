@@ -20,6 +20,8 @@
 
 \usepackage{multirow}
 
+\usepackage{csquotes}
+
 \usepackage{epstopdf}
 \DeclareGraphicsExtensions{.pdf,.png,.jpg,.eps}
 
@@ -119,7 +121,7 @@ THIS ABSTRACT NEEDS A LOT MORE WORK, WILL WORK ON AFTER WRITING MORE OF THE REPO
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \chapter{Introduction}
 \section{Background Information}
-Software Synthesisers (Soft-Synths) are computer applications which create sounds in response to musical input typically in the form of MIDI messages. They are widely used in a variety of musical contexts. Typical soft-synths have hundreds or thousands of parameters which control the sound generation algorithm, allowing the user to create sounds that suit their musical needs. This results in a high dimensional, non-linear search space which the user must navigate in order. Research indicates that humans are bad at navigating such interfaces with serial controls, and that there is a strong link between interface design and the level of creativity that the user with experience when using the interface. \\
+Software Synthesisers (Soft-Synths) are computer applications which create sounds in response to musical input typically in the form of MIDI (\emph{Musical Instrument Digital Interface}) messages. They are widely used in a variety of musical contexts. Typical soft-synths have hundreds or thousands of parameters which control the sound generation algorithm, allowing the user to create sounds that suit their musical needs. This results in a high dimensional, non-linear search space which the user must navigate in order. Research indicates that humans are bad at navigating such interfaces with serial controls, and that there is a strong link between interface design and the level of creativity that the user with experience when using the interface. \\
 This work describes a novel interface designed to help users control synthesisers in a quicker and more intuitive manner. It combines 3 interfaces together: a traditional 'knob and slider' interface, a search space visualisation interface, and an iterative blending interface.
 
 A video of the full interface being used can be viewed at (LINK TO VIDEO).
@@ -131,32 +133,132 @@ Aim to ...
 dtsadfdsafdsaf
 
 \chapter{Literature Review}
-\section{Previous studies of synthesiser parameter spaces}
-Several previous...
+\section{Introduction to Synthesisers}
+Synthesisers are devices which can create a wide waviety of musical sounds in response to  user input, typically in the form of notes played on a keyboard. %The first synthesisers consisted of single note electronic oscilators, such as the Theremin... , 
+Wiki - "The earliest synthesizers used a variety of thermionic-valve (vacuum tube) and electro-mechanical technologies.". \\
+In the 1960s and 70s, after the invention of the transistor, - Wiki - "Early analog synthesizers used technology from electronic analog computers and laboratory test equipment. They were generally "modular" synthesizers, consisting of a number of independent electronic modules connected by patch cables into a patchbay that resembled the jackfields used by 1940s-era telephone operators. Synthesizer modules in early analog synthesizers included voltage-controlled oscillators (VCOs), voltage-controlled filters (VCFs), and voltage-controlled amplifiers (VCAs). The control voltage varied frequency in VCOs and VCFs, and attenuation (gain) in VCAs. Additionally, they used envelope generators, low-frequency oscillators, and ring modulators. Some synthesizers also had effects devices, such as reverb units, or tools such as sequencers or sound mixers. Because many of these modules took input sound signals and processed them, an analog synthesizer could be used both as a sound-generating and sound-processing system.\\
+Famous modular synthesizer manufacturers included Buchla \& Associates, Moog Music, ARP Instruments, Inc., and Electronic Music Studios."
+Later analogue synths were fixed architecture (or semi-modular), and much more compact and user friendly. -Wiki- "The most popular of these was the Minimoog". At this time, synthesisers began to feauture commoonly in popular music, both in the studio and in live situations.\\
+In the 1980s, digital syntheisers were invented, allong with a much wider variety of syntesis techniques than was possible with analogue electronics. In particular FM synthesis defined much of the musical sound of the 1980s, and was poularised by the Yamaha DX7 synthesisers. (REFERENCE ALL THIS STUFF!)
+
+Since the invention of personal computers, many popular synthesisers have been recreated digitally as software synthesisers, commonly known as 'Plug-ins', and are widely used in modern Digital Audio Workstations (DAWs). As well as recreatations of hardsware synthesisers, many novel software synthesisers have been developed solely for use on computers, making use of the flexibility, the increased computing power, and interactive display capabitilies of computers. 
+
+In the thesis "Development and Exploration of a Timbre Space Representation of Audio" \ref{SynthTypes} %http://mig.dcs.gla.ac.uk/wp-content/mig-papers/craig_nicol_thesis.pdf
+the common methods of synthesiser are decrebed in detail, and are as follows:
+\begin{itemize}
+	\setlength\itemsep{-1.2em}
+	\item Wavetable Synthesis
+	\item Synthesis using Oscillators
+	\item Additive Synthesis
+	\item Frequency Modulation (FM) Synthesis
+	\item Subtractive Synthesis
+	\item Granular Synthesis
+	\item Physical Modelling
+\end{itemize}
+In addition, many synthesisers inlcude the use of audio samples. Hybrid approcaches of the above techniques are also common.
+
+\section{Introduction to Synthesiser Interfaces}
+Analogue synthesiser interfaces, whether modular or fixed architecture, usually consist of a number of modules, such as VCOs and VCAs, controlled with potentiometers, switches, and control signals from elsewhere in the synth, see Figure \ref{fig:MoogSystem35}. \\
+%
+\begin{figure}[h] 
+	\centering
+	\includegraphics[width = 6in]{MoogSystem35.jpg}
+	\caption{Analogue synthesiser - Moog System 35}
+	\label{fig:MoogSystem35}
+	% https://www.moogmusic.com/products/modulars/system-35
+\end{figure}
+%
+Digital synthesisers can be much more flexible in their interface, as the audio signals are not passing directily thorugh the controls. Early digital synthesisers had famously un-user friendly interfaces comsising of LCD screens and rows of buttons to alter the parameters, hidden in a series of menus, see Figure \ref{fig:YamahFS1R}. As these interfaces lacked the 'hands-on' interface that musicians loved from analogue synths, many digital synths, despite being much more capable of producing a wide variety sounds, were less popular than analogue synths, and many users found the process of programming these synths to be incredibly frustrating. (REFERENCE FOR THIS) To make the intefaces more user friendly, most digital synths are provided with a set of 'Presets' - parameter settings that produce 'nice' sounds - which demonstarate a wide range of the synthesiser's sounds. One of the reasons the synthesiser sounds of the 1980s were so simlar to each other, is that many musicians would entirely use the preset sounds, without altering them at all. This is in part due to the novely of the sounds at the time, and in part due to the difficult user interfaces.\\
+%
+\begin{figure}[h] 
+	\centering
+	\includegraphics[width = 6in]{yamaha_fs1r.jpg}
+	\caption{Digital synthesiser - Yamaha FS1R}
+	\label{fig:YamahFS1R}
+	% http://www.vintagesynth.com/yamaha/fs1r.php
+\end{figure}
+Software synthsesiers have a wide variety of interfaes. Many follow similar design patterns to analogue synths, but with additional interactive elements such as 'user drawable' envelopes. An example of this is the very popular Massive by Native Instruments, shown in Figure \ref{fig:MassiveNI}. Other software synthesisers offer musch more visual and interactive interfaces, such as the Ableton Wavetable synthesiser, shown in Figure \ref{fig:AbletonWavetable}.
+
+\begin{figure}[h] 
+	\centering
+	\includegraphics[width = 6in]{MassiveNI.jpg}
+	\caption{Software Synthesiser - Massive (Native Instruments) }
+	\label{fig:MassiveNI}
+	%https://www.soundonsound.com/reviews/native-instruments-massive
+\end{figure}
+
+\begin{figure}[h] 
+	\centering
+	\includegraphics[width = 6in]{AbletonWavetable.jpg}
+	\caption{Software Synthesiser - Wavetable (Ableton) }
+	\label{fig:AbletonWavetable}
+	%https://www.ableton.com/en/packs/wavetable/
+\end{figure}
+
+Some software synthesisers have modular designs, such as SoftTube Modular, and some even allow users to program synthesis modules from scratch, such as Max/MSP and Supercollider.
+
+There has been lots of reasearch in the Computer Music field to use multideminsional controllers, such as the Myo, Leap Motion and Microsoft Kinect, to control synthesis parameters in real time, and research into advanced user interaction types, such as preset blending and randomisation of presets. (EXAMPLES!!) Several studies have applied a variety of machine learning techniques to synthesiser control, as described in the next section.
+
 \section{Previous attempts of using machine learning to control synthesisers}
-There have been several previous attempts...
+There have been several previous attempts to use machine learning to make programming synthesisers easier and more expressive.
 
 Talk about the preset blending study, including the parameter freezing.
 
 
 
+Talk about automatic tone matching
+
 Talk about the google sample mapping with TSNE (infinite drum machine).
 
 Talk about how taking a sound sample from each preset could be a good way to do the dimensionality reduction interface, but how a parameter based approach is preferable in many ways. Mention which sound metrics would be good to use, and the difficulties involved.
 
+Talk about the Rebecca Frink stuff
+
 Talk about the stuff about multidemsional controlers having higher thoroughput, and it being desirable for the control dimensions when exploring creatively not neededing to be tied to single parameters.
 \section{Description of HCI design principles for creative musical interfaces}
-A number of guidelines for creative musical interfaces
+In the work 'Creativity, Exploration and Control in Musical Parameter Spaces' by Robert H. Tubb. (REFERENCE PROPERLY), the representation and mapping of musical paramers is considered in Section 4.3.
+
+\begin{displayquote}
+The principal distinctions between types of mappings are as follows [Hunt et al., 2000].
+\begin{itemize}
+\setlength\itemsep{-1.2em}
+\item One-to-many: one control dimension is mapped to many synthesis parameters.
+\item Many-to-one: many control parameters affect one synth parameter.
+\item Many-to-many: a combination of the above (also known as ‘complex’ map- pings).
+\end{itemize}
+
+[Hunt and Kirk, 2000] Complex many-to-many mappings appear to be more effective for expressive performance, and may lead to greater performance improvements with practice. This may seem counterintuitive, as a complex mapping would appear to be less understandable or predictable than the alternative.
+“The sliders interface, whilst it physically allowed people to control multiple parameters, forced the user to mentally ‘strip apart’ the control task into separate control streams. This caused a form of cognitive overload which users generally found restricting and frustrating.”
+[Hunt and Wanderley, 2002]
+\end{displayquote}
+
+A number of guidelines for creative musical interfaces are presented:
+\begin{displayquote}
+\begin{enumerate}
+\setlength\itemsep{-1.2em}
+	\item \emph{Low dimensionality}: Control devices often have fewer parameters than synthesis engines. Given the brain’s limited conscious multi-tasking abilities and working memory capacity, simple controllers are preferable.
+	\item \emph{Locality}, or distance preservation: Having travelled a certain distance in control space, we want that to be reflected in the distance travelled in parameter space, and ideally perceptual distance too.
+	\item \emph{Revisitability}: If we return to the same point, we wish it to sound the same. The location of preset points should be stable.
+	\item \emph{Continuity}: If a point is adjacent to another point on the low-dimensional surface, they should be adjacent in the high-dimensional space.
+	\item \emph{Smoothness}: Continuous higher derivatives are desirable to eliminate sudden changes in direction, this has relevance to the predictability of a control.
+	\item \emph{Linearity}: When a gesture, such as a scroll, occurs it will have a certain effect on that sound, more extreme versions of this gesture should produce more of the same effect. This property is hard to achieve with any dimensionality reduction method, however smoothness implies some linearity in the immediate neighbourhood.
+\end{enumerate}
+The Blending Interface described in Sectinon \ref{sec:BlendingDescription} follows all of these design guidelines, and the Selection Interface follows all except the \emph{Smoothness} condition (due to the sudden jumps between presets). Both are complex many-to many interfaces.
+
+\end{displayquote}
 
 \section{Principal Component Analysis}
-Wiki quote:
+Wiki quote: FIND BETTER SOURCE OR WRITE OWN
 
-"Principal component analysis (PCA) is a statistical procedure that uses an orthogonal transformation to convert a set of observations of possibly correlated variables into a set of values of linearly uncorrelated variables called principal components. If there are n observations withp variables, then the number of distinct principal components is $\min(n−1, p)$. This transformation is defined in such a way that the first principal component has the largest possible variance (that is, accounts for as much of the variability in the data as possible), and each succeeding component in turn has the highest variance possible under the constraint that it is orthogonal to the preceding components. The resulting vectors are an uncorrelated orthogonal basis set. PCA is sensitive to the relative scaling of the original variables."
+"Principal component analysis (PCA) is a statistical procedure that uses an orthogonal transformation to convert a set of observations of possibly correlated variables into a set of values of linearly uncorrelated variables called principal components. If there are $n$ observations with $p$ variables, then the number of distinct principal components is $\min(n−1, p)$. This transformation is defined in such a way that the first principal component has the largest possible variance (that is, accounts for as much of the variability in the data as possible), and each succeeding component in turn has the highest variance possible under the constraint that it is orthogonal to the preceding components. The resulting vectors are an uncorrelated orthogonal basis set. PCA is sensitive to the relative scaling of the original variables."
 
+%In this report, the MATLAB nomenclature for PCA will be used
 
-Describe the PCA algorithm, and dicuss the possible extention to using Sparse PCA. 
+Describe the PCA algorithm, 
 
 Desribe output parameters: Score, coeff, latent.
+
+Dicuss the possible extention to using Sparse PCA. 
 
 Talk about weighted PCA 
 \section{Bayesian Optimisation}
@@ -386,10 +488,10 @@ The histogram equalisation in one dimension is described in Figure \ref{fig:Hist
 \end{figure}
 A histogram is created by splitting the data into a number of eqully spaced bins (6 bins was empirically found to work well in this case). The bins are then rescaled, such that the bin width is equal to the number of data points in the bin).
 
-This process is carried out for the presets in all 5 of the XY-RGB dimensions, and then each dimension is mapped to the range $[0.05, 0.95]$, such that it will fit inside the axes of $[0, 1]$.
+This process is carried out for the presets in all 5 of the XY-RGB dimensions, and then each dimension is mapped to the range $[0.05, 0.95]$, such that it will fit inside the axes of $[0, 1]$. Figures \ref{fig:PCAnumPresets} and \ref{fig:PCAnumPresets2}, show this technique applied to the first 3 principal components.
 
 This approach, although simple, effectively redistributes the presets. As long as one of the bins are empty, the mapping in each dimension is peicewise linear and continuous. This means that the Combined Preset Markers can be positioned correctly on the graph by first calculating the PCA scores, then passing these scores through the mapping function. Due to the continuity of the mapping function, the Macro Controls will cause the preset markers to move smootly across the graph. ... FINISH WRITING
-\subsection{Demonstrations of Preset GroupCclustering}
+\subsection{Demonstrations of Preset Group Clustering}
 Having divided the presets into a set of (non-exlusive) categories, the clustering nature of the PCA process can be tested by viewing where the categories are placed in the diagram, see Figure \ref{fig:Categories}. This demonstrates that the PCA process does indeed cluster the categories together, although some are better clustered than others. Part of this is due to the fact that the categorys are somewhat subjective, for example the decision between Synth Lead and Synth Pad, or between Piano/Keys and Plucked/Mallet.\\
 Some of the categories also include a wide range of sounds, especially Rhythmic and Synth Lead, and so have a less consistent pattern in their parameters.
 It is also hard to draw colcusions about the clustering performance, due to the small sample size of presets, and the fact that many of the presets were made by using the Blending interface, so potentially have overly similar paramaters than if they'd been made from scratch by a person. To validate this approach more thoroughly, it would need to be applied to many 'real world' sets of presets of pre-existing commercial synthesisers, but several technical challenges (In particular lack of standardisation of control interfaces MORE DETAIL HERE) prevented this being possible during the sort timescale of this project.
@@ -494,7 +596,7 @@ asdasdasdsa
 asdasdsa
 
 \section{Blending Interface}
-\subsection{Detailed Description}\label{sec:BlendingDesription}.
+\subsection{Detailed Description}\label{sec:BlendingDescription}.
 This interface was created as a Matlab 'figure based application'.
 
 \begin{figure}[h] 
@@ -514,8 +616,8 @@ Where $\vec{P}$ is the blended preset, $\vec{A}$, $\vec{B}$, $\vec{C}$ are prese
 [\beta,  \gamma]^T = (\vec{M}^T*\vec{M})\\vec{M}^T*[x, y], 
 	\hspace{1in} \alpha = 1 - (\beta + \gamma)
 \end{equation}
-\begin{wrapfigure}{r}{0.35\textwidth}
-	\vspace{-30pt}
+\begin{wrapfigure}{R}{0.35\textwidth}
+	%\vspace{-30pt}
 	\includegraphics[width = \textwidth/3]{BlendVectors.png}
 	\caption{Non-orthogonal vector decomposition}
 	\label{fig:BlendingVectors}
@@ -527,7 +629,7 @@ Where $\vec{P}$ is the blended preset, $\vec{A}$, $\vec{B}$, $\vec{C}$ are prese
 	\includegraphics[width = \textwidth/3]{BlendingColours2.png}
 	\caption{$PC_{3,4,5}$ applied to RGB colour of blending interface}
 	\label{fig:BlendingColours}
-	\vspace{-60pt}
+	\vspace{-30pt}
 \end{wrapfigure}
 where $x$, and $y$ are the x and y coordinates of the current cursor position, and $\vec{M} =[\vec{b},  \vec{c}]$, where $\vec{b}$,  $\vec{c}$ are vectors from the A preset location to the B and C preset locations on the interface, as shown in Figure \ref{fig:BlendingVectors}.
 
@@ -591,9 +693,9 @@ where $w_i$ is the scalar importance weighting for the $i$th parameter, and $r_i
 
 The $L_1$ norm was chosen over the $L_2$ norm so that a few large parameter errors don't dominate the error metric and as no gradients are necessary.
 This is by no means a perfect metric for comparins synth settings, but it is good enough for our purposes. (IS IT?)
-
+COULD USE THE Index of Search Space Reduction (ISSR) Approach from Robert Tubbs thesis.
 \section{Comparison of isolated interfaces}
-\subsection{Blending Interface}
+\subsection{Traditional Interface}
 \begin{wrapfigure}{r}{0.5\textwidth}
 	\centering
 	\vspace{-60pt}
@@ -674,7 +776,7 @@ Results of this test are shown in Figure \ref{fig:BlendingTest1}
 	%	\vspace{-30pt}
 \end{figure}
 On average, there is an rapid decrease in error during the first iteration, followed by an approxiamtely expenential decrease in error.
-As in the Selection Interface, there are some tests in which the error barely decreases at all, and some in which the error decreases very quickly, however the variance of the different tests is less than in the PCA interface. For the Perfect User, error is monotoically decreasing, but this is not always the case for the imperfect user, and for real users of the system(EVIDENCE?). This reinforces the need for the Selection History Plot (See Section \ref{sec:BlendingDesription}), which allows users to select several of the local minima in the error plot to resume blending with. (MAYBE MORE DETAIL)
+As in the Selection Interface, there are some tests in which the error barely decreases at all, and some in which the error decreases very quickly, however the variance of the different tests is less than in the PCA interface. For the Perfect User, error is monotoically decreasing, but this is not always the case for the imperfect user, and for real users of the system(EVIDENCE?). This reinforces the need for the Selection History Plot (See Section \ref{sec:BlendingDescription}), which allows users to select several of the local minima in the error plot to resume blending with. (MAYBE MORE DETAIL)
 
 \section{Comparison of combined interfaces}
 A comparison of the test results from all three interfaces is shown in Figure \ref{fig:CombinedTest1}. 
