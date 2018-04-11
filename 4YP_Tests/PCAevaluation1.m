@@ -5,6 +5,7 @@ presetRead = matfile('PresetStoreSC.mat');
 presetStore = presetRead.presetStore;
 presetStoreFlattenedOriginal = cell2mat(presetStore);
 
+%presetStoreFlattenedOriginal = rand(36,94);
 
 
 coeff = cell(1,36);
@@ -329,7 +330,7 @@ for j = 1:36
     end
 end
 
-figure(19), clf
+figure(20), clf
 % subplot(3,1,1)
 % plot(2:length(presetStore), latentArray)
 % xlim([2,36])

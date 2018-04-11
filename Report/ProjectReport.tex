@@ -151,6 +151,8 @@ A number of guidelines for creative musical interfaces
 \section{Principal Component Analysis}
 Describe the PCA algorithm, and dicuss the possible extention to using Sparse PCA. 
 
+Desribe output parameter:Score, coeff, latent.
+
 \section{Bayesian Optimisation}
 Discuss how this is a promising technique in this field, for example preference gallery interface, but due to large ammount of training data neccesary, and bad performance in high dimensions it wont be used.
 
@@ -381,7 +383,7 @@ A histogram is created by splitting the data into a number of eqully spaced bins
 This process is carried out for the presets in all 5 of the XY-RGB dimensions, and then each dimension is mapped to the range $[0.05, 0.95]$, such that it will fit inside the axes of $[0, 1]$.
 
 This approach, although simple, effectively redistributes the presets. As long as one of the bins are empty, the mapping in each dimension is peicewise linear and continuous. This means that the Combined Preset Markers can be positioned correctly on the graph by first calculating the PCA scores, then passing these scores through the mapping function. Due to the continuity of the mapping function, the Macro Controls will cause the preset markers to move smootly across the graph. ... FINISH WRITING
-\subsection{Demonstrations of preset group clustering}
+\subsection{Demonstrations of Preset GroupCclustering}
 Having divided the presets into a set of (non-exlusive) categories, the clustering nature of the PCA process can be tested by viewing where the categories are placed in the diagram, see Figure \ref{fig:Categories}. This demonstrates that the PCA process does indeed cluster the categories together, although some are better clustered than others. Part of this is due to the fact that the categorys are somewhat subjective, for example the decision between Synth Lead and Synth Pad, or between Piano/Keys and Plucked/Mallet.\\
 Some of the categories also include a wide range of sounds, especially Rhythmic and Synth Lead, and so have a less consistent pattern in their parameters.
 It is also hard to draw colcusions about the clustering performance, due to the small sample size of presets, and the fact that many of the presets were made by using the Blending interface, so potentially have overly similar paramaters than if they'd been made from scratch by a person. To validate this approach more thoroughly, it would need to be applied to many 'real world' sets of presets of pre-existing commercial synthesisers, but several technical challenges (In particular lack of standardisation of control interfaces MORE DETAIL HERE) prevented this being possible during the sort timescale of this project.
@@ -430,7 +432,7 @@ It is also hard to draw colcusions about the clustering performance, due to the 
 	\label{fig:Categories}
 \end{figure}
 
-\subsection{Investigate how the PCA mapping scales with number of presets}
+\subsection{How the PCA Mapping Scales with Number of Presets}
 The consistency of the PCA mapping as more presets are added is of importance to the usefulness of the interface. If the mapping radically changes every time a new preset is added, then any intuitition the user has learned about what the different components represent will be lost. This is one of the reasons for choosing PCA, as the linearity of the technique should lead to less surprising results (EXPLAIN BETTER).\\
 Figure \ref{fig:PCAnumPresets} shows the variation of the first two principal components as the presets are added one at a time in the order of creation. After Histogram Equalisation has been applied the components are relatively stable, except at certain points where the component flips sign. These can clearly be seen at preset 34 for $PC_1$, and presets 6, 9, 13, 15, 28, 31:36 for $PC_2$. The bottom row of the figure shows the components after this sign flipping has been corrected by flipping the sign of the component. This makes a dramatic improvement in the stability of the principal components, especially for $PC_2$. This phenomenon also occurs in $PC_{3,4,5}$ used for the RGB mapping of the presets.
 \begin{figure}
@@ -458,12 +460,24 @@ This algorithm is used on $PC_3$ in Figure \ref{fig:PCAnumPresets2}. To implemen
 	%	\vspace{-30pt}
 \end{figure}
 
-DO a graph of the Latent value for the first 10 or so components vs number of presets. WRITE THIS SECTION
+The 'Latent' value for PCA is the variance of each component, and can be used to measure the effectiveness of the PCA mapping. If the first few components account for most of the variance of the dataset, then the dimensionality reduction has been successful.\\
+Figure \ref{fig:LatentOriginal} shows how the Latent score changes as more presets are added. Figure \ref{fig:LatentRandom} is the same plot but made with an entirely random dataset of the same size as the original dataset. Comparing the two graphs it can be concluded that the preset dataset is not purely random, as its PCA performs a lot better. Over 50\% of the variance can be accounted for by the first 2 components,  over 90\% can be accounted for by the first 10 components, and the graph seems to have assymtoted to a relatively stable state. In the random dataset, each of the fractions is rougly exponentially decresing as more presets are added. When all 36 random presets are included, only 50\% of the variance can be accounted for by the first 10 components. 
+
+This suggests that PCA is an appropriate technique to use on syntheiser datasets, however testing on more synthesiser datasets is necessary to validate this result.
 \begin{figure}
 	\hspace{-40pt}
-	\includegraphics[width = 7in]{LatentFraction.eps}
+	\begin{subfigure}{3.5in}
+		\includegraphics[width = \textwidth]{LatentFraction.eps}
+		\caption{Original Presets}
+		\label{fig:LatentOriginal}
+	\end{subfigure} 
+%
+	\begin{subfigure}{3.5in}
+		\includegraphics[width = \textwidth]{LatentFractionRandom.eps}
+		\caption{Randomised Presets}
+		\label{fig:LatentRandom}
+	\end{subfigure}
 	\caption{Latent Fraction - Colour denotes Principal Component number}
-	\label{fig:PCAnumPresets2}
 	%	\vspace{-30pt}
 \end{figure}
 
