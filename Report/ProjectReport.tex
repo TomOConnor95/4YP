@@ -120,8 +120,8 @@ THIS ABSTRACT NEEDS A LOT MORE WORK, WILL WORK ON AFTER WRITING MORE OF THE REPO
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \chapter{Introduction}
-\section{Background Information}
-Software Synthesisers (Soft-Synths) are computer applications which create sounds in response to musical input typically in the form of MIDI (\emph{Musical Instrument Digital Interface}) messages. They are widely used in a variety of musical contexts. Typical soft-synths have hundreds or thousands of parameters which control the sound generation algorithm, allowing the user to create sounds that suit their musical needs. This results in a high dimensional, non-linear search space which the user must navigate in order. Research indicates that humans are bad at navigating such interfaces with serial controls, and that there is a strong link between interface design and the level of creativity that the user with experience when using the interface. \\
+%\section{Background Information}
+Software Synthesisers (Soft-Synths) are computer applications which create sounds in response to musical input typically in the form of MIDI (\emph{Musical Instrument Digital Interface}) messages. They are widely used in a variety of musical contexts. Typical soft-synths have hundreds or thousands of parameters which control the sound generation algorithm, allowing the user to create sounds that suit their musical needs. This results in a high dimensional, non-linear search space which the user must navigate in order. Research indicates that humans are bad at navigating such interfaces with serial controls, and that there is a strong link between interface design and the level of creativity that the user with experience when using the interface. (REFERENCE) \\
 This work describes a novel interface designed to help users control synthesisers in a quicker and more intuitive manner. It combines 3 interfaces together: a traditional 'knob and slider' interface, a search space visualisation interface, and an iterative blending interface.
 
 A video of the full interface being used can be viewed at (LINK TO VIDEO).
@@ -204,8 +204,6 @@ There have been several previous attempts to use machine learning to make progra
 
 Talk about the preset blending study, including the parameter freezing.
 
-
-
 Talk about automatic tone matching
 
 Talk about the google sample mapping with TSNE (infinite drum machine).
@@ -214,7 +212,6 @@ Talk about how taking a sound sample from each preset could be a good way to do 
 
 Talk about the Rebecca Frink stuff
 
-Talk about the stuff about multidemsional controlers having higher thoroughput, and it being desirable for the control dimensions when exploring creatively not neededing to be tied to single parameters.
 \section{Description of HCI design principles for creative musical interfaces}
 In the work 'Creativity, Exploration and Control in Musical Parameter Spaces' by Robert H. Tubb. (REFERENCE PROPERLY), the representation and mapping of musical paramers is considered in Section 4.3.
 
@@ -243,9 +240,19 @@ A number of guidelines for creative musical interfaces are presented:
 	\item \emph{Smoothness}: Continuous higher derivatives are desirable to eliminate sudden changes in direction, this has relevance to the predictability of a control.
 	\item \emph{Linearity}: When a gesture, such as a scroll, occurs it will have a certain effect on that sound, more extreme versions of this gesture should produce more of the same effect. This property is hard to achieve with any dimensionality reduction method, however smoothness implies some linearity in the immediate neighbourhood.
 \end{enumerate}
-The Blending Interface described in Sectinon \ref{sec:BlendingDescription} follows all of these design guidelines, and the Selection Interface follows all except the \emph{Smoothness} condition (due to the sudden jumps between presets). Both are complex many-to many interfaces.
-
 \end{displayquote}
+The Blending Interface described in Section \ref{sec:BlendingDescription} follows all of these design guidelines, and the Selection Interface follows all except the \emph{Smoothness} condition (due to the sudden jumps between presets). Both are complex many-to many interfaces.
+
+In the thesis, the EARS model for creative cognition is developed, described in Figure \ref{fig:EARSmodel}. Detailed decriptions of the four quadrants of the model can be found in the thesis, Section 5.5.3
+\begin{figure}[h] 
+	\centering
+	\includegraphics[width = 6in]{EARSmodel.png}
+	\caption{The four quadrants formed by drawing distinctions between implicit vs. explicit thinking (left/right) and divergent vs. convergent thinking (top/bottom). (REFERENCE)}
+	\label{fig:EARSmodel}
+\end{figure}
+This project's interface will be evaluatied with this model in Section \ref{sec:EARS}.
+
+ALSO>>>>>Talk about the stuff about multidemsional controlers having higher thoroughput.
 
 \section{Principal Component Analysis}
 Wiki quote: FIND BETTER SOURCE OR WRITE OWN
@@ -384,7 +391,7 @@ If the full interface were to be extended to work with any VST, the traditional 
 \section{Selection Interface}
 Typical Soft-Synths are supplied with a large number of presets, which are usually named and arranged into categories. They are usually displayed in a list which can be searched by name, or split into category. In many soft-synths, each preset is given a set (usually 8) of Macro Controls, which each vary single parameter or combinations of parameters, and aim to give the user a quick way to tweak each preset.\\
 The Selection Interface is a new approach to displaying presets, arranging the presets as cells of a 2D voronoi diagram, such that similar presets are close to each other and coloured similarly. The presets can quickly be compared by moving the mouse around the diagram, and presets are selected by clicking on the cells. Once a preset is selected it can be edited by macro controls. 
-The presets have been divided into a number of categories. Clicking the category buttons at the top of the interface highlights the selected category, as shown in Figure \ref{fig:PCAInterface}b. By clicking the 'Display Mode' button, it is also possible to limit the presets displayed to just the selected category(s), displayed in a recalculated voronoi diagram.\\
+The presets have been divided into a number of categories. Clicking the category buttons at the top of the interface highlights the selected category, as shown in Figure \ref{fig:PCAInterface}. By clicking the 'Display Mode' button, it is also possible to limit the presets displayed to just the selected category(s), displayed in a recalculated voronoi diagram.\\
 Both the 2D spacing of the presets, and the creating of the macro controls is calculated automatically from the set of presets' parameter values using Principal Component Analysis (PCA).
 
 \begin{figure}[h] 
@@ -398,8 +405,8 @@ Both the 2D spacing of the presets, and the creating of the macro controls is ca
 \end{figure}
 
 \section{Blending Interface}
-Preset Blending is a somewhat popular approach in synth interface design, where new presets are created by a linear combination of presets. (EXAMPLES) The Blending Interface is an extension of this approach.\\
-Three initial presets (A, B, C) are selected, and are placed on the coreners of the triangle in the centre of the interface. As the cursor moves over the interface, a new preset is created as a weighted sum of the three presets, based on promixity to the corners. Once the user finds the optimal preset in the space, the user clicks. The preset clicked on then becomes the preset A (I.e is placed on the bottom corner of the triangle), and a new preset B and C are generated. \\
+Preset Blending is a somewhat popular approach in synth interface design, where new presets are created by a linear combination of presets. (EXAMPLES: Alchemy, MaxMSP Nodes) The Blending Interface is an extension of this approach.\\
+Three initial presets (A, B, C) are selected, and are placed on the corners of the triangle in the centre of the interface. As the cursor moves over the interface, a new preset is created as a weighted sum of the three presets, based on promixity to the corners. Once the user finds the optimal preset in the space, the user clicks. The preset clicked on then becomes the preset A (I.e is placed on the bottom corner of the triangle), and a new preset B and C are generated. \\
 This process is repeated as many times as desired, allowing the user to keep searching through the parameter space.\\
 If the user clicks on the 'Pause on Selected Preset Button', they are shown an interactive display of their past preset choices, which they can use to go back to previously selected settings and resume searching. It is also possible to select three of the previous presets, and assign them to preset A, B and C.
 The user has the option to freeze sections of the parameter space, which helps the search be more fine tuned to their needs.
@@ -417,7 +424,7 @@ The colours of the Blending Interface are calculated to be consistent with the S
 \section{How the Interfaces are Combined}
 When the application is started, the Selection interface is displayed first. Once a preset has been selected and possibly modified with the Macro Controls, the user has the option to click the 'Edit Mode' button, which opens the Traditional Interface, allowing the currently selected preset to be further modified. The user can move back to the Selection Interface by clicking the 'Return to Selection UI' button. The varied preset is displayed on the Selection Interface with a marker, attatched to the original preset, which is positioned and coloured to be consistent with the PCA mapping. If the user wants to undo the edits made to the preset they can click the 'Undo Edit' button. In this way the user can move back and forth between the Blending and PCA interfaces as often as desired.\\
 Once three presets have been selected, the user has the option of clicking the 'Blend Mode' button which opens the blending interface, and assigns the three seceted presets to A, B and C. The user can then use the blending interface for as long as necessary, and then click the 'Return to Preset Selection' button. This time another marker is created, with dotted lines to the 3 initially selected presets.\\ 
-This marker can then be used in the same way as the cells of the voronoi diagram, I.e it can be previewed by clicking, selected by double clicking, can be edited with the Macro Controls or the Traditional Interface. There are a set of parameter visialisations that are diaplayed alongside all of the presets to give the user more feedback into what changes they are making, and to aid in understanding how the synthesis algorithm works.
+This marker can then be used in the same way as the cells of the voronoi diagram, I.e it can be previewed by clicking, selected by double clicking, can be edited with the Macro Controls or the Traditional Interface. There are a set of parameter visualisations that are displayed alongside all of the presets to give the user more feedback into what changes they are making, and to aid in understanding how the synthesis algorithm works.
 \begin{figure}[h] 
 	\centering
 	\hspace*{-1.5cm}
@@ -693,7 +700,7 @@ where $w_i$ is the scalar importance weighting for the $i$th parameter, and $r_i
 
 The $L_1$ norm was chosen over the $L_2$ norm so that a few large parameter errors don't dominate the error metric and as no gradients are necessary.
 This is by no means a perfect metric for comparins synth settings, but it is good enough for our purposes. (IS IT?)
-COULD USE THE Index of Search Space Reduction (ISSR) Approach from Robert Tubbs thesis.
+%COULD USE THE Index of Search Space Reduction (ISSR) Approach from Robert Tubbs thesis.
 \section{Comparison of isolated interfaces}
 \subsection{Traditional Interface}
 \begin{wrapfigure}{r}{0.5\textwidth}
@@ -809,6 +816,13 @@ As these tests have only been carried out on one set of presets for one particul
 	%	\vspace{-30pt}
 \end{figure}
 
+\section{EARS-model based evaluation of interface}\label{sec:EARS}.
+In Table \ref{tab:EARStable}, the three interfaces are evaluated in terms of the EARS model from (REFERECE)
+
+Blending
+
+
+
 \chapter{User tests and Interviews}
 A rigourous user study would require time and resourses that this project is incapable of, however the interface has been shown to a number of musicians, and some feedback shown below:
 
@@ -817,24 +831,16 @@ A rigourous user study would require time and resourses that this project is inc
 \chapter{Conclusion}
 The interface proposed in this project has many benefits over a traditional synthesiser interface, as has been designed following design heuristics from the fields of Human Computer Interaction and Creative Cognition. Based on simulated user studies, the interface has at least as good performance as a traditional interface when carrying out search based tasks, and based on real user feedback it has many advantages in terms of creativity.
 \section{Further Work}
-The evaluation of this interface was only carried out on a single synthesiser, due to the projects time constraints. The interface has been designed to be as general purpose as possible, allowing it to control arbitrary synths over the OSC protocol, but due to a lack of standardisation between soft synths, and lack of implementation time, more work needs to be done to create a truly general purpose soft synth controller. As many soft-synths are in the VST format, making a version of the interface with acts as a VST host, and uses the parameter retrieval and preset storage functionality of VSTs is a good next goal if this project is continued in the future.
+The evaluation of this interface was only carried out on a single synthesiser, due to the project's time constraints. The interface has been designed to be as general purpose as possible, allowing it to control arbitrary synths over the OSC protocol, but due to a lack of standardisation between soft synths, and lack of implementation time, more work needs to be done to create a truly general purpose soft synth controller. As many soft-synths are in the Virtual Studio Technology (VST) format, making a version of the interface with acts as a VST Host, and uses the parameter retrieval and preset storage functionality of VSTs is a good next goal if this project is continued in the future.
 
-Talk about how the selections made in the blending interface could be used to create a large dataset of sound preferences, which could be used to train a more sophisticated method of preset generation in the blending interface.
+When the Blending Interface is used, the user carries out a large number of interactions, all of which show a users preference over hyperplanes of parameter settings. If recorded, it may be possible to use these interactions to form a training set to train more sophistocated models of user preference in the parameter space. This can be seen as an extension of the Bayesian Optimisation approach to preference galleries shown in \ref{BayesOptGallery}. As this technique relies on fitting a guassian process to the paramter space, large ammount of training data is necessary, and these interactions may be a way to find such data. As each comparison is choosing the optimum in a hyperplane, as opposed to a binary choice, the interactions have the potentially to be more information dense. Such models of user preference could be used to devise a more sophistocated preset generation algorithm.
 
-Talk about the hierarchical nature of synthesis parameters could be exploited to improve preset generation and comparison algorithms. 
+In typical synthesisers, the parameters have a hierarchical nature, as the synthesis algorithm is usally made up of several modules, each with their own parameters and/or sub modules. Many synthesisers store their presets in the JSON (Javascript Object Notation) format, and use such hierarchies to make clean data structures. It may be possible to make use of this hierarchical parameter structure to deduce covariances between parameters, as parameters in the same module are likely to be much more co-dependant than those in seperate modules. Thsi could be used to refine the preset generation and comparison algorithms, and help to detect and correct cases of permutation ambiguity. However this approach has several challenges, most importantly there is a lack of standardisation of preset storage hierarchies.
+
+%The Native Kontrol Standard, is a standardard
+
 \begin{thebibliography}{9}
 \singlespacing
-\bibitem{CleanCode}
-Martin, R. (2009). Clean Code. 1st ed. Upper Saddle River, NJ: Prentice Hall, pp.36-52.
-\bibitem{WikiLM}
-En.wikipedia.org. (2017). Levenberg-Marquardt algorithm. \\
-\url{https://en.wikipedia.org/wiki/Levenberg-Marquardt_algorithm}
-\bibitem{WikiOp}
-En.wikipedia.org. (2017). Optimisation Algorithms \& Methods.
-\url{<https://en.wikipedia.org/wiki/Category:Optimization_algorithms_and_methods>}
-\bibitem{OOPMatlab}
-Introduction to Object Oriented Programming in Matlab\\
-\url{https://uk.mathworks.com/company/newsletters/articles/introduction-to-object-oriented-programming-in-matlab.html}
 \bibitem{UGen}
 Stefan Kersten. skUG SuperCollider UGen library., 2008. \url{http://space.k- hornz.de/software/skug/}.
 \end{thebibliography}
