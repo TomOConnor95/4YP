@@ -36,6 +36,9 @@ classdef ApplicationDataPCAInterface < handle
         
         presetPCAParams;
         
+        % Doesn't work quite right yet - preset markers in wrong place!
+        weightedPCA = false;
+        
         % UI elements - PCA Voronoi
         selectedColour = [1.0, 0, 0];
         mouseOverColour = [0, 0, 1.0];
@@ -1199,8 +1202,13 @@ mu = mean(presetStoreFlattened);
 presetStoreFlattened = presetStoreFlattened - mu;
 
 
-[coeff, score, latent] = pca(presetStoreFlattened);
-
+if appData.weightedPCA == true
+    [coeff, score, latent] = pca(presetStoreFlattened, 'VariableWeights','variance');
+else
+    [coeff, score, latent] = pca(presetStoreFlattened);
+end
+    
+    
 appData.coeff = coeff;
 appData.score = score;
 appData.latent = latent;
@@ -1266,10 +1274,20 @@ B = mapVectorRange(B, 0.1,1);
 appData.colours = num2cell([R,G,B],2);
 
 % Perform PCA on presets - timbre parameters
-[timbreCoeff, timbreScore, timbreLatent] = pca(presetStoreFlattened(:,1:72));
+
+if appData.weightedPCA == true
+    [timbreCoeff, timbreScore, timbreLatent] = pca(presetStoreFlattened(:,1:72), 'VariableWeights','variance');
+else
+    [timbreCoeff, timbreScore, timbreLatent] = pca(presetStoreFlattened(:,1:72));
+end
+    
 
 % Perform PCA on presets - time parameters
-[timeCoeff, timeScore, timeLatent] = pca(presetStoreFlattened(:,73:94));
+if appData.weightedPCA == true
+    [timeCoeff, timeScore, timeLatent] = pca(presetStoreFlattened(:,73:94), 'VariableWeights','variance');
+else
+    [timeCoeff, timeScore, timeLatent] = pca(presetStoreFlattened(:,73:94));
+end
 
 coeffCombined = [timbreCoeff(:,1:4), zeros(size(timbreCoeff(:,1:4)));...
                  zeros(size(timeCoeff(:,1:4))), timeCoeff(:,1:4), ];
@@ -1285,7 +1303,12 @@ mu = mean(presetStoreFlattened);
 
 presetStoreFlattened = presetStoreFlattened - mu;
 
-[coeff, score, latent] = pca(presetStoreFlattened);
+if appData.weightedPCA == true
+    [coeff, score, latent] = pca(presetStoreFlattened, 'VariableWeights','variance');
+else
+    [coeff, score, latent] = pca(presetStoreFlattened);
+end
+
 % 
 % appData.coeff = coeff;
 % appData.score = score;
