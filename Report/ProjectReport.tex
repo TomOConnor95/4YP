@@ -105,7 +105,7 @@ Candidate Number: 355136\\
 
 \begin{abstract}
 \begin{flushleft}
-Software Synthesisers (Soft-Synths) are computer applications which create sounds in response to musical input typically in the form of MIDI messages. They are widely used in a variety of musical contexts. Typical soft-synths have hundreds or thousands of parameters which control the sound generation algorithm, allowing the user to create sounds that suit their musical needs. This results in a high dimensional, non-linear search space which the user must navigate in order. Research indicates that humans are bad at navigating such interfaces with serial controls, and that there is a strong link between interface design and the level of creativity that the user with experience when using the interface. \\
+Software Synthesisers (Soft-Synths) are computer applications which create sounds in response to musical input typically in the form of MIDI messages. They are widely used in a variety of musical contexts. Typical soft-synths have hundreds or thousands of parameters which control the sound generation algorithm, allowing the user to create sounds that suit their musical needs. This results in a high dimensional, non-linear search space which the user must navigate in order. The act of choosing the parameter values for a synth is commonly refered to as 'programming' the synth. Research indicates that humans are bad at navigating such interfaces with serial controls, and that there is a strong link between interface design and the level of creativity that the user with experience when using the interface. \\
 This work describes a novel interface designed to help users control synthesisers in a quicker and more intuitive manner. It combines 3 interfaces together: a traditional 'knob and slider' interface, a search space visualisation interface, and an iterative blending interface.
 
 THIS ABSTRACT NEEDS A LOT MORE WORK, WILL WORK ON AFTER WRITING MORE OF THE REPORT
@@ -124,7 +124,7 @@ THIS ABSTRACT NEEDS A LOT MORE WORK, WILL WORK ON AFTER WRITING MORE OF THE REPO
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \chapter{Introduction}
 %\section{Background Information}
-Software Synthesisers (Soft-Synths) are computer applications which create sounds in response to musical input typically in the form of MIDI (\emph{Musical Instrument Digital Interface}) messages. They are widely used in a variety of musical contexts. Typical soft-synths have hundreds or thousands of parameters which control the sound generation algorithm, allowing the user to create sounds that suit their musical needs. This results in a high dimensional, non-linear search space which the user must navigate in order. Research indicates that humans are bad at navigating such interfaces with serial controls, and that there is a strong link between interface design and the level of creativity that the user with experience when using the interface \cite{TubbThesis}. \\
+Software Synthesisers (Soft-Synths) are computer applications which create sounds in response to musical input typically in the form of MIDI (\emph{Musical Instrument Digital Interface}) messages. They are widely used in a variety of musical contexts. Typical soft-synths have hundreds or thousands of parameters which control the sound generation algorithm, allowing the user to create sounds that suit their musical needs. This results in a high dimensional, non-linear search space which the user must navigate. Research indicates that humans are bad at navigating such interfaces with serial controls \cite{YeeKing}, and that there is a strong link between interface design and the level of creativity that the user with experience when using the interface \cite{TubbThesis}. \\
 This work describes a novel interface designed to help users control synthesisers in a quicker and more intuitive manner. It combines 3 interfaces together: a traditional 'knob and slider' interface, a search space visualisation interface, and an iterative blending interface.
 
 A video of the full interface being used can be viewed at (LINK TO VIDEO).
@@ -134,24 +134,32 @@ A video of the full interface being used can be viewed at (LINK TO VIDEO).
 	\item Create dataset of synthesiser presets
 	\item Create low dimensional embedding of the preset dataset
 	\item Prototype the user interface (UI).
-	\item Determine an optimal way to generate new presets for each  iteration of the Blending INterface
+	\item Determine an optimal way to generate new presets for each iteration of the Blending Interface
+	\item Compare the novel interface to a 'traditional' synth interface.
 \end{itemize}
 NEEDS WORK
 \section{Methodology}
 The main methodology taken in this project is that the set of preset sounds for a synthesiser contain a lot of useable information. This is because much of the parameter space of typical synthesisers creates inaudible, or terrible sounding sounds, and the presets have been designed to avoid such regions, and to highlight a diverse range of the synth's best sounds. By working to map the timbre of the presets, rather than the timbre of the entire parameter space, a much simpler, and hopefully more useful latent space can be identified, only requiring simpler statistical techniques to be used.
 
-The project is aimed at fixed architechure parmetric synhesisers, such as FM, additive, subractive, and physical modelling synthesisers.
+This project aims to make use of human users' impressive abilities of spatial memory, spatial reasoning, and memory of colours to increase the effectiveness of the interface. In particular, effort will be taken to maintain visual consistency between interfaces. (REFERENCE)
+
+Studies show (REFERENCE), that users are much better at giving a preferance between several options, rather that scoring indivudual options numerically. This will be exploited in the Blending Interface, where in each iteration the user selectes between a range of sounds, which were generated based on their previous preferences. (TRY TO DESCRIBE BETTER)
+
+The project is aimed at fixed architechure parmetric synhesisers, such as FM, additive, subractive, and physical modelling synthesisers. These have a fixed number of parameters which entirely decribe the sound, making parameter-based comparisons between presets possible. 
 NEEDS MORE WORK.
 \chapter{Literature Review}
 \section{Introduction to Synthesisers}
 Synthesisers are devices which can create a wide waviety of musical sounds in response to  user input, typically in the form of notes played on a keyboard. %The first synthesisers consisted of single note electronic oscilators, such as the Theremin... , 
 Wiki - "The earliest synthesizers used a variety of thermionic-valve (vacuum tube) and electro-mechanical technologies.". \\
-In the 1960s and 70s, after the invention of the transistor, - Wiki - "Early analog synthesizers used technology from electronic analog computers and laboratory test equipment. They were generally "modular" synthesizers, consisting of a number of independent electronic modules connected by patch cables into a patchbay that resembled the jackfields used by 1940s-era telephone operators. Synthesizer modules in early analog synthesizers included voltage-controlled oscillators (VCOs), voltage-controlled filters (VCFs), and voltage-controlled amplifiers (VCAs). The control voltage varied frequency in VCOs and VCFs, and attenuation (gain) in VCAs. Additionally, they used envelope generators, low-frequency oscillators, and ring modulators. Some synthesizers also had effects devices, such as reverb units, or tools such as sequencers or sound mixers. Because many of these modules took input sound signals and processed them, an analog synthesizer could be used both as a sound-generating and sound-processing system.\\
-Famous modular synthesizer manufacturers included Buchla \& Associates, Moog Music, ARP Instruments, Inc., and Electronic Music Studios."
+In the 1960s and 70s, after the invention of the transistor, - Wiki - "Early analog synthesizers used technology from electronic analog computers and laboratory test equipment. They were generally "modular" synthesizers, consisting of a number of independent electronic modules connected by patch cables into a patchbay that resembled the jackfields used by 1940s-era telephone operators. Synthesizer modules in early analog synthesizers included voltage-controlled oscillators (VCOs), voltage-controlled filters (VCFs), and voltage-controlled amplifiers (VCAs). The control voltage varied frequency in VCOs and VCFs, and attenuation (gain) in VCAs. Additionally, they used envelope generators, low-frequency oscillators, and ring modulators. Some synthesizers also had effects devices, such as reverb units, or tools such as sequencers or sound mixers. 
+%Because many of these modules took input sound signals and processed them, an analog synthesizer could be used both as a sound-generating and sound-processing system.
+Famous modular synthesizer manufacturers included Buchla \& Associates, Moog Music, ARP Instruments, Inc., and Electronic Music Studios."\\
 Later analogue synths were fixed architecture (or semi-modular), and much more compact and user friendly. -Wiki- "The most popular of these was the Minimoog". At this time, synthesisers began to feauture commoonly in popular music, both in the studio and in live situations.\\
-In the 1980s, digital syntheisers were invented, allong with a much wider variety of syntesis techniques than was possible with analogue electronics. In particular FM synthesis defined much of the musical sound of the 1980s, and was poularised by the Yamaha DX7 synthesisers. (REFERENCE ALL THIS STUFF!)
+In the 1980s, digital syntheisers were invented, allong with a much wider variety of syntesis techniques than was possible with analogue electronics. In particular FM synthesis defined much of the musical sound of the 1980s, and was popularised by the Yamaha DX7 synthesisers. (REFERENCE ALL THIS STUFF!)
 
 Since the invention of personal computers, many popular synthesisers have been recreated digitally as software synthesisers, commonly known as 'Plug-ins', and are widely used in modern Digital Audio Workstations (DAWs). As well as recreatations of hardsware synthesisers, many novel software synthesisers have been developed solely for use on computers, making use of the flexibility, the increased computing power, and interactive display capabitilies of computers. 
+
+A much more in depth history of synthesisers, as well as deatiled explanation of all aspects of synthesisers can be found in The Syntheser by Mark Vail \cite{Synth}.
 
 In the thesis "Development and Exploration of a Timbre Space Representation of Audio" \cite{SynthTypes} %http://mig.dcs.gla.ac.uk/wp-content/mig-papers/craig_nicol_thesis.pdf
 the common methods of audio synthesis are decrebed in detail, and are as follows:
@@ -205,23 +213,27 @@ Software synthsesiers have a wide variety of interfaes. Many follow similar desi
 	%https://www.ableton.com/en/packs/wavetable/
 \end{figure}
 
-Some software synthesisers have modular designs, such as SoftTube Modular, and some even allow users to program synthesis modules from scratch, such as Max/MSP and Supercollider.
+Some software synthesisers have modular designs, such as SoftTube Modular, and some even allow users to design synthesis modules from scratch, such as Max/MSP and Supercollider.
 
-There has been lots of reasearch in the Computer Music field to use multideminsional controllers, such as the Myo, Leap Motion and Microsoft Kinect, to control synthesis parameters in real time, and research into advanced user interaction types, such as preset blending and randomisation of presets. (EXAMPLES!!) Several studies have applied a variety of machine learning techniques to synthesiser control, as described in the next section.
+There has been lots of reasearch in the Computer Music field to use multideminsional controllers, such as the Myo, Leap Motion and Microsoft Kinect, to control synthesis parameters in real time, and research into advanced user interaction types, such as preset blending (see vector synthesis) and randomisation of presets. (EXAMPLES!!)(NI FM8) Several studies have applied a variety of machine learning techniques to synthesiser control, as described in the next section.
 
 \section{Previous attempts of using machine learning to control synthesisers}
 NEEDS A LOT OF WORK!!\\
-There have been several previous attempts to use machine learning to make programming synthesisers easier and more expressive.
+
+Many user have difficulties programming synthesisers, due to large ammount of technical and creative skill necessary. There have been several previous attempts to use machine learning to make programming synthesisers easier and more expressive. In Yee King's thesis \cite{YeeKing} Sections 4.1.1, and 4.1.2 describes the difficulty of programming synthesisers, and several of these attempts, from both academia and in commercial products.
 
 Talk about the preset blending study, including the parameter freezing.
+Many synthesisers include preset blending for part of, or their entire architechture. 
 
-Talk about automatic tone matching \cite{YeeKing}
+The Google NSynth (Neural Synthesiser) project \cite{NSynth}, develops a technique to do preset blending of sampled instruments, in a latent space of a WaveNet autoencoder rather than operating directly on the audio recordings. This project has impressive results, but a downside is that it relies upon pre-computing a large database of audio recordings to densely sample the latent space, which are then interpolated for real time playback. Furthermore only 16 instruments were sampled.
 
-Talk about the google sample mapping with TSNE (infinite drum machine). The Selection Interface draws inspiration from this project.
+Tone Matching is an active area of research in which a synthesiser is automatically programmed to match a reference audio recording. Common techniques involve using global optimisation techniques, such as genetic algorithms, feed-forward neural networks and gradient methods. This either requires a system which continuously monitors the output of the synthesiser, and calculates a sound-based metric to compare to the reference recording's metric, or requires a densely sampled database of metric values over the parameter space of the synthesiser.  The Mel Frequency Cepstrum Coefficient (MFCC) has been identified as the best metric to use, as it is based on human perception.  \cite{YeeKing}
 
-Talk about how taking a sound sample from each preset could be a good way to do the dimensionality reduction interface, but how a parameter based approach is preferable in many ways. Mention which sound metrics would be good to use, and the difficulties involved. \cite{YeeKing}
+Dimensionality reduduction has been applied to a set of audio recordings in the 'Infinite Drum Machine' - Google AI Experiment \cite{InfinteDrum} (NOT SURE HOW TO CITE THIS). In this work, feature vectors were calculated for a large number of real world sound recordings, and t-Distributed Stochatic Neighbour Embedding (tSNE) was used to map these sounds to 2 dimensions. This mapping was used to select samples for use in a drum machine. \\
+The Selection Interface draws inspiration from this project. It would be possible to carry about the same process for a synthesiser if first an audio recording was taken of each preset of the synthesiser. However, it is not clear exactly what the best way to select what audio recording should be taken from each preset, as different presets respond very differently to the MIDI Note, Velocity, and Note Length. Therefore the best sampling method to accurately characterise a synthesiser preset in as few audio recordings as possible is an open research question.\\
+In this work a parameter-based approach is taken, to see if similar quality results can be obtained through a statistical analysis of the paramters of the prestets of a synthesiser. If this approach is sucessful, it also has many benefits in terms of the speed of the mapping, and the ammount of storage required.
 
-Talk about the Wekinator stuff
+Talk about the Wekinator stuff...
 
 \section{Description of HCI design principles for creative musical interfaces}\label{sec:Tubb}
 NEEDS SOME WORK - most likely needs to be shortened.\\
@@ -282,6 +294,8 @@ Talk about weighted PCA
 \section{Bayesian Optimisation}
 NEEDS WRITING\\
 Discuss how this is a promising technique in this field, for example preference gallery interface, but due to large ammount of training data neccesary, and bad performance in high dimensions it wont be used.
+
+Mention preferance gallery study, and how users are much better at giving comparisons than scoring individual presets. Hence Blending Interface, as allows comparison between 3 presets, and a plane of settings in-between them.
 
 \chapter{Description of Synthesiser and Image Processing Algorithms}
 \section{Synthesiser Algorithm}
@@ -364,7 +378,7 @@ USE TABLE TO CLEAN UP PREVIOUS SECTION
 Typical commercial synthesisers have a large number of parameters (Yamaha DX7 - 126 parameters, Omnisphere 2 - several thousand parameters), which can be discrete or continuous, and are usually contrained within a range. Some synthesisers have Modular or Semi-Modular architectures, which allow for a lot of flexibility, but due to the combinational explosion of number of parameter combinations, and difficulty blending between presets, this type of architecture is not addressed in the work.
 Some synthesisers use short audio recordings, known as samples, as part of their sound creation algorithm. This creates difficulties blending between presets, so this type of architecture will not be considered in this work. (However both of these type of algorithms would be interesting to try as a follow up work).
 
-The type of synth that this work is aimed at is 'analogue-style' synths, in which there is a medium number of parameters, with a fixed internal routing. 
+The type of synth that this work is aimed at is 'analogue-style' synths, in which there is a medium number of parameters, with a fixed internal routing. Effects modules, such as reverb, delay and chorus have not been included in the synthesiser, as these can easily be added to the signal chain by users. Effects modules also tend to be much easier to control than synthesisers, as they typically have fewer, and more intuitive, parameters. Effects modules are typically chained together in series, with no feedback, so each effect module is a seperate transfer funtion, with no covariance between the parameters.
 
 The synthesiser features a combination of continuous and discrete parameters, all of which are bounded. Common bounds are: $[0, 1]$, $[0, k]$ and $[-k, k]$, where $k \in \mathbb{R}^+ $.
 
@@ -373,7 +387,6 @@ The DX7 was chosen to base the synth off because it is a very famous and powerfu
 The synthesiser was designed to have access to as wide a range of sounds as possible with as few parameters as possible. For example instead of having a separate envelope generator for each oscillator (as in the Yamaha DX7), only 2 envelopes were included, with a blendable amount per operator. The synth has 96 total parameters, compared to the 126 of the DX7, but it can replicate most of the useful sounds of a DX7. Despite aims to reduce parameter count, there are still many redundant parmaeters in most presets for this synthesiser. For example, if the amplitude of one of the LFOs is set to zero, all of the other parameters to do with the LFO will have no effect on the sound. This is a common feature with synthesisers, and presets a challenge when trying to learn useful information from the parameters.
 
 In Yee King's thesis \cite{YeeKing}, a similar FM7 Ugen based Supercollider synthesiser was used, but no envelopes or LFOs were included, so that it was limited to producing sounds with a static timbre. Whilst this had advantages for the timbre mapping approach of the work, it resulted in a synthesiser that was not very representative of ones typically used, as envelopes are such an important part of designing sounds. 
-
 
 An interesting property of this synthesiser design is that due to the 6 identical operators which can be configured in any combination, there is lots of possible permutation ambiguity, as if two operators have all of their parameters switched, the sound will remain identical. This presents a challenge as two presets can have very different parameters despite having the exact same sound. 
 \section{Image Processing Algorithm}
@@ -877,7 +890,13 @@ Nicol, C. (2005). \emph{Development and Exploration of a Timbre Space Representa
 \bibitem{TubbThesis}
 Tubb, R. (2016). \emph{Creativity, Exploration and Control in Musical Parameter Spaces}. Ph.D. Queen Mary University of London.
 
+\bibitem{Synth}
+Vail, M. (2014). \emph{The synthesizer}. New York, NY: Oxford University Press.
+
 \bibitem{YeeKing}
 Yee-King, M. (2011). \emph{Automatic Sound Synthesizer Programming: Techniques and Applications}. Ph.D. University of Sussex.
+
+\bibitem{NSynth} \emph{Neural Audio Synthesis of Musical Notes with WaveNet Autoencoders}. Engel, J., Resnick, C., Roberts, A., et al.\ 2017, arXiv:1704.01279 
+
 \end{thebibliography}
 \end{document}  
