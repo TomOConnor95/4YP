@@ -21,7 +21,7 @@
 \usepackage{multirow}
 \usepackage[table,xcdraw]{xcolor}
 \usepackage{array}
-\newcolumntype{L}{>{\centering\arraybackslash}m{7cm}}
+\newcolumntype{L}{>{\centering\arraybackslash}m{6.5cm}}
 
 \usepackage{csquotes}
 
@@ -297,7 +297,7 @@ Dicuss the possible extention to using Sparse PCA.
 Talk about weighted PCA 
 \section{Bayesian Optimisation}
 NEEDS WRITING - Maybe not necessary at all\\
-Discuss how this is a promising technique in this field, for example preference gallery interface, but due to large ammount of training data neccesary, and bad performance in high dimensions it wont be used.
+Discuss how this is a promising technique in this field, for example preference gallery interface, but due to large amount of training data neccesary, and bad performance in high dimensions it wont be used.
 
 Mention preferance gallery study, and how users are much better at giving comparisons than scoring individual presets. Hence Blending Interface, as allows comparison between 3 presets, and a plane of settings in-between them.
 
@@ -463,7 +463,7 @@ This marker can then be used in the same way as the cells of the voronoi diagram
 \section{Traditional Interface}
 %\subsection{Detailed Description}
 \begin{wrapfigure}{r}{0.5\textwidth}
-		\vspace{-30pt}
+		\vspace{-10pt}
 	\includegraphics[width = 3.5in]{TraditionalUI2.png}
 	\caption{Trad. Interface - 'Timbre Controls 2'}
 	\label{fig:TraditionalInterface2}
@@ -474,18 +474,18 @@ This interface was created in the MATLAB App Designer toolbox. As the parameters
 A skilled user can use knowledge of synthesis to construct any preset they can conceive of. The entire parameter space can be searched. For sectional of the synthesiser archececture that are more intuitive, such as the LFOs and envelopes, this works very well.
 \subsection{Weaknesses}
 Even if the user knows exactly what each parameter should be set to, it will still take several minutes to go through all of the 96 knobs and set them to the correct value. This is studied in detail in Section \ref{sec:TradEval}, which shows that the order at which the parameters are visited is absolutely crucial to the speed of the interface: if they are visited in a random order, the interface is very slow. Parts of the synthesis architecture are non-intuitive and fiddly to use, in particular the 36 phase modulation routing parameters shown in Figure \ref{fig:TraditionalInterface2}. If the user doesn't know exactly what they want, or how to acheive a particular sound, this interface can be extremely inefficient and frustrating.
-
+\pagebreak
 \section{Selection Interface}\label{sec:SelectionDescription}
 %\subsection{Detailed Description}
 This interface was created as a Matlab 'figure based application'. MAYBE PUT THE PCA DESCRIPTION HERE
-\subsection{Global PCA vs Time/Timbre PCA}
+\subsection{Global PCA vs Time/Timbre PCA}\label{sec:GlobalTimeTimbre}
 The PCA is calculated in two different ways for different sections of the interface. In 'Global PCA', each of the $36$ presets' $96$ parameters arranged in a $36 \times 96$ array. PCA is carried out on this array to produce the Global PCA Weights and Scores. 
 
 In Time/Timbre PCA, the $96$ parameters are partitioned into two sets: $72$ which affect timbre, and $24$ which affect variation of the sound over time (I.e all of the envelope and LFO parameters). PCA is then carried out seperately on the resulting  $36 \times 72$, and $36 \times 24$ arrays to produce the Time PCA Weights, and the Timbre PCA Weights. 
 
 The Global PCA Weights are used for the XY-RGB mapping of the Voronoi diagram, the Global PCA Macros, and for colouring the Blending Interface. The Time/Timbre PCA Weights are just used for the Time/TImbre Macro Controls.
 
-The user is given the option to switch between the Global, and Time/Timbre Macro Controls, as the global controls allow a greater ammount to the space to be searched, but the Time/Timbre controls can be more understandable. See Section \ref{sec:SelectionEval} for a evaluation of the two control types.
+The user is given the option to switch between the Global, and Time/Timbre Macro Controls, as the global controls allow a greater amount to the space to be searched, but the Time/Timbre controls can be more understandable. See Section \ref{sec:SelectionEval} for a evaluation of the two control types.
 The Macro controls are the same for all presets, but centered on the currently selected preset. I.e. they allow a relative change of parameters not an absolute parameter change. A possible extension is to create a unique set of macro controls for each preset, which may make macro controls more useful, but at the sacrifice of consistency between presets.
 
 Another possible extension to this approach is to allow parameter freezing, as in the Blending Interface (see Section \ref{sec:BlendingDescription}), and have the PCA Macros automatically be recalculated based on the currently unfrozen parameters.
@@ -539,7 +539,7 @@ It is also hard to draw conclusions about the clustering performance, due to the
 	~ %add desired spacing between images, e. g. ~, \quad, \qquad, \hfill etc. 
 	%(or a blank line to force the subfigure onto a new line)
 	\begin{subfigure}[b]{0.48\textwidth}
-		\includegraphics[width=\textwidth]{CategoryPluckedMallet.png}
+		\includegraphics[trim={0 0 0.01cm 0}, clip, width=\textwidth]{CategoryPluckedMallet.png}
 		\caption{Plucked/Mallet}
 		\label{fig:categoriesPluckedMallet}
 	\end{subfigure}
@@ -552,13 +552,13 @@ It is also hard to draw conclusions about the clustering performance, due to the
 ~ %add desired spacing between images, e. g. ~, \quad, \qquad, \hfill etc. 
 %(or a blank line to force the subfigure onto a new line)
 \begin{subfigure}[b]{0.48\textwidth}
-	\includegraphics[width=\textwidth]{CategorySynthLead.png}
+	\includegraphics[trim={0 0 0.01cm 0}, clip, width=\textwidth]{CategorySynthLead.png}
 	\caption{Synth Lead}
 	\label{fig:categoriesSynthLead}
 \end{subfigure}
 \\
 \begin{subfigure}[b]{0.48\textwidth}
-	\includegraphics[width=\textwidth]{CategorySynthPad.png}
+	\includegraphics[trim={0 0 0.01cm 0}, clip, width=\textwidth]{CategorySynthPad.png}
 	\caption{Synth Pad}
 	\label{fig:categoriesSynthPad}
 \end{subfigure}
@@ -569,20 +569,21 @@ It is also hard to draw conclusions about the clustering performance, due to the
 	\caption{Rhythmic}
 	\label{fig:categoriesRhythmic}
 \end{subfigure}
-	\caption{Preset Categories shown on Selection Interface}
+	\caption{Preset Categories shown on Selection Interface - For ceratin categories, such as Piano/Keys and Plucked/Mallet, the PCA + Histogram Equalisation mapping has effectively clustered the presets together. Other categories, such as Synth Lead, are less clustered.}
 	\label{fig:Categories}
 \end{figure}
 
 \subsection{How the PCA Mapping Scales with Number of Presets}
 The consistency of the PCA mapping as more presets are added is of importance to the usefulness of the interface. If the mapping radically changes every time a new preset is added, then any intuitition the user has learned about what the different components represent will be lost. This is one of the reasons for choosing PCA, as the linearity of the technique should lead to less surprising results (EXPLAIN BETTER).\\
-Figure \ref{fig:PCAnumPresets} shows the variation of the first two principal components as the presets are added one at a time in the order of creation. After Histogram Equalisation has been applied the components are relatively stable, except at certain points where the component flips sign. These can clearly be seen at preset 34 for $PC_1$, and presets 6, 9, 13, 15, 28, 31:36 for $PC_2$. The bottom row of the figure shows the components after this sign flipping has been corrected by flipping the sign of the component. This makes a dramatic improvement in the stability of the principal components, especially for $PC_2$. This phenomenon also occurs in $PC_{3,4,5}$ used for the RGB mapping of the presets.
-\begin{figure}
+\begin{figure}[h]
 	\hspace{-80pt}
 	\includegraphics[width = 8.5in]{PCAnumPresets1.eps}
-	\caption{PCA stability with number of presets}
+	\caption{PCA stability with number of presets. These plots show the positions of the indiviual presets when mapped onto the first and second principal components, with and without Histogram Equalisation. The mapping is recalculated each time a new preset is added. The positions are relatively stable except at discrete points where the component flips. These flips can be automatically corrected, as shown in the thrid row, with details of the correction process shown in Figure \ref{fig:PCAnumPresets2}.}
 	\label{fig:PCAnumPresets}
 	%	\vspace{-30pt}
-\end{figure}
+\end{figure}8
+Figure \ref{fig:PCAnumPresets} shows the variation of the first two principal components as the presets are added one at a time in the order of creation. After Histogram Equalisation has been applied the components are relatively stable, except at certain points where the component flips sign. These can clearly be seen at preset 34 for $PC_1$, and presets 6, 9, 13, 15, 28, 31:36 for $PC_2$. The bottom row of the figure shows the components after this sign flipping has been corrected by flipping the sign of the component. This makes a dramatic improvement in the stability of the principal components, especially for $PC_2$. This phenomenon also occurs in $PC_{3,4,5}$ used for the RGB mapping of the presets.
+
 As PCA is very quick to compute, the necessary sign reversals to correct the components can easily be computed using dynamic programming.\\ Defining $PCA_i^k$ to be the $i$th principal component computed with $k$ presets.
 \vspace{-10pt}
 \begin{itemize}
@@ -627,30 +628,30 @@ This suggests that PCA is an appropriate technique to use on syntheiser datasets
 asdasdasdsa
 \subsection{Investigate Permutation Ambiguity}
 asdasdsa
-
+\pagebreak
 \section{Blending Interface}
 \subsection{Detailed Description}\label{sec:BlendingDescription}
-This interface was created as a Matlab 'figure based application'.
+This interface was created as a Matlab figure-based application. Figure \ref{fig:BlendingAlgorithm} shows the the key steps of the Blending Interface's algorithm.
 
 \begin{figure}[h] 
 	\centering
-	\includegraphics[width = \textwidth]{BlendingAlgorithm.png}
+	\includegraphics[width = 5in]{BlendingAlgorithm.png}
 	\caption{Blending Algorithm flow chart}
 	\label{fig:BlendingAlgorithm}
 \end{figure}
-
-The blending of presets is calculated as a non orthogonal vetor decomposition: (REFERENCE!)
+%
+The blending of presets is calculated as a non orthogonal vetor decomposition: \cite{NonOrthogonal}
 \begin{equation}
 	\vec{P} = f(\alpha\vec{A} + \beta\vec{B} + \gamma\vec{C})
 	\label{eq:PresetMix}
 \end{equation}
 Where $\vec{P}$ is the blended preset, $\vec{A}$, $\vec{B}$, $\vec{C}$ are presets A, B and C, $f$ is a function which applies parameter constraints, and $\alpha$, $\beta$ and $\gamma$ are calculated from the following matrix equation:
 \begin{equation}
-[\beta,  \gamma]^T = (\vec{M}^T*\vec{M})\\vec{M}^T*[x, y], 
+[\beta,  \gamma]^T = (\vec{M}^T\vec{M})\vec{M}^T[x, y], 
 	\hspace{1in} \alpha = 1 - (\beta + \gamma)
 \end{equation}
-\begin{wrapfigure}{R}{0.35\textwidth}
-	%\vspace{-30pt}
+\begin{wrapfigure}{r}{0.35\textwidth}
+	\vspace{-10pt}
 	\includegraphics[width = \textwidth/3]{BlendVectors.png}
 	\caption{Non-orthogonal vector decomposition}
 	\label{fig:BlendingVectors}
@@ -664,33 +665,34 @@ Where $\vec{P}$ is the blended preset, $\vec{A}$, $\vec{B}$, $\vec{C}$ are prese
 	\label{fig:BlendingColours}
 	\vspace{-30pt}
 \end{wrapfigure}
-where $x$, and $y$ are the x and y coordinates of the current cursor position, and $\vec{M} =[\vec{b},  \vec{c}]$, where $\vec{b}$,  $\vec{c}$ are vectors from the A preset location to the B and C preset locations on the interface, as shown in Figure \ref{fig:BlendingVectors}.
+where $x$ and $y$ are the x and y coordinates of the current cursor position, and $\vec{M} =[\vec{b},  \vec{c}]$, where $\vec{b}$,  $\vec{c}$ are vectors from preset location A to the B and C locations, as shown in Figure \ref{fig:BlendingVectors}. There are two reasons for blending the presets in this way. Firstly, on an $m$-dimensional control surface, it is possible to linearly blend between all possible combinations of $m+1$ presets, so on a 2D screen, three presets should be blended.\footnote{Some implementations of preset blending in commercial synthesisers use four presets located on the corners of a square, however in this arrangement it is not possible to reach all possible combinations.} Secondly, this arrangment allows for locations both inside and outside of the central triangle to be used. Inside the triangle, $\alpha$, $\beta$ and $\gamma$ are all in the range [0, 1], giving an \emph{interpolation} between the presets. However, outside the triangle it is possible for $\alpha$, $\beta$ and $\gamma$ to be less than zero and greater than one, allowing for \emph{extrapolation}.
 
-The parameter constraint function $f$, applies the relevant constraints to each parameter. Most parameters are continuous with an upper and lower bound, $[l, u]$. For these parameters: $f_i(P_i) = \min(\max(P_i, l), u)$. For the Coarse frequency parameters, the continuous blended value is discretised back into the set ${0.5, 1, 2, 3, ...}$, which the desicion boundary between neighbouring number falling equidistant to the numbers, as shown in Figure \ref{fig:Freq Coarse}.
+The parameter constraint function, $f$, applies the relevant constraints to each parameter. Most parameters are continuous with an upper and lower bound, $[l, u]$. For these parameters: $f_i(P_i) = \min(\max(P_i, l), u)$, where $P_i$ is the $i$th parameter of blended preset $\vec{P}$. For the Coarse frequency parameters, the continuous blended value is discretised back into the set ${0.5, 1, 2, 3, ...}$, which the desicion boundary between neighbouring number falling equidistant to the numbers, as shown in Figure \ref{fig:Freq Coarse}.
 
-To make the iterative blending process more intuitive, and to maintain consistency between the interfaces, the RGB colouring using PCA from the Selection interface was used. This is done by using Equation \ref{eq:PresetMix} to calculate the blended preset at each of the points marked on Figure \ref{fig:BlendingColours}, then calculateing the PCA Scores for each of these points. $PC_{3,4,5}$ are mapped to RGB colour, and colour is linearly interpolated between the points. A more detailed colour space could be acheived by using more points, but there would be an associated performance tradeoff. 
-
-Each time the presets are iterated, and a new B and C are generated, the first principal component, $PC_{1}$ is calculated for B and C, and if $PC_{1}^B > PC_{1}^C $, then presets B and C are swapped. The effect of this is that the $x$ direction in the Blending Interface corresponds to a direction of increasing $PC_{1}$. This is done because $PC_{1}$ is also used in the Selection Interface for the $x$ coordinate of each preset, and so this process further maintains consistency between the two interfaces.
+To make the iterative blending process more intuitive, and to maintain consistency between the interfaces, the PCA based RGB colouring from the Selection Interface was used. This is done by using Equation \ref{eq:PresetMix} to calculate the blended preset at each of the points marked on Figure \ref{fig:BlendingColours}, then calculating the PCA Scores for each of these points. $PC_{3,4,5}$ are mapped to RGB colour, and colour is linearly interpolated between the points. A more detailed colour space can be acheived by using more points, but there is an associated performance tradeoff. 
 
 \begin{wrapfigure}{R}{0.3\textwidth}
 	\centering
-	\vspace{-40pt}
+	%\vspace{-40pt}
 	\includegraphics[width = \textwidth/3]{SelectionHistory.png}
 	\caption{Selection History plot construction}
 	\label{fig:SelectionHistory}
-	
+	\vspace{10pt}
 	\includegraphics[width = \textwidth/3]{FreezeParams2.png}
 	\caption{Parameter Freezing}
 	\label{fig:FreezeParams}
 	
-	\vspace{-30pt}
+	\vspace{-50pt}
 	
 \end{wrapfigure}
-The Selection History display, allows the user to browse their previously selected presets, by clicking on nodes of the graph. Each time presets are iterated, the vector from A to the selelected coordinates, $\vec{p}_i$ is recorded. The graph is constucted by joining these vectors head-to-tail, as shown in Figure \ref{fig:SelectionHistory}. The colours of each edge of the graph are chosen based on $PC_{3,4,5}$ of the presets. See Figure, \ref{fig:BlendingInterface} for a typical example of the Selection History plot.
 
-It may be possible to use some of the information contained in the graph (if the data from many users is collected), as a way to refine the preset generation algorithm. If the generation algorithm is producing good presets, then most of the choices should be somewhere between A, B and C on the interface. If the algorithm is producing bad presets, most of the choices will be very close to, or below A. MORE DETAIL HERE
+Each time the presets are iterated and a new B and C are generated the first principal component, $PC_{1}$ is calculated for B and C, and if $PC_{1}^B > PC_{1}^C $, then presets B and C are swapped. This makes the $x$ direction in the Blending Interface correspond to a direction of increasing $PC_{1}$. This is done to further maintain consistency between the two interfaces, as $PC_{1}$ is also used in the Selection Interface for the $x$ coordinate of each preset.
 
-As part of the Blending Interfacee, the user has the option to freeze sections of the parameter space. The parameters are divided into 'Time' and 'Timbre' parameters, and then subdivided into a total of 12 smaller categories, see Figure \ref{fig:FreezeParams}. This makes the Blending Interface more useful, as it allows users with knowledge of synthesisers to fine-tune the blending process to their needs. This tends to lead to more useful generated presets, as it reduces the dimensionality of the search space (BACK THIS UP).
+The Selection History display allows the user to browse their previously selected presets, by clicking on nodes of the graph. Each time presets are iterated, the vector from A to the selelected coordinates, $\vec{p}_i$ is recorded. The graph is constucted by joining these vectors head-to-tail, as shown in Figure \ref{fig:SelectionHistory}. The colours of each edge of the graph are chosen based on $PC_{3,4,5}$ of the presets. See Figure, \ref{fig:BlendingInterface} for a typical example of the Selection History plot.
+
+It may be possible to use some of the information contained in the graph (if the data from many users is collected), as a way to refine the preset generation algorithm. If the generation algorithm is producing good presets, then most of the choices should be somewhere between A, B and C on the interface. If the algorithm is producing bad presets, most of the choices will be very close to, or below A.
+
+As part of the Blending Interface, the user has the option to freeze sections of the parameter space. The parameters are divided into Time and Timbre parameters, and then subdivided into a total of 12 smaller categories, see Figure \ref{fig:FreezeParams}. This makes the Blending Interface more useful, as it allows users with knowledge of synthesisers to fine-tune the blending process to their needs. This tends to lead to more useful generated presets, as it reduces the dimensionality of the search space.
 
 \subsection{Development / Verification of Preset Generation Algorithm} \label{sec:PresetGeneration}
 asdasdsadsa
@@ -698,35 +700,35 @@ asdasdsadsa
 \subsection{Investigate Permutation Ambiguity}
 asdasdsad
 
-\chapter{Numerical Comparisons of Interfaces}
-Due to the subjectivity of interface design, and as the three interfaces have quite different purposes, there are not many obvious metrics to use to compare the interfaces with each other. However, the key challenge is to make the combined interface better than the traditional interface alone. MORE WRITING
-\section{Perfect /Imperfect User Model}
-A way of evaluating the performance of the interface is to simulate a 'Perfect User', and an 'Imperfect User' carying out particular tasks. In particular the task is to use the interface to move from an initial preset, to a goal preset. This analysis won't account for any creativity based goals of the interface, but will help evaluate some of the practical comsiderations of the interface. (BAD WORDING< WORK ON THIS SECTION).
+\chapter{Numerical Evaluation of Interfaces}
+Due to the subjectivity of interface design, and as the three interfaces have quite different purposes, there are not many obvious metrics to use to compare the interfaces with each other. However, the key challenge is to make the combined interface better than the traditional interface alone. MORE WRITING - PRIOR WORK? MEASURE OF REGRET>?
+\section{Perfect/Imperfect User Model}
+A way of evaluating the performance of the interface is to simulate a Perfect User, and an Imperfect User carying out a range of tasks. These simulated users must use the interface to move from initial presets to goal presets. This analysis won't account for any creativity based goals of the interface, but will help evaluate some of the practical considerations of the interface. (BAD WORDING< WORK ON THIS SECTION).
  
 The Perfect User has perfect knowledge of the synth and the interface, so can always choose the optimum position for a particular knob, or choose the optimum blend of presets in the Blending Interface.
 
-The Imperfect User has imperfect knowledge of the synth and the interface, so chooses interactions similarly to the Perfect User, but 'misses' by a certain ammount: $\Delta P_i = \Delta P_i^0 * (1 + \varepsilon)$, where $\Delta P_i^0$ is the Perfect parameter change, and $\varepsilon$ is a zero mean gaussian random variable with variance $\sigma^2$. Various values of $\sigma$ will be considered to account for the varying skill levels of users.
+The Imperfect User has imperfect knowledge of the synth and the interface, so chooses interactions similarly to the Perfect User, but misses by a certain amount: $\Delta P_i = \Delta P_i^0 * (1 + \varepsilon)$, where $\Delta P_i^0$ is the Perfect parameter change, and $\varepsilon$ is a zero-mean Gaussian random variable with variance $\sigma^2$. Various values of $\sigma$ will be considered to account for the varying skill levels of users.
 
-A key consideration for the Traditional Interface is the order which parameters are varied. In the 'Perfect Order', parameters are visited in decreasing order of importance. In the 'Random Order', parameters are visited in a comploetely random order. Real users most likely operate somewhere in the middle of these regimes. (REFERENCE FOR THIS>???)
+A key consideration for the Traditional Interface is the order which parameters are varied. In the Perfect Order, parameters are visited in decreasing order of importance. In the Random Order, parameters are visited in a completely random order. Real users most likely operate somewhere in the middle of these regimes. (REFERENCE FOR THIS>???)
 
 \section{Error Metric}
-A parameter based error metric is used for these tasks due to the complexity of using a sound based error metric (AS DESCRIBED IN SECTION). 
-
+A parameter based error metric is used for these tasks due to the complexity of using a sound based error metric (AS DESCRIBED IN SECTION - MAYBE DESCRIBE MORE HERE). 
+%COULD USE THE Index of Search Space Reduction (ISSR) Approach from Robert Tubbs thesis.
 For each parameter, $p_i$, a weighted $L_1$ norm is used. The parameters are weighted based on an approximate measure of importance, and normalised by their parameter ranges. The total error is calculated as:
 \begin{equation}
-E = \sum_{i=1}^{N} \| p_i - p_i^{goal} \|_1 *\frac{w_i}{r_i}
+E = \sum_{i=1}^{N}\frac{w_i}{r_i} \| p_i - p_i^{goal} \|_1 
 \end{equation}
 where $w_i$ is the scalar importance weighting for the $i$th parameter, and $r_i$ is the range of values that parameter $i$ can take, see Table \ref{tab:Params}.
 
 The $L_1$ norm was chosen over the $L_2$ norm so that a few large parameter errors don't dominate the error metric and as no gradients are necessary.
-This is by no means a perfect metric for comparins synth settings, but it is good enough for our purposes. (IS IT?)
-%COULD USE THE Index of Search Space Reduction (ISSR) Approach from Robert Tubbs thesis.
+This is by no means a perfect metric for comparing synth settings, but it is good enough for our purposes.
+
 \section{Comparison of Isolated Interfaces}
 \subsection{Traditional Interface}\label{sec:TradEval}
-\begin{wrapfigure}{r}{0.5\textwidth}
+\begin{wrapfigure}{r}{0.4\textwidth}
 	\centering
-	\vspace{-60pt}
-	\includegraphics[width = \textwidth/2]{TradInterfaceTests1.eps}
+	\vspace{-110pt}
+	\includegraphics[trim  ={0, 2.3cm, 0, 1.5cm}, clip, width = 3.1in]{TradInterfaceTests1.eps}
 	\caption{Perfect/Imperfect user tests for Traditional Interface}
 	\label{fig:TradTest1}
 	
@@ -734,30 +736,25 @@ This is by no means a perfect metric for comparins synth settings, but it is goo
 %	\caption{Parameter Freezing}
 %	\label{fig:FreezeParams}
 	
-	\vspace{-140pt}
+	\vspace{-40pt}
 	
 \end{wrapfigure}
 Perfect/Imperfect user tests were carrried out on the Blending Interface, using each of the 36 presets as a goal preset, and setting the starting preset to the closest preset to the goal preset. The results of these tests are shown in Figure \ref{fig:TradTest1}. In each of the plots, the cyan lines are individual instances of the Perfect Order test. The blue lines are individual instances of the Random Order test. The solid red line is the mean of the Perfect Order tests, and the red dotted line is the mean of the Random Order tests. 
 
-For low values of $\sigma$, the Perfect Order tests folllows a smooth, approximately exponentially decreasing, curve. For high values of $\sigma$, and when the random otder is used, the error decreases in a much less smooth manner. In all cases the Perfect Order gives a substantially faster convergence time. A comparison of the mean error for various values of $\sigma$ is shown in Figure \ref{fig:TradTest2}. 
+For low values of $\sigma$, the Perfect Order tests folllows a smooth, approximately exponentially decreasing, curve. For high values of $\sigma$, and when the Random Order is used, the error decreases in a much less smooth manner. In all cases the Perfect Order gives a substantially faster convergence time. A comparison of the mean error for various values of $\sigma$ is shown in Figure \ref{fig:TradTest2}. These results suggest that the main limitation when using a Traditional Interface is not the accuracy with which the parameters are set, but the choice of parameter.
 \begin{figure}
 	\centering
 %	\vspace{-40pt}
-	\includegraphics[width = \textwidth/2]{TradInterfaceTests2.eps}
-	\caption{Perfect/Imperfect user tests for Traditional Interface}
+	\includegraphics[width = 5in]{TradInterfaceTests2.eps}
+	\caption{Perfect/Imperfect user tests for Traditional Interface. Perfect Order shown with solid lines, Random Order shown with dotted lines. The Parameter order has a much more significant effect than the Imperfectness of the user.}
 	\label{fig:TradTest2}
-	
-	%	\includegraphics[width = \textwidth/3]{FreezeParams2.png}
-	%	\caption{Parameter Freezing}
-	%	\label{fig:FreezeParams}
-	
 %	\vspace{-30pt}
 	
 \end{figure}
 
 \subsection{Selection Interface}\label{sec:SelectionEval}
-A similar evaluation was carried out with the selection interface. Again all 36 presets were used as goal presets, with the closest preset used each time as the starting point. For each test, the PCA values were calculated for the remaining 35 presets, simulating the situation where the PCA Macros were being used to find a brand new preset. As before, two parameter orders were tested: the Macro Controls were visited cyclically in order of PCA number, or visited in a random order. For each iteration of the test, the MATLAB 'Patternsearch' search algorithm was used to minimise the cost function for a particular Macro Control. \\ 
-A key question with the interface is whether the 'Global' or 'Time/Timbre' version of the PCA Macro Controls should be used. The results for a test with the combination of both sets of macros is shown in Figure \ref{fig:PCAtest1}.
+A similar evaluation was carried out with the selection interface. Again all 36 presets were used as goal presets, with the closest preset used each time as the starting point. For each test, the PCA values were calculated for the remaining 35 presets, simulating the situation where the PCA Macros were being used to find a brand new preset. As before, two parameter orders were tested: the Macro Controls were visited cyclically in order of PCA number, or visited in a random order. For each iteration of the test, the MATLAB 'Patternsearch' search algorithm was used to minimise the cost function for a particular Macro Control. (WHY WAS THIS USED?)\\ 
+A key question with the interface is whether the 'Global' or 'Time/Timbre' version of the PCA Macro Controls should be used. The results for a test with the combination of both sets of macros is shown in Figure \ref{fig:PCAtest1}, and a comparison of the mean results for the different macro configurations is shown in Figure \ref{fig:PCAtest2}.
 \begin{figure}
 
 \hspace{-60pt}
@@ -766,23 +763,21 @@ A key question with the interface is whether the 'Global' or 'Time/Timbre' versi
 	\label{fig:PCAtest1}
 	%	\vspace{-30pt}
 \end{figure}
-
-A comparison of the results for the different macro configurations is shown in Figure \ref{fig:PCAtest2}.
 \begin{figure}
 	\centering
-	%	\vspace{-40pt}
+		\vspace{-40pt}
 	\includegraphics[width = \textwidth]{PCAInterfaceTests2.eps}
-	\caption{Comparison of Macro Types}
+	\caption{Comparison of Macro Types - All of the Macro Controls have a similar initial rate of cost reduction, but the Global Macro Controls have a better steady state value than the Time/Timbre Macro Controls.}
 	\label{fig:PCAtest2}
 	%	\vspace{-30pt}
 \end{figure}
-MAYBE NEED TO DO THE IMPRERFECT USER TESTS ON THE MACRO CONTROLS.
+%MAYBE NEED TO DO THE IMPRERFECT USER TESTS ON THE MACRO CONTROLS.
 
 Some points to note from these results:
 
-As shown in Figure \ref{fig:PCAtest1}, for different preset goals, the effictiveness of the PCA Controls varies significantly. In the best case the error drops very rapidly, falling 50\% in the first 10 iterations. In the worst case the error doesn't decrease at all. This suggests that, for this particlar task at least, having the same Macro Controls for each preset may not be ideal, and so a new approach which in some way optimises the Macro Controls per preset would be worth pursuing. However, as previously stated (IN SECTION ????), this comes at the cost of the user being less farmiliar with what the Macro Controls are actually doing. 
+As shown in Figure \ref{fig:PCAtest1}, for different preset goals, the effectiveness of the PCA Controls varies significantly. In the best case the error drops very rapidly, falling 50\% in the first 10 iterations. In the worst case the error doesn't decrease at all. This suggests that, for this particlar task at least, having the same Macro Controls for each preset may not be ideal, and so a new approach which in some way optimises the Macro Controls per preset would be worth pursuing. However, as previously stated in Section \ref{sec:GlobalTimeTimbre}, this comes at the cost of the user being less familiar with what the Macro Controls are actually doing. 
 
-In all cases the mean error converges to a non-zero steady state value. This is due to the limited degrees of freedom when using the Macro Controls. This means that the Macro Controls alone cannot be used to prefectly match a goal preset.
+In all cases the mean error converges to a non-zero steady state value. This is due to the limited degrees of freedom when using the Macro Controls. This means that the Macro Controls alone cannot be used to perfectly match a goal preset.
 
 When the 'Global' Macro Controls are being used, after a large number of iterations, the random order manages to decrease the error past the cyclic order. It is likely that this is due to the cyclic order getting stuck in a local optimum due to the naive 'one parameter at a time' (BETTER NAME FOR THIS) search algorithm.
 
@@ -802,7 +797,7 @@ Results of this test are shown in Figure \ref{fig:BlendingTest1}
 	\label{fig:BlendingTest1}
 	%	\vspace{-30pt}
 \end{figure}
-On average, there is an rapid decrease in error during the first iteration, followed by an approxiamtely expenential decrease in error.
+On average, there is n rapid decrease in error during the first iteration, followed by an approximately expenential decrease in error.
 As in the Selection Interface, there are some tests in which the error barely decreases at all, and some in which the error decreases very quickly, however the variance of the different tests is less than in the PCA interface. For the Perfect User, error is monotoically decreasing, but this is not always the case for the imperfect user, and for real users of the system(EVIDENCE?). This reinforces the need for the Selection History Plot (See Section \ref{sec:BlendingDescription}), which allows users to select several of the local minima in the error plot to resume blending with. (MAYBE MORE DETAIL)
 
 \section{Comparison of Interfaces}
@@ -830,8 +825,8 @@ As these tests have only been carried out on one set of presets for one particul
 
 \begin{figure}
 	\hspace{-50pt}
-	\includegraphics[width = 7.6in]{comparisonOfAllInterfaceGraph3.eps}
-	\caption{Comparison of Interfaces}
+	\includegraphics[trim = {0, 2cm, 0, 0}, clip, width = 7.6in]{comparisonOfAllInterfaceGraph3.eps}
+	\caption{Comparison of Interfaces - The Blending Interface, and Selection Interface both have initial rates of error reduction faster than the traditional interface with random order (WRITE MORE DESCRIPTION HERE)}
 	\label{fig:CombinedTest1}
 	%	\vspace{-30pt}
 \end{figure}
@@ -840,11 +835,11 @@ As these tests have only been carried out on one set of presets for one particul
 In Table \ref{tab:EARStable}, the three interfaces are evaluated in terms of the EARS model from Section \ref{sec:Tubb} \cite{TubbThesis}.
 A conclusion which can be drawn is that the interfaces enables Exploratory, Algorithmic, and Reflective process well, but is not suited to skilled interactions. One of the interfaces could be redisigned with this in mind, or a fourth interface could be introduced.  It should be designed for use with multidimensional controllers, and involve moving through a parameter space consisting solely of the 'nice sounds' of the synthesiser. An Interactive Machine Learning system such as the Wekinator \cite{Wekinator} would be well suited to this task, however more work needs to be done to integrate this approach with the other 3 interfaces.
 \begin{table}[h]
-	\hspace{-1.5cm}
+	\hspace{-1cm}
 	\begin{tabular}{|l|l|l|l|l|L|}
 		\hline
 		\rowcolor[HTML]{EFEFEF} 
-		Interface                           & Exploratory? & Algorithmic? & Reflective? & Skilled? & Comments                                                                                                                                                                                                                                                                                                                                                                       \\ \hline
+		Interface                           & Exploratory & Algorithmic & Reflective & Skilled & Comments                                                                                                                                                                                                                                                                                                                                                                       \\ \hline
 		\cellcolor[HTML]{EFEFEF}Traditional & Maybe        & Yes          & No          & No       & Can be used for exploratory and algorithmic depending on the skill level of the user                                                                                                                                                                                                                                                                \\ \hline
 		\cellcolor[HTML]{EFEFEF}Selection   & Yes          & No           & Yes         & No       & \begin{tabular}[c]{@{}L@{}}Exploration by browsing and varying presets. \\ Reflective as easy comparison of presets with combined and varied presets.\end{tabular}                                                                                                                                                                                                            \\ \hline
 		\cellcolor[HTML]{EFEFEF}Blending    & Yes          & Maybe        & Yes         & Maybe    & \begin{tabular}[c]{@{}L@{}}Well suited to exploratory, due to simple interface and preset generation. \\ May be used algorithmically due to parameter freezing.\\ The Selection History graph enables reflective comparison and combination.\\ May be used as a skilled strategy, but is not optimised for this approach. Too low dimensional and unpredictable.\end{tabular} \\ \hline
@@ -855,14 +850,14 @@ A conclusion which can be drawn is that the interfaces enables Exploratory, Algo
 
 
 
-\chapter{User tests and Interviews}
-A rigourous user study would require time and resourses that this project is incapable of, however the interface has been shown to a number of musicians, and some feedback shown below:
-
-NEED TO DO THESE INTERVIEWS
-...
+%\chapter{User tests and Interviews}
+%A rigourous user study would require time and resourses that this project is incapable of, however the interface has been shown to a number of musicians, and some feedback shown below:
+%
+%NEED TO DO THESE INTERVIEWS
+%...
 
 \chapter{Conclusion}
-The interface proposed in this project has many benefits over a traditional synthesiser interface, as has been designed following design heuristics from the fields of Human Computer Interaction and Creative Cognition. Based on simulated user studies, the interface has at least as good performance as a traditional interface when carrying out search based tasks, and based on real user feedback it has many advantages in terms of creativity. \\
+The interface proposed in this project has many benefits over a traditional synthesiser interface, as has been designed following design heuristics from the fields of Human Computer Interaction and Creative Cognition. Based on simulated user studies, the interface has at least as good performance as a traditional interface when carrying out search based tasks, and based on real user feedback it has many advantages in terms of creativity (If don't have interviews CANT INCLUDE). \\
 Synthesiser preset datasets are not random, and information can definitely be learned from them. PCA combined with Histogram Equalisation has been identified as a useful dimensionality reduction tool for synthesiser parameters, and several preset generation algorithms have been developed and tested. \\
 The interface has also been tested in a different domain, Image Filtering, with promising results. It could easily be applied to many other use cases, such as stage lighting design, or parametric 3D design, as each has a high dimensional parameter set which can be readily controlled over interfaces such as OSC.
 \section{Further Work}
@@ -872,11 +867,11 @@ The interface has been designed to be as general purpose as possible, allowing i
 
 The interface has been designed with touch-screen contollers in mind, so it would be interesting to implement the interface on a touch screen. Either a dedicated app could be made, or the very customisable OSC controllers Lemur (REFERENCE) or Mira (REFERENCE) could be used. The interface could be further extended by taking into consideration the Multi-Touch capabilities of modern touchscreens.
 
-When the Blending Interface is used, the user carries out a large number of interactions, all of which show a users preference over hyperplanes of parameter settings. If recorded, it may be possible to use these interactions to form a training set to train more sophistocated models of user preference in the parameter space. This can be seen as an extension of the Bayesian Optimisation approach to preference galleries shown in \ref{BayesOptGallery}. As this technique relies on fitting a guassian process to the paramter space, large ammount of training data is necessary, and these interactions may be a way to find such data. As each comparison is choosing the optimum in a hyperplane, as opposed to a binary choice, the interactions have the potentially to be more information dense. Such models of user preference could be used to devise a more sophistocated preset generation algorithm.
+When the Blending Interface is used, the user carries out a large number of interactions, all of which show a users preference over hyperplanes of parameter settings. If recorded, it may be possible to use these interactions to form a training set to train more sophistocated models of user preference in the parameter space. This can be seen as an extension of the Bayesian Optimisation approach to preference galleries shown in \ref{BayesOptGallery}. As this technique relies on fitting a Guassian process to the high dimensionsal parameter space, large amount of training data is necessary, and these interactions may be a way to find such data. As each comparison is choosing the optimum in a hyperplane, as opposed to a binary choice, the interactions have the potentially to be more information dense. Such models of user preference could be used to devise a more sophistocated preset generation algorithm.
 
 Aside from the initial confiuration of presets A, B and C, the Blending Interface currently does not use the preset dataset in its preset generation algorithm. Due to the effectiveness of using this dataset in the Selection Interface, the inclusion of this data is a worthwhile area of further research.
 
-In typical synthesisers, the parameters have a hierarchical nature, as the synthesis algorithm is usally made up of several modules, each with their own parameters and/or sub modules. Many synthesisers store their presets in the JSON (Javascript Object Notation) format, and use such hierarchies to make clean data structures. It may be possible to make use of this hierarchical parameter structure to deduce covariances between parameters, as parameters in the same module are likely to be much more co-dependant than those in seperate modules. Thsi could be used to refine the preset generation and comparison algorithms, and help to detect and correct cases of permutation ambiguity. However this approach has several challenges, most importantly there is a lack of standardisation of preset storage hierarchies.
+In typical synthesisers, the parameters have a hierarchical nature, as the synthesis algorithm is usally made up of several modules, each with their own parameters and/or sub modules. Many synthesisers store their presets in the JSON (Javascript Object Notation) format, and use such hierarchies to make clean data structures. It may be possible to make use of this hierarchical parameter structure to deduce covariances between parameters, as parameters in the same module are likely to be much more co-dependant than those in seperate modules. This could be used to refine the preset generation and comparison algorithms, and help to detect and correct cases of permutation ambiguity. However this approach has several challenges, most importantly there is a lack of standardisation of preset storage hierarchies.
 
 %The Native Kontrol Standard, is a standardard
 
@@ -903,6 +898,9 @@ Hantrakul, L. and Kaczmarek, K. (2014). \emph{Implementations of the Leap Motion
 
 \bibitem{UGen}
 Kersten, S. \emph{skUG SuperCollider UGen library}, 2008. \url{http://space.k- hornz.de/software/skug/}.
+
+\bibitem{NonOrthogonal}
+Miguel (https://math.stackexchange.com/users/95625/miguel), \emph{Equation for non-orthogonal projection of a point onto two vectors representing the isometric axis?}, (version: 2017-03-07): \url{https://math.stackexchange.com/q/1123586}
 
 \bibitem{Massive}
 Native-instruments.com. (2007). \emph{MASSIVE}. [online] Available at: \url{https://www.native-instruments.com/en/products/komplete/synths/massive/} [Accessed 18 Apr. 2018].
