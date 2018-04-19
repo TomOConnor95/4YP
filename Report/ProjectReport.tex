@@ -105,7 +105,7 @@ Candidate Number: 355136\\
 
 \begin{abstract}
 \begin{flushleft}
-Software Synthesisers (Soft-Synths) are computer applications which create sounds in response to musical input typically in the form of MIDI messages. They are widely used in a variety of musical contexts. Typical soft-synths have hundreds or thousands of parameters which control the sound generation algorithm, allowing the user to create sounds that suit their musical needs. This results in a high dimensional, non-linear search space which the user must navigate in order. The act of choosing the parameter values for a synth is commonly refered to as 'programming' the synth. Research indicates that humans are bad at navigating such interfaces with serial controls, and that there is a strong link between interface design and the level of creativity that the user with experience when using the interface. \\
+Software Synthesisers (Soft-Synths) are computer applications which create sounds in response to musical input typically in the form of \emph{MIDI} (\emph{Musical Instrument Digital Interface}) messages. They are widely used in a variety of musical contexts. Typical soft-synths have hundreds or thousands of parameters which control the sound generation algorithm, allowing the user to create sounds that suit their musical needs. This results in a high dimensional, non-linear search space which the user must navigate. Research indicates that humans are bad at navigating such interfaces with serial controls, and that there is a strong link between interface design and the level of creativity that the user with experience when using the interface. \\
 This work describes a novel interface designed to help users control synthesisers in a quicker and more intuitive manner. It combines three interfaces together: a traditional 'knob and slider' interface, a search space visualisation interface, and an iterative blending interface.
 
 THIS ABSTRACT NEEDS A LOT MORE WORK, WILL WORK ON AFTER WRITING MORE OF THE REPORT
@@ -124,10 +124,10 @@ THIS ABSTRACT NEEDS A LOT MORE WORK, WILL WORK ON AFTER WRITING MORE OF THE REPO
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \chapter{Introduction}
 %\section{Background Information}
-Software Synthesisers (Soft-Synths) are computer applications which create sounds in response to musical input typically in the form of MIDI (\emph{Musical Instrument Digital Interface}) messages. They are widely used in a variety of musical contexts. Typical soft-synths have hundreds or thousands of parameters which control the sound generation algorithm, allowing the user to create sounds that suit their musical needs. This results in a high dimensional, non-linear search space which the user must navigate. Research indicates that humans are bad at navigating such interfaces with serial controls \cite{YeeKing}, and that there is a strong link between interface design and the level of creativity that the user with experience when using the interface \cite{TubbThesis}. \\
+Software Synthesisers (Soft-Synths) are computer applications which create sounds in response to musical input typically in the form of \emph{MIDI} (\emph{Musical Instrument Digital Interface}) messages. They are widely used in a variety of musical contexts. Typical soft-synths have hundreds or thousands of parameters which control the sound generation algorithm, allowing the user to create sounds that suit their musical needs. This results in a high dimensional, non-linear search space which the user must navigate. The act of choosing the parameter values for a synth is commonly refered to as \emph{programming} the synth. Research indicates that humans are bad at navigating such interfaces with serial controls \cite{YeeKing}, and that there is a strong link between interface design and the level of creativity that the user with experience when using the interface \cite{TubbThesis}. \\
 This work describes a novel interface designed to help users control synthesisers in a quicker and more intuitive manner. It combines three interfaces together: a traditional 'knob and slider' interface, a search space visualisation interface, and an iterative blending interface.
 
-A video of the full interface being used can be viewed at (LINK TO VIDEO), and a working demo can be downloaded from (LINK).
+
 \section{Aims of the project}
 \begin{itemize}
 	\item Create a synthesiser to test the interface with.
@@ -137,7 +137,7 @@ A video of the full interface being used can be viewed at (LINK TO VIDEO), and a
 	\item Determine an optimal way to generate new presets for each iteration of the Blending Interface
 	\item Compare the novel interface to a 'traditional' synth interface.
 \end{itemize}
-NEEDS WORK
+NEEDS WORK - MAYBE DELETE THE AIMS SECTION AND REPLACE WITH CONTRIBUTIONS, AND REPORT STRUCTURE SECTIONS.
 \section{Methodology}
 The main methodology taken in this project is that the set of preset sounds for a synthesiser contain a lot of useable information. This is because much of the parameter space of typical synthesisers creates inaudible, or terrible sounding sounds, and the presets have been designed to avoid such regions, and to highlight a diverse range of the synth's best sounds. By working to map the timbre of the presets, rather than the timbre of the entire parameter space, a much simpler, and hopefully more useful latent space can be identified, only requiring simpler statistical techniques to be used.
 
@@ -145,11 +145,46 @@ This project aims to make use of human users' impressive abilities of spatial me
 
 Studies show (REFERENCE), that users are much better at giving a preferance between several options, rather that scoring indivudual options numerically. This will be exploited in the Blending Interface, where in each iteration the user selectes between a range of sounds, which were generated based on their previous preferences. (TRY TO DESCRIBE BETTER)
 
+*---- Move to Synth justification Bit?
 The project is aimed at fixed architechure parametric synhesisers, such as FM, additive, subractive, and physical modelling synthesisers. These have a fixed number of parameters which entirely decribe the sound, making parameter-based comparisons between presets possible. 
 NEEDS MORE WORK.
 
+Mention how this work aims to create a fairly lightweight interface, due to resourse contraints of users. Also mention how typical musical interface users will use interfaces in unexpected ways, so its good to keep flexibility in the interface, and allow many different workflows.
+-----*
 
 Mention how in normal synths, the knobs are mapped such that their motion has a (relatively) linear motion though perceptual space, I.e frequency usually as exponential mapping, and time has a Log(?) mapping.
+
+\chapter{Introduction V2}
+The invention and subsequent development of the Synthesiser has been one of the main driving forces behind the evolution of popular and experimental music over the last century \cite{DOTHIS}. With the current ubiquity of cheap, powerful computers, the barriers of entry to music making are lower than ever. Award winning albums have been produced by teenagers, entirely on laptops and smartphones \cite{DOTHIS}. Such productions commonly use Software Synthesisers, \emph{Soft-Synths}, to produce many of the sounds.\\
+Typical Soft-Synths require lots of technical knowledge to use, and have hundreds or even thousands of parameters which control the sound generation algorithm. Many musicians lack the expertise required to synthesise sounds from scratch and thus rely heavily on \emph{Presets}, pre-made combinations of synth parameters which produce nice sounds. Whilst there is nothing necessarily wrong with using presets, it makes it difficult for musicians to create unique and destinctive sounds. There is even a sizeable market for buying new presets for synthesisers.\\
+A conclusion can be drawn from this: more work needs to be done to make synthesisers easier to use. To quote Roger Linn, a pioneer of synthesisers, in a 2016 keynote: \cite{RogerLinn}
+\begin{displayquote}
+	In the early days of automobiles, to own one you had to know the technical details of how it worked, and clubs of enthusiasts were formed around details such as carburettors and spark plugs. Once cars got more reliable these clubs disappeared, as it turned out they were actually just intersted in the ability to drive. I think this is the area we're in now [with synthesisers]. People are learning every little detaim rather than focusing on making music \dots The key challenge of synth design is to find what the musician really wants, and give them controls in that space.
+\end{displayquote}
+This project aims to tackle this problem by designing a radically new interface for controlling synthesisers, and along the way hopes to find some useful insights about high-dimensional parameter spaces in general.
+%
+\section{Key Ideas}
+Presets are widely used and proved to be very useful by musicians, and so should form a key part of the interface. Furthermore, the presets of a synth contain a lot of useable information. This is because the presets have been designed to highlight a diverse range of the synth's best sounds, avoiding the numerous regions of parameter space which create inaudible, or terrible sounding sounds. By analysing the timbre of the presets, rather than the timbre of the entire parameter space, a simpler, and hopefully more useful control space can be identified, whilst only requiring simple statistical techniques to be used.\\
+%
+Humans have impressive abilities of spatial memory, spatial reasoning, and memory of colours, and this can be exploited to increase the effectiveness of the interface. In particular, effort will be taken to maintain visual consistency between throughout the interface. (REFERENCE)\\
+%
+Studies show (REFERENCE), that users are much better at giving a preferance between several options, rather that scoring indivudual options numerically. This is exploited in the Blending Interface, where in each iteration the user selects between a range of sounds, which were generated based on their previous preferences.
+%
+\section{Contributions}
+\begin{itemize}
+	\setlength\itemsep{-1.0em}
+	\item A novel interface is designed, combining a traditional synth interface with a search space visualisation interface, and an iterative blending interface.
+	\item Suitable types of synthesiser for this interface are identified, and a purpose built synthesiser created to test the interface with.
+	\item A small dataset of synthesiser presets is created
+	\item Principal Component Analysis (PCA) combined with Histogram Equalisation is shown to be an effective method to create a low dimensional embedding of a synth preset dataset.
+	\item An algorithm is designed to force the PCA mapping to be more stable (REWRITE).
+	\item An algorithm for generating new presets based off a user's preferences is developed.
+	\item A Perfect/Imperfect user model is developed to numerically evaluate syntheiser interfaces.
+	\item The interface is shown to be useful in a different domain - Image Filtering.(REWRITE).
+	\item Parameter selection order is identified as a key limitation of traditional interfaces.
+\end{itemize}
+
+
 \chapter{Literature Review}
 \section{Introduction to Synthesisers}
 Synthesisers are devices which can create a wide variety of musical sounds in response to  user input, typically in the form of notes played on a keyboard. %The first synthesisers consisted of single note electronic oscilators, such as the Theremin... , 
@@ -396,7 +431,7 @@ An interesting property of this synth design is that due to the 6 identical oper
 
 
 \chapter{Description of Full Interface}
-The full interface developed in this report is a combination of three interfaces. Each interface has the ability to vary the entire set of parameters, and produce a wide variety of sounds, but they are designed to complement each other as well as possible. The user can easily move back and forth between the different interfaces, and there are consistent parameter visualisations for all of the interfaces, as shown in Figure \ref{fig:CombinedInterface}.
+The full interface developed in this report is a combination of three interfaces. Each interface has the ability to vary the entire set of parameters, and produce a wide variety of sounds, but they are designed to complement each other as well as possible. The user can easily move back and forth between the different interfaces. A video of the full interface can be viewed at (LINK), and a working demo can be downloaded from (LINK).
 \section{Traditional Interface}
 The Traditional Interface is designed to be representative of a typical software and hardware synthesisers. It has a knob or slider for each parameter of the synthesiser, and has interactive visualisations for some parts of the architecture (namely the envelopes and LFOs). The interface is arranged in three seperate pages, two of which are shown in Figure \ref{fig:TraditionalInterface}. 
 If the full interface were to be extended to work with any VST, the traditional interface would be replaced by the VST's user interface. 
@@ -695,7 +730,8 @@ It may be possible to use some of the information contained in the graph (if the
 As part of the Blending Interface, the user has the option to freeze sections of the parameter space. The parameters are divided into Time and Timbre parameters, and then subdivided into a total of 12 smaller categories, see Figure \ref{fig:FreezeParams}. This makes the Blending Interface more useful, as it allows users with knowledge of synthesisers to fine-tune the blending process to their needs. This tends to lead to more useful generated presets, as it reduces the dimensionality of the search space.
 
 \subsection{Development / Verification of Preset Generation Algorithm} \label{sec:PresetGeneration}
-asdasdsadsa
+Give background to Active Learning. Mention possibility of using Bayesian Optimisation, but aiming for simpler approach. 
+
 
 \subsection{Investigate Permutation Ambiguity}
 asdasdsad
