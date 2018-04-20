@@ -34,6 +34,13 @@
 \titlespacing\subsection{0pt}{4pt plus 4pt minus 2pt}{0pt plus 2pt minus 2pt}
 \titlespacing\subsubsection{0pt}{4pt plus 4pt minus 2pt}{0pt plus 2pt minus 2pt}
 
+\AtBeginDocument{%
+	\abovedisplayskip=3pt plus 3pt minus 3pt
+	\abovedisplayshortskip=0pt plus 3pt
+	\belowdisplayskip=3pt plus 3pt minus 3pt
+	\belowdisplayshortskip=7pt plus 3pt minus 4pt
+}
+
 \titleformat{\chapter}[display]
 {\normalfont\huge\bfseries}{\chaptertitlename\ \thechapter}{0pt}{\Huge}
 \titlespacing*{\chapter}{0pt}{0pt}{0pt}
@@ -322,7 +329,7 @@ For different creative tasks, interfaces suited to an appropriate mode of creati
 
 \chapter{Description of Synthesiser Algorithm}
 \section{Description}
-In order to develop the synthesiser controller, it was necessary to choose a synthesiser to work with. To remove some of the complexities of interfacing with many commercial synthesisers, a purpose built synth was made to make it as easy as possible to work with the interface, whilst being representative of typical soft-synths available.
+ In order to develop the synthesiser controller, it was necessary to choose a synthesiser to work with. To remove some of the complexities of interfacing with many commercial synthesisers, a purpose built synth was made to make it as easy as possible to work with the interface, whilst being representative of typical soft-synths available.
 The programming language \emph{Supercollider} was used to create a 6 operator Phase Modulation (PM) synthesiser, loosely based on the Yamaha DX7, a very famous synthesiser from 1983. PM synthesis is very closely related to FM synthesis \cite{FM}, and the names are often used interchangeably.
  
 The synthesis algorithm is based around the FM7 UGen for Supercolldier \cite{UGen}, which implements 6 operators with independent amplitudes and frequencies, whose outputs can be used to modulate the phase of any of the operators. The implementation can be simply described by the following discrete time equation: 
@@ -330,8 +337,8 @@ The synthesis algorithm is based around the FM7 UGen for Supercolldier \cite{UGe
 y_i[t+1] = a_i\sin(2\pi T f_i + \sum_{j = 1}^{6} y_j[t] m_{ij})
 \end{equation}
 where $T$ is the sampling interval,  $y_i[t]$ is the output of operator $i$ at time $t$, $a_i$ and $f_i$ are the amplitude and frequency of operator $i$ and $m_{ij}$ is a scalar parameter determining the level of phase modulation from operator $j$ to operator $i$. This is a very flexible sound generation algorithm which can create a large number of different sounds. \\
-The full synthesiser architecture can be described as follows.\\
- A MIDI Note ON message is received with a musical note number $N$ and a velocity $V$. This triggers the sound generations process for this particular note. the note number $N$ is converted into a base frequency $F$. The frequency of each operator is set using the equation: 
+The full synthesiser architecture is shown in Figure \ref{fig:SynthSchematic} and can be described as follows.\\
+ A \emph{MIDI Note ON} message is received with a musical note number $N$ and a velocity $V$. This triggers the sound generations process for this particular note. the note number $N$ is converted into a base frequency $F$. The frequency of each operator is set using the equation: 
  \begin{equation}
 	f_i = Ff_i^{coarse}(1+f_i^{fine})
  \end{equation}
@@ -345,18 +352,15 @@ This can be described by the equation:
 where $\mathrm{LFO}^a[t]$ and $\mathrm{LFO}^B[t]$ are the LFOs' output values at time $t$, $\mathrm{ENV}[t]$ is the modulation envelope's output value at time $t$, and $\mathrm{lfo}^{a}_i$, $\mathrm{lfo}^{b}_i$, and $\mathrm{env}^{mod}_{i}$ are parameters which determine how much operator $i$ is affected by the respective signals.\\
 After amplitude modulation with the LFOs and the modulation envelope, the operators are fed into the previously described phase modulation algorithm. The 6 outputs from this algorithm are then mixed together, and multiplied by the Amplitude Envelope to form the output signal: $Y[t] = \mathrm{ENV}^{amp}[t]*\sum_{i=1}^{6}y_i[t]*a_i^{output}$, where $a_i^{output}$ is the Output Level parameter for operator $i$, and the Amplitude Envelope is another Envelope generator, similar to the Modulation Envelope.
 
-All of the synth's parameters can be easily adjusted in real time, by sending messages through the Open Sound Control (OSC) protocol \cite{OSC}, a UDP based protocol for sending messages between applications.
+The synthesiser has 96 parameters, as described in Table \ref{tab:Params}. All of the synth's parameters can be easily adjusted in real time, by sending messages through the Open Sound Control (OSC) protocol \cite{OSC}, a UDP based protocol for inter-application communication.
 
 A selection of 35 presets were created for this synth, to give a selection of all the different kinds of nice sounds the synth can make, and to provide data to design the interface with.
-\begin{figure}[h] \label{fig:SynthSchematic}
+\begin{figure}[h] 
 	\centering
-	\hspace*{-2cm}
-	\includegraphics[width = 7.8in]{SynthSchematic.png}
-	\caption{Software Synthesiser Schematic - a 6 operator Phase Modulation synthesiser, with two LFOs, and seperate envelope generators for modulation, amplitude and vibrato. Implemented in \emph{Supercollider} with 96 parameters controlable in real time over the \emph{OSC} protocol.}
+	\hspace*{-1cm}
+	\includegraphics[width = 7in]{SynthSchematic.png}
+	\caption{Software Synthesiser Schematic - a 6 operator Phase Modulation synthesiser, with two LFOs, and seperate envelope generators for modulation, amplitude and vibrato. Implemented in \emph{Supercollider} with 96 parameters controlable in real time over the \emph{OSC} protocol.}\label{fig:SynthSchematic}
 \end{figure}
-
-\section{Synthesiser Parameters}
-This synthesiser has 96 parameters, as described in Table \ref{tab:Params}.
 
 \def\arraystretch{1.5}
 \begin{table}[]
@@ -394,8 +398,6 @@ Modulation Envelope Amount                       & 6 x $\mathrm{ENV}_{i}^{mod}$ 
 \label{tab:Params}
 \end{table}
 
-USE TABLE TO CLEAN UP PREVIOUS SECTION
-
 \section{Design choices and justification}
 Typical commercial synthesisers have a large number of parameters\footnote{For example, the \emph{Yamaha DX7} has 126 parameters, and  \emph{Omnisphere 2} has several thousand parameters}, which can be discrete or continuous, and are usually constrained within a range. Some synthesisers have Modular or Semi-Modular architectures, which allow for a lot of flexibility, but due to the combinational explosion of number of parameter combinations, and difficulty blending between presets, this type of architecture is not addressed in the work.
 Some synthesisers use short audio recordings, known as samples, as part of their sound creation algorithm. This creates difficulties blending between presets, so this type of architecture will not be considered in this work. (However both of these types of synthesisers would be interesting to try as a follow up work).
@@ -406,12 +408,11 @@ The synthesiser features a combination of continuous and discrete parameters, al
 
 The DX7 was chosen to as a base synth, as although it is a very powerful, it is notoriously difficult to use due to the phase modulation algorithm being very un-intuitive. An improved interface has the ability to open up FM synthesiser programming to non-expert users. %WORK ON THIS
 
-The synthesiser was designed to have access to as wide a range of sounds as possible with as few parameters as possible. For example instead of having a separate envelope generator for each oscillator (as in the Yamaha DX7), only 2 envelopes were included, with a blendable amount per operator. The synth has 96 total parameters, compared to the 126 of the DX7, but it can replicate most of the useful sounds of a DX7. Despite aims to reduce parameter count, there are still many redundant parmaeters in most presets for this synthesiser. For example, if the amplitude of one of the LFOs is set to zero, all of the other parameters to do with the LFO will have no effect on the sound. This is a common feature with synthesisers, and presents a challenge when trying to learn useful information from the parameters.
+The synthesiser was designed to have access to as wide a range of sounds as possible with as few parameters as possible. For example instead of having a separate envelope generator for each oscillator (as in the Yamaha DX7), only 2 envelopes were included, with an adjustable amount per operator. The synth has 96 total parameters, compared to the 126 of the DX7, but it can replicate most of the useful sounds of a DX7. Despite aims to reduce parameter count, there are still many redundant parmaeters in most presets for this synthesiser. For example, if the amplitude of one of the LFOs is set to zero, all of the other parameters to do with the LFO will have no effect on the sound. This is a common feature with synthesisers, and presents a challenge when trying to learn useful information from the parameters.
 
 In Yee King's thesis \cite{YeeKing}, a similar FM7 Ugen based Supercollider synthesiser was used, but no envelopes or LFOs were included, so that it was limited to producing sounds with a static timbre. Whilst this had advantages for the timbre mapping approach of the work, it resulted in a synthesiser that was not very representative of ones typically used, as envelopes are such an important part of designing sounds. 
 
 An interesting property of this synth design is that due to the 6 identical operators which can be configured in any combination, there is lots of possible permutation ambiguity: if two operators have all of their parameters switched, the sound will remain identical. This presents a challenge as two presets can have very different parameters despite having the exact same sound. 
-
 
 \chapter{Description of Full Interface}
 The full interface developed in this report is a combination of three interfaces. Each interface has the ability to vary the entire set of parameters, and produce a wide variety of sounds, but they are designed to complement each other as well as possible. The user can easily move back and forth between the different interfaces. A video of the full interface can be viewed at (LINK), and a working demo can be downloaded from (LINK).
@@ -429,8 +430,8 @@ If the full interface were to be extended to work with any VST, the traditional 
 \end{figure}
 
 \section{Selection Interface}
-Typical Soft-Synths are supplied with a large number of presets, which are usually named and arranged into categories. They are usually displayed in a list which can be searched by name, or split into category. In many soft-synths, each preset is given a set (usually 8) of Macro Controls, which each vary single parameter or combinations of parameters, and aim to give the user a quick way to tweak each preset.\\
-The Selection Interface is a new approach to displaying presets, arranging the presets as cells of a 2D Voronoi diagram \cite{Voronoi}, such that similar presets are close to each other and coloured similarly. The presets can quickly be compared by moving the mouse around the diagram, and presets are selected by clicking on the cells. Once a preset is selected it can be edited by macro controls. 
+Typical Soft-Synths are supplied with a large number of presets, which are usually named and arranged into categories. They are usually displayed in a list which can be searched by name, or split into category. In many soft-synths, each preset is given a set (usually 8) of \emph{Macro Controls}, which each vary single parameter or combinations of parameters, and aim to give the user a quick way to tweak each preset.\\
+The Selection Interface is a new approach to displaying presets, arranging the presets as cells of a 2D Voronoi diagram \cite{Voronoi}, such that similar presets are close to each other and coloured similarly. The presets can quickly be compared by moving the mouse around the diagram, and presets are selected by clicking on the cells. Once a preset is selected it can be edited by Macro Controls. 
 The presets have been divided into a number of categories. Clicking the category buttons at the top of the interface highlights the selected category, as shown in Figure \ref{fig:PCAInterface}. By clicking the 'Display Mode' button, it is also possible to limit the presets displayed to just the selected category(s), displayed in a recalculated Voronoi diagram.\\
 Both the 2D spacing of the presets, and the mapping of the macro controls are calculated automatically from the set of presets' parameter values using Principal Component Analysis.
 
@@ -445,12 +446,12 @@ Both the 2D spacing of the presets, and the mapping of the macro controls are ca
 \end{figure}
 
 \section{Blending Interface}
-Preset Blending is a somewhat popular approach in synth interface design, where new presets are created by a linear combination of presets. \footnote{For example, the \emph{Alchemy} \emph{FM8} soft-synths allow preset blending, and the  \emph{Nodes} object in \emph{Max/MSP} is a commonly used implementation of preset blending.} The Blending Interface extends this approach.
+Preset Blending is a somewhat popular approach in synth interface design, where new presets are created by a linear combination of presets.\footnote{For example, the \emph{Alchemy} and \emph{FM8} soft-synths allow preset blending, and the  \emph{Nodes} object in \emph{Max/MSP} is a commonly used implementation of preset blending.} The Blending Interface extends this approach.
 
 Three initial presets (A, B, C) are selected, and are placed on the corners of a triangle at the centre of the interface. As the cursor moves over the interface, a new preset is created as a weighted sum of the three presets, based on proximity to the corners. Once the user finds the optimal preset in the space, the user clicks. The preset clicked on then becomes the preset A (i.e is placed on the bottom corner of the triangle), and a new preset B and C are generated with a novel algorithm, described in Section \ref{sec:PresetGeneration}. \\
 This process is repeated as many times as desired, allowing the user to keep searching through the parameter space.\\
 If the user clicks on the Pause on Selected Preset button, they are shown an interactive display of their past preset choices, which they can use to go back to previously selected settings and resume searching. It is also possible to select three of the previous presets, and assign them to preset A, B and C.
-The user has the option to freeze sections of the parameter space, which helps the search be more fine tuned to their needs.
+The user has the option to freeze sections of the parameter space (see Figure \ref{fig:FreezeParams}) which helps the search be more fine tuned to their needs.
 The colours of the Blending Interface are calculated to be consistent with the Selection Interface.
 \begin{figure}[h] 
 	\centering
@@ -463,17 +464,17 @@ The colours of the Blending Interface are calculated to be consistent with the S
 \end{figure}
 
 \section{How the Interfaces are Combined}
-When the application is started, the Selection Interface is displayed first. Once a preset has been selected and possibly modified with the Macro Controls, the user has the option to click the 'Edit Mode' button, which opens the Traditional Interface, allowing the currently selected preset to be further modified. The user can move back to the Selection Interface by clicking the 'Return to Selection UI' button. The varied preset is displayed on the Selection Interface with a marker, attatched to the original preset, which is positioned and coloured to be consistent with the PCA mapping (as shown in Figure \ref{fig:CombinedInterface}). If the user wants to undo the edits made to the preset they can click the 'Undo Edit' button. In this way the user can move back and forth between the Blending and PCA interfaces as often as desired.
+When the application is started, the Selection Interface is displayed first. Once a preset has been selected and possibly modified with the Macro Controls, the user has the option to click the `Edit Mode' button, which opens the Traditional Interface, allowing the currently selected preset to be further modified. The user can move back to the Selection Interface by clicking the `Return to Selection UI' button. The varied preset is displayed on the Selection Interface with a marker, attatched to the original preset, which is positioned and coloured to be consistent with the PCA mapping (as shown in Figure \ref{fig:CombinedInterface}). If the user wants to undo the edits made to the preset they can click the `Undo Edit' button. In this way the user can move back and forth between the Blending and PCA interfaces as often as desired.
 
-Once three presets have been selected, the user has the option of clicking the 'Blend Mode' button which opens the Blending Interface, and assigns the three selected presets to A, B and C. The user can then use the Blending Interface for as long as necessary, and then click the 'Return to Preset Selection' button. This time another marker is created, with dotted lines to the 3 initially selected presets. 
-This marker can then be used in the same way as the cells of the voronoi diagram, I.e it can be previewed by clicking, selected by double clicking, can be edited with the Macro Controls or the Traditional Interface.
+Once three presets have been selected, the user has the option of clicking the `Blend Mode' button which opens the Blending Interface, and assigns the three selected presets to A, B and C. The user can then use the Blending Interface for as long as necessary, and then click the `Return to Preset Selection' button. This time another marker is created, with dotted lines to the 3 initially selected presets. 
+This marker can then be used in the same way as the cells of the voronoi diagram, i.e it can be previewed by clicking, selected by double clicking, can be edited with the Macro Controls or the Traditional Interface.
 
  There are a set of parameter visualisations that are displayed alongside all of the presets to give the user more feedback into what changes they are making, and to aid in understanding how the synthesis algorithm works. These are shown on the left and bottom sides of the interface in Figure \ref{fig:CombinedInterface}.
 \begin{figure}[h] 
 	\centering
 	\hspace*{-1.5cm}
 	\includegraphics[width = 7.5in]{CombinedInterface1.png}
-	\caption{Combined Interface - PCA view. The top right corner of the interface can be swapped for the Traditional Interface and the Blending Interface. The parameter visualisations on the left and bottom sides are common to all three interfaces.}
+	\caption{Combined Interface - PCA view. The top right corner of the interface can be swapped for the Traditional Interface and the Blending Interface. The parameter visualisations on the left and bottom sides are common to all three interfaces. The combined preset markers are shown on the Selection interface, as circles connected to dotted lines.}
 	\label{fig:CombinedInterface}
 \end{figure}
 
@@ -495,36 +496,30 @@ Even if the user knows exactly what each parameter should be set to, it will sti
 \pagebreak
 \section{Selection Interface}\label{sec:SelectionDescription}
 %\subsection{Detailed Description}
-This interface was created as a Matlab 'figure based application'. MAYBE PUT THE PCA DESCRIPTION HERE
+This interface was created as a Matlab figure-based application. A key technical detail of this interface is the choice of mapping function from the high dimensional parameter space to the 5-dimensional XY-RGB space of the interface. Many dimensionality reduction techniques could be used for this, such as \emph{tSNE} (used in \cite{InfiniteDrum}), \emph{Linear Discriminant Analysis}, and \emph{Autoencoders}. The simplest dimensionality reduction technique was chosen to try first: \emph{Principal Component Analysis} (\emph{PCA}). It is linear, non-parametric and has a closed-form solution, making it reliable and simple to implement. Other techniques could be investigated as a follow-up work.
 \subsection{Principal Component Analysis}
-Wiki quote: FIND BETTER SOURCE OR WRITE OWN
-
-"Principal component analysis (PCA) is a statistical procedure that uses an orthogonal transformation to convert a set of observations of possibly correlated variables into a set of values of linearly uncorrelated variables called principal components. If there are $n$ observations with $p$ variables, then the number of distinct principal components is $\min(n−1, p)$. This transformation is defined in such a way that the first principal component has the largest possible variance (that is, accounts for as much of the variability in the data as possible), and each succeeding component in turn has the highest variance possible under the constraint that it is orthogonal to the preceding components. The resulting vectors are an uncorrelated orthogonal basis set. PCA is sensitive to the relative scaling of the original variables."
-
-%In this report, the MATLAB nomenclature for PCA will be used
-
-Describe the PCA algorithm, 
-
-Desribe output parameters: Score, coeff, latent.
-
-Dicuss the possible extention to using Sparse PCA. 
-
-Talk about weighted PCA 
+PCA finds an optimal linear transformation of a dataset onto a set of decorrelated orthogonal basis vectors known as \emph{principal components}. This transformation is optimal in the sense that it diagonalises the covariance matrix of the transformed dataset. 
+The principal components are calculated as the eigenvectors of the covariance matrix $\vec{C}_x = \frac{1}{n-1}\vec{X}\vec{X}^T$, where $\vec{X} = [\vec{P}_1, \vec{P}_1, \dots \vec{P}_n]^T$, $\vec{P}_i$ are the individual presets, and $n$ is the number of presets.\\
+The eigenvalues of $\vec{C}_x$ are the variances of each component, and the principal components are arranged in order of decreasing variance.
+Most of the variance of a dataset typically lies in the first few components, and hence by only using these components, dimensionality reduction is acheived \cite{PCA}. The \emph{PCA score} for a preset is calculated by projecting the preset onto a particular principal component.\\
+PCA makes the assumption that directions with large variance correspond to directions of interest. In the case of a synthesiser preset dataset, this assumption is reasonable, as the data has high signal to noise ratio (although this may be affected by permutation ambiguity).\\
+PCA is affected by the relative scaling of the parameters in the dataset. This can be accounted for by inversely weighting each parameter by its variance before applying PCA. However, no conclusive evidence was found to show that this is worth doing for our particular dataset.\\
+There are several extensions to PCA including \emph{kernel PCA} which generalises PCA to the non-linear case. \emph{Sparse PCA} is another of such extensions, which aims to find principal components which have as few non-zero variables as possible. This is of special interest to the Macro Controls of the Selection Interface, as if each macro control only varies a subset of the parameters, it may make the Macro Controls more intuitive to users.
 \subsection{Global PCA vs Time/Timbre PCA}\label{sec:GlobalTimeTimbre}
-The PCA is calculated in two different ways for different sections of the interface. In 'Global PCA', each of the $36$ presets' $96$ parameters arranged in a $36 \times 96$ array. PCA is carried out on this array to produce the Global PCA Weights and Scores. 
+The PCA is calculated in two different ways for different sections of the interface. In \emph{Global PCA}, each of the $36$ presets' $96$ parameters arranged in a $36 \times 96$ array. PCA is carried out on this array to produce the Global principal components. 
+\\
+In \emph{Time/Timbre PCA}, the $96$ parameters are partitioned into two sets: $72$ which affect timbre, and $24$ which affect variation of the sound over time (I.e all of the envelope and LFO parameters). PCA is then carried out seperately on the resulting  $36 \times 72$, and $36 \times 24$ arrays to produce the Time principal components, and the Timbre principal components. 
+\\
+The Global principal components are used for the XY-RGB mapping of the Voronoi diagram, the Global PCA Macros, and for colouring the Blending Interface. The Time/Timbre PCA principal components are just used for the Time/Timbre Macro Controls.
 
-In Time/Timbre PCA, the $96$ parameters are partitioned into two sets: $72$ which affect timbre, and $24$ which affect variation of the sound over time (I.e all of the envelope and LFO parameters). PCA is then carried out seperately on the resulting  $36 \times 72$, and $36 \times 24$ arrays to produce the Time PCA Weights, and the Timbre PCA Weights. 
-
-The Global PCA Weights are used for the XY-RGB mapping of the Voronoi diagram, the Global PCA Macros, and for colouring the Blending Interface. The Time/Timbre PCA Weights are just used for the Time/TImbre Macro Controls.
-
-The user is given the option to switch between the Global, and Time/Timbre Macro Controls, as the global controls allow a greater amount to the space to be searched, but the Time/Timbre controls can be more understandable. See Section \ref{sec:SelectionEval} for a evaluation of the two control types.
-The Macro controls are the same for all presets, but centered on the currently selected preset. I.e. they allow a relative change of parameters not an absolute parameter change. A possible extension is to create a unique set of macro controls for each preset, which may make macro controls more useful, but at the sacrifice of consistency between presets.
+The user is given the option to switch between the Global, and Time/Timbre Macro Controls. The Global controls allow a greater amount to the space to be searched, but the Time/Timbre controls can be more understandable. See Section \ref{sec:SelectionEval} for an evaluation of the two  types.\\
+The Macro controls are the same for all presets, but centered on the currently selected preset. i.e. they allow a relative change of parameters not an absolute parameter change. A possible extension is to create a unique set of macro controls for each preset, which may make macro controls more useful, but at the sacrifice of consistency between presets.
 
 Another possible extension to this approach is to allow parameter freezing, as in the Blending Interface (see Section \ref{sec:BlendingDescription}), and have the PCA Macros automatically be recalculated based on the currently unfrozen parameters.
 
 
 \subsection{PCA + Histogram Equalisation Description}
-When using the Global PCA scores to calculate the XY-RGB position of each preset in the Voronoi diagram, there are some undesirable characteristics of the mapping produced. The sizes of the cells varies dramatically, and the majority of the presets usually get compressed into one of the corners, see Figure \ref{fig:histEqBefore}. This is because PCA is linear, and so outliers will skew the diagram. After rescaling to $[-1, 1]$ to fit in the diagram, the inliers will be compressed to a smaller range. A similar effect occurs with the colour mapping, causing many of the colours to be similar to each other minimising the dynamic range of the diagram. Research in the field of user interface design shows that users usually associate larger icons with greater importance (REFERENCE), therefore it would be preferable for all the presets to be of a similar size, so as not to give uninteded meaning to particular presets.\\
+When using the Global PCA scores to calculate the XY-RGB position of each preset in the Voronoi diagram, there are some undesirable characteristics of the mapping produced. The sizes of the cells varies dramatically, and the majority of the presets usually get compressed into one of the corners, see Figure \ref{fig:histEqBefore}. This is because PCA is linear, and so outliers will skew the diagram. After rescaling to $[-1, 1]$ to fit in the diagram, the inliers will be compressed to a small range. A similar effect occurs with the colour mapping, causing many of the colours to be similar to each other, minimising the dynamic range of the diagram. Research in the field of user interface design shows that users usually associate larger icons with greater importance (REFERENCE), therefore it would be preferable for all the presets to be of a similar size, so as not to give uninteded meaning to particular presets.\\
 To fix this issue, a variant of an image processing method known as histogram equalisation (REFERENCE) was used, resulting in the mapping shown in Figure \ref{fig:histEqAfter}.
 
 \begin{figure}
@@ -544,22 +539,21 @@ To fix this issue, a variant of an image processing method known as histogram eq
 	\caption{Selection Interface before and after Histogram Equalisation}\label{fig:PCAhistEq}
 \end{figure}
 
-Histogram equalisation in one dimension is described in Figure \ref{fig:HistEq}.\\
+Histogram equalisation in one dimension is shown in Figure \ref{fig:HistEq}, and described below.
 \begin{figure}[h] 
 	\centering
-	\includegraphics[width = 6in]{HistogramEquilisation.png}
-	\caption{Histogram Equalisation}
+	\includegraphics[trim={0, 5pt, 0, 5pt}, clip, width = 6in]{HistogramEquilisation.png}
+	\caption{Histogram Equalisation in one dimension}
 	\label{fig:HistEq}
-\end{figure}
-A histogram is created by splitting the data into a number of eqully spaced bins (6 bins was empirically found to work well in this case). The bins are then rescaled, such that the bin width is equal to the number of data points in the bin).
+\end{figure}\\
+A histogram is created by splitting the data into a number of eqully spaced bins (6 bins was empirically found to work well for our dataset). The bins are then rescaled, such that the bin width is equal to the number of data points in the bin).
 
-This process is carried out for the presets in all 5 of the XY-RGB dimensions, and then each dimension is mapped to the range $[0.05, 0.95]$, such that it will fit inside the axes of $[0, 1]$. Figures \ref{fig:PCAnumPresets} and \ref{fig:PCAnumPresets2}, show this technique applied to the first 3 principal components.
+This process is carried out for the presets in all 5 of the XY-RGB dimensions, and then each dimension is mapped to the range $[-0.95, 0.95]$, such that it will fit inside the axes of $[-1, 1]$. Figures \ref{fig:PCAnumPresets} and \ref{fig:PCAnumPresets2}, show this technique applied to the first 3 principal components.
 
-This approach, although simple, effectively redistributes the presets. As long as none of the bins are empty, the mapping in each dimension is peicewise-linear and continuous. This means that the Combined Preset Markers can be positioned correctly on the graph by first calculating the PCA scores, then passing these scores through the mapping function. Due to the continuity of the mapping function, the Macro Controls will cause the preset markers to move smootly across the graph. ... FINISH WRITING
+This approach, although simple, effectively redistributes the presets. As long as none of the bins are empty, the mapping in each dimension is peicewise-linear and continuous. This means that the Combined Preset Markers can be positioned correctly on the graph by first calculating the PCA scores, then passing these scores through the mapping function. Due to the continuity of the mapping function, the Macro Controls will cause the preset markers to move smootly across the graph.
 \subsection{Demonstrations of Preset Group Clustering}
-Having divided the presets into a set of (non-exlusive) categories, the clustering nature of the PCA process can be tested by viewing where the categories are placed in the diagram, see Figure \ref{fig:Categories}. This demonstrates that the PCA process does indeed cluster the categories together, although some are better clustered than others. Part of this is due to the fact that the categories are somewhat subjective, for example the decision between Synth Lead and Synth Pad, or between Piano/Keys and Plucked/Mallet.\\
-Some of the categories also include a wide range of sounds, especially Rhythmic and Synth Lead, and so have a less consistent pattern in their parameters.
-It is also hard to draw conclusions about the clustering performance, due to the small sample size of presets, and the fact that many of the presets were made by using the Blending Interface, so potentially have overly similar paramaters than if they'd been made from scratch by a person. To validate this approach more thoroughly, it would need to be applied to many real world sets of presets of pre-existing commercial synthesisers, but several technical challenges (In particular lack of standardisation of control interfaces MORE DETAIL HERE) prevented this being possible during the sort timescale of this project.
+Having divided the presets into a set of (non-exlusive) categories, the clustering nature of the PCA process can be tested by viewing where the categories are placed in the diagram, see Figure \ref{fig:Categories}. This demonstrates that the PCA process does indeed cluster the categories together, although some are better clustered than others. Part of this is due to the fact that the categories are somewhat subjective, for example the decision between Synth Lead and Synth Pad, or between Piano/Keys and Plucked/Mallet. Some of the categories also include a wide range of sounds, especially Rhythmic and Synth Lead, and so have a less consistent pattern in their parameters.\\
+It is hard to draw many conclusions about the clustering performance, due to the small sample size of presets, and the fact that many of the presets were made by using the Blending Interface, so potentially have overly similar paramaters than if they'd been made from scratch by a person. To validate this approach more thoroughly, it would need to be applied to many real world sets of presets of pre-existing commercial synthesisers, but several technical challenges prevented this being possible during the sort timescale of this project.
 
 \begin{figure}
 	\centering
@@ -606,15 +600,15 @@ It is also hard to draw conclusions about the clustering performance, due to the
 \end{figure}
 
 \subsection{How the PCA Mapping Scales with Number of Presets}
-The consistency of the PCA mapping as more presets are added is of importance to the usefulness of the interface. If the mapping radically changes every time a new preset is added, then any intuitition the user has learned about what the different components represent will be lost. This is one of the reasons for choosing PCA, as the linearity of the technique should lead to less surprising results (EXPLAIN BETTER).\\
+The consistency of the PCA mapping as more presets are added is of importance to the usefulness of the interface. If the mapping radically changes every time a new preset is added, then any intuitition the user has learned about what the different components represent will be lost. This is one of the reasons for choosing PCA, as the linearity of the technique should lead to less surprising results than stochastic, non-linear techniques such as \emph{tSNE}.\\
 \begin{figure}[h]
 	\hspace{-80pt}
-	\includegraphics[width = 8.5in]{PCAnumPresets1.eps}
+	\includegraphics[trim={0, 1cm, 0, 1cm}, clip, width = 8.5in]{PCAnumPresets1.eps}
 	\caption{PCA stability with number of presets. These plots show the positions of the indiviual presets when mapped onto the first and second principal components, with and without Histogram Equalisation. The mapping is recalculated each time a new preset is added. The positions are relatively stable except at discrete points where the component flips. These flips can be automatically corrected, as shown in the thrid row, with details of the correction process shown in Figure \ref{fig:PCAnumPresets2}.}
 	\label{fig:PCAnumPresets}
 	%	\vspace{-30pt}
-\end{figure}8
-Figure \ref{fig:PCAnumPresets} shows the variation of the first two principal components as the presets are added one at a time in the order of creation. After Histogram Equalisation has been applied the components are relatively stable, except at certain points where the component flips sign. These can clearly be seen at preset 34 for $PC_1$, and presets 6, 9, 13, 15, 28, 31:36 for $PC_2$. The bottom row of the figure shows the components after this sign flipping has been corrected by flipping the sign of the component. This makes a dramatic improvement in the stability of the principal components, especially for $PC_2$. This phenomenon also occurs in $PC_{3,4,5}$ used for the RGB mapping of the presets.
+\end{figure}
+Figure \ref{fig:PCAnumPresets} shows the variation of the preset positions for the first two principal components as the presets are added one at a time in the order of creation. After Histogram Equalisation has been applied the components are relatively stable, except at certain points where the component flips sign. These can clearly be seen at preset 34 for $PC_1$, and presets 6, 9, 13, 15, 28, 31:36 for $PC_2$. The bottom row of the figure shows the components after this sign flipping has been corrected. This makes a dramatic improvement in the stability of the mapping, especially for $PC_2$. This phenomenon also occurs in $PC_{3,4,5}$ used for the RGB mapping of the presets.
 
 As PCA is very quick to compute, the necessary sign reversals to correct the components can easily be computed using dynamic programming.\\ Defining $PCA_i^k$ to be the $i$th principal component computed with $k$ presets.
 \vspace{-10pt}
@@ -625,17 +619,18 @@ Iterate from $k = 1$, to $k = N-1$, where $N$ is the number of presets.
 	\item 
 If $\|PCA_i^{k+1} - PCA_i^k)\|_1 > \|PCA_i^{k+1} - (-PCA_i^k))\|_1$,  flip the sign of all remaining presets.
 \end{itemize}
-This algorithm is used on $PC_3$ in Figure \ref{fig:PCAnumPresets2}. To implement this checking in the interface, all that it necessary to do is keep track of which components have been flipped, and each time a new preset is added, check if $\|PCA_i^{k+1} - PCA_i^k)\|_1 > \|PCA_i^{k+1} - (-PCA_i^k))\|_1$ to determine whether or not to flip component $i$, and update the record of flipped components. (MENTION THAT THIS REQUIRES THE PCA COMPONENETS TO BE CENTERED ON ZERO, AND BE HISTOGRAM NORMALISED FIRST TO WORK WELL).
+This algorithm is used on $PC_3$ in Figure \ref{fig:PCAnumPresets2}. In order for this algorithm to work well, the preset mapping needs to be Histogram Normalised and centered on zero. To implement the algorithm in the interface, all that it necessary to do is keep track of which components have been flipped, and each time a new preset is added, check if $\|PCA_i^{k+1} - PCA_i^k)\|_1 > \|PCA_i^{k+1} - (-PCA_i^k))\|_1$ to determine whether or not to flip component $i$, and update the record of flipped components. 
+
 \begin{figure}
 	\hspace{-40pt}
-	\includegraphics[width = 7in]{PCAnumPresets2.eps}
-	\caption{PCA Sign Flip Calculations}
+	\includegraphics[trim={0, 1cm, 0, 1cm}, clip, width = 7in]{PCAnumPresets2.eps}
+	\caption{PCA Sign Flip Correction Algorithm.}
 	\label{fig:PCAnumPresets2}
 	%	\vspace{-30pt}
 \end{figure}
 
-The 'Latent' value for PCA is the variance of each component, and can be used to measure the effectiveness of the PCA mapping. If the first few components account for most of the variance of the dataset, then the dimensionality reduction has been successful.\\
-Figure \ref{fig:LatentOriginal} shows how the Latent score changes as more presets are added. Figure \ref{fig:LatentRandom} is the same plot but made with an entirely random dataset of the same size as the original dataset. Comparing the two graphs it can be concluded that the preset dataset is not purely random, as its PCA performs a lot better. Over 50\% of the variance can be accounted for by the first 2 components,  over 90\% can be accounted for by the first 10 components, and the graph seems to have assymtoted to a relatively stable state. In the random dataset, each of the fractions is rougly exponentially decresing as more presets are added. When all 36 random presets are included, only 50\% of the variance can be accounted for by the first 10 components. 
+The variance of each principal component can be used to measure the effectiveness of the PCA mapping. If the first few components account for most of the variance of the dataset, then the dimensionality reduction has been successful.\\
+Figure \ref{fig:LatentOriginal} shows how the variance changes as more presets are added. Figure \ref{fig:LatentRandom} is the same plot but made with an entirely random dataset of the same size as the original dataset. Comparing the two graphs it can be concluded that the preset dataset is not purely random, as its PCA performs a lot better. Over 50\% of the variance can be accounted for by the first 2 components,  over 90\% can be accounted for by the first 10 components, and the graph seems to have assymtoted to a relatively stable state. In the random dataset, each of the fractions is rougly exponentially decresing as more presets are added. When all 36 random presets are included, only 50\% of the variance can be accounted for by the first 10 components. 
 
 This suggests that PCA is an appropriate technique to use on syntheiser datasets, however testing on more synthesiser datasets is necessary to validate this result.
 \begin{figure}
@@ -651,7 +646,7 @@ This suggests that PCA is an appropriate technique to use on syntheiser datasets
 		\caption{Randomised Presets}
 		\label{fig:LatentRandom}
 	\end{subfigure}
-	\caption{Latent Fraction - Colour denotes Principal Component number}
+	\caption{Variance Fraction - Colour denotes Principal Component number}
 	%	\vspace{-30pt}
 \end{figure}
 
@@ -682,7 +677,7 @@ Where $\vec{P}$ is the blended preset, $\vec{A}$, $\vec{B}$, $\vec{C}$ are prese
 [\beta,  \gamma]^T = (\vec{M}^T\vec{M})\vec{M}^T[x, y], 
 	\hspace{1in} \alpha = 1 - (\beta + \gamma)
 \end{equation}
-\begin{wrapfigure}{r}{0.35\textwidth}
+\begin{wrapfigure}{R}{0.35\textwidth}
 	\vspace{-10pt}
 	\includegraphics[width = \textwidth/3]{BlendVectors.png}
 	\caption{Non-orthogonal vector decomposition}
@@ -697,7 +692,7 @@ Where $\vec{P}$ is the blended preset, $\vec{A}$, $\vec{B}$, $\vec{C}$ are prese
 	\label{fig:BlendingColours}
 	\vspace{-30pt}
 \end{wrapfigure}
-where $x$ and $y$ are the x and y coordinates of the current cursor position, and $\vec{M} =[\vec{b},  \vec{c}]$, where $\vec{b}$,  $\vec{c}$ are vectors from preset location A to the B and C locations, as shown in Figure \ref{fig:BlendingVectors}. There are two reasons for blending the presets in this way. Firstly, on an $m$-dimensional control surface, it is possible to linearly blend between all possible combinations of $m+1$ presets, so on a 2D screen, three presets should be blended.\footnote{Some implementations of preset blending in commercial synthesisers use four presets located on the corners of a square, however in this arrangement it is not possible to reach all possible combinations.} Secondly, this arrangment allows for locations both inside and outside of the central triangle to be used. Inside the triangle, $\alpha$, $\beta$ and $\gamma$ are all in the range [0, 1], giving an \emph{interpolation} between the presets. However, outside the triangle it is possible for $\alpha$, $\beta$ and $\gamma$ to be less than zero and greater than one, allowing for \emph{extrapolation}.
+where $x$ and $y$ are the x and y coordinates of the current cursor position, and $\vec{M} =[\vec{b},  \vec{c}]$, where $\vec{b}$,  $\vec{c}$ are vectors from preset location A to the B and C locations, as shown in Figure \ref{fig:BlendingVectors}. There are two reasons for blending the presets in this way. Firstly, on an $m$-dimensional control surface, it is possible to linearly blend between all possible combinations of $m+1$ presets, so on a 2D screen, three presets should be blended.\footnote{Some implementations of preset blending in commercial synthesisers use four presets located on the corners of a square, however in this arrangement it is not possible to reach all possible combinations.} Secondly, this arrangment allows for locations both inside and outside of the central triangle to be used. Inside the triangle, $\alpha$, $\beta$ and $\gamma$ are all in the range [0, 1], giving an \emph{interpolation} between the presets. Outside of the triangle $\alpha$, $\beta$ and $\gamma$ can be less than zero and greater than one, allowing for \emph{extrapolation}.
 
 The parameter constraint function, $f$, applies the relevant constraints to each parameter. Most parameters are continuous with an upper and lower bound, $[l, u]$. For these parameters: $f_i(P_i) = \min(\max(P_i, l), u)$, where $P_i$ is the $i$th parameter of blended preset $\vec{P}$. For the Coarse frequency parameters, the continuous blended value is discretised back into the set ${0.5, 1, 2, 3, ...}$, which the desicion boundary between neighbouring number falling equidistant to the numbers, as shown in Figure \ref{fig:Freq Coarse}.
 
@@ -817,14 +812,14 @@ As shown in Figure \ref{fig:PCAtest1}, for different preset goals, the effective
 
 In all cases the mean error converges to a non-zero steady state value. This is due to the limited degrees of freedom when using the Macro Controls. This means that the Macro Controls alone cannot be used to perfectly match a goal preset.
 
-When the 'Global' Macro Controls are being used, after a large number of iterations, the random order manages to decrease the error past the cyclic order. It is likely that this is due to the cyclic order getting stuck in a local optimum due to the naive 'one parameter at a time' (BETTER NAME FOR THIS) search algorithm.
+When the Global Macro Controls are being used, after a large number of iterations, the random order manages to decrease the error past the cyclic order. It is likely that this is due to the cyclic order getting stuck in a local optimum due to the naive 'one parameter at a time' (BETTER NAME FOR THIS) search algorithm.
 
 Finally, each of the combinations of controls has a similar initial rate of error reduction, but the 'Global' Macro Controls appear to have a significant advantage over the 'Time/Timbre' Macro Controls over larger numbers of iterations. This is likely due to the fact that the Global Macro Controls have access to principal components 1 to 8, whereas the 'Time/Timbre' Macro Controls on have access to two sets of principal components 1 to 4. The combination of both sets of Macro Controls gives the lowest mean error overall, which is unsurprising as it has the most degrees of freedom, and it has a comparable error reduction rate as the 'Global' Controls.
 
-Based on this it is concluded that it is worth keeping both sets of macro controls for the user to be able to select between, especially as the 'Time/Timbre' Macro Controls may lead to more semantically meaningful controls due to the seperation of Time and Timbre. (JUSTIFY THIS MORE)
+Based on this it is concluded that it is worth keeping both sets of macro controls for the user to be able to select between, especially as the Time/Timbre Macro Controls may lead to more semantically meaningful controls due to the seperation of Time and Timbre. (JUSTIFY THIS MORE)
 
 \subsection{Blending Interface} \label{sec:BlendingEval}
-The Blending interface was evaluated in a similar manner. For each of the 36 possible goal presets, the closest three presets to it were found, and these used as preset A, B and C in the blending algorithm. MATLAB's 'Patternsearch' was again used in each iteration to optimise the position of the mouse in the Blending Interface to minimise the parameter based error metric. 
+The Blending interface was evaluated in a similar manner. For each of the 36 possible goal presets, the closest three presets to it were found, and these used as preset A, B and C in the blending algorithm. MATLAB's Patternsearch was again used in each iteration to optimise the position of the mouse in the Blending Interface to minimise the parameter based error metric. 
 
 Results of this test are shown in Figure \ref{fig:BlendingTest1}
 \begin{figure}
@@ -978,6 +973,9 @@ Pierce, D. (2017). \emph{The hot new hip-hop producer who does everything on his
 
 \bibitem{GenSynth}
 Rice, David. (2015). \emph{GenSynth: Collaboratively Evolving Novel Synthetic Musical Instruments}. 10.13140/RG.2.1.4691.6001. 
+
+\bibitem{PCA}
+Shlens, D. (2014). \emph{A Tutorial on Principal Component Analysis}. arXiv:1404.1100 [cs.LG]
 
 \bibitem{SoftTube}
 Softube.com. (2016). Softube - Modular. [online] Available at: \url{https://www.softube.com/modular} [Accessed 18 Apr. 2018].
