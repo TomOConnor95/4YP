@@ -159,7 +159,7 @@ The invention and subsequent development of the Synthesiser has been one of the 
 Typical Soft-Synths require lots of technical knowledge to use, and have hundreds or even thousands of parameters which control the sound generation algorithm. Many musicians lack the expertise required to synthesise sounds from scratch and thus rely heavily on \emph{Presets}, pre-made combinations of synth parameters which produce nice sounds. Whilst there is nothing necessarily wrong with using presets, it makes it difficult for musicians to create unique and destinctive sounds. There is even a sizeable market for buying new presets for synthesisers.\\
 A conclusion can be drawn from this: more work needs to be done to make synthesisers easier to use. To quote Roger Linn, a pioneer of synthesisers, in a 2016 keynote: \cite{RogerLinn}
 \begin{displayquote}
-	In the early days of automobiles, to own one you had to know the technical details of how it worked, and clubs of enthusiasts were formed around details such as carburettors and spark plugs. Once cars got more reliable these clubs disappeared, as it turned out they were actually just intersted in the ability to drive. I think this is the area we're in now [with synthesisers]. People are learning every little detaim rather than focusing on making music \dots The key challenge of synth design is to find what the musician really wants, and give them controls in that space.
+	``In the early days of automobiles, to own one you had to know the technical details of how it worked, and clubs of enthusiasts were formed around details such as carburettors and spark plugs. Once cars got more reliable these clubs disappeared, as it turned out they were actually just intersted in the ability to drive. I think this is the area we're in now [with synthesisers]. People are learning every little detaim rather than focusing on making music \dots The key challenge of synth design is to find what the musician really wants, and give them controls in that space.''
 \end{displayquote}
 This project aims to tackle this problem by designing a radically new interface for controlling synthesisers, and along the way hopes to find some useful insights about high-dimensional parameter spaces in general.
 %
@@ -187,21 +187,21 @@ Studies show (REFERENCE), that users are much better at giving a preferance betw
 
 \chapter{Literature Review}
 \section{Introduction to Synthesisers}
-Synthesisers are devices which can create a wide variety of musical sounds in response to  user input, typically in the form of notes played on a keyboard. %The first synthesisers consisted of single note electronic oscilators, such as the Theremin... , 
-Wiki - "The earliest synthesizers used a variety of thermionic-valve (vacuum tube) and electro-mechanical technologies.". \\
-In the 1960s and 70s, after the invention of the transistor, - Wiki - "Early analogue synthesizers used technology from electronic analogue computers and laboratory test equipment. They were generally "modular" synthesizers, consisting of a number of independent electronic modules connected by patch cables into a patchbay that resembled the jackfields used by 1940s-era telephone operators. Synthesizer modules in early analog synthesizers included voltage-controlled oscillators (VCOs), voltage-controlled filters (VCFs), and voltage-controlled amplifiers (VCAs). The control voltage varied frequency in VCOs and VCFs, and attenuation (gain) in VCAs. Additionally, they used envelope generators, low-frequency oscillators, and ring modulators. Some synthesizers also had effects devices, such as reverb units, or tools such as sequencers or sound mixers. 
-%Because many of these modules took input sound signals and processed them, an analog synthesizer could be used both as a sound-generating and sound-processing system.
-Famous modular synthesizer manufacturers included Buchla \& Associates, Moog Music, ARP Instruments, Inc., and Electronic Music Studios."\\
-Later analogue synths were fixed architecture (or semi-modular), and much more compact and user friendly. -Wiki- "The most popular of these was the Minimoog". At this time, synthesisers began to feauture commoonly in popular music, both in the studio and in live situations.\\
-In the 1980s, digital syntheisers were invented, allong with a much wider variety of syntesis techniques than was possible with analogue electronics. In particular FM synthesis defined much of the musical sound of the 1980s, and was popularised by the Yamaha DX7 synthesisers. (REFERENCE ALL THIS STUFF!) REWRITE IN OWN WORDS
+Synthesisers are devices which can create a wide variety of musical sounds in response to  user input, typically in the form of notes played on a keyboard. The history of synthesisers closely follows the evolution of electronics over the last century.\\
+Early synthesisers, from 1900 - 1960, used a variety of the technologies of the time. These included steam powered electromagnetic generators, vaccum tubes, electrostatic antennae, and a variety of electro-mechanical technologies \cite{AppleSynth}.\\
+In the 1960s and 70s, technology from early analogue computers and laboratory test equipment was used to create sound. The invention of the transistor made many types of electronic circuit cheap and practical to use, allowing the creation of  \emph{modular synthesisers}. These consisted of many modules of electronics, such as voltage-controlled oscillators, filters and amplifiers (VCOs, VCFs and VCAs) and envelope generators, which were patched together with cables (see Figure \ref{fig:MoogSystem35}). As this technology matured, many more modules were invented, such as ring-modulators, sequencers, and effects units such as reverb.
+%
+%Wiki - "The earliest synthesizers used a variety of thermionic-valve (vacuum tube) and electro-mechanical technologies.". \\
+%In the 1960s and 70s, after the invention of the transistor, - Wiki - "Early analogue synthesizers used technology from electronic analogue computers and laboratory test equipment. They were generally "modular" synthesizers, consisting of a number of independent electronic modules connected by patch cables into a patchbay that resembled the jackfields used by 1940s-era telephone operators. Synthesizer modules in early analog synthesizers included voltage-controlled oscillators (VCOs), voltage-controlled filters (VCFs), and voltage-controlled amplifiers (VCAs). The control voltage varied frequency in VCOs and VCFs, and attenuation (gain) in VCAs. Additionally, they used envelope generators, low-frequency oscillators, and ring modulators. Some synthesizers also had effects devices, such as reverb units, or tools such as sequencers or sound mixers. 
+%Famous modular synthesizer manufacturers included Buchla \& Associates, Moog Music, ARP Instruments, Inc., and Electronic Music Studios."\\
+Later analogue synths were fixed architecture (or semi-modular), and much more compact and user friendly, such as the \emph{Minimoog} and the \emph{Prophet-5}. At this time, synthesisers began to feauture commonly in popular music, both in the studio and in live situations \cite{Synth}.\\
+In the 1980s, \emph{digital syntheisers} were invented, allowing a much wider variety of synthesis techniques than is possible with analogue electronics. In particular FM synthesis defined much of the musical sound of the 1980s, and was popularised by the Yamaha \emph{DX7} synthesiser.\\
+Since the invention of personal computers, many popular synthesisers have been recreated digitally as \emph{software synthesisers}, commonly known as \emph{plug-ins}, and are widely used in modern Digital Audio Workstations (DAWs). As well as recreatations of hardware synthesisers, many novel software synthesisers have been developed solely for use on computers, making use of the flexibility, increased computing power, and interactive display capabitilies of computers.\\
+A much more in depth history of synthesisers, as well as deatiled explanation of all aspects of sound synthesis can be found in \emph{The Syntheser} by Mark Vail \cite{Synth}.
 
-Since the invention of personal computers, many popular synthesisers have been recreated digitally as software synthesisers, commonly known as 'Plug-ins', and are widely used in modern Digital Audio Workstations (DAWs). As well as recreatations of hardsware synthesisers, many novel software synthesisers have been developed solely for use on computers, making use of the flexibility, the increased computing power, and interactive display capabitilies of computers. 
-
-A much more in depth history of synthesisers, as well as deatiled explanation of all aspects of synthesisers can be found in The Syntheser by Mark Vail \cite{Synth}.
-
-In the thesis Development and Exploration of a Timbre Space Representation of Audio \cite{SynthTypes} %http://mig.dcs.gla.ac.uk/wp-content/mig-papers/craig_nicol_thesis.pdf
-the common methods of audio synthesis are decrebed in detail, and are as follows:
+The common methods of audio synthesis are as follows: \cite{SynthTypes}
 \begin{itemize}
+	\vspace{-10pt}
 	\setlength\itemsep{-1.2em}
 	\item Wavetable Synthesis
 	\item Synthesis using Oscillators
@@ -210,34 +210,36 @@ the common methods of audio synthesis are decrebed in detail, and are as follows
 	\item Subtractive Synthesis
 	\item Granular Synthesis
 	\item Physical Modelling
+		\vspace{-10pt}
 \end{itemize}
 In addition, many synthesisers include the use of audio samples. Hybrid approaches of the above techniques are also common.
 
 \section{Introduction to Synthesiser Interfaces}
 Analogue synthesiser interfaces, whether modular or fixed architecture, usually consist of a number of modules, such as VCOs and VCAs, controlled with potentiometers, switches, and control signals from elsewhere in the synth, see Figure \ref{fig:MoogSystem35}. \\
 %
-\begin{figure}[h] 
+\begin{figure}[h]
 	\centering
-	\includegraphics[width = 6in]{MoogSystem35.jpg}
-	\caption{Analogue synthesiser - Moog System 35 \cite{Moog35}}
+	\includegraphics[width = 5in]{MoogSystem35.jpg}
+	\caption{Analogue synthesiser - \emph{System 35} (Moog)}
 	\label{fig:MoogSystem35}
 	% https://www.moogmusic.com/products/modulars/system-35
 \end{figure}
 %
-Digital synthesisers can be much more flexible in their interface, as the audio signals are not passing directily thorugh the controls. Early digital synthesisers had famously un-user friendly interfaces consising of LCD screens and rows of buttons to alter the parameters, hidden in a series of menus, see Figure \ref{fig:YamahFS1R}. As these interfaces lacked the hands-on interface that musicians loved from analogue synths, many digital synths, despite being much more capable of producing a wide variety sounds, were less popular, and many users found the process of programming these synths to be incredibly frustrating. (REFERENCE FOR THIS - Also sentrence isn't that good) To make the interfaces more user friendly, most digital synths are provided with a set of Presets - parameter settings that produce nice sounds - which demonstarate a wide range of the synthesiser's sounds. One of the reasons the synthesiser sounds of the 1980s were so simlar to each other, is that many musicians would entirely use the preset sounds, without altering them at all. This is in part due to the novely of the sounds at the time, and in part due to the difficult user interfaces \cite{Synth}.\\
+Digital synthesisers can be much more flexible in their interface, as the audio signals are not passing directily through the controls. Early digital synthesisers had famously un-user friendly interfaces consising of LCD screens and rows of buttons to alter the parameters, hidden in a series of menus, see Figure \ref{fig:YamahFS1R}. As these interfaces lacked the hands-on control that musicians loved from analogue synths, many digital synths were less popular, despite being much more capable of producing a wide variety sounds. Many users found the process of programming these synths to be incredibly frustrating \cite{Synth}. To make the interfaces more user friendly, most digital synths are provided with a set of presets - parameter settings that produce nice sounds - which demonstrate a wide range of the synthesiser's sounds. %One of the reasons the synthesiser sounds of the 1980s were so simlar to each other, is that many musicians would entirely use the preset sounds, without altering them at all. This is in part due to the novely of the sounds at the time, and in part due to the difficult user interfaces \\
 %
 \begin{figure}[h] 
 	\centering
-	\includegraphics[width = 6in]{yamaha_fs1r.jpg}
-	\caption{Digital synthesiser - \emph{FS1R} (Yamaha) \cite{YamahaFS1R}}
+	\includegraphics[trim = {0, 0.2cm, 0, 0.5cm}, clip, width = 5in]{yamaha_fs1r.jpg}
+	\caption{Digital synthesiser - \emph{FS1R} (Yamaha) \cite{FS1R}}
 	\label{fig:YamahFS1R}
 	% http://www.vintagesynth.com/yamaha/fs1r.php
-\end{figure}
+	\vspace{-10pt}
+\end{figure}\\
 Software synthsesiers have a wide variety of interfaces. Many follow similar design patterns to analogue synths, but with additional interactive elements such as user-drawable envelopes. An example of this is the very popular \emph{Massive} by Native Instruments \cite{Massive}, shown in Figure \ref{fig:MassiveNI}. Other software synthesisers offer much more visual and interactive interfaces, such as the \emph{Wavetable} synthesiser by Ableton \cite{Wavetable}, shown in Figure \ref{fig:AbletonWavetable}.
 
 \begin{figure}[h] 
 	\centering
-	\includegraphics[width = 6in]{MassiveNI.jpg}
+	\includegraphics[width = 5in]{MassiveNI.jpg}
 	\caption{Software Synthesiser - \emph{Massive} (Native Instruments) \cite{Massive}}
 	\label{fig:MassiveNI}
 	%https://www.soundonsound.com/reviews/native-instruments-massive
@@ -245,7 +247,7 @@ Software synthsesiers have a wide variety of interfaces. Many follow similar des
 
 \begin{figure}[h] 
 	\centering
-	\includegraphics[width = 6in]{AbletonWavetable.jpg}
+	\includegraphics[width = 5in]{AbletonWavetable.jpg}
 	\caption{Software Synthesiser - \emph{Wavetable} (Ableton)\cite{Wavetable} }
 	\label{fig:AbletonWavetable}
 	%https://www.ableton.com/en/packs/wavetable/
@@ -916,6 +918,9 @@ In typical synthesisers, the parameters have a hierarchical nature, as the synth
 
 \bibitem{Wavetable}
 Ableton.com. (2018). \emph{Wavetable | Ableton}. [online] Available at: \url{https://www.ableton.com/en/packs/wavetable/} [Accessed 18 Apr. 2018].
+
+\bibitem{AppleSynth}
+Documentation.apple.com. (2009). \emph{A Brief History of the Synthesiser}. [online] Available at: \url{https://documentation.apple.com/en/logicstudio/instruments/index.html#chapter=A\%26section=5\%26tasks=true} [Accessed 20 Apr. 2018].
 
 \bibitem{FM}
 Chowming, J.M. (1977). \emph{The Synthesis of Complex Audio Spectra by Means of Frequency Modulation}.
