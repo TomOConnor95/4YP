@@ -112,18 +112,17 @@ Candidate Number: 355136\\
 
 \begin{abstract}
 \begin{flushleft}
-Software Synthesisers (Soft-Synths) are computer applications which create sounds in response to musical input typically in the form of \emph{MIDI} (\emph{Musical Instrument Digital Interface}) messages. They are widely used in a variety of musical contexts. Typical soft-synths have hundreds or thousands of parameters which control the sound generation algorithm, allowing the user to create sounds that suit their musical needs. This results in a high dimensional, non-linear search space which the user must navigate. Research indicates that humans are bad at navigating such interfaces with serial controls, and that there is a strong link between interface design and the level of creativity that the user with experience when using the interface. \\
+Software Synthesisers (Soft-Synths) are computer applications which create sounds in response to musical input typically in the form of \emph{MIDI} (\emph{Musical Instrument Digital Interface}) messages. They are widely used in a variety of musical contexts. Typical soft-synths have hundreds or thousands of parameters which control the sound generation algorithm, allowing the user to create sounds that suit their musical needs. This results in a high dimensional, non-linear search space which the user must navigate. Research indicates that humans are bad at navigating such interfaces with serial controls, and that there is a strong link between interface design and the level of creativity that the users experience. \\
 This work describes a novel interface designed to help users control synthesisers in a quicker and more intuitive manner. It combines three interfaces together: a traditional 'knob and slider' interface, a search space visualisation interface, and an iterative blending interface.\\
 %
 Suitable types of synthesiser for this interface are identified, and a purpose-built synthesiser created. A small dataset of presets is created for this synthesiser.\\
 Principal Component Analysis (PCA) combined with Histogram Equalisation is shown to be an effective method to create a low dimensional embedding of a synth preset dataset.
- A dynamic programming algorithm is designed to eliminate an undesirable phenomenon of PCA, in which the sign of the principal components may flip unexpectedly as more data points are added to the dataset.
+An algorithm is developed to eliminate an undesirable phenomenon of PCA, in which the sign of the principal components may flip unexpectedly as more data points are added to the dataset.
 An algorithm for iteratively generating new presets based off users' preferences is developed.
  A Perfect/Imperfect user model is developed to numerically evaluate syntheiser interfaces.
  Parameter selection order is identified as a key limitation of traditional interfaces.
- To verify the approach, the interface is tested in a different context - Image Filtering.
+ To verify the design of the interface, it is also tested in a different context - Image Filtering.
 
-THIS ABSTRACT NEEDS MORE WORK
 \end{flushleft}
 \end{abstract}
 
@@ -195,7 +194,7 @@ Studies show \cite{RatingRanking}, that users are much better at giving a prefer
 	\item Suitable types of synthesiser for this interface are identified, and a purpose built synthesiser created to test the interface with.
 	\item A small dataset of synthesiser presets is created
 	\item Principal Component Analysis (PCA) combined with Histogram Equalisation is shown to be an effective method to create a low dimensional embedding of a synth preset dataset.
-	\item A dynamic programming algorithm is designed to eliminate an undesirable phenomenon of PCA, in which the sign of the principal components may flip unexpectedly as more data points are added to the dataset.
+	\item An algorithm is developed to eliminate an undesirable phenomenon of PCA, in which the sign of the principal components may flip unexpectedly as more data points are added.
 	\item An algorithm for iteratively generating new presets based off users' preferences is developed.
 	\item A Perfect/Imperfect user model is developed to numerically evaluate syntheiser interfaces.
 	\item Parameter selection order is identified as a key limitation of traditional interfaces.
@@ -275,7 +274,7 @@ Some software synthesisers have modular designs, such as \emph{Modular} by SoftT
 
 There has been a wide range of reasearch in the Computer Music field in the use of multideminsional controllers, such as the  \emph{Myo}, \emph{Leap Motion} and \emph{Microsoft Kinect}, to control synthesis parameters in real time \cite{ICMC, TubbThesis}, and research into advanced user interaction types, such as waveform blending (see \emph{wavetable synthesis}\cite{Wavetable} and \emph{vector synthesis} \cite{SY22}), preset blending \cite{Interpolation}, randomisation of presets, and many more \cite{YeeKing, EvolvedAudioEffects}.  Several studies have applied a variety of machine learning techniques to synthesiser control, as described in the next section.
 
-\section{Previous attempts of using machine learning to control synthesisers}
+\section{Using Machine Learning to Control Synthesisers}
 Many user have difficulties programming synthesisers, due to large amount of technical and creative skill necessary. There have been several previous attempts to use machine learning to make programming synthesisers easier and more expressive. In Yee King's thesis \cite{YeeKing} Sections 4.1.1, and 4.1.2 describes the difficulty of programming synthesisers, and several of these attempts, from both academia and in commercial products.
 
 The Google NSynth (Neural Synthesiser) project \cite{NSynth}, develops a technique to do preset blending of sampled instruments, in a latent space of a WaveNet autoencoder rather than operating directly on the audio recordings. This project has impressive results, but a downside is that it relies upon pre-computing a large database of audio recordings to densely sample the latent space, which are then interpolated for real time playback. Furthermore only 16 instruments were sampled.
@@ -289,7 +288,7 @@ The Selection Interface draws inspiration from this project. It would be possibl
 In this work a parameter-based approach is taken, to see if similar quality results can be obtained through a statistical analysis of the parameters of the presets of a synthesiser. If this approach is sucessful, it also has many benefits in terms of the speed of the mapping, and the amount of storage required.
 
 The \emph{Wekinator} \cite{Wekinator} is an infuential application of \emph{interactive machine learning} (also known as \emph{active learning}) in music, in which expressive control mappings can be generated for many different types of user interaction based on a small number of user supplied training examples. This approach could be used to allow the interface designed in this report to be controlled more expressively, and make it better suited to live performance.
-\section{Description of HCI design principles for creative musical interfaces}\label{sec:Tubb}
+\section{HCI design principles for Creative Musical Interfaces}\label{sec:Tubb}
 There are four main types of parameter mapping in synthesier interfaces:\cite{MappingStrategies}
 \begin{itemize}
 \vspace{-10pt}
@@ -520,7 +519,7 @@ Another possible extension to this approach is to allow parameter freezing, as i
 
 \subsection{PCA + Histogram Equalisation Description}
 When using the Global PCA scores to calculate the XY-RGB position of each preset in the Voronoi diagram, there are some undesirable characteristics of the mapping produced. The sizes of the cells varies dramatically, and the majority of the presets usually get compressed into one of the corners, see Figure \ref{fig:histEqBefore}. This is because PCA is linear, and so outliers will skew the diagram. After rescaling to $[-1, 1]$ to fit in the diagram, the inliers will be compressed to a small range. A similar effect occurs with the colour mapping, causing many of the colours to be similar to each other, minimising the dynamic range of the diagram. Research in the field of user interface design shows that users usually associate larger icons with greater importance (REFERENCE), therefore it would be preferable for all the presets to be of a similar size, so as not to give uninteded meaning to particular presets.\\
-To fix this issue, a variant of an image processing method known as histogram equalisation (REFERENCE) was used, resulting in the mapping shown in Figure \ref{fig:histEqAfter}.
+To fix this issue, a variant of an image processing method known as \emph{histogram equalisation}\cite{HistogramEqualisation} was used, resulting in the mapping shown in Figure \ref{fig:histEqAfter}.
 
 \begin{figure}
 	\centering
@@ -541,6 +540,7 @@ To fix this issue, a variant of an image processing method known as histogram eq
 
 Histogram equalisation in one dimension is shown in Figure \ref{fig:HistEq}, and described below.
 \begin{figure}[h] 
+	\vspace{-20pt}
 	\centering
 	\includegraphics[trim={0, 5pt, 0, 5pt}, clip, width = 6in]{HistogramEquilisation.png}
 	\caption{Histogram Equalisation in one dimension}
@@ -606,43 +606,44 @@ The consistency of the PCA mapping as more presets are added is of importance to
 	\includegraphics[trim={0, 1cm, 0, 1cm}, clip, width = 8.5in]{PCAnumPresets1.eps}
 	\caption{PCA stability with number of presets. These plots show the positions of the indiviual presets when mapped onto the first and second principal components, with and without Histogram Equalisation. The mapping is recalculated each time a new preset is added. The positions are relatively stable except at discrete points where the component flips. These flips can be automatically corrected, as shown in the thrid row, with details of the correction process shown in Figure \ref{fig:PCAnumPresets2}.}
 	\label{fig:PCAnumPresets}
-	%	\vspace{-30pt}
+		\vspace{-10pt}
 \end{figure}
-Figure \ref{fig:PCAnumPresets} shows the variation of the preset positions for the first two principal components as the presets are added one at a time in the order of creation. After Histogram Equalisation has been applied the components are relatively stable, except at certain points where the component flips sign. These can clearly be seen at preset 34 for $PC_1$, and presets 6, 9, 13, 15, 28, 31:36 for $PC_2$. The bottom row of the figure shows the components after this sign flipping has been corrected. This makes a dramatic improvement in the stability of the mapping, especially for $PC_2$. This phenomenon also occurs in $PC_{3,4,5}$ used for the RGB mapping of the presets.
+Figure \ref{fig:PCAnumPresets} shows the variation of the preset positions for the first two principal components as the presets are added one at a time in the order of creation. After Histogram Equalisation has been applied the components are relatively stable, except at certain points where the component flips sign. This can be seen at preset 34 for $PC_1$, and presets 6, 9, 13, 15, 28, 31:36 for $PC_2$. The bottom row of the figure shows the components after this sign flipping has been corrected. This makes a dramatic improvement in the stability of the mapping, especially for $PC_2$. This phenomenon also occurs in $PC_{3,4,5}$ used for the RGB mapping of the presets.
 
 As PCA is very quick to compute, the necessary sign reversals to correct the components can easily be computed using dynamic programming.\\ Defining $PCA_i^k$ to be the $i$th principal component computed with $k$ presets.
-\vspace{-10pt}
 \begin{itemize}
+	\vspace{-10pt}
 		\setlength\itemsep{-1.2em}
 	\item 
 Iterate from $k = 1$, to $k = N-1$, where $N$ is the number of presets.
 	\item 
 If $\|PCA_i^{k+1} - PCA_i^k)\|_1 > \|PCA_i^{k+1} - (-PCA_i^k))\|_1$,  flip the sign of all remaining presets.
+\vspace{-30pt}
 \end{itemize}
-This algorithm is used on $PC_3$ in Figure \ref{fig:PCAnumPresets2}. In order for this algorithm to work well, the preset mapping needs to be Histogram Normalised and centered on zero. To implement the algorithm in the interface, all that it necessary to do is keep track of which components have been flipped, and each time a new preset is added, check if $\|PCA_i^{k+1} - PCA_i^k)\|_1 > \|PCA_i^{k+1} - (-PCA_i^k))\|_1$ to determine whether or not to flip component $i$, and update the record of flipped components. 
+This algorithm is used on $PC_3$ in Figure \ref{fig:PCAnumPresets2}. In order for this algorithm to work well, the preset mapping needs to be Histogram Normalised and centered on zero. To implement the algorithm in the interface, all that it necessary to do is keep track of which components have been flipped, and each time a new preset is added, check if $\|PCA_i^{k+1} - PCA_i^k)\|_1 > \|PCA_i^{k+1} - (-PCA_i^k))\|_1$ to determine whether to flip component $i$, and update the record of flipped components. 
 
 \begin{figure}
 	\hspace{-40pt}
-	\includegraphics[trim={0, 1cm, 0, 1cm}, clip, width = 7in]{PCAnumPresets2.eps}
+	\includegraphics[trim={0, 1cm, 0, 1.5cm}, clip, width = 7in]{PCAnumPresets2.eps}
 	\caption{PCA Sign Flip Correction Algorithm.}
 	\label{fig:PCAnumPresets2}
-	%	\vspace{-30pt}
+	\vspace{-10pt}
 \end{figure}
 
-The variance of each principal component can be used to measure the effectiveness of the PCA mapping. If the first few components account for most of the variance of the dataset, then the dimensionality reduction has been successful.\\
-Figure \ref{fig:LatentOriginal} shows how the variance changes as more presets are added. Figure \ref{fig:LatentRandom} is the same plot but made with an entirely random dataset of the same size as the original dataset. Comparing the two graphs it can be concluded that the preset dataset is not purely random, as its PCA performs a lot better. Over 50\% of the variance can be accounted for by the first 2 components,  over 90\% can be accounted for by the first 10 components, and the graph seems to have assymtoted to a relatively stable state. In the random dataset, each of the fractions is rougly exponentially decresing as more presets are added. When all 36 random presets are included, only 50\% of the variance can be accounted for by the first 10 components. 
-
-This suggests that PCA is an appropriate technique to use on syntheiser datasets, however testing on more synthesiser datasets is necessary to validate this result.
-\begin{figure}
+The variance of each principal component can be used to measure the effectiveness of the PCA mapping. If the first few components account for most of the variance of the dataset, then the dimensionality reduction has been successful.
+Figure \ref{fig:LatentOriginal} shows how the fraction of the variance associated with each principal component changes as more presets are added. Over 50\% of the variance can be accounted for by $PC_{1,2}$,  over 90\% by $PC_{1 : 10}$, and the graph assymtotes to a relatively stable state. Figure \ref{fig:LatentRandom} is the same plot for a random dataset the same size as the original dataset. Each of the fractions is rougly exponentially decreasing. When all 36 presets are included, only 50\% of the variance can be accounted for by $PC_{1 : 10}$. \\
+It appears that synth dataset has some non-random internal structure which PCA is successfully managing to find. This suggests that PCA is an appropriate technique to use on syntheiser datasets, however testing on more synthesiser datasets is necessary to validate this result.
+\begin{figure}[h]
+	\vspace{-25pt}
 	\hspace{-40pt}
 	\begin{subfigure}{3.5in}
-		\includegraphics[width = \textwidth]{LatentFraction.eps}
+		\includegraphics[trim = {0, 0.1cm, 0, 0.5cm}, clip, width = \textwidth]{LatentFraction.eps}
 		\caption{Original Presets}
 		\label{fig:LatentOriginal}
 	\end{subfigure} 
 %
 	\begin{subfigure}{3.5in}
-		\includegraphics[width = \textwidth]{LatentFractionRandom.eps}
+		\includegraphics[trim = {0, 0.1cm, 0, 0.5cm}, clip, width = \textwidth]{LatentFractionRandom.eps}
 		\caption{Randomised Presets}
 		\label{fig:LatentRandom}
 	\end{subfigure}
@@ -651,10 +652,11 @@ This suggests that PCA is an appropriate technique to use on syntheiser datasets
 \end{figure}
 
 
-\subsection{Quantify the extra variance the macro controls give}
-asdasdasdsa
-\subsection{Investigate Permutation Ambiguity}
-asdasdsa
+%\subsection{Quantify the extra variance the macro controls give}
+%asdasdasdsa
+%\subsection{Investigate Permutation Ambiguity}
+%asdasdsa
+
 \pagebreak
 \section{Blending Interface}
 \subsection{Detailed Description}\label{sec:BlendingDescription}
@@ -692,7 +694,7 @@ Where $\vec{P}$ is the blended preset, $\vec{A}$, $\vec{B}$, $\vec{C}$ are prese
 	\label{fig:BlendingColours}
 	\vspace{-30pt}
 \end{wrapfigure}
-where $x$ and $y$ are the x and y coordinates of the current cursor position, and $\vec{M} =[\vec{b},  \vec{c}]$, where $\vec{b}$,  $\vec{c}$ are vectors from preset location A to the B and C locations, as shown in Figure \ref{fig:BlendingVectors}. There are two reasons for blending the presets in this way. Firstly, on an $m$-dimensional control surface, it is possible to linearly blend between all possible combinations of $m+1$ presets, so on a 2D screen, three presets should be blended.\footnote{Some implementations of preset blending in commercial synthesisers use four presets located on the corners of a square, however in this arrangement it is not possible to reach all possible combinations.} Secondly, this arrangment allows for locations both inside and outside of the central triangle to be used. Inside the triangle, $\alpha$, $\beta$ and $\gamma$ are all in the range [0, 1], giving an \emph{interpolation} between the presets. Outside of the triangle $\alpha$, $\beta$ and $\gamma$ can be less than zero and greater than one, allowing for \emph{extrapolation}.
+where $x$ and $y$ are the x and y coordinates of the current cursor position, and $\vec{M} =[\vec{b},  \vec{c}]$, where $\vec{b}$,  $\vec{c}$ are vectors from preset location A to the B and C locations, as shown in Figure \ref{fig:BlendingVectors}. There are two reasons for blending the presets in this way. Firstly, on an $m$-dimensional control surface, it is possible to linearly blend between all possible combinations of $m+1$ presets, so on a 2D screen, three presets should be used.\footnote{Some implementations of preset blending in commercial synthesisers use four presets located on the corners of a square, however in this arrangement it is not possible to reach all possible combinations.} Secondly, this arrangment allows for locations both inside and outside of the central triangle to be used. Inside the triangle, $\alpha$, $\beta$ and $\gamma$ are all in the range [0, 1], giving an \emph{interpolation} between the presets. Outside of the triangle $\alpha$, $\beta$ and $\gamma$ can be less than zero and greater than one, allowing for \emph{extrapolation}.
 
 The parameter constraint function, $f$, applies the relevant constraints to each parameter. Most parameters are continuous with an upper and lower bound, $[l, u]$. For these parameters: $f_i(P_i) = \min(\max(P_i, l), u)$, where $P_i$ is the $i$th parameter of blended preset $\vec{P}$. For the Coarse frequency parameters, the continuous blended value is discretised back into the set ${0.5, 1, 2, 3, ...}$, which the desicion boundary between neighbouring number falling equidistant to the numbers, as shown in Figure \ref{fig:Freq Coarse}.
 
@@ -722,6 +724,7 @@ It may be possible to use some of the information contained in the graph (if the
 As part of the Blending Interface, the user has the option to freeze sections of the parameter space. The parameters are divided into Time and Timbre parameters, and then subdivided into a total of 12 smaller categories, see Figure \ref{fig:FreezeParams}. This makes the Blending Interface more useful, as it allows users with knowledge of synthesisers to fine-tune the blending process to their needs. This tends to lead to more useful generated presets, as it reduces the dimensionality of the search space.
 
 \subsection{Development / Verification of Preset Generation Algorithm} \label{sec:PresetGeneration}
+THIS SECTION NEEDS WRITING!
 Give background to Active Learning. Mention possibility of using Bayesian Optimisation, but aiming for simpler approach. 
 
 Bayesian Optimisation.  - 
@@ -1000,7 +1003,8 @@ Yee-King, M J. 2016. \emph{The Use of Interactive Genetic Algorithms in Sound De
 
 \bibitem{NSynth} \emph{Neural Audio Synthesis of Musical Notes with WaveNet Autoencoders}. Engel, J., Resnick, C., Roberts, A., et al.\ 2017, arXiv:1704.01279 
 
-
+\bibitem{HistogramEqualisation}
+Singh, P. et al. (2015). \emph{Histogram Equalization: A Strong Technique for Image Enhancement}. International Journal of Signal Processing, Image Processing and Pattern Recognition. %8. 345-352. 10.14257/ijsip.2015.8.8.35. 
 
 
 \end{thebibliography}

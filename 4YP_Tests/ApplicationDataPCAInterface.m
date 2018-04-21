@@ -156,7 +156,7 @@ classdef ApplicationDataPCAInterface < handle
             [~, obj.nameStrings, obj.typeStrings] = createPresetAforOSC();
             
             % Load Presets
-            presetRead = matfile('PresetStoreSC.mat');
+            presetRead = matfile('PresetStoreSCPermuted.mat');
             obj.presetStore = presetRead.presetStore;
             obj.presetStoreEdited = obj.presetStore;
             obj.presetStoreVaried = obj.presetStore;
