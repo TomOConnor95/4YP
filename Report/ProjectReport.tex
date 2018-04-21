@@ -737,7 +737,7 @@ Mention preferance gallery study, and how users are much better at giving compar
 
 
 \section{Investigion of Permutation Ambiguity}
-Due to the equivilance of the 6 operators of the synth arcitecture, there is the possibility of permutation ambiguity in the dataset, as described in Section \ref{sec:SynthDescription}. However it may be possible to correct for this using knowledge of the synth architecture. Typically the operators with the loudest Output Level parameters act as \emph{modulators} and the operators with lower output levels act as \emph{carriers} (as defined in \cite{YeeKing}, Section 3.1.1). Therefore the dataset can be permutation-alligned by permuting each preset, such that the Output Level parameteres are in decreasing order.\\
+Due to the equivilance of the 6 operators of the synth architecture, there is the possibility of permutation ambiguity in the dataset, as described in Section \ref{sec:SynthDescription}. However it may be possible to correct for this using knowledge of the synth architecture. Typically the operators with the loudest Output Level parameters act as \emph{modulators} and the operators with lower output levels act as \emph{carriers} (as defined in \cite{YeeKing}, Section 3.1.1). Therefore the dataset can be permutation-alligned by permuting each preset, such that the Output Level parameters are in decreasing order.\\
 To determine the sucess of this approach, the original dataset was compared to the permuted dataset, and a randomly permuted dataset , using the following cost function:
 \begin{equation}
 	C = \sum_{i = 1}^{N}\sum_{j = i+1}^{N}\mathrm{error}(\vec{P}_i, \vec{P}_j)
