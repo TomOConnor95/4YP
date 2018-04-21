@@ -370,7 +370,7 @@ A selection of 35 presets were created for this synth, to give a selection of al
 		Phase Modulation         						& 36 x $m_{ij}$               & $[0, 10]$                  		& Timbre                	& 3									\\ \hline
 		Coarse Frequency                            	& 6 x $f_{i}^{coarse}$     & $\{0.5, 1, 2, 3, 4, ...\}$ & Timbre                	& 10									  \\ \hline
 		Fine Frequency                                 	   & 6 x $f_{i}^{fine}$         & $[0, 1]$                   		& Timbre                	& 10									  \\ \hline
-		Output Levels                                  		& 6 x $a_{i}^{output}$     & $[0, 1]$                   	  & Timbre                	& 3								    	\\ \hline
+		Output Level                                  		& 6 x $a_{i}^{output}$     & $[0, 1]$                   	  & Timbre                	& 3								    	\\ \hline
 Modulation Envelope Amount                       & 6 x $\mathrm{ENV}_{i}^{mod}$   & $[0, 1]$                   	     & Timbre                  & 1		  \\ \hline
 		LFO A Depth                                    		& 6 x $\mathrm{LFO}_{i}^{a}$         & $[0, 1]$                   	   & Timbre                  & 1				\\ \hline
 		LFO B Depth                                    		& 6 x $\mathrm{LFO}_{i}^{b}$        & $[0, 1]$                   	   & Timbre                  & 1				\\ \hline
@@ -397,7 +397,7 @@ Modulation Envelope Amount                       & 6 x $\mathrm{ENV}_{i}^{mod}$ 
 \label{tab:Params}
 \end{table}
 
-\section{Design choices and justification}
+\section{Design choices and justification}\label{sec:SynthDescription}
 Typical commercial synthesisers have a large number of parameters\footnote{For example, the \emph{Yamaha DX7} has 126 parameters, and  \emph{Omnisphere 2} has several thousand parameters}, which can be discrete or continuous, and are usually constrained within a range. Some synthesisers have Modular or Semi-Modular architectures, which allow for a lot of flexibility, but due to the combinational explosion of number of parameter combinations, and difficulty blending between presets, this type of architecture is not addressed in the work.
 Some synthesisers use short audio recordings, known as samples, as part of their sound creation algorithm. This creates difficulties blending between presets, so this type of architecture will not be considered in this work. (However both of these types of synthesisers would be interesting to try as a follow up work).
 
@@ -414,11 +414,13 @@ In Yee King's thesis \cite{YeeKing}, a similar FM7 Ugen based Supercollider synt
 An interesting property of this synth design is that due to the 6 identical operators which can be configured in any combination, there is lots of possible permutation ambiguity: if two operators have all of their parameters switched, the sound will remain identical. This presents a challenge as two presets can have very different parameters despite having the exact same sound. 
 
 \chapter{Description of Full Interface}
-The full interface developed in this report is a combination of three interfaces. Each interface has the ability to vary the entire set of parameters, and produce a wide variety of sounds, but they are designed to complement each other as well as possible. The user can easily move back and forth between the different interfaces. A video of the full interface can be viewed at (LINK), and a working demo can be downloaded from (LINK).
+The full interface developed in this report is a combination of three interfaces. Each has the ability to vary the entire set of parameters, and produce a wide variety of sounds, but they are designed to complement each other as well as possible. The user can easily move back and forth between the different interfaces. The interface is desinged to use as little information of the synthesiser as possible, so that it can be easily applied to other synths. A video of the full interface can be viewed at (LINK), and a working demo can be downloaded from (LINK).
+\vspace{-15pt}
 \section{Traditional Interface}
 The Traditional Interface is designed to be representative of a typical software and hardware synthesisers. It has a knob or slider for each parameter of the synthesiser, and has interactive visualisations for some parts of the architecture (namely the envelopes and LFOs). The interface is arranged in three seperate pages, two of which are shown in Figure \ref{fig:TraditionalInterface}. 
 If the full interface were to be extended to work with any VST, the traditional interface would be replaced by the VST's user interface. 
 \begin{figure}[h] 
+	\vspace{-5pt}
 	\centering
 	\hspace*{-0.2cm}
 \includegraphics[width = 3in]{TraditionalUI1.png}
@@ -426,6 +428,7 @@ If the full interface were to be extended to work with any VST, the traditional 
 	\includegraphics[width = 3in]{TraditionalUI3.png}
 	\caption{Traditional Interface - 'Timbre Controls 1' and 'Time Controls' pages}
 	\label{fig:TraditionalInterface}
+	\vspace{-20pt}
 \end{figure}
 
 \section{Selection Interface}
@@ -498,7 +501,7 @@ Even if the user knows exactly what each parameter should be set to, it will sti
 This interface was created as a Matlab figure-based application. A key technical detail of this interface is the choice of mapping function from the high dimensional parameter space to the 5-dimensional XY-RGB space of the interface. Many dimensionality reduction techniques could be used for this, such as \emph{tSNE} (used in \cite{InfiniteDrum}), \emph{Linear Discriminant Analysis}, and \emph{Autoencoders}. The simplest dimensionality reduction technique was chosen to try first: \emph{Principal Component Analysis} (\emph{PCA}). It is linear, non-parametric and has a closed-form solution, making it reliable and simple to implement. Other techniques could be investigated as a follow-up work.
 \subsection{Principal Component Analysis}
 PCA finds an optimal linear transformation of a dataset onto a set of decorrelated orthogonal basis vectors known as \emph{principal components}. This transformation is optimal in the sense that it diagonalises the covariance matrix of the transformed dataset. 
-The principal components are calculated as the eigenvectors of the covariance matrix $\vec{C}_x = \frac{1}{n-1}\vec{X}\vec{X}^T$, where $\vec{X} = [\vec{P}_1, \vec{P}_1, \dots \vec{P}_n]^T$, $\vec{P}_i$ are the individual presets, and $n$ is the number of presets.\\
+The principal components are calculated as the eigenvectors of the covariance matrix $\vec{C}_x = \frac{1}{n-1}\vec{X}\vec{X}^T$, where $\vec{X} = [\vec{P}_1, \vec{P}_2, \dots \vec{P}_n]^T$, $\vec{P}_i$ are the individual presets, and $n$ is the number of presets.\\
 The eigenvalues of $\vec{C}_x$ are the variances of each component, and the principal components are arranged in order of decreasing variance.
 Most of the variance of a dataset typically lies in the first few components, and hence by only using these components, dimensionality reduction is acheived \cite{PCA}. The \emph{PCA score} for a preset is calculated by projecting the preset onto a particular principal component.\\
 PCA makes the assumption that directions with large variance correspond to directions of interest. In the case of a synthesiser preset dataset, this assumption is reasonable, as the data has high signal to noise ratio (although this may be affected by permutation ambiguity).\\
@@ -733,8 +736,24 @@ Discuss how this is a promising technique in this field, for example preference 
 Mention preferance gallery study, and how users are much better at giving comparisons than scoring individual presets. Hence Blending Interface, as allows comparison between 3 presets, and a plane of settings in-between them.
 
 
-\subsection{Investigate Permutation Ambiguity}
-asdasdsad
+\section{Investigion of Permutation Ambiguity}
+Due to the equivilance of the 6 operators of the synth arcitecture, there is the possibility of permutation ambiguity in the dataset, as described in Section \ref{sec:SynthDescription}. However it may be possible to correct for this using knowledge of the synth architecture. Typically the operators with the loudest Output Level parameters act as \emph{modulators} and the operators with lower output levels act as \emph{carriers} (as defined in \cite{YeeKing}, Section 3.1.1). Therefore the dataset can be permutation-alligned by permuting each preset, such that the Output Level parameteres are in decreasing order.\\
+To determine the sucess of this approach, the original dataset was compared to the permuted dataset, and a randomly permuted dataset , using the following cost function:
+\begin{equation}
+	C = \sum_{i = 1}^{N}\sum_{j = i+1}^{N}\mathrm{error}(\vec{P}_i, \vec{P}_j)
+\end{equation}
+where $N$ is the number of presets, and $\mathrm{error}$ is the error metric defined in Section \ref{sec:ErrorMetric} with only the Timbre parameters included (As only these exhibit permutation ambiguity).\\
+The results of this evaluluation is shown in Table \ref{tab:PermutationAmbiguity}. The permutation-alligned dataset has a similar cost to the original dataset, and a 15\% lower cost than the randomly permuted cost. It is worth noting that when creating the original dataset, most presets were designed to minimise permutation ambiguity, and so exhibit lower levels than a typical synth preset dataset might.  The interface was tested after permutation-alligning the presets, which seemed to improve the usefulness of the macro controls, and made the blending interface create more useful sounds. Furthermore the category clustering perfomance wasn't degraded. Based on the results, permutation-allignment seems to be a worthwhile endevour, as it gives a sigificant improvement over randomly permutated dataset, and gives potential improvements to the usefulness of the interface. More work needs to be done to thoroughly evaluate this technique, and to determine if more knowledge of the synth architecture can make the process more effective.
+\begin{table}[h]
+	\centering
+	\begin{tabular}{l|l|l|l}
+		& Original Dataset & Permutation-Alligned Dataset & Randomly Permuted Dataset \\ \hline
+		Cost $\times 10^4$ & 2.427            & 2.452                 & 2.819  (averaged over 10 runs)
+	\end{tabular}
+\caption{Permutation Ambiguity Evaluation Results}
+\label{tab:PermutationAmbiguity}
+\end{table}
+
 
 \chapter{Numerical Evaluation of Interfaces}
 Due to the subjectivity of interface design, and as the three interfaces have quite different purposes, there are not many obvious metrics to use to compare the interfaces with each other. However, the key challenge is to make the combined interface better than the traditional interface alone. MORE WRITING - PRIOR WORK? MEASURE OF REGRET>?
@@ -747,7 +766,7 @@ The Imperfect User has imperfect knowledge of the synth and the interface, so ch
 
 A key consideration for the Traditional Interface is the order which parameters are varied. In the Perfect Order, parameters are visited in decreasing order of importance. In the Random Order, parameters are visited in a completely random order. Real users most likely operate somewhere in the middle of these regimes. (REFERENCE FOR THIS>???)
 
-\section{Error Metric}
+\section{Error Metric}\label{sec:ErrorMetric}
 A parameter based error metric is used for these tasks due to the complexity of using a sound based error metric (AS DESCRIBED IN SECTION - MAYBE DESCRIBE MORE HERE). 
 %COULD USE THE Index of Search Space Reduction (ISSR) Approach from Robert Tubbs thesis.
 For each parameter, $p_i$, a weighted $L_1$ norm is used. The parameters are weighted based on an approximate measure of importance, and normalised by their parameter ranges. The total error is calculated as:
