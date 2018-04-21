@@ -26,10 +26,10 @@ for i = 1:numPresets
     %newOrder = [1,2,3,4,6,5];
     newOrder = indeces;
     
-    PMParams = reshape(presetStoreOriginal{i,1},6,6);
+    PMParams = reshape(presetStoreOriginal{i,1},6,6)';
     PMParamsPermuted = PMParams(newOrder,newOrder);
     
-    presetStorePermuted{i,1} = reshape(PMParamsPermuted',1,36)';
+    presetStorePermuted{i,1} = reshape(PMParamsPermuted',1,36);
     presetStorePermuted{i,2} = presetStoreOriginal{i,2}(newOrder);
     presetStorePermuted{i,3} = presetStoreOriginal{i,3}(newOrder);
     presetStorePermuted{i,4} = presetStoreOriginal{i,4}(newOrder);
