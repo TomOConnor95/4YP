@@ -186,7 +186,7 @@ Presets are widely used and very useful to musicians, and so should form a key p
 %
 Humans have impressive abilities of spatial memory, spatial reasoning, and memory of colours, and this can be exploited to increase the effectiveness of the interface. In particular, effort will be taken to maintain visual consistency between throughout the interface.\\
 %
-Studies show \cite{RatingRanking}, that users are much better at giving a preferance between several options, rather that scoring individual options numerically. This is exploited in the Blending Interface, where in each iteration the user selects between a range of sounds, which were generated based on their previous preferences.
+Studies show \cite{RatingRanking, PreferenceGallery}, that users are much better at giving a preferance between several options, rather that scoring individual options numerically. This is exploited in the Blending Interface, where in each iteration the user selects between a range of sounds, which were generated based on their previous preferences.
 %
 \section{Contributions}
 \begin{itemize}
@@ -275,7 +275,7 @@ Some software synthesisers have modular designs, such as \emph{Modular} by SoftT
 
 There has been a wide range of reasearch in the Computer Music field in the use of multideminsional controllers, such as the  \emph{Myo}, \emph{Leap Motion} and \emph{Microsoft Kinect}, to control synthesis parameters in real time \cite{ICMC, TubbThesis}, and research into advanced user interaction types, such as waveform blending (see \emph{wavetable synthesis} \cite{Wavetable} and \emph{vector synthesis} \cite{SY22}), preset blending \cite{Interpolation}, randomisation of presets, and many more \cite{YeeKing, EvolvedAudioEffects}.  Several studies have applied a variety of machine learning techniques to synthesiser control, as described in the next section.
 
-\section{Using Machine Learning to Control Synthesisers}
+\section{Using Machine Learning to Control Synthesisers}\label{MachineLearning}
 Many users have difficulties programming synthesisers, due to the large amount of technical and creative skill necessary (\cite{YeeKing} \S 4.1.1). There have been several previous attempts to use machine learning to make programming synthesisers easier and more expressive, from both academia and commercial products (\cite{YeeKing} \S 4.1.2).
 
 The Google NSynth project \cite{NSynth}, develops a technique for preset blending of sampled instruments, in the latent space of a \emph{WaveNet Autoencoder} rather than operating directly on the audio recordings. This project has impressive results, but a downside is that it relies upon pre-computing a large database of audio recordings to densely sample the latent space, which are then interpolated for real time playback. Furthermore only 16 instruments were sampled.
@@ -713,13 +713,11 @@ To make the iterative blending process more intuitive, and to maintain consisten
 	\includegraphics[width = \textwidth/3]{SelectionHistory.png}
 	\caption{Selection History plot construction}
 	\label{fig:SelectionHistory}
-	\vspace{10pt}
+	\vspace{7pt}
 	\includegraphics[width = \textwidth/3]{FreezeParams2.png}
 	\caption{Parameter Freezing}
 	\label{fig:FreezeParams}
-	
-	\vspace{-50pt}
-	
+	\vspace{-70pt}
 \end{wrapfigure}
 
 Each time the presets are iterated, the first principal component, $PC_{1}$ is calculated for the generated presets B and C. If $PC_{1}^B > PC_{1}^C $, then presets B and C are swapped. This makes the $x$ direction in the Blending Interface correspond to a direction of increasing $PC_{1}$. This is done to maintain consistency between the two interfaces, as $PC_{1}$ is also used in the Selection Interface for the $x$ coordinate of each preset.
@@ -728,26 +726,38 @@ The Selection History display allows the user to browse their previously selecte
 
 It may be possible to use some of the information contained in the graph (if the data from many users is collected), as a way to refine the preset generation algorithm. If the generation algorithm is producing good presets, then most of the choices should be somewhere between A, B and C on the interface. If the algorithm is producing bad presets, most of the choices will be very close to, or below A.
 
-As part of the Blending Interface, the user has the option to freeze sections of the parameter space. The parameters are divided into Time and Timbre parameters, and then subdivided into a total of 12 smaller categories, see Figure \ref{fig:FreezeParams}. This makes the Blending Interface more useful, as it allows users with knowledge of synthesisers to fine-tune the blending process to their needs. This tends to lead to more useful generated presets, as it reduces the dimensionality of the search space.
+The user has the option to freeze sections of the parameter space (Fig. \ref{fig:FreezeParams}). The parameters are divided into Time and Timbre parameters, and then subdivided into a total of 12 smaller categories (Table \ref{tab:Params}). This makes the Blending Interface more useful, as it allows users with knowledge of synthesisers to fine-tune the blending process to their needs. This tends to lead to more useful generated presets, as it reduces the dimensionality of the search space.
 
 \subsection{Preset Generation Algorithm} \label{sec:PresetGeneration}
-THIS SECTION NEEDS WRITING!
-Give background to Active Learning. Mention possibility of using Bayesian Optimisation, but aiming for simpler approach. 
+The aim of the Preset Generation Algorithm is to suggest useful new presets, based on the user's previous selections. In the field of \emph{Active Learning} \cite{ActiveLearning}, several similar problems have been adressed, the most relevant of which is a preference-gallery based approach to fine-tuning parametric procedural animations \cite{PreferenceGallery}.
+In this work a user is iteratively presented with a four generated aminations, and selects their favourite. In each iteration, \emph{Bayesian optimisation} is used to learn from the previous selections, and generate four new animations. This procedure was shown to be superior to both a slider-based interface, and an interface in which the user rates each animation on a numeric scale. The gallery interface was improved by allowing the user to manually set and freeze parameters, especially for expert-users. Bayesian optimisation is well suited to this task, as it explicitely deals with the \emph{exploration-exploitation} tradeoff \cite{ExplorationExploitation} and is designed to minimise the number of user queries. However, the main limitation with this work is that traditional Bayesian Optimisation can only be used for problems with low ($<20$) dimensionality due to an the exponential increase in necessary user queries. The animation model only had 12 parameters, and this still took a considerable ammount of training data to fine-tune the hyperparameters of the learning algorithm.  Adaptations of bayesian optimisation have managed to solve certain higher-dimensional problems \cite{BayesOptDimensionality}, but it is currently non-trivial to apply these results to general problems. Therefore an alternative algorithm was developed.
 
-Bayesian Optimisation.  - 
-Discuss how this is a promising technique in this field, for example preference gallery interface, but due to large amount of training data neccesary, and bad performance in high dimensions it wont be used.
+The new presets are a weighted sum of the previously selected presets, with gaussian noise added.
+Let $\vec{H} = [\vec{h}_1, \vec{h}_2, \dots \vec{h}_m]^T$ where $\vec{h}_i$ is the $i$th previously selected preset.
+Let $w = \frac{1}{1 + exp(-a*(x-c))}$
 
-Mention preferance gallery study, and how users are much better at giving comparisons than scoring individual presets. Hence Blending Interface, as allows comparison between 3 presets, and a plane of settings in-between them.
-
-
+\begin{figure}
+	\centering
+	%\vspace{-110pt}
+	\includegraphics[width = 3.1in]{SigmoidWeights.eps}
+	\caption{Sigmoid weighting function}
+	\label{fig:SigmoidWeights}
+	
+	%	\includegraphics[width = \textwidth/3]{FreezeParams2.png}
+	%	\caption{Parameter Freezing}
+	%	\label{fig:FreezeParams}
+	
+	%\vspace{-60pt}
+	
+\end{figure}
 \section{Investigion of Permutation Ambiguity}\label{sec:PermutationAmbiguity}
-Due to the equivilance of the 6 operators of the synth architecture, there is the possibility of permutation ambiguity in the dataset (\S \ref{sec:SynthDescription}). However it may be possible to correct for this using knowledge of the synth architecture. Typically the operators with the loudest Output Level parameters act as \emph{modulators} and the operators with lower output levels act as \emph{carriers} (as defined in \cite{YeeKing}, Section 3.1.1). Therefore the dataset can be permutation-alligned by permuting each preset, such that the Output Level parameters are in decreasing order.\\
+Due to the equivilance of the six operators of the synth architecture, there is the possibility of permutation ambiguity in the dataset (\S \ref{sec:SynthDescription}). However it may be possible to correct for this using knowledge of the synth architecture. Typically the operators with the loudest Output Level parameters act as \emph{modulators} and the operators with lower output levels act as \emph{carriers} (as defined in \cite{YeeKing}, Section 3.1.1). Therefore the dataset can be permutation-alligned by permuting each preset, such that the Output Level parameters are in decreasing order.\\
 To determine the sucess of this approach, the original dataset was compared to the permuted dataset, and a randomly permuted dataset , using the following cost function:
 \begin{equation}
 	C = \sum_{i = 1}^{N}\sum_{j = i+1}^{N}\mathrm{error}(\vec{P}_i, \vec{P}_j)
 \end{equation}
 where $N$ is the number of presets, and $\mathrm{error}$ is the error metric defined in Section \ref{sec:ErrorMetric} with only the Timbre parameters included (As only these exhibit permutation ambiguity).\\
-The results of this evaluluation is shown in Table \ref{tab:PermutationAmbiguity}. The permutation-alligned dataset has a similar cost to the original dataset, and a 15\% lower cost than the randomly permuted cost. It is worth noting that when creating the original dataset, most presets were designed to minimise permutation ambiguity, and so exhibit lower levels than a typical synth preset dataset might.  The interface was tested after permutation-alligning the presets, which seemed to improve the usefulness of the Macro Controls, and made the Blending Interface create more useful sounds. Furthermore the category clustering perfomance wasn't degraded. Based on the results, permutation-allignment seems to be a worthwhile endevour, as it gives a sigificant improvement over randomly permutated dataset, and gives potential improvements to the usefulness of the interface. More work needs to be done to thoroughly evaluate this technique, and to determine if incorporating more knowledge of the synth architecture can make the process more effective.
+The results of this evaluluation is shown in Table \ref{tab:PermutationAmbiguity}. The permutation-alligned dataset has a similar cost to the original dataset, and a 15\% lower cost than the randomly permuted data. It is worth noting that when creating the original dataset, most presets were designed to minimise permutation ambiguity, and so exhibit lower levels than a typical synth preset dataset might.  The interface was tested after permutation-alligning the presets, which seemed to improve the usefulness of the Macro Controls, and made the Blending Interface create more useful sounds. Furthermore the category clustering perfomance wasn't degraded. Based on the results, permutation-allignment seems to be a worthwhile endevour, as it gives a sigificant improvement over randomly permutated dataset, and gives potential improvements to the usefulness of the interface. More work needs to be done to thoroughly evaluate this technique, and to determine if incorporating more knowledge of the synth architecture can make the process more effective.
 \begin{table}[h]
 	\centering
 	\begin{tabular}{l|l|l|l}
@@ -771,16 +781,16 @@ The Imperfect User has imperfect knowledge of the synth and the interface, so ch
 A key consideration for the Traditional Interface is the order which parameters are varied. In the Perfect Order, parameters are visited in decreasing order of importance. In the Random Order, parameters are visited in a completely random order. Real users most likely operate somewhere in the middle of these regimes. (REFERENCE FOR THIS>???)
 
 \section{Error Metric}\label{sec:ErrorMetric}
-A parameter based error metric is used for these tasks due to the complexity of using a sound based error metric (AS DESCRIBED IN SECTION - MAYBE DESCRIBE MORE HERE). 
+A parameter-based error metric is used for these tasks due to the complexity of using a sound based comparisons of presets (\S \ref{MachineLearning}).
 %COULD USE THE Index of Search Space Reduction (ISSR) Approach from Robert Tubbs thesis.
 For each parameter, $p_i$, a weighted $L_1$ norm is used. The parameters are weighted based on an approximate measure of importance, and normalised by their parameter ranges. The total error is calculated as:
 \begin{equation}
 E = \sum_{i=1}^{N}\frac{w_i}{r_i} \| p_i - p_i^{goal} \|_1 
 \end{equation}
-where $w_i$ is the scalar importance weighting for the $i$th parameter, and $r_i$ is the range of values that parameter $i$ can take, see Table \ref{tab:Params}.
+where $w_i$ is the scalar importance weighting for the $i$th parameter, and $r_i$ is the range of values that parameter $i$ can take (see Table \ref{tab:Params}).
 
 The $L_1$ norm was chosen over the $L_2$ norm so that a few large parameter errors don't dominate the error metric and as no gradients are necessary.
-This is by no means a perfect metric for comparing synth settings, but it is good enough for our purposes.
+It may be possible to incorporate more knowledge of the synth into the error metric to explicitely remove the effect of permutation ambiguity, and to better approximate the results of a sound-based error metric. A similar parameter based metric is the \emph{Index of Search Space Reduction} \cite{TubbThesis}.
 
 \section{Comparison of Isolated Interfaces}
 \subsection{Traditional Interface}\label{sec:TradEval}
@@ -795,12 +805,12 @@ This is by no means a perfect metric for comparing synth settings, but it is goo
 %	\caption{Parameter Freezing}
 %	\label{fig:FreezeParams}
 	
-	\vspace{-40pt}
+	\vspace{-60pt}
 	
 \end{wrapfigure}
-Perfect/Imperfect user tests were carrried out on the Blending Interface, using each of the 36 presets as a goal preset, and setting the starting preset to the closest preset to the goal preset. The results of these tests are shown in Figure \ref{fig:TradTest1}. In each of the plots, the cyan lines are individual instances of the Perfect Order test. The blue lines are individual instances of the Random Order test. The solid red line is the mean of the Perfect Order tests, and the red dotted line is the mean of the Random Order tests. 
+Perfect/Imperfect user tests were carrried out on the Blending Interface, using each of the 36 presets as a goal preset, and starting from the closest preset to the goal preset. The results of these tests are shown in Fig. \ref{fig:TradTest1}. The cyan lines are individual instances of the Perfect Order test. The blue lines are individual instances of the Random Order test. The solid red lines are the mean of the Perfect Order tests (solid), and the Random Order tests (dotted). 
 
-For low values of $\sigma$, the Perfect Order tests folllows a smooth, approximately exponentially decreasing, curve. For high values of $\sigma$, and when the Random Order is used, the error decreases in a much less smooth manner. In all cases the Perfect Order gives a substantially faster convergence time. A comparison of the mean error for various values of $\sigma$ is shown in Figure \ref{fig:TradTest2}. These results suggest that the main limitation when using a Traditional Interface is not the accuracy with which the parameters are set, but the choice of parameter.
+For low values of $\sigma$, the Perfect Order tests folllows a smooth, approximately exponentially decreasing, curve. For high values of $\sigma$, and when the Random Order is used, the error decreases in a much less smooth manner. In all cases the Perfect Order gives a substantially faster convergence time. A comparison of the mean error for various values of $\sigma$ is shown in Fig. \ref{fig:TradTest2}. These results suggest that \textbf{the main limitation when using a Traditional Interface is not the accuracy with which the parameters are set, but the choice of parameter}.
 \begin{figure}
 	\centering
 %	\vspace{-40pt}
@@ -813,7 +823,7 @@ For low values of $\sigma$, the Perfect Order tests folllows a smooth, approxima
 
 \subsection{Selection Interface}\label{sec:SelectionEval}
 A similar evaluation was carried out with the selection interface. Again all 36 presets were used as goal presets, with the closest preset used each time as the starting point. For each test, the PCA values were calculated for the remaining 35 presets, simulating the situation where the PCA Macros were being used to find a brand new preset. As before, two parameter orders were tested: the Macro Controls were visited cyclically in order of PCA number, or visited in a random order. For each iteration of the test, the MATLAB 'Patternsearch' search algorithm was used to minimise the cost function for a particular Macro Control. (WHY WAS THIS USED?)\\ 
-A key question with the interface is whether the 'Global' or 'Time/Timbre' version of the PCA Macro Controls should be used. The results for a test with the combination of both sets of macros is shown in Figure \ref{fig:PCAtest1}, and a comparison of the mean results for the different macro configurations is shown in Figure \ref{fig:PCAtest2}.
+A key question with the interface is whether the 'Global' or 'Time/Timbre' version of the PCA Macro Controls should be used. The results for a test with the combination of both sets of macros is shown in Fig. \ref{fig:PCAtest1}, and a comparison of the mean results for the different macro configurations is shown in Fig. \ref{fig:PCAtest2}.
 \begin{figure}
 
 \hspace{-60pt}
@@ -834,7 +844,7 @@ A key question with the interface is whether the 'Global' or 'Time/Timbre' versi
 
 Some points to note from these results:
 
-As shown in Figure \ref{fig:PCAtest1}, for different preset goals, the effectiveness of the PCA Controls varies significantly. In the best case the error drops very rapidly, falling 50\% in the first 10 iterations. In the worst case the error doesn't decrease at all. This suggests that, for this particlar task at least, having the same Macro Controls for each preset may not be ideal, and so a new approach which in some way optimises the Macro Controls per preset would be worth pursuing. However, as previously stated in Section \ref{sec:GlobalTimeTimbre}, this comes at the cost of the user being less familiar with what the Macro Controls are actually doing. 
+As shown in Fig. \ref{fig:PCAtest1}, for different preset goals, the effectiveness of the PCA Controls varies significantly. In the best case the error drops very rapidly, falling 50\% in the first 10 iterations. In the worst case the error doesn't decrease at all. This suggests that, for this particlar task at least, having the same Macro Controls for each preset may not be ideal, and so a new approach which in some way optimises the Macro Controls per preset would be worth pursuing. However this comes at the cost of the user being less familiar with what the Macro Controls are actually doing (\S \ref{sec:GlobalTimeTimbre}).
 
 In all cases the mean error converges to a non-zero steady state value. This is due to the limited degrees of freedom when using the Macro Controls. This means that the Macro Controls alone cannot be used to perfectly match a goal preset.
 
@@ -943,8 +953,8 @@ Ableton.com. (2018). \emph{Wavetable | Ableton}. [online] Available at: \url{htt
 \bibitem{AppleSynth}
 Documentation.apple.com. (2009). \emph{A Brief History of the Synthesiser}. [online] Available at: \url{https://documentation.apple.com/en/logicstudio/instruments/index.html#chapter=A\%26section=5\%26tasks=true} [Accessed 20 Apr. 2018].
 
-\bibitem{EvolutionaryInteractive}
-J\'{o}nsson B et al. 2015. \emph{Interactively Evolving Compositional Sound Synthesis Networks}. In Proceedings of the 2015 Annual Conference on Genetic and Evolutionary Computation (GECCO '15), New York. DOI: \url{http://dx.doi.org/10.1145/2739480.2754796}
+\bibitem{PreferenceGallery}
+Brochu, E. et al. 2010. \emph{A Bayesian interactive optimization approach to procedural animation design}. Proceedings of the 2010 ACM SIGGRAPH/Eurographics Symposium on Computer Animation (SCA '10). Eurographics Association, Goslar, Germany, 103-112.
 
 \bibitem{FM}
 Chowming, J.M. (1977). \emph{The Synthesis of Complex Audio Spectra by Means of Frequency Modulation}.
@@ -971,6 +981,9 @@ ISSN 0969-5931
 
 \bibitem{MappingStrategies}
 Hunt, A. \& Kirk, R. 2000. \emph{Mapping Strategies for Musical Performance}. Trends in Gestural Control of Music
+
+\bibitem{EvolutionaryInteractive}
+J\'{o}nsson B et al. 2015. \emph{Interactively Evolving Compositional Sound Synthesis Networks}. In Proceedings of the 2015 Annual Conference on Genetic and Evolutionary Computation (GECCO '15), New York. DOI: \url{http://dx.doi.org/10.1145/2739480.2754796}
 
 \bibitem{UGen}
 Kersten, S. \emph{skUG SuperCollider UGen library}, 2008. \url{http://space.k- hornz.de/software/skug/}.
@@ -1000,6 +1013,9 @@ Pierce, D. (2017). \emph{The hot new hip-hop producer who does everything on his
 \bibitem{GenSynth}
 Rice, David. (2015). \emph{GenSynth: Collaboratively Evolving Novel Synthetic Musical Instruments}. 10.13140/RG.2.1.4691.6001. 
 
+\bibitem{ActiveLearning}
+Settles, Burr. (2010). \emph{Active Learning Literature Survey}. University of Wisconsin, Madison. 52. 
+
 \bibitem{PCA}
 Shlens, D. (2014). \emph{A Tutorial on Principal Component Analysis}. arXiv:1404.1100 [cs.LG]
 
@@ -1018,6 +1034,9 @@ Vail, M. (2014). \emph{The Synthesizer}. New York, NY: Oxford University Press.
 \bibitem{FS1R}
 Vintagesynth.com. (2012). \emph{Yamaha FS1R | Vintage Synth Explorer}. [online] Available at: \url{http://www.vintagesynth.com/yamaha/fs1r.php} [Accessed 18 Apr. 2018].
 
+\bibitem{BayesOptDimensionality}
+Wang, Z. et al. 2016. \emph{Bayesian Optimization in a Billion Dimensions via Random Embeddings}. arXiv:1301.1942 [stat.ML]
+
 \bibitem{YeeKing}
 Yee-King, M. (2011). \emph{Automatic Sound Synthesizer Programming: Techniques and Applications}. Ph.D. University of Sussex.
 
@@ -1029,6 +1048,8 @@ Yee-King, M J. 2016. \emph{The Use of Interactive Genetic Algorithms in Sound De
 \bibitem{HistogramEqualisation}
 Singh, P. et al. (2015). \emph{Histogram Equalization: A Strong Technique for Image Enhancement}. International Journal of Signal Processing, Image Processing and Pattern Recognition. %8. 345-352. 10.14257/ijsip.2015.8.8.35. 
 
+\bibitem{ExplorationExploitation}
+Besbes, O. et al. 2014.\emph{Optimal Exploration-Exploitation in a Multi-Armed-Bandit Problem with Non-stationary Rewards}.	arXiv:1405.3316
 
 \end{thebibliography}
 \end{document}  
