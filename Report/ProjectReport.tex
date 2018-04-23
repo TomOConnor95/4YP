@@ -751,7 +751,7 @@ In this work a user is iteratively presented with a four generated aminations, a
 	\vspace{40pt}
 \end{wrapfigure}
 
-The new presets are a stochastic weighted sum of the $k$ previously selected presets:
+The new presets are a \emph{stochastic weighted sum} of the $k$ previously selected presets:
 \begin{equation}
 \{\vec{B}^{k+1}, \vec{C}^{k+1}\} = f(\eta\vec{P}^k + (1-\eta)\vec{w}^T\vec{H} + \varepsilon) 
 \end{equation}
@@ -766,7 +766,7 @@ Zero-mean Gaussian noise $\varepsilon$ is added to the weighted mean with a cova
 \begin{equation}
 \Sigma = b\times(\nu\Sigma_P + (1-\nu)\Sigma_H)\times\xi^k
 \end{equation}
-where $b\in\mathbb{R}^+$, $\Sigma_P$ is the covariance (\S \ref{sec:PCA}) of the preset dataset, $\Sigma_H$ is the covariance of the previously selected presets\footnote{When $k =1$, $\Sigma_H = \vec{0}$}, $\nu \in [0, 1]$ sets the ratio of the covariances, and $\xi \in [0, 1]$ causes the magnitude of the covariance to decay as $k$ increases. The covariance was defined in this way so that the correlations from both the preset dataset and the previously selected presets are incorporated into the algorithm. If a user makes consistent decisions with regards to a particular parameter, its variance will decrease and eventually the parameter will become fixed. This algorithm has several hyperparameters ($a, b, c, \nu, \xi$), which were tuned empirically until the algoithm gave sensible suggestions.
+where $b\in\mathbb{R}^+$, $\Sigma_P$ is the covariance (\S \ref{sec:PCA}) of the preset dataset, $\Sigma_H$ is the covariance of the previously selected presets\footnote{When $k =1$, $\Sigma_H = \vec{0}$}, $\nu \in [0, 1]$ sets the ratio of the covariances, and $\xi \in [0, 1]$ causes the magnitude of the covariance to decay as $k$ increases. The covariance was defined in this way so that the correlations from both the preset dataset and the previously selected presets are incorporated into the algorithm. If a user makes consistent decisions with regards to a particular parameter, its variance will decrease and eventually the parameter will become fixed. This algorithm has several hyperparameters ($b, c, \mu,  \nu, \xi$), which were tuned empirically until the algoithm gave sensible suggestions.
 
 \section{Investigion of Permutation Ambiguity}\label{sec:PermutationAmbiguity}
 Due to the equivilance of the six operators of the synth architecture, there is the possibility of permutation ambiguity in the dataset (\S \ref{sec:SynthDescription}). However it may be possible to correct for this using knowledge of the synth architecture. Typically the operators with the loudest Output Level parameters act as \emph{modulators} and the operators with lower output levels act as \emph{carriers} (as defined in \cite{YeeKing}, Section 3.1.1). Therefore the dataset can be permutation-alligned by permuting each preset, such that the Output Level parameters are in decreasing order.\\
