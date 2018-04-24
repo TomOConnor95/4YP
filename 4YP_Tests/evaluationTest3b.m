@@ -14,7 +14,7 @@ presetLengthSum = [0, cumsum(presetLengths)];
 totalPresetLength = presetLengthSum(end);
 
 %% Compute all costs between combinations of presets
-costs = zeros(36);
+costs = zeros(37);
 % Costs are symmetric so exploit symmetry in computation
 for j = 1:numPresets
     presetGoal  = presetRead.presetStore(j,:);
@@ -30,19 +30,19 @@ costs = costs + costs';
 %% Run Tests
 figure(12)
 clf
-subplot(3,1,1)
+subplot(1,3,1)
 title('\fontsize{16}Perfect User')
 xlabel('\fontsize{16}Number of Iterations')
 ylabel('\fontsize{16}Normalised Error')
 
 hold on
-subplot(3,1,2)
+subplot(1,3,2)
 title('\fontsize{16}Imperfect User, \sigma = 0.3')
 xlabel('\fontsize{16}Number of Iterations')
 ylabel('\fontsize{16}Normalised Error')
 hold on
 
-subplot(3,1,3)
+subplot(1,3,3)
 title('\fontsize{16}Imperfect User, \sigma = 1.0')
 xlabel('\fontsize{16}Number of Iterations')
 ylabel('\fontsize{16}Normalised Error')
@@ -179,44 +179,44 @@ meanCostHistoryImperfectB = meanCostHistoryImperfectB + costHistoryImperfectB/nu
 meanCostHistoryImperfectB2 = meanCostHistoryImperfectB2 + costHistoryImperfectB2/numIterations;
 
 
-subplot(3,1,1)
+subplot(1,3,1)
 plot((0:1:plotLength), [initialCost, costHistoryPerfect]/initialCost, 'c')
-subplot(3,1,1)
+subplot(1,3,1)
 plot((0:1:plotLength), [initialCost, costHistoryPerfect2]/initialCost, 'b')
 
-subplot(3,1,2)
+subplot(1,3,2)
 plot((0:1:plotLength), [initialCost, costHistoryImperfectA]/initialCost, 'c')
-subplot(3,1,2)
+subplot(1,3,2)
 plot((0: 1:plotLength), [initialCost, costHistoryImperfectA2]/initialCost, 'b')
 
-subplot(3,1,3)
+subplot(1,3,3)
 plot((0:1:plotLength), [initialCost, costHistoryImperfectB]/initialCost, 'c')
-subplot(3,1,3)
+subplot(1,3,3)
 plot((0: 1:plotLength), [initialCost, costHistoryImperfectB2]/initialCost, 'b')
 
 end
 
-subplot(3,1,1)
+subplot(1,3,1)
 plot((0:1:plotLength), [meanInitialCost, meanCostHistoryPerfect]/meanInitialCost, 'r', 'LineWidth', 3)
 ylim([0,1])
 
-subplot(3,1,1)
+subplot(1,3,1)
 plot((0:1:plotLength), [meanInitialCost, meanCostHistoryPerfect2]/meanInitialCost, 'r:', 'LineWidth', 3)
 ylim([0,1])
 
-subplot(3,1,2)
+subplot(1,3,2)
 plot((0:1:plotLength), [meanInitialCost, meanCostHistoryImperfectA]/meanInitialCost, 'r', 'LineWidth', 3)
 ylim([0,1])
 
-subplot(3,1,2)
+subplot(1,3,2)
 plot((0:1:plotLength), [meanInitialCost, meanCostHistoryImperfectA2]/meanInitialCost, 'r:', 'LineWidth', 3)
 ylim([0,1])
 
-subplot(3,1,3)
+subplot(1,3,3)
 plot((0:1:plotLength), [meanInitialCost, meanCostHistoryImperfectB]/meanInitialCost, 'r', 'LineWidth', 3)
 ylim([0,1])
 
-subplot(3,1,3)
+subplot(1,3,3)
 plot((0:1:plotLength), [meanInitialCost, meanCostHistoryImperfectB2]/meanInitialCost, 'r:', 'LineWidth', 3)
 ylim([0,1])
 

@@ -736,7 +736,7 @@ The user has the option to freeze sections of the parameter space (Fig. \ref{fig
 
 \subsection{Preset Generation Algorithm} \label{sec:PresetGeneration}
 The aim of the Preset Generation Algorithm is to suggest useful new presets, based on the user's previous selections. In the field of \emph{Active Learning} \cite{ActiveLearning}, several similar problems have been adressed, the most relevant of which is a preference-gallery based approach to fine-tuning parametric procedural animations \cite{PreferenceGallery}.
-In this work a user is iteratively presented with a four generated aminations, and selects their favourite. In each iteration, \emph{Bayesian optimisation} is used to learn from the previous selections, and generate four new animations. This procedure was shown to be superior to both a slider-based interface, and an interface in which the user rates each animation on a numeric scale. The gallery interface was improved by allowing the user to manually set and freeze parameters, especially for expert-users. Bayesian optimisation is well suited to this task, as it explicitely deals with the \emph{exploration-exploitation} tradeoff \cite{ExplorationExploitation} and is designed to minimise the number of user queries. However, the main limitation with this work is that traditional Bayesian Optimisation can only be used for problems with low ($<20$) dimensionality due to an the exponential increase in necessary user queries. The animation model only had 12 parameters, and this still took a considerable ammount of training data to fine-tune the hyperparameters of the learning algorithm.  Adaptations of bayesian optimisation have managed to solve certain higher-dimensional problems \cite{BayesOptDimensionality}, but it is currently non-trivial to apply these results to general problems. Therefore an alternative algorithm was developed.
+In this work a user is iteratively presented with a four generated aminations, and selects their favourite. In each iteration, \emph{Bayesian optimisation} is used to learn from the previous selections, and generate four new animations. This procedure was shown to be superior to both a slider-based interface, and an interface in which the user rates each animation on a numeric scale. The gallery interface was improved by allowing the user to manually set and freeze parameters, especially for expert-users. Bayesian optimisation is well suited to this task, as it explicitely deals with the \emph{exploration-exploitation} tradeoff \cite{ExplorationExploitation} and is designed to minimise the number of user queries. However, the main limitation with this work is that traditional Bayesian Optimisation can only be used for problems with low ($<20$) dimensionality due to an exponential increase in necessary user queries. The animation model only had 12 parameters, and this still took a considerable ammount of training data to fine-tune the hyperparameters of the learning algorithm.  Adaptations of bayesian optimisation have managed to solve certain higher-dimensional problems \cite{BayesOptDimensionality}, but it is currently non-trivial to apply these results to general problems. Therefore an alternative algorithm was developed.
 \begin{wrapfigure}{l}{0.4\textwidth}
 	\vspace{-30pt}
 	\hspace{-31pt}
@@ -766,7 +766,7 @@ Zero-mean Gaussian noise $\varepsilon$ is added to the weighted mean with a cova
 \begin{equation}
 \Sigma = b\times(\nu\Sigma_P + (1-\nu)\Sigma_H)\times\xi^k
 \end{equation}
-where $b\in\mathbb{R}^+$, $\Sigma_P$ is the covariance (\S \ref{sec:PCA}) of the preset dataset, $\Sigma_H$ is the covariance of the previously selected presets\footnote{When $k =1$, $\Sigma_H = \vec{0}$}, $\nu \in [0, 1]$ sets the ratio of the covariances, and $\xi \in [0, 1]$ causes the magnitude of the covariance to decay as $k$ increases. The covariance was defined in this way so that the correlations from both the preset dataset and the previously selected presets are incorporated into the algorithm. If a user makes consistent decisions with regards to a particular parameter, its variance will decrease and eventually the parameter will become fixed. This algorithm has several hyperparameters ($b, c, \mu,  \nu, \xi$), which were tuned empirically until the algoithm gave sensible suggestions.
+where $b\in\mathbb{R}^+$, $\Sigma_P$ is the covariance (\S \ref{sec:PCA}) of the preset dataset, $\Sigma_H$ is the covariance of the previously selected presets\footnote{When $k =1$, $\Sigma_H = \vec{0}$.}, $\nu \in [0, 1]$ sets the ratio of the covariances, and $\xi \in [0, 1]$ causes the magnitude of the covariance to decay as $k$ increases. The covariance was defined in this way so that the correlations from both the preset dataset and the previously selected presets are incorporated into the algorithm. If a user makes consistent decisions with regards to a particular parameter, its variance will decrease and eventually the parameter will become fixed. This algorithm has several hyperparameters which were tuned empirically until the algorithm gave sensible suggestions ($b=0.4, c=0.5, \eta=0.5,  \nu=0.3, \xi=0.9$).
 
 \section{Investigion of Permutation Ambiguity}\label{sec:PermutationAmbiguity}
 Due to the equivilance of the six operators of the synth architecture, there is the possibility of permutation ambiguity in the dataset (\S \ref{sec:SynthDescription}). However it may be possible to correct for this using knowledge of the synth architecture. Typically the operators with the loudest Output Level parameters act as \emph{modulators} and the operators with lower output levels act as \emph{carriers} (as defined in \cite{YeeKing}, Section 3.1.1). Therefore the dataset can be permutation-alligned by permuting each preset, such that the Output Level parameters are in decreasing order.\\
@@ -790,60 +790,76 @@ The results of this evaluluation is shown in Table \ref{tab:PermutationAmbiguity
 
 
 \chapter{Numerical Evaluation of Interfaces}
-Due to the subjectivity of interface design, and as the three interfaces have quite different purposes, there are not many obvious metrics to use to compare the interfaces with each other. However, the key challenge is to make the combined interface better than the traditional interface alone. MORE WRITING - PRIOR WORK? MEASURE OF REGRET>?
+Due to the subjectivity of interface design, and as the three interfaces have quite different purposes, there are no obvious metrics to use to compare the interfaces with each other. 
+\emph{Fitt's Law} and the \emph{Index of Search Space Reduction} \cite{TubbThesis} has been used for evaluating the throughput of multidimensional controllers, however these metrics are aimed at analysing users' interactions with a controller rather than the control mapping. 
+The key question to answer is, are the Blending Interface and the Macro Controls better at editing presets than the Traditional Interface?
+The \emph{Perfect/Imperfect User Model}  is developed to answer this question, by analysing simulated users carrying out tasks on the interfaces. This analysis won't account for any of the creativity-based goals of the interface, but will help evaluate some of the practical considerations of the interface. 
+%However, the key challenge is to make the combined interface better than the traditional interface alone. MORE WRITING - PRIOR WORK? MEASURE OF REGRET>?
 \section{Perfect/Imperfect User Model}
-A way of evaluating the performance of the interface is to simulate a Perfect User, and an Imperfect User carying out a range of tasks. These simulated users must use the interface to move from initial presets to goal presets. This analysis won't account for any creativity based goals of the interface, but will help evaluate some of the practical considerations of the interface. (BAD WORDING< WORK ON THIS SECTION).
+A way of evaluating the performance of the interface is to simulate a Perfect User, and an Imperfect User carying out a range of tasks. These simulated users move from initial presets to goal presets using one of the interfaces. 
  
-The Perfect User has perfect knowledge of the synth and the interface, so can always choose the optimum position for a particular knob, or choose the optimum blend of presets in the Blending Interface.
+The Perfect User has perfect knowledge of the synth and the interface, so can always choose the optimum position for a particular parmeter, or choose the optimum blend of presets in the Blending Interface.
 
 The Imperfect User has imperfect knowledge of the synth and the interface, so chooses interactions similarly to the Perfect User, but misses by a certain amount: $\Delta P_i = \Delta P_i^0 * (1 + \varepsilon)$, where $\Delta P_i^0$ is the Perfect parameter change, and $\varepsilon$ is a zero-mean Gaussian random variable with variance $\sigma^2$. Various values of $\sigma$ will be considered to account for the varying skill levels of users.
 
-A key consideration for the Traditional Interface is the order which parameters are varied. In the Perfect Order, parameters are visited in decreasing order of importance. In the Random Order, parameters are visited in a completely random order. Real users most likely operate somewhere in the middle of these regimes. (REFERENCE FOR THIS>???)
-
+A key consideration for the Traditional Interface is the order which parameters are varied. In the Perfect Order, parameters are visited in decreasing order of importance. In the Random Order, parameters are visited in a completely random order. Real users operate somewhere in the middle of these regimes depending on their skill level. 
+\vspace{-10pt}
 \section{Error Metric}\label{sec:ErrorMetric}
+\vspace{-5pt}
 A parameter-based error metric is used for these tasks due to the complexity of using a sound based comparisons of presets (\S \ref{MachineLearning}).
 %COULD USE THE Index of Search Space Reduction (ISSR) Approach from Robert Tubbs thesis.
 For each parameter, $p_i$, a weighted $L_1$ norm is used. The parameters are weighted based on an approximate measure of importance, and normalised by their parameter ranges. The total error is calculated as:
 \begin{equation}
 E = \sum_{i=1}^{N}\frac{w_i}{r_i} \| p_i - p_i^{goal} \|_1 
 \end{equation}
-where $w_i$ is the scalar importance weighting for the $i$th parameter, and $r_i$ is the range of values that parameter $i$ can take (see Table \ref{tab:Params}).
-
+where $w_i$ is the scalar importance weighting for the $i$th parameter, and $r_i$ is the range of values that parameter $i$ can take (see Table \ref{tab:Params}).\\
 The $L_1$ norm was chosen over the $L_2$ norm so that a few large parameter errors don't dominate the error metric and as no gradients are necessary.
-It may be possible to incorporate more knowledge of the synth into the error metric to explicitely remove the effect of permutation ambiguity, and to better approximate the results of a sound-based error metric. A similar parameter based metric is the \emph{Index of Search Space Reduction} \cite{TubbThesis}.
-
-\section{Comparison of Isolated Interfaces}
+It may be possible to incorporate more knowledge of the synth into the error metric to explicitely remove the effect of permutation ambiguity, and to better approximate the results of a sound-based error metric. 
+%A similar parameter based metric is the \emph{Index of Search Space Reduction} \cite{TubbThesis}.
+\vspace{-10pt}
+\section{Evaluation of Isolated Interfaces}
 \subsection{Traditional Interface}\label{sec:TradEval}
-\begin{wrapfigure}{r}{0.4\textwidth}
+\vspace{-5pt}
+%\begin{wrapfigure}{r}{0.4\textwidth}
+%	\centering
+%	\vspace{-110pt}
+%	\includegraphics[trim  ={0, 2.3cm, 0, 1.5cm}, clip, width = 2.9in]{TradInterfaceTests1.eps}
+%	\caption{Perfect/Imperfect user tests for Traditional Interface}
+%	\label{fig:TradTest1}
+%	
+%%	\includegraphics[width = \textwidth/3]{FreezeParams2.png}
+%%	\caption{Parameter Freezing}
+%%	\label{fig:FreezeParams}
+%	
+%	\vspace{-120pt}
+%	
+%\end{wrapfigure}
+
+Perfect/Imperfect user tests were carrried out on the Blending Interface, using each of the 36 presets as a goal preset, and starting from the closest preset to the goal preset. The results of these tests are shown in Fig. \ref{fig:TradTest1}. The cyan lines are individual instances of the Perfect Order test. The blue lines are individual instances of the Random Order test. The solid red lines are the mean of the Perfect Order tests (solid), and the Random Order tests (dotted). 
+\begin{figure}[h]
 	\centering
-	\vspace{-110pt}
-	\includegraphics[trim  ={0, 2.3cm, 0, 1.5cm}, clip, width = 3.1in]{TradInterfaceTests1.eps}
+	\hspace{-10pt}
+	\includegraphics[trim  ={3cm, 0cm, 3cm, 0cm}, clip, width = 6.5in]{TradInterfaceTests1b.eps}
+	\vspace{-5pt}
 	\caption{Perfect/Imperfect user tests for Traditional Interface}
 	\label{fig:TradTest1}
-	
-%	\includegraphics[width = \textwidth/3]{FreezeParams2.png}
-%	\caption{Parameter Freezing}
-%	\label{fig:FreezeParams}
-	
-	\vspace{-60pt}
-	
-\end{wrapfigure}
-Perfect/Imperfect user tests were carrried out on the Blending Interface, using each of the 36 presets as a goal preset, and starting from the closest preset to the goal preset. The results of these tests are shown in Fig. \ref{fig:TradTest1}. The cyan lines are individual instances of the Perfect Order test. The blue lines are individual instances of the Random Order test. The solid red lines are the mean of the Perfect Order tests (solid), and the Random Order tests (dotted). 
-
-For low values of $\sigma$, the Perfect Order tests folllows a smooth, approximately exponentially decreasing, curve. For high values of $\sigma$, and when the Random Order is used, the error decreases in a much less smooth manner. In all cases the Perfect Order gives a substantially faster convergence time. A comparison of the mean error for various values of $\sigma$ is shown in Fig. \ref{fig:TradTest2}. These results suggest that \textbf{the main limitation when using a Traditional Interface is not the accuracy with which the parameters are set, but the choice of parameter}.
-\begin{figure}
-	\centering
-%	\vspace{-40pt}
-	\includegraphics[width = 5in]{TradInterfaceTests2.eps}
-	\caption{Perfect/Imperfect user tests for Traditional Interface. Perfect Order shown with solid lines, Random Order shown with dotted lines. The Parameter order has a much more significant effect than the Imperfectness of the user.}
-	\label{fig:TradTest2}
-%	\vspace{-30pt}
-	
+	\vspace{-15pt}
 \end{figure}
 
+\begin{figure}[h]
+	\centering
+	%	\vspace{-40pt}
+	\includegraphics[width = 5in]{TradInterfaceTests2.eps}
+	\caption{Perfect/Imperfect user tests for Traditional Interface. Perfect Order shown with solid lines, Random Order shown with dotted lines. The parameter order has a much more significant effect than the imperfect-ness of the user.}
+	\label{fig:TradTest2}
+		\vspace{-10pt}
+\end{figure}
+For low values of $\sigma$, the Perfect Order tests folllows a smooth, approximately exponentially decreasing, curve. For high values of $\sigma$, and when the Random Order is used, the error decreases in a much less smooth manner. In all cases the Perfect Order gives a substantially faster convergence time. A comparison of the mean error for various values of $\sigma$ is shown in Fig. \ref{fig:TradTest2}. These results suggest that \textbf{the main limitation when using a Traditional Interface is not the accuracy with which the parameters are set, but the choice of parameter}.
+
+%
 \subsection{Selection Interface}\label{sec:SelectionEval}
-A similar evaluation was carried out with the selection interface. Again all 36 presets were used as goal presets, with the closest preset used each time as the starting point. For each test, the PCA values were calculated for the remaining 35 presets, simulating the situation where the PCA Macros were being used to find a brand new preset. As before, two parameter orders were tested: the Macro Controls were visited cyclically in order of PCA number, or visited in a random order. For each iteration of the test, the MATLAB 'Patternsearch' search algorithm was used to minimise the cost function for a particular Macro Control. (WHY WAS THIS USED?)\\ 
-A key question with the interface is whether the 'Global' or 'Time/Timbre' version of the PCA Macro Controls should be used. The results for a test with the combination of both sets of macros is shown in Fig. \ref{fig:PCAtest1}, and a comparison of the mean results for the different macro configurations is shown in Fig. \ref{fig:PCAtest2}.
+A similar evaluation was carried out with the selection interface. Again all 36 presets were used as goal presets, with the closest preset used each time as the starting point. For each test, the PCA values were calculated for the remaining 35 presets, simulating the situation where the PCA Macros were being used to find a brand new preset. As before, two parameter orders were tested: the Macro Controls were visited cyclically in order of PCA number, or visited in a random order. For each iteration of the test, the MATLAB \emph{Patternsearch} algorithm\footnote{A global search algorithm. For these one-off tests the only goal is to find the minimum, with the convergence speed being irrelevant. The cost function is smooth and only a single parameter is being altered at a time, so \emph{Patternsearch} is appropriate.} was used to minimise the error metric for a particular Macro Control, to simulate a Perfect User.\\ 
+A key question with the interface is whether the Global or Time/Timbre version of the PCA Macro Controls should be used. The results for a test with the combination of both sets of macros is shown in Fig. \ref{fig:PCAtest1}, and a comparison of the mean results for the different macro configurations is shown in Fig. \ref{fig:PCAtest2}.
 \begin{figure}
 
 \hspace{-60pt}
@@ -870,7 +886,7 @@ In all cases the mean error converges to a non-zero steady state value. This is 
 
 When the Global Macro Controls are being used, after a large number of iterations, the random order manages to decrease the error past the cyclic order. It is likely that this is due to the cyclic order getting stuck in a local optimum due to the naive 'one parameter at a time' (BETTER NAME FOR THIS) search algorithm.
 
-Finally, each of the combinations of controls has a similar initial rate of error reduction, but the 'Global' Macro Controls appear to have a significant advantage over the 'Time/Timbre' Macro Controls over larger numbers of iterations. This is likely due to the fact that the Global Macro Controls have access to principal components 1 to 8, whereas the 'Time/Timbre' Macro Controls on have access to two sets of principal components 1 to 4. The combination of both sets of Macro Controls gives the lowest mean error overall, which is unsurprising as it has the most degrees of freedom, and it has a comparable error reduction rate as the 'Global' Controls.
+Finally, each of the combinations of controls has a similar initial rate of error reduction, but the Global Macro Controls appear to have a significant advantage over the Time/Timbre Macro Controls over larger numbers of iterations. This is likely due to the fact that the Global Macro Controls have access to principal components 1 to 8, whereas the Time/Timbre Macro Controls on have access to two sets of principal components 1 to 4. The combination of both sets of Macro Controls gives the lowest mean error overall, which is unsurprising as it has the most degrees of freedom, and it has a comparable error reduction rate as the Global Controls.
 
 Based on this it is concluded that it is worth keeping both sets of macro controls for the user to be able to select between, especially as the Time/Timbre Macro Controls may lead to more semantically meaningful controls due to the seperation of Time and Timbre. (JUSTIFY THIS MORE)
 

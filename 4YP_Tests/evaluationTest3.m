@@ -14,7 +14,7 @@ presetLengthSum = [0, cumsum(presetLengths)];
 totalPresetLength = presetLengthSum(end);
 
 %% Compute all costs between combinations of presets
-costs = zeros(36);
+costs = zeros(37);
 % Costs are symmetric so exploit symmetry in computation
 for j = 1:numPresets
     presetGoal  = presetRead.presetStore(j,:);
