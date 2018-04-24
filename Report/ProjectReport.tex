@@ -99,6 +99,8 @@
 \noindent\rule{5in}{0.6pt}\\[1mm]
 \huge{\textbf{4YP Project Report}}\\[3mm]
 \Large{\textbf{- Using Machine Learning to Control Software Synthesisers  -}}\\[1mm]
+\Large{\textbf{Thomas O'Connor}}\\[1mm]
+\Large{\textbf{Supervisor: Prof. Stephen Roberts, FREng}}\\[1mm]
 \noindent\rule{5in}{0.6pt}\\[1mm]
 \vfill
 Candidate Number: 355136\\
@@ -774,7 +776,7 @@ To determine the sucess of this approach, the original dataset was compared to t
 \begin{equation}
 	C = \sum_{i = 1}^{N}\sum_{j = i+1}^{N}\mathrm{error}(\vec{P}_i, \vec{P}_j)
 \end{equation}
-where $N$ is the number of presets, and $\mathrm{error}$ is the error metric defined in Section \ref{sec:ErrorMetric} with only the Timbre parameters included (As only these exhibit permutation ambiguity).\\
+where $N$ is the number of presets, and $\mathrm{error}$ is the error metric defined in Section \ref{sec:ErrorMetric} with only the Timbre parameters included (as only these exhibit permutation ambiguity).\\
 The results of this evaluluation is shown in Table \ref{tab:PermutationAmbiguity}. The permutation-alligned dataset has a similar cost to the original dataset, and a 15\% lower cost than the randomly permuted data. It is worth noting that when creating the original dataset, most presets were designed to minimise permutation ambiguity, and so exhibit lower levels than a typical synth preset dataset might.  The interface was tested after permutation-alligning the presets, which seemed to improve the usefulness of the Macro Controls, and made the Blending Interface create more useful sounds. Furthermore the category clustering perfomance wasn't degraded. Based on the results, permutation-allignment seems to be a worthwhile endevour, as it gives a sigificant improvement over randomly permutated dataset, and gives potential improvements to the usefulness of the interface. More work needs to be done to thoroughly evaluate this technique, and to determine if incorporating more knowledge of the synth architecture can make the process more effective.
 \begin{table}[h]
 	\vspace{-20pt}
@@ -788,7 +790,9 @@ The results of this evaluluation is shown in Table \ref{tab:PermutationAmbiguity
 \vspace{-20pt}
 \end{table}
 
-
+\section{Test of the Interface for Image Filtering}
+To test the interface in a different context the Blending Interface was adapted to control a simple image filtering algorithm.\\
+Two copies of an input image are seperately processed then combined together. The first is the \emph{background layer}, formed by a linear combination of the input image and a greyscale version of the input image. The second is the \emph{foreground layer} which first uses MATLAB's \emph{imadjust} functon to adjust the \emph{intensity range} and \emph{gamma} of the input image's RGB channels, then applies a Gaussian shaped \emph{alpha map}. The algorithm has 18 parameters in total, all in the range $[0,1]$. 
 \chapter{Numerical Evaluation of Interfaces}
 Due to the subjectivity of interface design, and as the three interfaces have quite different purposes, there are no obvious metrics to use to compare the interfaces with each other. 
 \emph{Fitt's Law} and the \emph{Index of Search Space Reduction} \cite{TubbThesis} has been used for evaluating the throughput of multidimensional controllers, however these metrics are aimed at analysing users' interactions with a controller rather than the control mapping. 
@@ -835,7 +839,7 @@ It may be possible to incorporate more knowledge of the synth into the error met
 %	
 %\end{wrapfigure}
 
-Perfect/Imperfect user tests were carrried out on the Blending Interface, using each of the 36 presets as a goal preset, and starting from the closest preset to the goal preset. The results of these tests are shown in Fig. \ref{fig:TradTest1}. The cyan lines are individual instances of the Perfect Order test. The blue lines are individual instances of the Random Order test. The solid red lines are the mean of the Perfect Order tests (solid), and the Random Order tests (dotted). 
+Perfect/Imperfect user tests were carrried out on the Blending Interface, using each of the 36 presets as a goal preset, and starting from the closest preset to the goal preset. The results of these tests are shown in Fig. \ref{fig:TradTest1}. The cyan lines are individual instances of the Perfect Order test. The  dark blue lines are individual instances of the Random Order test. The solid red lines are the mean of the Perfect Order tests (solid), and the Random Order tests (dotted). 
 \begin{figure}[h]
 	\centering
 	\hspace{-10pt}
@@ -893,7 +897,7 @@ When the Global Macro Controls are being used, after a large number of iteration
 
 Finally, each of the sets of controls has a similar initial rate of error reduction, but the Global Macro Controls appear to have a significant advantage over the Time/Timbre Macro Controls over larger numbers of iterations. This is likely due to the fact that the Global Macro Controls have access to principal components 1 to 8, whereas the Time/Timbre Macro Controls on have access to two sets of principal components 1 to 4. The combination of both sets of Macro Controls gives the lowest mean error overall, which is unsurprising as it has the most degrees of freedom, and it has a comparable error reduction rate as the Global Macro Controls.
 
-Based on this it is concluded that it is worth keeping both sets of Macro Controls for the user to be able to select between. This allows user to choose between the increased accuracy of the Global Macro Controls, the more semantically meaningful Time/Timbre Macro Control, or any combination thereof.
+Based on this it is concluded that it is worth keeping both sets of Macro Controls for the user to be able to select between. This allows user to choose between the increased accuracy of the Global Macro Controls, the more semantically meaningful Time/Timbre Macro Controls, or any combination thereof.
 
 \subsection{Blending Interface} \label{sec:BlendingEval}
 The Blending interface was evaluated in a similar manner. For each of the 36 possible goal presets, the closest three presets were identified, and used to initialise preset A, B and C in the blending algorithm (\S \ref{sec:BlendingDescription}). \emph{Patternsearch} was used in each iteration to optimise the position of the mouse in the Blending Interface to minimise the parameter based error metric. 
@@ -913,11 +917,11 @@ As in the Selection Interface, there are some tests in which the error barely de
 A comparison of the test results from all three interfaces is shown in Figure \ref{fig:CombinedTest1}.  
 %COULD DO A TABLE OF INITIAL RATE OF ERROR REDUCTION
 \\
-The fastest converging test is the Perfect User with Perfect Order on the Traditional Interface, and the slowest converging test is the Imperfect User with Random Order on the Tradtional interface. Interestingly, the order at which the parameters are visited has a much more significant affect than the perfectness of the user. This is due to the Imperfect user model having a zero mean error, so after visiting a parameter several times, the error converge to zero. This result demonstrates that \textbf{the Traditional Interface can simultaneously be the best possible, and worst possible interface to control a synth with, depending on the experience level of the user, and the intuitiveness of the parameters}.
+The fastest converging test is the Perfect User with Perfect Order on the Traditional Interface, and the slowest converging test is the Imperfect User with Random Order on the Tradtional interface. Interestingly, the order at which the parameters are visited has a much more significant affect than the perfectness of the user. This is due to the Imperfect user model having a zero mean error, so after visiting a parameter several times, the error converge to zero. This result demonstrates that \textbf{the Traditional Interface can either be the best possible, and worst possible interface to control a synth with, depending on the experience level of the user and the intuitiveness of the parameters}.
 \\
 The initial error reduction rate of the Blending Interface is very fast, comparable with the Perfect User of the Traditional interface. The main reason for the initial speed of the Blending Interface is that in the first iteration it blends between 3 presets, all close to the goal preset, and so can extract some useful information from each.\\
 A key advantage of the Blending Interface is that it removes the need for the user to choose which order to alter the parameters which, as previously described, is the main factor of the speed of the Traditional Interface.\\
- Over a larger number of iterations, Blending Interface is supassed by the Traditional interface with Random Order. This suggests that the preset generation algoithm is not optimal, as after a while it becomes faster to just sequentially offer the user a random parameter. However, as the user has the option to freeze parameters and to switch to the other interfaces at any point\footnote{Giving the user the option of manual controls was shown to be advantageous in \cite{PreferenceGallery}.}, this may not be an issue. \\
+ Over a larger number of iterations, Blending Interface is supassed by the Traditional interface with Random Order. This suggests that the preset generation algoithm is not optimal, as after a while it becomes faster to just sequentially offer the user a random parameter. However, as the user has the option to freeze parameters and to switch to the other interfaces at any point,\footnote{Giving the user the option of manual controls was shown to be advantageous in \cite{PreferenceGallery}.} this may not be an issue. \\
 Before converging to their steady state value, the Macro Controls have a fast rate of error reduction - inbetween the Perfect User with Perfect or Random orders. Part of this speed is because the Macro Contols allow all of the synthesiser parameters to be varied at once. This suggests that PCA mapping of the preset dataset produces principal components that are well suited for use in Macro Controls.\\
 These results suggest that a good workflow for editing synthesis parameters is as follows:
 \vspace{-3em}
@@ -944,7 +948,7 @@ As these tests have only been carried out on one set of presets for one particul
 \section{EARS-model based evaluation of interface}\label{sec:EARS}
 The \emph{EARS} model \cite{TubbThesis} describes four modes of creative cognition, \emph{Exploratory, Reflective, Skilled} and \emph{Algorithmic} (\S \ref{sec:Tubb}).
 The three interfaces are evaluated in terms of this model in Table \ref{tab:EARStable}.
-A conclusion which can be drawn is that the interfaces effectively enable exploratory, algorithmic, and reflective processes, but are not suited to skilled interactions. To enable skilled interactions, one of the interfaces could be redisigned with this in mind, or a fourth interface could be introduced.  It should be designed for use with multidimensional controllers\cite{MappingStrategies, TubbThesis}, and involve moving through a parameter space consisting solely of the useful sounds of the synth. An \emph{interactive machine learning} system such as the \emph{Wekinator} \cite{Wekinator} would be well suited to this task, however more work needs to be done to integrate this approach with the other three interfaces.
+A conclusion to draw from this is that the interfaces effectively enable exploratory, algorithmic, and reflective processes, but are not suited to skilled interactions. To enable skilled interactions, one of the interfaces could be redisigned with this in mind, or a fourth interface could be introduced.  It should be designed for use with multidimensional controllers \cite{MappingStrategies, TubbThesis}, and involve moving through a parameter space consisting solely of the useful sounds of the synth. An \emph{interactive machine learning} system such as the \emph{Wekinator} \cite{Wekinator} would be well suited to this task, however more work needs to be done to integrate this approach with the other three interfaces.
 \begin{table}[h]
 	\hspace{-1cm}
 	\begin{tabular}{|l|l|l|l|l|L|}
@@ -968,7 +972,7 @@ A conclusion which can be drawn is that the interfaces effectively enable explor
 %...
 
 \chapter{Conclusion}
-The interface created in this project has many benefits over a traditional synth interface. Based on simulated user studies, the interface has at least as good performance as a traditional interface when carrying out search based tasks. As it was designed based on heuristics from the fields of \emph{Human-Computer Interaction} \cite{MappingStrategies, YeeKing, RatingRanking}, and \emph{Creative Cognition} \cite{TubbThesis} it is more flexible, expressive and powerful than a traditional interface. Feedback about the interface from a number of users has been positive, however more rigourous user-testing is required.
+The interface created in this project has many benefits over a traditional synth interface. Based on simulated user studies, the interface has at least as good performance as a traditional interface when carrying out search based tasks. As it was designed based on heuristics from the fields of \emph{Human-Computer Interaction} \cite{MappingStrategies, YeeKing, RatingRanking}, and \emph{Creative Cognition} \cite{TubbThesis} it is more flexible, expressive and powerful than a traditional interface. Feedback about the interface from a small number of users has been positive, however more rigourous user-testing is required.
 
 Several insights have been gained about synth parameter spaces. \\
 The key limitation of traditional synthesiser interfaces is the order of parameter selection (\S \ref{sec:TradEval}). An iterative preset blending algorithm using a stochastic preset generation algorithm has been shown to be able to effectively navigate synth parameter spaces (\S \ref{sec:BlendingDescription}). Synth preset datasets are not random, containing strong correlations and internal structure (\S \ref{sec:PCAmappingScale}). \emph{PCA} combined with {\emph{histogram equalisation} has been shown to be capable of exploiting this internal structure to perform dimensionality reduction, and to create effective Macro Controls (\S \ref{sec:BlendingEval}).
@@ -976,8 +980,6 @@ The key limitation of traditional synthesiser interfaces is the order of paramet
 The interface has also been validated in a different context, Image Filtering, with promising results. It could easily be applied to many other use cases, such as stage lighting design, or parametric 3D design, as each has a high dimensional parameter set which can be readily controlled over interfaces such as \emph{OSC}.
 \section{Further Work}
 The evaluation of this interface was only carried out on a single synth, due to the project's time constraints. An immediate goal is to validate the conclusions from this work on several other synths, especially those from other categories, such as \emph{subtractive}, \emph{additive} and \emph{physical modelling} synths. It is non-trivial to extend this work to modular synths (\S \ref{sec:SynthDescription}). To determine the effectiveness of the parameter-based evaluation carried out in this work, and evaluate other aspects of the interface such as creativity, a user study should be carried out.
-
- More work needs to be done to create a truly general purpose soft-synth controller. The interface has been designed to be as general purpose as possible, allowing it to control arbitrary synths over the \emph{OSC} protocol, however it can currently only control one custom designed synth. The key difficulty preventing this was a lack of standardisation between soft-synths\footnote{Different soft-synths use a variety of communication protocols and preset storage methods, however efforts are being made to standardise these, such as the \emph{Native Kontrol Standard}.}. As many soft-synths are in the \emph{Virtual Studio Technology (VST)} format, making a version of the interface with acts as a \emph{VST host}, and uses the parameter retrieval and preset storage functionality of VSTs is a good next goal if this project is continued.
 
 The interface has been designed with touch-screen contollers in mind, so it would be interesting to implement the interface on a touch screen. Either a dedicated app could be made, or the customisable \emph{OSC} controllers \emph{Lemur} or \emph{Mira} could be used. The interface could be further extended by taking into consideration the \emph{multi-touch} capabilities of modern touchscreens.
 
@@ -987,7 +989,7 @@ In the Blending Interface, users carry out a large number of interactions, all o
 
 In typical synths, the parameters have a hierarchical nature, as the synthesis algorithm is usally made up of several modules, each with their own parameters and/or sub modules. Many synths store their presets in the \emph{Javascript Object Notation (JSON)} format, and use such hierarchies to make clean data structures. It may be possible to make use of this hierarchical parameter structure to deduce covariances between parameters, as those in the same module are likely to be much more co-dependant than those in seperate modules. This could be used to refine the preset generation and comparison algorithms, and help to detect and correct cases of permutation ambiguity. However this approach has several challenges, most importantly there is a lack of standardisation of preset storage hierarchies.
 
-%The Native Kontrol Standard, is a standardard
+More work needs to be done to create a truly general purpose soft-synth controller. The interface has been designed to be as general purpose as possible, allowing it to control arbitrary synths over the \emph{OSC} protocol, however it can currently only control one custom designed synth. The key difficulty preventing this was a lack of standardisation between soft-synths\footnote{Different soft-synths use a variety of communication protocols and preset storage methods, however efforts are being made to standardise these, such as the \emph{Native Kontrol Standard}.}. As many soft-synths are in the \emph{Virtual Studio Technology (VST)} format, making a version of the interface with acts as a \emph{VST host}, and uses the parameter retrieval and preset storage functionality of VSTs is a good next goal if this project is continued.
 
 \begin{thebibliography}{9}
 \singlespacing
