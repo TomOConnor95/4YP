@@ -176,7 +176,7 @@ An algorithm for iteratively generating new presets based off users' preferences
 
 
 \chapter{Introduction}
-The invention and subsequent development of the \emph{synthesiser} (synth) has been one of the main driving forces behind the evolution of popular and experimental music over the last century. With the current ubiquity of cheap, powerful computers, the barriers of entry to music making are lower than ever: award winning albums have been produced by teenagers, entirely on laptops and smartphones \cite{IphoneProducer}. Such productions commonly use \emph{software synthesisers} (soft synths) to produce many of the sounds.\\
+The invention and subsequent development of the \emph{synthesiser} (synth) has been one of the main driving forces behind the evolution of popular and experimental music over the last century. With the current ubiquity of cheap and powerful computers, the barriers of entry to music making are lower than ever: award winning albums have been produced by teenagers, entirely on laptops and smartphones \cite{IphoneProducer}. Such productions commonly use \emph{software synthesisers} (soft synths) to produce many of the sounds.\\
 Typical soft-synths require considerable technical knowledge to use, and have hundreds or even thousands of \emph{parameters} that control the sound generation algorithm. Many musicians lack the expertise required to synthesise sounds from scratch and thus rely heavily on \emph{presets} (pre-made combinations of parameters which produce useful sounds). Whilst there is nothing necessarily wrong with using presets, it makes it difficult for musicians to create unique and destinctive sounds. There is even a sizeable market for buying new presets for synths.\\
 A conclusion can be drawn from this: more work needs to be done to make synths easier to use. To quote Roger Linn, a pioneer of musical interface design, in a 2016 keynote: \cite{LinnKeynote}
 \begin{displayquote}
@@ -342,9 +342,9 @@ A \emph{six operator phase modulation} (PM) synth was created,\footnote{PM synth
  
 The synthesis algorithm uses the \emph{FM7 UGen} for Supercolldier \cite{UGen}. This implements six \emph{operators}\footnote{A general term for waveform generators in PM synthesis. In this case, sine-wave generators are used.} with independent amplitudes and frequencies, whose outputs can be used to modulate each other's phase. This is described by the following discrete-time equation: 
 \begin{equation}
-y_i[t+1] = a_i\sin(2\pi T f_i + \sum_{j = 1}^{6} y_j[t] m_{ij})
+y_i[k+1] = a_i\sin(2\pi kT f_i + \sum_{j = 1}^{6} y_j[k] m_{ij})
 \end{equation}
-where $T$ is the sampling interval,  $y_i[t]$ is the output of operator $i$ at time $t$, $a_i$ and $f_i$ are the amplitude and frequency of operator $i$ and $m_{ij}$ is a scalar parameter determining the level of phase modulation from operator $j$ to operator $i$. This is a very flexible sound generation algorithm which can create a large number of different sounds. \\
+where $T$ is the sampling interval, $k$ is the sample number, $y_i[k]$ is the output of operator $i$ at time $kT$, $a_i$ and $f_i$ are the amplitude and frequency of operator $i$ and $m_{ij}$ is a scalar parameter determining the level of phase modulation from operator $j$ to operator $i$. This is a very flexible sound generation algorithm which can create a large number of different sounds. \\
 The full synthesis architecture (Fig. \ref{fig:SynthSchematic}) can be described as follows.\\
  A \emph{MIDI Note ON} message is received with a musical note number $N$ and a velocity $V$. This triggers the sound generations process for this particular note. the note number $N$ is converted into a base frequency $F$. The frequency of each operator is set using the equation: 
  \begin{equation}
@@ -355,13 +355,13 @@ The base frequency $F$ can be continually modulated by the \emph{MIDI PitchBend}
 
 The operators are then continuously \emph{amplitude-modulated} by two \emph{low frequency oscillators} (LFOs), and a \emph{modulation envelope}, as described by the discrete-time equation:
  \begin{equation}
-a_i[t] = (1 + \mathrm{LFO}^a[t]*\mathrm{lfo}^{a}_i)*(1 + \mathrm{LFO}^b[t]*\mathrm{lfo}^{b}_i)*(\mathrm{ENV}^{mod}[t]*\mathrm{env}^{mod}_i + (1-\mathrm{env}^{mod}_i))
+a_i[k] = (1 + \mathrm{LFO}^a[k]*\mathrm{lfo}^{a}_i)*(1 + \mathrm{LFO}^b[k]*\mathrm{lfo}^{b}_i)*(\mathrm{ENV}^{mod}[k]*\mathrm{env}^{mod}_i + (1-\mathrm{env}^{mod}_i))
 \end{equation}
-where  $a_i[t]$ is the amplitude of operator $i$, $\mathrm{LFO}^a$ and $\mathrm{LFO}^b$ are the LFOs' output values, $\mathrm{ENV}[t]$ is the modulation envelope's output value, all at time $t$. $\mathrm{lfo}^{a}_i$, $\mathrm{lfo}^{b}_i$, and $\mathrm{env}^{mod}_{i}$ are parameters which determine how much operator $i$ is modulated by the respective signals. \\
+where  $a_i[k]$ is the amplitude of operator $i$, $\mathrm{LFO}^a[k]$ and $\mathrm{LFO}^b[k]$ are the LFOs' output values, $\mathrm{ENV}[k]$ is the modulation envelope's output value, all at time $kT$. $\mathrm{lfo}^{a}_i$, $\mathrm{lfo}^{b}_i$, and $\mathrm{env}^{mod}_{i}$ are parameters which determine how much operator $i$ is modulated by the respective signals. \\
 LFO A is a zero-mean \emph{triangle wave oscillator} with a frequency in the range [0, 20\si{\hertz}], amplitude in the range [0, 1], and phase spread in the range [0, 1] (a parameter which allows the LFO's initial phase to be randomly varied). LFO B is a zero-mean \emph{square wave oscillator} with a frequency in the range [0, 20\si{\hertz}], amplitude in the range [0, 1], and pulse width in the range [0, 1]. The modulation envelope is an \emph{ADSR  envelope generator}\footnote{A commonly used type of envelope generator with the parameters Attack, Decay, Sustain and Release.}, which is triggered by the MIDI Note ON message.
 
 
-After amplitude modulation, the operators amplitudes and frequencies are used as inputs to the previously described phase modulation algorithm. The six outputs from this algorithm are then mixed together, and multiplied by the \emph{amplitude envelope} (another ADSR envelope generator) to form the output signal: $Y[t] = \mathrm{ENV}^{amp}[t]*\sum_{i=1}^{6}y_i[t]*a_i^{output}$, where $a_i^{output}$ is the Output Level parameter for operator $i$.
+After amplitude modulation, the operators amplitudes and frequencies are used as inputs to the previously described phase modulation algorithm. The six outputs from this algorithm are then mixed together, and multiplied by the \emph{amplitude envelope} (another ADSR envelope generator) to form the output signal: $Y[t] = \mathrm{ENV}^{amp}[k]*\sum_{i=1}^{6}y_i[k]*a_i^{output}$, where $a_i^{output}$ is the Output Level parameter for operator $i$.
 
 The synth has 96 parameters, as described in Table \ref{tab:Params}. All of the parameters can be easily adjusted in real time, by sending messages over \emph{Open Sound Control (OSC)} \cite{OSC}, a UDP based protocol for inter-application communication.
 
@@ -383,9 +383,9 @@ The synth has 96 parameters, as described in Table \ref{tab:Params}. All of the 
 		Coarse Frequency                            	& 6 x $f_{i}^{coarse}$     & $\{0.5, 1, 2, 3, 4, ...\}$ & Timbre                	& 10									  \\ \hline
 		Fine Frequency                                 	   & 6 x $f_{i}^{fine}$         & $[0, 1]$                   		& Timbre                	& 10									  \\ \hline
 		Output Level                                  		& 6 x $a_{i}^{output}$     & $[0, 1]$                   	  & Timbre                	& 3								    	\\ \hline
-Modulation Envelope Amount                       & 6 x $\mathrm{ENV}_{i}^{mod}$   & $[0, 1]$                   	     & Timbre                  & 1		  \\ \hline
-		LFO A Depth                                    		& 6 x $\mathrm{LFO}_{i}^{a}$         & $[0, 1]$                   	   & Timbre                  & 1				\\ \hline
-		LFO B Depth                                    		& 6 x $\mathrm{LFO}_{i}^{b}$        & $[0, 1]$                   	   & Timbre                  & 1				\\ \hline
+Modulation Envelope Amount                       & 6 x $\mathrm{env}_{i}^{mod}$   & $[0, 1]$                   	     & Timbre                  & 1		  \\ \hline
+		LFO A Depth                                    		& 6 x $\mathrm{lfo}_{i}^{a}$         & $[0, 1]$                   	   & Timbre                  & 1				\\ \hline
+		LFO B Depth                                    		& 6 x $\mathrm{lfo}_{i}^{b}$        & $[0, 1]$                   	   & Timbre                  & 1				\\ \hline
 		\multirow{3}{*}{LFO A}      					& Rate                    		& $[0, 20]$ Hz               	 & \multirow{3}{*}{Time}& \multirow{3}{*}{3} \\
 																	  & Amplitude               	& $[0, 1]$                   		&                      				& \\
 																	  & Phase Spread         	& $[0, 1]$                   		&                       			&\\ \hline
