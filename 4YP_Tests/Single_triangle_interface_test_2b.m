@@ -92,6 +92,8 @@ bar([(presetA' * alpha),(presetB'*beta),(presetC'*gamma)])
 ylim([-0.0,1.1])
 xlim([0.5, 6.5])
 title(['\fontsize{14}Position ', num2str(i)], 'Color', 'blue')
+% ylabel('Parameter Value')
+% xlabel('Parameter Number')
 % subplot(1,2,2)
 % presetMix = (presetA * alpha) + (presetB*beta) + (presetC*gamma);
 % bar(presetMix,'r');
@@ -104,16 +106,18 @@ title(['\fontsize{14}Position ', num2str(i)], 'Color', 'blue')
 end
 subplot(5,3,7)
 legend('Blended Preset', 'Preset A Contribution', 'Preset B Contribution', 'Preset C Contribution', 'Location',  'NorthWest')
+ xlabel('Parameter Number')
+ylabel('Parameter Value')
 
 subplot(5,3,13)
 ylim([-0.5,1.1])
-xlabel('Parameter Number')
+% xlabel('Parameter Number')
 subplot(5,3,14)
 ylim([-0.5,1.1])
-xlabel('Parameter Number')
+% xlabel('Parameter Number')
 subplot(5,3,15)
 ylim([-0.5,1.1])
-xlabel('Parameter Number')
+% xlabel('Parameter Number')
 
 
 subplot(5,3,7)
