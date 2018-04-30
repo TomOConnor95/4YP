@@ -50,6 +50,8 @@
 
 \usepackage{sidecap}
 
+\usepackage{color}
+
 \pagestyle{fancy}
 \fancyhead{}
 \fancyfoot{}
@@ -530,7 +532,7 @@ Even if the user knows exactly what each parameter should be set to, it still ta
 \pagebreak
 \section{Selection Interface}\label{sec:SelectionDescription}
 %\subsection{Detailed Description}
-This interface was created as a Matlab figure-based application. A key technical detail of this interface is the choice of mapping function from the high dimensional parameter space to the 5-dimensional XY-RGB space of the interface. Many dimensionality reduction techniques could be used for this, such as \emph{tSNE} (used in \cite{InfiniteDrum}), \emph{Linear Discriminant Analysis}, and \emph{Autoencoders}. The simplest dimensionality reduction technique was chosen to try first: \emph{Principal Component Analysis} (\emph{PCA}). It is linear, non-parametric and has a closed-form solution, making it reliable and simple to implement. Other techniques could be investigated as a follow-up work.
+This interface was created as a MATLAB figure-based application. A key technical detail of this interface is the choice of mapping function from the high dimensional parameter space to the 5-dimensional XY-RGB space of the interface. Many dimensionality reduction techniques could be used for this, such as \emph{tSNE} (used in \cite{InfiniteDrum}), \emph{Linear Discriminant Analysis}, and \emph{Autoencoders}. The simplest dimensionality reduction technique was chosen to try first: \emph{Principal Component Analysis} (\emph{PCA}). It is linear, non-parametric and has a closed-form solution, making it reliable and simple to implement. Other techniques could be investigated as a follow-up work.
 \subsection{Principal Component Analysis}\label{sec:PCA}
 PCA finds an optimal linear transformation of a dataset onto a set of decorrelated orthogonal basis vectors known as \emph{principal components}. This transformation is optimal in the sense that it diagonalises the covariance matrix of the transformed dataset. 
 The principal components are calculated as the eigenvectors of the covariance matrix $\vec{\Sigma}_x = \frac{1}{n-1}\vec{X}\vec{X}^T$, where $\vec{X} = [(\vec{P}_1-\mu), (\vec{P}_2-\mu), \dots (\vec{P}_n-\mu)]^T$, $\vec{P}_i$ is the $i$th preset, $\mu$ is the mean of the presets, and $n$ is the number of presets.
@@ -695,7 +697,7 @@ It appears that the dataset has some non-random internal structure which PCA is 
 \pagebreak
 \section{Blending Interface}
 \subsection{Detailed Description}\label{sec:BlendingDescription}
-This interface was created as a Matlab figure-based application. Fig. \ref{fig:BlendingAlgorithm} shows the the key steps of the Blending Interface's algorithm.
+This interface was created as a Matlab figure-based application. Fig. \ref{fig:BlendingAlgorithm} shows the the key steps of the Blending Interface's algorithm, and Fig. \ref{fig:BlendingExample} shows one iteration of the Blending Interface applied to a simple 6-dimesional parameter space.
 
 \begin{figure}[h] 
 	\centering
@@ -729,7 +731,8 @@ Where $\vec{P}$ is the blended preset, $\vec{A}$, $\vec{B}$, $\vec{C}$ are prese
 	\label{fig:BlendingColours}
 	\vspace{-30pt}
 \end{wrapfigure}
-where $x$ and $y$ are the x and y coordinates of the current cursor position, and $\vec{M} =[\vec{b},  \vec{c}]$, where $\vec{b}$,  $\vec{c}$ are vectors from preset location A to the B and C locations (Fig. \ref{fig:BlendingVectors}). There are two reasons for blending the presets in this way. Firstly, on an $m$-dimensional control surface, it is possible to linearly interpolate between all possible combinations of $m+1$ presets, so on a 2D screen, three presets should be used.\footnote{Some implementations of preset blending in commercial synthesisers use four presets located on the corners of a square, however in this arrangement it is not possible to reach all possible combinations.} Secondly, this arrangment allows for locations both inside and outside of the central triangle to be used. Inside the triangle, $\alpha$, $\beta$ and $\gamma$ are all in the range [0, 1], giving an \emph{interpolation} between the presets. Outside of the triangle $\alpha$, $\beta$ and $\gamma$ can be less than zero and greater than one, allowing for \emph{extrapolation}.
+where $x$ and $y$ are the x and y coordinates of the current cursor position, and $\vec{M} =[\vec{b},  \vec{c}]$, where $\vec{b}$,  $\vec{c}$ are vectors from preset location A to the B and C locations (Fig. \ref{fig:BlendingVectors}). There are two reasons for blending the presets in this way. Firstly, on an $m$-dimensional control surface, it is possible to linearly interpolate between all possible combinations of $m+1$ presets, so on a 2D screen, three presets should be used.\footnote{Some implementations of preset blending in commercial synthesisers use four presets located on the corners of a square, however in this arrangement it is not possible to reach all possible combinations.} Secondly, this arrangment allows for locations both inside and outside of the central triangle to be used. Inside the triangle, $\alpha$, $\beta$ and $\gamma$ are all in the range [0, 1], giving an \emph{interpolation} between the presets. Outside of the triangle $\alpha$, $\beta$ and $\gamma$ can be less than zero and greater than one, allowing for \emph{extrapolation} (See Fig. \ref{fig:BlendingExample}).
+
 
 The parameter constraint function, $f$, applies the relevant constraints to each parameter. Most parameters are continuous with an upper and lower bound, $[l, u]$. For these parameters: $f_i(P_i) = \min(\max(P_i, l), u)$, where $P_i$ is the $i$th parameter of blended preset $\vec{P}$. For the Coarse Frequency parameters, the continuous blended value is discretised to the set $\{0.5, 1, 2, 3, ...\}$, with the desicion boundary equidistant from neighbouring numbers (Fig. \ref{fig:Freq Coarse}).
 
@@ -748,7 +751,17 @@ To make the iterative blending process more intuitive, and to maintain consisten
 	\vspace{-70pt}
 \end{wrapfigure}
 
-Each time the presets are iterated, the first principal component, $PC_{1}$ is calculated for the generated presets B and C. If $PC_{1}^B > PC_{1}^C $, then presets B and C are swapped. This makes the $x$ direction in the Blending Interface correspond to a direction of increasing $PC_{1}$. This is done to maintain consistency between the two interfaces, as $PC_{1}$ is also used in the Selection Interface for the $x$ coordinate of each preset.
+Each time the presets are iterated, the first principal component, $PC_{1}$ is calculated for the generated presets B and C. If $PC_{1}^B > PC_{1}^C $, then presets B and C are swapped. This makes the $x$ direction in the Blending Interface correspond to a direction of increasing $PC_{1}$. This is done to maintain consistency between the two interfaces, as $PC_{1}$ is also used in the Selection Interface for the $x$ coordinate of each preset.\\
+%\pagebreak
+\begin{figure}[h!] 
+	\vspace{-2cm}
+	\hspace{-2.0cm}
+	%	\centering
+	\includegraphics[trim = {1cm, 2.5cm, 1cm, 1cm}, clip, width = 7.5in]{BlendingExamplePlot.eps}
+	\caption{Preset blending applied to three presets {\color{red}(A, B, C)} for a simple 6 dimensional parameter space. Each bar graph displays the blended preset produced by its corresponding location on the `Blending Preset Positions' plot. Positions 8, 1 and 3 display presets A, B and C, and all other positions are a linear combination of these presets (\S \ref{sec:BlendingDescription}). Each of the graphs' thick bars correspond to a particular parameter of the blended preset. The thin bars represent the contributions of presets A, B and C, which are summed to give the blended preset.}
+	\label{fig:BlendingExample}
+	%	\vspace{-40pt}
+\end{figure}
 
 The Selection History display allows the user to browse their previously selected presets, by clicking on nodes of the graph. Each time presets are iterated, the vector from A to the selelected coordinates, $\vec{p}_i$ is recorded. The graph is constucted by joining these vectors head-to-tail (Fig. \ref{fig:SelectionHistory}). The colours of each edge of the graph are chosen based on $PC_{3,4,5}$ of the presets. See Fig. \ref{fig:BlendingInterface} for a typical  Selection History plot.
 

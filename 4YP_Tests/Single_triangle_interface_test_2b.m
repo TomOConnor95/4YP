@@ -28,6 +28,7 @@ P1{8} = A;
 P1{9} = 0.3*B -0.7*(B-C);
 
 figure(2),clf
+set(figure(2), 'Position', [42 337 800 950])
 subplot(5,3,1:6)
 
 % plot(A(1),A(2), 'r+')
@@ -102,14 +103,17 @@ title(['\fontsize{14}Position ', num2str(i)], 'Color', 'blue')
 % figure(1)
 end
 subplot(5,3,7)
-legend('Blended Preset', 'Preset A', 'Preset B', 'Preset C', 'Location',  'NorthWest')
+legend('Blended Preset', 'Preset A Contribution', 'Preset B Contribution', 'Preset C Contribution', 'Location',  'NorthWest')
 
 subplot(5,3,13)
 ylim([-0.5,1.1])
+xlabel('Parameter Number')
 subplot(5,3,14)
 ylim([-0.5,1.1])
+xlabel('Parameter Number')
 subplot(5,3,15)
 ylim([-0.5,1.1])
+xlabel('Parameter Number')
 
 
 subplot(5,3,7)
