@@ -41,6 +41,7 @@
 	\abovedisplayshortskip=-5pt plus 3pt
 	\belowdisplayskip=3pt plus 3pt minus 3pt
 	\belowdisplayshortskip=7pt plus 3pt minus 4pt
+	\emergencystretch 3em
 }
 
 \titleformat{\chapter}[display]
@@ -115,16 +116,15 @@
 
 \begin{abstract}
 \begin{flushleft}
-\emph{Software synthesisers} (soft-synths) are computer applications that create sounds in response to musical input, typically in the form of \emph{MIDI} (\emph{Musical Instrument Digital Interface}) messages, and are widely used in a variety of musical contexts. Typical soft-synths have hundreds or thousands of parameters that control the sound generation algorithm, allowing the user to create sounds that suit their musical needs. This results in a high dimensional, non-linear search space that the user must navigate. Research indicates that users struggle to navigate such spaces with serial controls, and that there is a strong link between interface design and the level of creativity that the users experience. \\
-This work describes a novel interface designed to help users control synthesisers in a quicker and more intuitive manner. It combines three interfaces together: a traditional `knob and slider' interface, a search space visualisation interface, and an iterative blending interface.\\
-%
-Suitable types of synthesiser for this interface are identified, and a purpose-built synthesiser created with a small dataset of presets.\\
+\emph{Software synthesisers} (soft-synths) are computer applications that create sounds in response to musical input, typically in the form of \emph{MIDI} (\emph{Musical Instrument Digital Interface}) messages, and are widely used in a variety of musical contexts. Typical soft-synths have hundreds or thousands of parameters that control the sound generation algorithm, allowing the user to create sounds that suit their musical needs. This results in a high dimensional, non-linear parameter space that the user must search. Research indicates that users struggle to navigate such spaces with traditional `knob and slider' user interfaces, and that there is a strong link between interface design and the level of creativity that the users experience. \\
+This work describes a novel interface designed to help users control synthesisers in a more efficient and intuitive manner. It combines three interfaces together: a traditional `knob and slider' interface, a search space visualisation interface, and an iterative blending interface.
+Suitable types of synthesiser for this interface are identified, and a purpose-built synthesiser is created with a small dataset of presets.
 Principal Component Analysis (PCA) combined with Histogram Equalisation is shown to be an effective method to create a low dimensional embedding of a synthesiser preset dataset.
 An algorithm is developed to eliminate an undesirable phenomenon of PCA, in which the sign of the principal components may flip unexpectedly as more data points are added to the dataset.
-An algorithm for iteratively generating new presets based off users' preferences is developed.
+An algorithm for iteratively generating new presets based upom users' preferences is developed.
  A Perfect/Imperfect user model is developed to numerically evaluate syntheiser interfaces.
  Parameter selection order is identified as a key limitation of traditional interfaces.
- To verify the design of the novel interface, it is also tested in a different context - Image Filtering.
+ To verify the design of the novel interface, it is also tested in a different context: Image Filtering.
 
 \end{flushleft}
 \end{abstract}
@@ -194,7 +194,7 @@ I'd like to thanks John and Gemma for their contintued support, generosity and f
 
 
 \chapter{Introduction}
-The invention and subsequent development of the \emph{synthesiser} (synth) has been one of the main driving forces behind the evolution of popular and experimental music over the last century. With the current ubiquity of cheap and powerful computers, the barriers of entry to music making are lower than ever: award winning albums have been produced by teenagers, entirely on laptops and smartphones \cite{IphoneProducer}. Such productions commonly use \emph{software synthesisers} (soft synths) to produce many of the sounds.\\
+The invention and subsequent development of the \emph{synthesiser} (synth) has been one of the main driving forces behind the evolution of popular and experimental music over the last century \cite{Synth}. With the current ubiquity of cheap and powerful computers, the barriers of entry to music making are lower than ever: award winning albums have been produced by teenagers, entirely on laptops and smartphones \cite{IphoneProducer}. Such productions commonly use \emph{software synthesisers} (soft synths) to produce many of the sounds.\\
 Typical soft-synths require considerable technical knowledge to use, and have hundreds or even thousands of \emph{parameters} that control the sound generation algorithm. Many musicians lack the expertise required to synthesise sounds from scratch and thus rely heavily on \emph{presets} (pre-made combinations of parameters which produce useful sounds). Whilst there is nothing necessarily wrong with using presets, it makes it difficult for musicians to create unique and destinctive sounds. There is even a sizeable market for buying new presets for synths.\\
 A conclusion can be drawn from this: more work needs to be done to make synths easier to use. To quote Roger Linn, a pioneer of musical interface design, in a 2016 keynote: \cite{LinnKeynote}
 \begin{displayquote}
@@ -204,9 +204,9 @@ A conclusion can be drawn from this: more work needs to be done to make synths e
 This project aims to tackle this problem by designing a radically new interface for controlling synths, and along the way hopes to find some useful insights about high-dimensional parameter spaces in general.
 %
 \section{Key Ideas}
-Presets are widely used and very useful to musicians, and so should form a key part of the interface. Furthermore, the presets of a synth contain a lot of useable information. This is because the presets have been designed to highlight a diverse range of the synth's best sounds, avoiding the numerous regions of parameter space which create inaudible, or terrible sounds. By analysing the timbre of the presets, rather than the timbre of the entire parameter space, a simpler, and more useful control space can be identified, whilst only requiring simple statistical techniques to be used.\\
+Presets are widely used and very useful to musicians, and so should form a key part of the interface. Furthermore, the presets of a synth contain a lot of useable information. This is because the presets have been designed to highlight a diverse range of the synth's best sounds, avoiding the numerous regions of parameter space which create inaudible, or undesirable sounds. By analysing the timbre of the presets, rather than the timbre of the entire parameter space, a simpler, and more useful control space can be identified, whilst only requiring simple statistical techniques to be used.\\
 %
-Humans have impressive abilities of spatial memory, spatial reasoning, and memory of colours, and this can be exploited to increase the effectiveness of the interface. In particular, effort will be taken to maintain visual consistency throughout the interface.\\
+Humans have impressive abilities of spatial memory, \cite{SpatialMemory}, spatial reasoning \cite{SpatialCognition}, and memory of colours \cite{MemoryColour}, and this can be exploited to increase the effectiveness of the interface. In particular, effort will be taken to maintain visual consistency throughout the interface.\\
 %
 Users are much better at giving a preferance between several options, rather that scoring individual options numerically \cite{RatingRanking, PreferenceGallery}. This is exploited in the Blending Interface (\S \ref{sec:BlendingDescription}), where in each iteration the user selects between a range of sounds, which were generated based on their previous preferences.
 %
@@ -218,7 +218,7 @@ Users are much better at giving a preferance between several options, rather tha
 	\item A small dataset of synth presets is created
 	\item Principal Component Analysis (PCA) combined with Histogram Equalisation is shown to be an effective method to create a low dimensional embedding of a synth preset dataset.
 	\item An algorithm is developed to eliminate an undesirable phenomenon of PCA, in which the sign of the principal components may flip unexpectedly as more data points are added.
-	\item An algorithm for iteratively generating new presets based off users' preferences is developed.
+	\item An algorithm for iteratively generating new presets based upon users' preferences is developed.
 	\item A Perfect/Imperfect user model is developed to numerically evaluate synth interfaces.
 	\item Parameter selection order is identified as a key limitation of traditional interfaces.
 	\item To verify the approach, the interface is tested in a different context - Image Filtering.
@@ -260,12 +260,12 @@ Analogue synth interfaces, whether modular or fixed architecture, usually consis
 \begin{figure}[h]
 	\centering
 	\includegraphics[width = 5in]{MoogSystem35.jpg}
-	\caption{Analogue synthesiser - \emph{System 35} (Moog)}
+	\caption{Analogue synthesiser - \emph{System 35} (Moog) \cite{MoogSystem35}}
 	\label{fig:MoogSystem35}
 	% https://www.moogmusic.com/products/modulars/system-35
 \end{figure}
 %
-Digital synthesisers can be much more flexible in their interface, as the audio signals are not passing directily through the controls. Early digital synthesisers had un-user friendly interfaces consising of LCD screens and rows of buttons to alter the parameters, hidden in a series of menus (Fig. \ref{fig:YamahFS1R}). As these interfaces lacked the hands-on control that musicians loved from analogue synths, many digital synths were less popular despite being capable of producing a much wider variety of sounds. Many users found the process of programming these synths to be incredibly frustrating \cite{Synth}. To make the interfaces more user friendly, most digital synths are provided with a set of presets - parameter settings that produce useful sounds - which demonstrate a wide range of the synth's capabilities. %One of the reasons the synthesiser sounds of the 1980s were so simlar to each other, is that many musicians would entirely use the preset sounds, without altering them at all. This is in part due to the novely of the sounds at the time, and in part due to the difficult user interfaces \\
+Digital synthesisers can be much more flexible in their interface, as the audio signals are not passing directily through the controls. Early digital synthesisers had unintuitive user interfaces consising of LCD screens and rows of buttons to alter the parameters, hidden in a series of menus (Fig. \ref{fig:YamahFS1R}). As these interfaces lacked the hands-on control that musicians loved from analogue synths, many digital synths were less popular despite being capable of producing a much wider variety of sounds. Many users found the process of programming these synths to be incredibly frustrating \cite{Synth}. To make the interfaces more user friendly, most digital synths are provided with a set of presets - parameter settings that produce desirable sounds - which demonstrate a wide range of the synth's capabilities. %One of the reasons the synthesiser sounds of the 1980s were so simlar to each other, is that many musicians would entirely use the preset sounds, without altering them at all. This is in part due to the novely of the sounds at the time, and in part due to the difficult user interfaces \\
 %
 \begin{figure}[h] 
 	\centering
@@ -275,7 +275,7 @@ Digital synthesisers can be much more flexible in their interface, as the audio 
 	% http://www.vintagesynth.com/yamaha/fs1r.php
 	\vspace{-10pt}
 \end{figure}\\
-Soft-synths have a wide variety of interfaces. Many follow similar design patterns to analogue synths, but with additional interactive elements such as user-drawable envelopes. An example of this is the very popular \emph{Massive} by Native Instruments \cite{Massive} (Fig. \ref{fig:MassiveNI}). Other soft-synths offer much more visual and interactive interfaces, such as \emph{Wavetable} by Ableton \cite{Wavetable} (Fig. \ref{fig:AbletonWavetable}).
+Soft-synths have a wide variety of interfaces. Many follow similar design patterns to analogue synths, but with additional interactive elements such as user-drawable waveforms. An example of this is the very popular \emph{Massive} by Native Instruments \cite{Massive} (Fig. \ref{fig:MassiveNI}). Other soft-synths offer much more visual and interactive interfaces, such as \emph{Wavetable} by Ableton \cite{Wavetable} (Fig. \ref{fig:AbletonWavetable}).
 
 \begin{figure}[h] 
 	\centering
@@ -298,12 +298,12 @@ Soft-synths have a wide variety of interfaces. Many follow similar design patter
 Some soft-synths have modular designs, such as \emph{Modular} by SoftTube, %\cite{SoftTube}
 and some even allow users to design synthesis modules from scratch, such as \emph{Max/MSP} and \emph{Supercollider}.
 
-There has been a wide range of reasearch in the Computer Music field in the use of multideminsional controllers, such as the  \emph{Myo}, \emph{Leap Motion} and \emph{Microsoft Kinect}, to control synthesis parameters in real time \cite{ICMC, TubbThesis}, and research into advanced user interaction types, such as waveform blending (see \emph{wavetable synthesis} \cite{Wavetable} and \emph{vector synthesis} ), preset blending \cite{Interpolation}, randomisation of presets, and many more \cite{YeeKing, EvolvedAudioEffects}.  Several studies have applied a variety of machine learning techniques to synthesiser control, as described in the next section.
+There has been a wide range of reasearch in the Computer Music field in the use of multidimensional controllers, such as the  \emph{Myo}, \emph{Leap Motion} and \emph{Microsoft Kinect}, to control synthesis parameters in real time \cite{ICMC, TubbThesis}, and research into advanced user interaction types, such as waveform blending (see \emph{wavetable synthesis} \cite{Wavetable} and \emph{vector synthesis} ), preset blending \cite{Interpolation}, randomisation of presets, and many more \cite{YeeKing, EvolvedAudioEffects}.  Several studies have applied a variety of machine learning techniques to synthesiser control, as described in the next section.
 
 \section{Using Machine Learning to Control Synthesisers}\label{MachineLearning}
 Many users find programming synths difficult, due to the large amount of technical and creative skill necessary (\cite{YeeKing} \S 4.1.1). There have been several previous attempts to use machine learning to make programming synths easier and more expressive, from both academia and commercial products (\cite{YeeKing} \S 4.1.2).
 
-The Google NSynth project \cite{NSynth}, develops a technique for interpolating between sampled instruments, in the latent space of a \emph{WaveNet Autoencoder} rather than operating directly on the audio recordings. This project has impressive results, but a downside is that it relies upon pre-computing a large database of audio recordings to densely sample the latent space, which are then interpolated for real time playback. Furthermore only 16 instruments were sampled.
+The Google NSynth project \cite{NSynth} develops a technique for interpolating between sampled instruments, in the latent space (low-dimensional internal representation) of an \emph{Autoencoder} rather than operating directly on the audio recordings. This project has impressive results, generating much higher quality synthetic instrument samples than can be generated by interpolating between audio samples. However, a downside is that it relies upon pre-computing a large database of audio recordings to densely sample the latent space, which are then interpolated for real time playback. Furthermore only 16 instruments were sampled, as there is an exponential increase in the number of possible combinations that have to be pre-computed as more instruments are added.
 
 \emph{Tone-matching} is an active area of research in which synths are automatically programmed to match a reference audio recording. Common techniques involve using global optimisation techniques, such as genetic algorithms, feed-forward neural networks and gradient methods. This either requires a system which continuously monitors the output of the synth and calculates a sound-based metric to compare to the reference recording's metric, or requires a densely sampled database of metric values over the parameter space of the synth.  The Mel Frequency Cepstrum Coefficient (MFCC) has been identified as the best metric to use, as it is based on human perception \cite{YeeKing}.
 
@@ -313,10 +313,10 @@ Dimensionality reduction was applied to audio recordings in the \emph{Infinite D
 The Selection Interface (\S \ref{sec:SelectionDescription}) draws inspiration from this project. It would be possible to carry out the same process for a synth if first an audio recording was taken of each preset. However, the best way to select which audio recording should be taken from each preset is not clear, as different presets respond very differently to the \emph{MIDI Note}, \emph{Velocity}, and \emph{Note Length}. Therefore the best sampling method to accurately characterise a synthesiser preset, in as few audio recordings as possible, is an open research question.\\
 In this work a parameter-based approach is taken, to see if similar quality results can be obtained through a statistical analysis of the presets of a synth. This approach has many benefits such as the speed of the mapping, and the amount of storage required.
 
-The \emph{Wekinator} \cite{Wekinator} is an infuential application of \emph{interactive machine learning} (also known as \emph{active learning}) in music, in which expressive control mappings can be generated for many different types of user interaction based on a small number of user supplied training examples. This approach could be used to allow the interface designed in this report to be controlled more expressively, and make it better suited to live performance.
+The \emph{Wekinator} \cite{Wekinator} is an infuential application of \emph{interactive machine learning} (also known as \emph{active learning}) in music, in which expressive control mappings can be generated for many different types of user interaction based on a small number of user supplied training examples. This approach could be used to allow the interface designed in this report to be controlled more expressively, and make it better suited to live performance. \vspace{-10pt}
 \section{HCI design principles for Creative Musical Interfaces}\label{sec:Tubb}
 Several results from the field of \emph{Human-Computer Interaction} (HCI) give useful insights into synth interface design.\\
-There are four main types of parameter mapping in synthesier interfaces \cite{MappingStrategies}:
+There are four main types of parameter mapping in synthesier interfaces:
 \begin{itemize}
 \vspace{-10pt}
 \setlength\itemsep{-1.2em}
@@ -326,8 +326,8 @@ There are four main types of parameter mapping in synthesier interfaces \cite{Ma
 \item Many-to-many: a combination of the above (known as ‘complex’ mappings).
 \end{itemize}
 \vspace{-10pt}
-Complex many-to-many mappings appear to be the most effective for many users, as well as being more fun and inspiring higher levels of creativity. It appears that they allow users to intuitively learn to navigate the control space. One-to-one interfaces on the other hand require the user to break the creative process into a number of subtasks, and are reported to be confusing and frustrating to use.
-
+Complex many-to-many mappings appear to be the most effective for many users, as well as being more fun and inspiring higher levels of creativity. It appears that they allow users to intuitively learn to navigate the control space. One-to-one interfaces on the other hand require the user to break the creative process into a number of subtasks, and are reported to be confusing and frustrating to use \cite{MappingStrategies}.\\
+%
 In \cite{TubbThesis}, a number of guidelines for creative musical interfaces are presented:
 \begin{enumerate}
 	\vspace{-10pt}
@@ -346,7 +346,7 @@ In \cite{TubbThesis}(\S 5.5.3), the EARS model for creative cognition is develop
 \begin{figure}[h] 
 	\centering
 	\includegraphics[width = 5in]{EARSmodel.png}
-	\caption{The four quadrants formed by drawing distinctions between implicit vs. explicit thinking (left/right) and divergent vs. convergent thinking (top/bottom). \cite{TubbThesis}}
+	\caption{The four quadrants formed by drawing distinctions between implicit vs. explicit thinking (left/right) and divergent vs. convergent thinking (top/bottom). Convergent processes are conceptual/parameter space traversal mechanisms that work upon improving the fitness of solutions. Divergent processes generate candidate solutions via traversal mechanisms that ignore any prediction of increasing value, e.g. creating lots of scattered points \cite{TubbThesis}.}
 	\label{fig:EARSmodel}
 \end{figure}\\
 For different creative tasks, interfaces suited to an appropriate mode of creative cognition (Exploratory, Reflective, Skilled or Algorithmic) will be more effective, and it is important for users to be able to easily switch between these different modes. This project's interface is evaluated using this model in Section \ref{sec:EARS}.
@@ -358,7 +358,7 @@ For different creative tasks, interfaces suited to an appropriate mode of creati
  It was necessary to choose a synth to use, in order to develop the interface. To remove some of the complexities of communicating with commercial synths, a purpose built synth was made in the programming language \emph{Supercollider}.
 A \emph{six operator phase modulation} (PM) synth was created,\footnote{PM synthesis is very closely related to FM synthesis \cite{FM}, and the names are often used interchangeably.} loosely based on the Yamaha \emph{DX7}, and was designed to be representative of typical commercial soft-synths.
  
-The synthesis algorithm uses the \emph{FM7 UGen} for Supercolldier \cite{UGen}. This implements six \emph{operators}\footnote{A general term for waveform generators in PM synthesis. In this case, sine-wave generators are used.} with independent amplitudes and frequencies, whose outputs can be used to modulate each other's phase. This is described by the following discrete-time equation: 
+The synthesis algorithm uses the \emph{FM7 UGen} for Supercolldier \cite{UGen}. This implements six \emph{operators}\footnote{A general term for waveform generators in PM synthesis. In this case, sine-wave generators are used.} with independent amplitudes and frequencies, whose outputs can be used to modulate each other's phase. This is described by the following discrete-time equation \cite{YeeKing}: 
 \begin{equation}
 y_i[k+1] = a_i\sin(2\pi kT f_i + \sum_{j = 1}^{6} y_j[k] m_{ij})
 \end{equation}
@@ -430,12 +430,12 @@ Modulation Envelope Amount                       & 6 x $\mathrm{env}_{i}^{mod}$ 
 \section{Design choices and justification}\label{sec:SynthDescription}
 Typical commercial synths have a large number of parameters\footnote{For example, the \emph{Yamaha DX7} has 126 parameters, and  \emph{Omnisphere 2} has several thousand parameters}, which can be discrete or continuous, and are usually constrained within a range. This synth features a combination of continuous and discrete parameters, all of which are bounded. Commonly used bounds are: $[0, 1]$, $[0, k]$ and $[-k, k]$, where $k \in \mathbb{R}^+ $ (See Table \ref{tab:Params}). 
 Some synths have \emph{modular} architectures, which allow for considerable flexibility in sound generation. However, due to the \emph{combinatorial explosion} of potential parameter combinations, and difficulties blending between presets, modular synths are not addressed in this work.
-Some synths use short audio recordings, known as samples, as part of their sound creation algorithm. This creates difficulties blending between presets, so this type of architecture will not be considered in this work. Both of these types of synths, however, would be interesting to pursue as a follow-up work.
+Some synths use short audio recordings, known as samples, as part of their sound creation algorithm. This creates difficulties blending between presets, so this type of architecture will not be considered in this work. Both of these types of synths would be interesting to pursue as a follow-up work.
 
 This work is aimed at analogue-style synths, in which there are a medium number of parameters with a fixed internal routing. Effects modules, such as reverb, delay and chorus have not been included in the synth, as these can easily be added to the signal chain by users. Effects modules also tend to be much easier to control than synths, as they typically have fewer, and more intuitive parameters. Effects modules are typically chained together in series, with no feedback, so each effect module is a seperate transfer function, with no covariance between the parameters.
 
 
-The DX7 was chosen as a base synth as although it is a very powerful, it is notoriously difficult to use due to the unintuitive phase modulation algorithm. An improved interface has the ability to open up FM synthesiser programming to non-expert users. %WORK ON THIS
+The DX7 was chosen as a base synth as although it is very powerful, it is notoriously difficult to use due to the unintuitive phase modulation algorithm. An improved interface has the ability to open up FM synthesiser programming to non-expert users. %WORK ON THIS
 
 The synth was designed to have access to as wide a range of sounds as possible with as few parameters as possible. For example instead of having a separate envelope generator for each oscillator as the  DX7 does, only two envelopes were included, with an adjustable amount per operator. The synth has 96 total parameters, compared to the 126 of the DX7, but it can replicate most of the useful sounds of a DX7. Despite aims to reduce parameter count, there are still many redundant parameters in most presets for this synth. For example, if the amplitude of one of the LFOs is set to zero, all of the other parameters to do with the LFO will have no effect on the sound. This is a common feature with synths, and presents a challenge when trying to learn useful information from the parameters.
 
@@ -444,11 +444,11 @@ In Yee King's thesis \cite{YeeKing}, a similar FM7 Ugen based Supercollider synt
 As this synth has six identical operators which can be configured in any combination, there is lots of possible \emph{permutation ambiguity}: if two operators have all of their parameters switched, the sound will remain identical. This presents a challenge (\S \ref{sec:PermutationAmbiguity}) as two presets can have very different parameters despite having the same sound.
 
 \chapter{Description of Full Interface}
-The full interface developed in this report is a combination of three interfaces. Each has the ability to vary the entire set of parameters, and produce a wide variety of sounds, but they are designed to complement each other as well as possible. The user can easily move back and forth between the different interfaces. The interface is designed to use as little information about the synth as possible, so that it can be easily applied to other synths. A video of the full interface can be viewed at (LINK), and a working demo can be downloaded from (LINK).
-%\vspace{-15pt}
+The full interface developed in this project is a combination of three interfaces. Each has the ability to vary the entire set of parameters, and produce a wide variety of sounds, but they are designed to complement each other as well as possible. The user can easily move back and forth between the different interfaces. The interface is designed to use as little information about the synth as possible, so that it can be easily applied to other synths. A video of the full interface can be viewed at (LINK), and a working demo can be downloaded from (LINK). This chapter gives an overview of each interface, with a detailed description in the next chapter. \vspace{-30pt}
 \section{Traditional Interface}
+\vspace{-5pt}
 The \emph{Traditional Interface} is designed to be representative of a typical soft-synth interface. It has a knob or slider for each synthesis parameter, and has interactive visualisations for some parts of the architecture (namely the envelopes and LFOs). The interface is arranged in three seperate pages, two of which are shown in Fig. \ref{fig:TraditionalInterface}. 
-If the full interface were to be extended to work with any VST, the traditional interface would be replaced by the VST's user interface. 
+If the full interface were to be extended to work with any VST, the traditional interface would be replaced by the VST's user interface. \vspace{-15pt}
 \begin{figure}[h!] 
 	\vspace{-5pt}
 	\centering
@@ -465,7 +465,7 @@ If the full interface were to be extended to work with any VST, the traditional 
 Typical soft-synths are supplied with a large number of presets, which are usually named and arranged into categories. They are usually displayed in a list which can be searched by name, or split into category. In many soft-synths, each preset is given a set of \emph{Macro Controls} (usually eight), each of which vary one or more parameters, and aim to give the user a quick way to fine-tune the presets to their needs.\\
 The \emph{Selection Interface} is a new approach to displaying presets, arranging the presets as cells of a \emph{2D Voronoi diagram} \cite{Voronoi}, such that similar presets are close to each other and coloured similarly. The presets can quickly be compared by moving the mouse around the diagram, and presets are selected by clicking on the cells. Once a preset is selected it can be edited by Macro Controls. 
 The presets have been divided into a number of categories. Clicking the category buttons at the top of the interface highlights the selected category (Fig. \ref{fig:PCAInterface}). By clicking the `Display Mode' button, it is also possible to limit the presets displayed to just the selected category(s), displayed in a recalculated Voronoi diagram.\\
-Both the 2D spacing of the presets, and the mapping of the Macro Controls are calculated automatically from the set of presets' parameter values using Principal Component Analysis.
+Both the 2D spacing of the presets, and the mapping of the Macro Controls are calculated automatically from the set of presets' parameter values using Principal Component Analysis combined with Histogram Equalisation.
 
 \begin{figure}[h] 
 	\centering
@@ -473,7 +473,7 @@ Both the 2D spacing of the presets, and the mapping of the Macro Controls are ca
 	\includegraphics[width = 3.0in]{PCAInterface1.png}
 	\hspace*{0.1cm}
 	\includegraphics[width = 3.0in]{PCAInterface2.png}
-	\caption{PCA Interface - Normal View, and Category Highlight View}
+	\caption{Selection Interface - Normal View, and Category Highlight View}
 	\label{fig:PCAInterface}
 \end{figure}
 
@@ -498,10 +498,12 @@ The colours of the Blending Interface are calculated to be consistent with the S
 \section{How the Interfaces are Combined}
 When the application is started, the Selection Interface is displayed first. Once a preset has been selected and possibly modified with the Macro Controls, the user has the option to click the `Edit Mode' button, which opens the Traditional Interface, allowing the currently selected preset to be further modified. The user can move back to the Selection Interface by clicking the `Return to Selection UI' button. The varied preset is displayed on the Selection Interface with a marker, attatched to the original preset, which is positioned and coloured to be consistent with the PCA mapping (Fig. \ref{fig:CombinedInterface}). To undo the edits made to the preset the user can click the `Undo Edit' button. In this way the user can move back and forth between the Selection and Traditional interfaces as often as desired.
 
-Once three presets have been selected, the user has the option of clicking the `Blend Mode' button which opens the Blending Interface, and assigns the three selected presets to A, B and C. The user can then use the Blending Interface for as long as necessary, and then click the `Return to Preset Selection' button. This time another marker is created, with dotted lines to the 3 initially selected presets. 
+Once three presets have been selected, the user has the option of clicking the `Blend Mode' button which opens the Blending Interface, and assigns the three selected presets to A, B and C. The user can then use the Blending Interface for as long as necessary, and then click the `Return to Preset Selection' button. This time another marker is created, with dotted lines to the three initially selected presets. 
 This marker can then be used in the same way as the cells of the Voronoi diagram, i.e it can be previewed by clicking, selected by double clicking, and can be edited with the Macro Controls or the Traditional Interface.
 
  Parameter visualisations are displayed alongside all of the interfaces to give the user more feedback of the changes they are making with the interface, and to aid in understanding the synthesis algorithm. These are shown on the left and bottom sides of the interface in Fig. \ref{fig:CombinedInterface}.
+ 
+The following chapter gives a detailed description of each of the interfaces, and describes some of the technical challenges which had to be overcome to make the interfaces work effectively
 \begin{figure}[h] 
 	\centering
 	\hspace*{-1.5cm}
@@ -665,7 +667,7 @@ This algorithm is used on $PC_3$ in Fig. \ref{fig:PCAnumPresets2}. In order for 
 
 The variance of each principal component can be used to measure the effectiveness of the PCA mapping. If the first few components account for most of the variance of the dataset, then the dimensionality reduction has been successful.
 Fig. \ref{fig:LatentOriginal} shows how the fraction of the variance associated with each principal component changes as more presets are added. Over 50\% of the variance can be accounted for by $PC_{1,2}$,  over 90\% by $PC_{1 : 10}$, and the graph asymptotes to a relatively stable state. Fig. \ref{fig:LatentRandom} is the same plot for a random dataset the same size as the original dataset. Each of the fractions is rougly exponentially decreasing. When all 36 presets are included, only 50\% of the variance can be accounted for by $PC_{1 : 10}$. \\
-It appears that synth dataset has some non-random internal structure which PCA is successfully managing to find. This suggests that \textbf{PCA is an appropriate technique to use on synth datasets}, however testing on other synth datasets is necessary to validate this result.
+It appears that the dataset has some non-random internal structure which PCA is successfully managing to find. This suggests that \textbf{PCA is an appropriate technique to use on synth datasets}, however testing on other synth datasets is necessary to validate this result.
 \begin{figure}[h]
 	\vspace{-5pt}
 	\hspace{-40pt}
@@ -787,8 +789,9 @@ Zero-mean Gaussian noise $\varepsilon$ is added to the weighted mean with a cova
 \Sigma = b\times(\nu\Sigma_P + (1-\nu)\Sigma_H)\times\xi^k
 \end{equation}
 where $b\in\mathbb{R}^+$, $\Sigma_P$ is the covariance (\S \ref{sec:PCA}) of the preset dataset, $\Sigma_H$ is the covariance of the previously selected presets\footnote{When $k =1$, $\Sigma_H = \vec{0}$.}, $\nu \in [0, 1]$ sets the ratio of the covariances, and $\xi \in [0, 1]$ causes the magnitude of the covariance to decay as $k$ increases. The covariance was defined in this way so that the correlations from both the preset dataset and the previously selected presets are incorporated into the algorithm. If a user makes consistent decisions with regards to a particular parameter, its variance will decrease and eventually the parameter will become fixed. This algorithm has several hyperparameters which were set using an optimisation based approach, described in Section \ref{sec:ImageEditing}, then fine-tuned empirically until the algorithm gave sensible suggestions ($b=0.4, c=0.5, \eta=0.5,  \nu=0.3, \xi=0.9$).
-
+\vspace{-8pt}
 \section{Investigion of Permutation Ambiguity}\label{sec:PermutationAmbiguity}
+\vspace{-5pt}
 Due to the equivilance of the six operators of the synth architecture, there is the possibility of permutation ambiguity in the dataset (\S \ref{sec:SynthDescription}). However it may be possible to correct for this using knowledge of the synth architecture. Typically the operators with the loudest Output Level parameters act as \emph{modulators} and the operators with lower output levels act as \emph{carriers} (as defined in \cite{YeeKing}, Section 3.1.1). Therefore the dataset can be permutation-alligned by permuting each preset, such that the Output Level parameters are in decreasing order.\\
 To determine the sucess of this approach, the original dataset was compared to the permuted dataset, and a randomly permuted dataset , using the following cost function:
 \begin{equation}
@@ -903,15 +906,15 @@ A key question with the interface is whether the Global or Time/Timbre version o
 
 Some points to note from these results:
 
-For different preset goals, the effectiveness of the PCA Controls varies significantly (Fig. \ref{fig:PCAtest1}). In the best case the error drops very rapidly, falling 50\% in the first 10 iterations. In the worst case the error doesn't decrease at all. This suggests that, for this particlar task at least, having the same Macro Controls for each preset may not be ideal and that a new approach that calculates the Macro Controls per preset is worth pursuing. However, this comes at the cost of the user being less familiar with what the Macro Controls are actually doing (\S \ref{sec:GlobalTimeTimbre}).
+For different preset goals, the effectiveness of the Macro Controls varies significantly (Fig. \ref{fig:PCAtest1}). In the best case the error drops very rapidly, falling 50\% in the first 10 iterations. In the worst case the error doesn't decrease at all. This suggests that, for this particlar task at least, having the same Macro Controls for each preset may not be ideal and that a new approach that calculates the Macro Controls per preset is worth pursuing. However, this comes at the cost of the user being less familiar with what the Macro Controls are actually doing (\S \ref{sec:GlobalTimeTimbre}).
 
 In all cases the mean error converges to a non-zero steady state value,  due to the limited degrees of freedom when using the Macro Controls. This means that the Macro Controls alone cannot be used to perfectly match a goal preset.
 
 For numbers of iterations less than 40, the cyclic order decreases the error faster than the random order.\footnote{
 When the Global Macro Controls are being used, after a large number of iterations, the random order manages to decrease the error past the cyclic order's error. However, It is likely that this is due to the cyclic order causing the search algorithm to get stuck in a local optimum.} Therefore ordering the Macro controls based on their variance is a sensible choice, so that users can easily use this cyclic order. 
 
-Finally, each of the sets of controls has a similar initial rate of error reduction, but the Global Macro Controls appear to have a significant advantage over the Time/Timbre Macro Controls over larger numbers of iterations. This is likely due to the fact that the Global Macro Controls have access to principal components 1 to 8, whereas the Time/Timbre Macro Controls on have access to two sets of principal components 1 to 4. The combination of both sets of Macro Controls gives the lowest mean error overall, which is unsurprising as it has the most degrees of freedom, and it has a comparable error reduction rate as the Global Macro Controls.
-
+Finally, each of the sets of controls has a similar initial rate of error reduction, but the Global Macro Controls appear to have a significant advantage over the Time/Timbre Macro Controls over larger numbers of iterations. This is likely due to the fact that the Global Macro Controls have access to principal components 1 to 8, whereas the Time/Timbre Macro Controls on have access to two sets of principal components 1 to 4. The combination of both sets of Macro Controls gives the lowest mean error overall, which is unsurprising as it has the most degrees of freedom, and it has a comparable error reduction rate as the Global Macro Controls.\\
+%
 Based on this it is concluded that it is worth keeping both sets of Macro Controls for the user to be able to select between. This allows user to choose between the increased accuracy of the Global Macro Controls, the more semantically meaningful Time/Timbre Macro Controls, or any combination thereof.
 
 \subsection{Blending Interface} \label{sec:BlendingEval}
@@ -1001,6 +1004,10 @@ As the algorithm does not spatially transform the image in any way, a simple met
 %...
 
 \chapter{Conclusion}
+This project investigated using machine learning to make synthesiser programming more efficient and intuitive. 
+%A literature review identified several promising techniques for 
+An interface has been designed which allows users with no knowledge of synthesiser programming to find new sounds by varying and combining presets. The two novel sections of this interface are the Selection Interface (an interactive low dimensional mapping of a synth preset dataset), and the Blending Interface (an iterative approach to combining presets in order to explore the parameter space). Both of these interfaces use machine learning techniques to extract information from the set of presets.
+
 The interface created in this project has many benefits over a traditional synth interface. Based on simulated user studies, the interface has at least as good performance as a traditional interface when carrying out search based tasks. As it was designed using heuristics from the fields of \emph{Human-Computer Interaction} \cite{MappingStrategies, YeeKing, RatingRanking}, and \emph{Creative Cognition} \cite{TubbThesis}, and statistical techniques from the field of \emph{Machine Learning} \cite{PCA, PreferenceGallery}, it is more flexible, expressive and powerful than a traditional interface. Feedback about the interface from a small number of users has been positive, however more rigourous user-testing is required.
 
 Several insights have been gained about synth parameter spaces. \\
@@ -1030,13 +1037,19 @@ Ableton.com. (2018). \emph{Wavetable | Ableton}. [online] Available at: \url{htt
 Documentation.apple.com. (2009). \emph{A Brief History of the Synthesiser}. [online] Available at: \url{https://documentation.apple.com/en/logicstudio/instruments/index.html#chapter=A\%26section=5\%26tasks=true} [Accessed 20 Apr. 2018].
 
 \bibitem{PreferenceGallery}
-Brochu, E. et al. 2010. \emph{A Bayesian interactive optimization approach to procedural animation design}. Proceedings of the 2010 ACM SIGGRAPH/Eurographics Symposium on Computer Animation (SCA '10). Eurographics Association, Goslar, Germany, 103-112.
+Brochu, E. et al. (2010). \emph{A Bayesian interactive optimization approach to procedural animation design}. Proceedings of the 2010 ACM SIGGRAPH/Eurographics Symposium on Computer Animation (SCA '10). Eurographics Association, Goslar, Germany, 103-112.
+
+\bibitem{SpatialCognition}
+Clifton, Paul G. et al. (2016) \emph{Design of Embodied Interfaces for Engaging Spatial Cognition}. Cognitive Research 1.1: 24. PMC. Web. [Acccessed 30 Apr. 2018].
 
 \bibitem{FM}
 Chowming, J.M. (1977). \emph{The Synthesis of Complex Audio Spectra by Means of Frequency Modulation}.
 
 \bibitem{Voronoi}
 Dobrin, A. (2005). \emph{A review of properties and variations of Voronoi diagrams}. 
+
+\bibitem{MemoryColour}
+Dzulkifli, M. A. et al. (2013). The Influence of Colour on Memory Performance: A Review. The Malaysian Journal of Medical Sciences : MJMS, 20(2), 3–9.
 
 %\bibitem{SY22}
 %Encyclotronic. (2018). \emph{Yamaha SY22 Vector Synthesizer}. [online] Available at: \url{https://encyclotronic.com/synthesizers/yamaha/sy22-r345/} [Accessed 18 Apr. 2018].
@@ -1051,27 +1064,30 @@ Fiebrink, R. et al. (2010). \emph{The Wekinator: A System for Real-time, Interac
 Hantrakul, L. and Kaczmarek, K. (2014). \emph{Implementations of the Leap Motion in sound synthesis, effects modulation and assistive performance tools}. In: International Computer Music Conference. 
 
 \bibitem{RatingRanking}
-Harzing, A et al. 2009. \emph{Rating versus ranking: What is the best way to reduce response and language bias in cross-national research?}.
+Harzing, A et al. (2009). \emph{Rating versus ranking: What is the best way to reduce response and language bias in cross-national research?}.
 International Business Review,
 ISSN 0969-5931
 
 \bibitem{MappingStrategies}
-Hunt, A. \& Kirk, R. 2000. \emph{Mapping Strategies for Musical Performance}. Trends in Gestural Control of Music
+Hunt, A. \& Kirk, R. (2000). \emph{Mapping Strategies for Musical Performance}. Trends in Gestural Control of Music
 
 \bibitem{EvolutionaryInteractive}
-J\'{o}nsson B et al. 2015. \emph{Interactively Evolving Compositional Sound Synthesis Networks}. In Proceedings of the 2015 Annual Conference on Genetic and Evolutionary Computation (GECCO '15), New York. DOI: \url{http://dx.doi.org/10.1145/2739480.2754796}
+J\'{o}nsson B et al. (2015). \emph{Interactively Evolving Compositional Sound Synthesis Networks}. In Proceedings of the 2015 Annual Conference on Genetic and Evolutionary Computation (GECCO '15), New York. DOI: \url{http://dx.doi.org/10.1145/2739480.2754796}
 
 \bibitem{UGen}
-Kersten, S. \emph{skUG SuperCollider UGen library}, 2008. \url{http://space.k- hornz.de/software/skug/}.
+Kersten, S. (2008). \emph{skUG SuperCollider UGen library}. \url{http://space.k- hornz.de/software/skug/}.
 
 \bibitem{LinnKeynote}
-Linn, R. \emph{Keynote}.  Audio Developer Conference, 2016. \url{https://www.youtube.com/watch?v=3bHGeSv37rU} [at 19:00]
+Linn, R. (2016). \emph{Keynote}.  Audio Developer Conference (ADC 2016). \url{https://www.youtube.com/watch?v=3bHGeSv37rU} [at 19:00]
 
 \bibitem{Interpolation}
 Marier, M. (2012). \emph{Designing Mappings for Musical Interfaces Using Preset Interpolation}. NIME.
 
 \bibitem{NonOrthogonal}
 Miguel (https://math.stackexchange.com/users/95625/miguel), \emph{Equation for non-orthogonal projection of a point onto two vectors representing the isometric axis?}, (version: 2017-03-07): \url{https://math.stackexchange.com/q/1123586}
+
+\bibitem{MoogSystem35}
+Moogmusic.com. (2015). \emph{System 35 | Moog Music Inc}. [online] Available at: https://www.moogmusic.com/products/modulars/system-35 [Accessed 30 Apr. 2018].
 
 \bibitem{Massive}
 Native-instruments.com. (2007). \emph{MASSIVE}. [online] Available at: \url{https://www.native-instruments.com/en/products/komplete/synths/massive/} [Accessed 18 Apr. 2018].
@@ -1089,6 +1105,11 @@ Pierce, D. (2017). \emph{The hot new hip-hop producer who does everything on his
 \bibitem{GenSynth}
 Rice, David. (2015). \emph{GenSynth: Collaboratively Evolving Novel Synthetic Musical Instruments}. 10.13140/RG.2.1.4691.6001. 
 
+\bibitem{SpatialMemory}
+Roy P.C. Kessels et al. (2001). \emph{Varieties of human spatial memory: a meta-analysis on the effects of hippocampal lesions}.
+Brain Research Reviews,
+Volume 35, Issue 3.
+
 \bibitem{ActiveLearning}
 Settles, Burr. (2010). \emph{Active Learning Literature Survey}. University of Wisconsin, Madison.
 
@@ -1099,7 +1120,7 @@ Shlens, D. (2014). \emph{A Tutorial on Principal Component Analysis}. arXiv:1404
 %Softube.com. (2016). Softube - Modular. [online] Available at: \url{https://www.softube.com/modular} [Accessed 18 Apr. 2018].
 
 \bibitem{EvolvedAudioEffects}
-Smith, B.D. (2017) \emph{Play it Again: Evolved Audio Effects and Synthesizer Programming}. In: Computational Intelligence in Music, Sound, Art and Design. EvoMUSART 2017. Lecture Notes in Computer Science, vol 10198. Springer, Cham.
+Smith, B.D. (2017). \emph{Play it Again: Evolved Audio Effects and Synthesizer Programming}. In: Computational Intelligence in Music, Sound, Art and Design. EvoMUSART 2017. Lecture Notes in Computer Science, vol 10198. Springer, Cham.
 
 \bibitem{TubbThesis}
 Tubb, R. (2016). \emph{Creativity, Exploration and Control in Musical Parameter Spaces}. Ph.D. Queen Mary University of London.
@@ -1111,21 +1132,23 @@ Vail, M. (2014). \emph{The Synthesizer}. New York, NY: Oxford University Press.
 Vintagesynth.com. (2012). \emph{Yamaha FS1R | Vintage Synth Explorer}. [online] Available at: \url{http://www.vintagesynth.com/yamaha/fs1r.php} [Accessed 18 Apr. 2018].
 
 \bibitem{BayesOptDimensionality}
-Wang, Z. et al. 2016. \emph{Bayesian Optimization in a Billion Dimensions via Random Embeddings}. arXiv:1301.1942 [stat.ML]
+Wang, Z. et al. (2016). \emph{Bayesian Optimization in a Billion Dimensions via Random Embeddings}. arXiv:1301.1942 [stat.ML]
 
 \bibitem{YeeKing}
 Yee-King, M. (2011). \emph{Automatic Sound Synthesizer Programming: Techniques and Applications}. Ph.D. University of Sussex.
 
 \bibitem{GenComparison}
-Yee-King, M J. 2016. \emph{The Use of Interactive Genetic Algorithms in Sound Design: A Comparison Study}. Computers in Entertainmnent, 14(3), [Article]
+Yee-King, M J. (2016). \emph{The Use of Interactive Genetic Algorithms in Sound Design: A Comparison Study}. Computers in Entertainmnent, 14(3), [Article]
 
-\bibitem{NSynth} \emph{Neural Audio Synthesis of Musical Notes with WaveNet Autoencoders}. Engel, J., Resnick, C., Roberts, A., et al.\ 2017, arXiv:1704.01279 
+\bibitem{NSynth}
+ Engel, J. et al. (2017). \emph{Neural Audio Synthesis of Musical Notes with WaveNet Autoencoders}. arXiv:1704.01279 
 
 \bibitem{HistogramEqualisation}
 Singh, P. et al. (2015). \emph{Histogram Equalization: A Strong Technique for Image Enhancement}. International Journal of Signal Processing, Image Processing and Pattern Recognition. %8. 345-352. 10.14257/ijsip.2015.8.8.35. 
 
 \bibitem{ExplorationExploitation}
-Besbes, O. et al. 2014.\emph{Optimal Exploration-Exploitation in a Multi-Armed-Bandit Problem with Non-stationary Rewards}.	arXiv:1405.3316
+Besbes, O. et al. (2014). \emph{Optimal Exploration-Exploitation in a Multi-Armed-Bandit Problem with Non-stationary Rewards}.	arXiv:1405.3316
+
 
 \end{thebibliography}
 \end{document}  
