@@ -42,7 +42,7 @@ mosaicHeight = 3;
 
 selectedPresetNumbers = chooseFromImageMosaic(img, mosaicWidth, mosaicHeight);
 
-presetRead = matfile('PresetStore.mat');
+presetRead = matfile('PresetStore2.mat');
 P.presetA = presetRead.presetStore(selectedPresetNumbers(1),:);
 P.presetB = presetRead.presetStore(selectedPresetNumbers(2),:);
 P.presetC = presetRead.presetStore(selectedPresetNumbers(3),:);

@@ -1000,7 +1000,7 @@ A conclusion to draw from this is that the interfaces effectively enable explora
 
 \section{Test of the Interface for Image Filtering}\label{sec:ImageEditing}
 To test the interface in a different context the Blending Interface was adapted to control a simple image filtering algorithm. The results of this process are shown in Fig. \ref{fig:ImageFIltering}, and the image filtering algorithm is described below.\\
-Two copies of an input image are seperately processed then combined together. The \emph{background layer} is formed by a linear combination of the input image and a greyscale version of the input image. The \emph{foreground layer} first uses MATLAB's \emph{imadjust} functon to adjust the \emph{intensity range} and \emph{gamma} of the input image's RGB channels, then applies a Gaussian shaped \emph{alpha map}. The algorithm has 18 parameters, all in the range $[0,1]$. A small collection of presets was generated for this algorithm, which the user can select between.
+Two copies of an input image are seperately processed then combined together. The \emph{background layer} is formed by a linear combination of the input image and a greyscale version of the input image. The \emph{foreground layer} first uses MATLAB's \emph{imadjust} functon to adjust the \emph{intensity range} and \emph{gamma} of the input image's RGB channels, then applies a Gaussian shaped \emph{alpha map}. The algorithm has 18 parameters, all in the range $[0,1]$. A small collection of presets was generated for this algorithm, which the user can select between (Fig. \ref{fig:ImageFIlteringOutput}).
 \begin{figure}[h]
 	\hspace{-30pt}
 	\includegraphics[width = 7in]{ImageBlendingLocations.png}
@@ -1011,7 +1011,13 @@ Two copies of an input image are seperately processed then combined together. Th
 
 As the algorithm does not spatially transform the image in any way, a simple metric (the $L_2$ norm of the difference between the images\footnote{The image can be downsampled first to reduce the computation time.}) can be used to compare the outputs. This allows a Perfect User test (\S \ref{sec:PerfectImperfect}) to be carried out on the Blending Interface, however instead of using a parameter based error metric (\S \ref{sec:ErrorMetric}) the image based error metric can be used. This simulates a real user in a more realistic manner as the comparison is in the perceptual space rather than the parameter space. Once again, MATLAB's \emph{Patternsearch} algorithm was used to optimise the blend between presets A, B and C. These tests were carried out using a variety of test images, start presets and end presets. This allowed the rates of convergence to be compared when developing the preset generation algorithm (\S \ref{sec:PresetGeneration}), which was used to set its hyperparameters.
 
-
+\begin{figure}[h]
+	\hspace{-30pt}
+	\includegraphics[trim = {0.5cm, 12.5cm, 2cm, 1cm}, clip, width = 7in]{ImageEditing.png}
+	\caption{Several Outputs from the Image Filtering Algorithm (original image top left).}
+	\label{fig:ImageFIlteringOutput}
+	\vspace{-20pt}
+\end{figure}
 
 %\chapter{User tests and Interviews}
 %A rigourous user study would require time and resourses that this project is incapable of, however the interface has been shown to a number of musicians, and some feedback shown below:
