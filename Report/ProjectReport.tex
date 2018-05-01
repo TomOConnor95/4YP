@@ -511,7 +511,7 @@ This marker can then be used in the same way as the cells of the Voronoi diagram
 
  Parameter visualisations are displayed alongside all of the interfaces to give the user more feedback of the changes they are making with the interface, and to aid in understanding the synthesis algorithm. These are shown on the left and bottom sides of the interface in Fig. \ref{fig:CombinedInterface}.
  
-The following chapter gives a detailed description of each of the interfaces, and describes some of the technical challenges which had to be overcome to make the interfaces work effectively
+The following chapter gives a detailed description of each of the interfaces, and describes some of the technical challenges which had to be overcome to make the interfaces work effectively.
 \begin{figure}[h] 
 	\centering
 	\hspace*{-1.5cm}
@@ -538,8 +538,9 @@ Even if the user knows exactly what each parameter should be set to, it still ta
 \pagebreak
 \section{Selection Interface}\label{sec:SelectionDescription}
 %\subsection{Detailed Description}
-This interface was created as a MATLAB figure-based application. A key technical detail of this interface is the choice of mapping function from the high dimensional parameter space to the 5-dimensional XY-RGB space of the interface. Many dimensionality reduction techniques could be used for this, such as \emph{tSNE} \cite{InfiniteDrum}, \emph{Linear Discriminant Analysis}, and \emph{Autoencoders} \cite{NSynth}. The simplest dimensionality reduction technique was chosen to try first: \emph{Principal Component Analysis} (\emph{PCA}). It is linear, non-parametric and has a closed-form solution, making it reliable and simple to implement. Other techniques could be investigated as a follow-up work.
+\vspace{-7pt} This interface was created as a MATLAB figure-based application. A key technical detail of this interface is the choice of mapping function from the high dimensional parameter space to the 5-dimensional XY-RGB space of the interface. Many dimensionality reduction techniques could be used for this, such as \emph{tSNE} \cite{InfiniteDrum}, \emph{Linear Discriminant Analysis}, and \emph{Autoencoders} \cite{NSynth}. The simplest dimensionality reduction technique was chosen: \emph{Principal Component Analysis} (\emph{PCA}). It is linear, non-parametric and has a closed-form solution, making it reliable and simple to implement. PCA is shown to be effective for this application, however, other techniques should be investigated as a follow-up work. \vspace{-5pt}
 \subsection{Principal Component Analysis}\label{sec:PCA}
+\vspace{-5pt}
 PCA finds an optimal linear transformation of a dataset onto a set of decorrelated orthogonal basis vectors known as \emph{principal components}. This transformation is optimal in the sense that it diagonalises the covariance matrix of the transformed dataset. 
 The principal components are calculated as the eigenvectors of the covariance matrix $\vec{\Sigma}_x = \frac{1}{n-1}\vec{X}\vec{X}^T$, where $\vec{X} = [(\vec{P}_1-\mu), (\vec{P}_2-\mu), \dots (\vec{P}_n-\mu)]^T$, $\vec{P}_i$ is the $i$th preset, $\mu$ is the \emph{common mean} of the presets, and $n$ is the number of presets.
 The eigenvalues of $\vec{\Sigma}_x$ are the variances of each component, and the principal components are arranged in order of decreasing variance.
@@ -666,9 +667,11 @@ If $\|PC_i^{k+1} - PC_i^k)\|_1 > \|PC_i^{k+1} - (-PC_i^k))\|_1$,  flip the sign 
 This algorithm is used on $PC_3$ in Fig. \ref{fig:PCAnumPresets2}. In order for this algorithm to work well, the preset mapping needs to be Histogram Normalised and centered on zero. To implement the algorithm in the interface, all that is necessary to do is keep track of which components have been flipped, and each time a new preset is added, check if $\|PC_i^{k+1} - PC_i^k)\|_1 > \|PC_i^{k+1} - (-PC_i^k))\|_1$ to determine whether to flip component $i$, and update the record of flipped components. 
 
 \begin{figure}
+	\vspace{-0.5cm}
 	\hspace{-40pt}
-	\includegraphics[trim={0, 1cm, 0, 1.5cm}, clip, width = 7in]{PCAnumPresets2.eps}
-	\caption{PCA Sign Flip Correction Algorithm.}
+	\includegraphics[trim={0, 1cm, 0, 1.5cm}, clip, width = 7.3in]{PCAnumPresets2.eps}
+	\vspace{-20pt}
+	\caption{Sign Flip Correction Algorithm. (1) Detection. (2) Original Data. (3) Corrected Data.}
 	\label{fig:PCAnumPresets2}
 	\vspace{-10pt}
 \end{figure}
@@ -690,7 +693,7 @@ It appears that the dataset has some non-random internal structure which PCA is 
 		\caption{Randomised Presets}
 		\label{fig:LatentRandom}
 	\end{subfigure}
-	\caption{Variance Fraction - Colour denotes Principal Component number}
+	\caption{Variance Fraction - Colour denotes Principal Component (blue: $PC_1$, yellow: $PC_{11+}$)}
 	%	\vspace{-30pt}
 \end{figure}
 
