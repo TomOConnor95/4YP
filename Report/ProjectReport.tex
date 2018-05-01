@@ -226,7 +226,7 @@ Users are much better at giving a preferance between several options, rather tha
 	\item An algorithm for iteratively generating new presets based upon users' preferences is developed.
 	\item A Perfect/Imperfect user model is developed to numerically evaluate synth interfaces.
 	\item Parameter selection order is identified as a key limitation of traditional interfaces.
-	\item To verify the approach, the interface is tested in a different context - Image Filtering.
+	\item To verify the approach, the interface is tested in a different context: Image Filtering.
 \end{itemize}
 
 
@@ -367,7 +367,7 @@ A \emph{six operator phase modulation} (PM) synth was created,\footnote{PM synth
  
 The synthesis algorithm uses the \emph{FM7 UGen} for Supercolldier \cite{UGen}. This implements six \emph{operators}\footnote{A general term for waveform generators in PM synthesis. In this case, sine-wave generators are used.} with independent amplitudes and frequencies, whose outputs can be used to modulate each other's phase. This is described by the following discrete-time equation \cite{YeeKing}: 
 \begin{equation}
-y_i[k+1] = a_i\sin(2\pi kT f_i + \sum_{j = 1}^{6} y_j[k] m_{ij})
+y_i[k+1] = a_i\sin\left(2\pi kT f_i + \sum_{j = 1}^{6} y_j[k] m_{ij}\right)
 \end{equation}
 where $T$ is the sampling interval, $k$ is the sample number, $y_i[k]$ is the output of operator $i$ at time $kT$, $a_i$ and $f_i$ are the amplitude and frequency of operator $i$ and $m_{ij}$ is a scalar parameter determining the level of phase modulation from operator $j$ to operator $i$. This is a very flexible sound generation algorithm which can create a large number of different sounds. \\
 The full synthesis architecture (Fig. \ref{fig:SynthSchematic}) can be described as follows.\\
@@ -380,13 +380,13 @@ The base frequency $F$ can be continually modulated by the \emph{MIDI PitchBend}
 
 The operators are then continuously \emph{amplitude-modulated} by two \emph{low frequency oscillators} (LFOs), and a \emph{modulation envelope}, as described by the discrete-time equation:
  \begin{equation}
-a_i[k] = (1 + \mathrm{LFO}^a[k]*\mathrm{lfo}^{a}_i)*(1 + \mathrm{LFO}^b[k]*\mathrm{lfo}^{b}_i)*(\mathrm{ENV}^{mod}[k]*\mathrm{env}^{mod}_i + (1-\mathrm{env}^{mod}_i))
+a_i[k] = (1 + \mathrm{LFO}^a[k]\times\mathrm{lfo}^{a}_i)\times(1 + \mathrm{LFO}^b[k]\times\mathrm{lfo}^{b}_i)\times(\mathrm{ENV}^{mod}[k]\times\mathrm{env}^{mod}_i + (1-\mathrm{env}^{mod}_i))
 \end{equation}
 where  $a_i[k]$ is the amplitude of operator $i$, $\mathrm{LFO}^a[k]$ and $\mathrm{LFO}^b[k]$ are the LFOs' output values, $\mathrm{ENV}[k]$ is the modulation envelope's output value, all at time $kT$. $\mathrm{lfo}^{a}_i$, $\mathrm{lfo}^{b}_i$, and $\mathrm{env}^{mod}_{i}$ are parameters which determine how much operator $i$ is modulated by the respective signals. \\
 LFO A is a zero-mean \emph{triangle wave oscillator} with a frequency in the range [0, 20\si{\hertz}], amplitude in the range [0, 1], and phase spread in the range [0, 1] (a parameter which allows the LFO's initial phase to be randomly varied). LFO B is a zero-mean \emph{square wave oscillator} with a frequency in the range [0, 20\si{\hertz}], amplitude in the range [0, 1], and pulse width in the range [0, 1]. The modulation envelope is an \emph{ADSR  envelope generator}\footnote{A commonly used type of envelope generator with the parameters Attack, Decay, Sustain and Release.}, which is triggered by the MIDI Note ON message.
 
 
-After amplitude modulation, the operators amplitudes and frequencies are used as inputs to the previously described phase modulation algorithm. The six outputs from this algorithm are then mixed together, and multiplied by the \emph{amplitude envelope} (another ADSR envelope generator) to form the output signal: $Y[t] = \mathrm{ENV}^{amp}[k]*\sum_{i=1}^{6}y_i[k]*a_i^{output}$, where $a_i^{output}$ is the Output Level parameter for operator $i$.
+After amplitude modulation, the operators amplitudes and frequencies are used as inputs to the previously described phase modulation algorithm. The six outputs from this algorithm are then mixed together, and multiplied by the \emph{amplitude envelope} (another ADSR envelope generator) to form the output signal: $Y[t] = \mathrm{ENV}^{amp}[k]\times\sum_{i=1}^{6}y_i[k]\times a_i^{output}$, where $a_i^{output}$ is the Output Level parameter for operator $i$.
 
 The synth has 96 parameters, as described in Table \ref{tab:Params}. All of the parameters can be easily adjusted in real time, by sending messages over \emph{Open Sound Control (OSC)} \cite{OSC}, a UDP based protocol for inter-application communication.
 
@@ -435,7 +435,7 @@ Modulation Envelope Amount                       & 6 x $\mathrm{env}_{i}^{mod}$ 
 \end{table}
 
 \section{Design choices and justification}\label{sec:SynthDescription}
-Typical commercial synths have a large number of parameters\footnote{For example, the \emph{Yamaha DX7} has 126 parameters, and  \emph{Omnisphere 2} has several thousand parameters}, which can be discrete or continuous, and are usually constrained within a range. This synth features a combination of continuous and discrete parameters, all of which are bounded. Commonly used bounds are: $[0, 1]$, $[0, k]$ and $[-k, k]$, where $k \in \mathbb{R}^+ $ (See Table \ref{tab:Params}). 
+Typical commercial synths have a large number of parameters\footnote{For example, the \emph{Yamaha DX7} has 126 parameters, and  \emph{Omnisphere 2} has several thousand parameters.}, which can be discrete or continuous, and are usually constrained within a range. This synth features a combination of continuous and discrete parameters, all of which are bounded. Commonly used bounds are: $[0, 1]$, $[0, k]$ and $[-k, k]$, where $k \in \mathbb{R}^+ $ (See Table \ref{tab:Params}). 
 Some synths have \emph{modular} architectures, which allow for considerable flexibility in sound generation. However, due to the \emph{combinatorial explosion} of potential parameter combinations, and difficulties blending between presets, modular synths are not addressed in this work.
 Some synths use short audio recordings, known as samples, as part of their sound creation algorithm. This creates difficulties blending between presets, so this type of architecture will not be considered in this work. Both of these types of synths would be interesting to pursue as a follow-up work.
 
@@ -487,8 +487,9 @@ Both the 2D spacing of the presets, and the mapping of the Macro Controls are ca
 \section{Blending Interface}
 Preset Blending is a popular approach in synth interface design, where new presets are created by a linear combination of presets.\footnote{For example, the \emph{Alchemy} and \emph{FM8} soft-synths allow preset blending, and the  \emph{Nodes} object in \emph{Max/MSP} is a commonly used implementation of preset blending.} The \emph{Blending Interface} extends this approach.
 
-Three initial presets (A, B, C) are selected, and are placed on the corners of a triangle at the centre of the interface (Fig. \ref{fig:BlendingInterface}). As the cursor moves over the interface, a new preset is created as a weighted sum of the three presets, based on proximity to the corners. Once the user finds the optimal preset in the space, the user clicks. The preset clicked on then becomes the preset A (i.e is placed on the bottom corner of the triangle), and a new preset B and C are generated with a novel algorithm (\S \ref{sec:PresetGeneration}). \\
-This process can repeat as many times as desired, allowing the user to keep searching through the parameter space.\\
+Three initial presets (A, B, C) are selected, and are placed on the corners of a triangle at the centre of the interface (Fig. \ref{fig:BlendingInterface}). As the cursor moves over the interface, a new preset is created as a weighted sum of the three presets, based on proximity to the corners (\S \ref{sec:BlendingDescription}). Once the user finds the optimal preset in the space, the user clicks. The preset clicked on then becomes the preset A (i.e is placed on the bottom corner of the triangle), and a new preset B and C are generated with a novel algorithm (\S \ref{sec:PresetGeneration}). 
+This process can repeat as many times as desired, allowing the user to keep searching through the parameter space.
+
 If the user clicks on the `Pause on Selected Preset' button, they are shown an interactive display of their past preset choices, which they can use to return to previously selected settings and resume searching. It is also possible to select three of the previous presets, and assign them to preset A, B and C.
 The user has the option to freeze sections of the parameter space (Fig. \ref{fig:FreezeParams}) which helps the search be more fine tuned to their needs.
 The colours of the Blending Interface are calculated to be consistent with the Selection Interface.
@@ -502,7 +503,7 @@ The colours of the Blending Interface are calculated to be consistent with the S
 	\label{fig:BlendingInterface}
 \end{figure}
 
-\section{How the Interfaces are Combined}
+\section{The Combined Interface}
 When the application is started, the Selection Interface is displayed first. Once a preset has been selected and possibly modified with the Macro Controls, the user has the option to click the `Edit Mode' button, which opens the Traditional Interface, allowing the currently selected preset to be further modified. The user can move back to the Selection Interface by clicking the `Return to Selection UI' button. The varied preset is displayed on the Selection Interface with a marker, attatched to the original preset, which is positioned and coloured to be consistent with the PCA mapping (Fig. \ref{fig:CombinedInterface}). To undo the edits made to the preset the user can click the `Undo Edit' button. In this way the user can move back and forth between the Selection and Traditional interfaces as often as desired.
 
 Once three presets have been selected, the user has the option of clicking the `Blend Mode' button which opens the Blending Interface, and assigns the three selected presets to A, B and C. The user can then use the Blending Interface for as long as necessary, and then click the `Return to Preset Selection' button. This time another marker is created, with dotted lines to the three initially selected presets. 
@@ -537,24 +538,24 @@ Even if the user knows exactly what each parameter should be set to, it still ta
 \pagebreak
 \section{Selection Interface}\label{sec:SelectionDescription}
 %\subsection{Detailed Description}
-This interface was created as a MATLAB figure-based application. A key technical detail of this interface is the choice of mapping function from the high dimensional parameter space to the 5-dimensional XY-RGB space of the interface. Many dimensionality reduction techniques could be used for this, such as \emph{tSNE} (used in \cite{InfiniteDrum}), \emph{Linear Discriminant Analysis}, and \emph{Autoencoders}. The simplest dimensionality reduction technique was chosen to try first: \emph{Principal Component Analysis} (\emph{PCA}). It is linear, non-parametric and has a closed-form solution, making it reliable and simple to implement. Other techniques could be investigated as a follow-up work.
+This interface was created as a MATLAB figure-based application. A key technical detail of this interface is the choice of mapping function from the high dimensional parameter space to the 5-dimensional XY-RGB space of the interface. Many dimensionality reduction techniques could be used for this, such as \emph{tSNE} \cite{InfiniteDrum}, \emph{Linear Discriminant Analysis}, and \emph{Autoencoders} \cite{NSynth}. The simplest dimensionality reduction technique was chosen to try first: \emph{Principal Component Analysis} (\emph{PCA}). It is linear, non-parametric and has a closed-form solution, making it reliable and simple to implement. Other techniques could be investigated as a follow-up work.
 \subsection{Principal Component Analysis}\label{sec:PCA}
 PCA finds an optimal linear transformation of a dataset onto a set of decorrelated orthogonal basis vectors known as \emph{principal components}. This transformation is optimal in the sense that it diagonalises the covariance matrix of the transformed dataset. 
-The principal components are calculated as the eigenvectors of the covariance matrix $\vec{\Sigma}_x = \frac{1}{n-1}\vec{X}\vec{X}^T$, where $\vec{X} = [(\vec{P}_1-\mu), (\vec{P}_2-\mu), \dots (\vec{P}_n-\mu)]^T$, $\vec{P}_i$ is the $i$th preset, $\mu$ is the mean of the presets, and $n$ is the number of presets.
+The principal components are calculated as the eigenvectors of the covariance matrix $\vec{\Sigma}_x = \frac{1}{n-1}\vec{X}\vec{X}^T$, where $\vec{X} = [(\vec{P}_1-\mu), (\vec{P}_2-\mu), \dots (\vec{P}_n-\mu)]^T$, $\vec{P}_i$ is the $i$th preset, $\mu$ is the \emph{common mean} of the presets, and $n$ is the number of presets.
 The eigenvalues of $\vec{\Sigma}_x$ are the variances of each component, and the principal components are arranged in order of decreasing variance.
 Most of the variance of a dataset typically lies in the first few components, and hence by only using these components, dimensionality reduction is acheived \cite{PCA}. The \emph{PCA score} for a preset is calculated by projecting the preset onto a particular principal component.\\
 PCA makes the assumption that directions with large variance correspond to directions of interest. In the case of a synthesiser preset dataset, this assumption is reasonable, as the data has high signal to noise ratio (although this may be affected by permutation ambiguity).\\
-PCA is affected by the relative scaling of the parameters in the dataset. This can be accounted for by inversely weighting each parameter by its variance before applying PCA. However, no conclusive evidence was found to show that this is worth doing for our particular dataset.\\
-There are several extensions to PCA including \emph{kernel PCA} which generalises PCA to the non-linear case. \emph{Sparse PCA} is another of such extensions, which aims to find principal components which have as few non-zero variables as possible. This is of special interest to the Macro Controls of the Selection Interface, as Macro Controls that only vary a subset of the parameters may be more intuitive to users.
+PCA is affected by the relative scaling of the parameters in the dataset. This can be accounted for by inversely weighting each parameter by its standard deviation before applying PCA. However, no conclusive evidence was found to show that this is beneficial for our particular.\\
+There are several extensions to PCA including \emph{kernel PCA} which generalises PCA to the non-linear case. \emph{Sparse PCA} is another such extension, which aims to find principal components which have as few non-zero variables as possible. This is of special interest to the Macro Controls of the Selection Interface, as Macro Controls that only vary a subset of the parameters may be more intuitive to users.
 \subsection{Global PCA vs Time/Timbre PCA}\label{sec:GlobalTimeTimbre}
 The PCA is calculated in two different ways for different sections of the interface. In \emph{Global PCA}, each of the $36$ presets' $96$ parameters are arranged in a $36 \times 96$ array. PCA is carried out on this array to produce the Global principal components. 
-\\
+%
 In \emph{Time/Timbre PCA}, the $96$ parameters are partitioned into two sets: $72$ which affect timbre, and $24$ which affect variation of the sound over time (I.e all of the envelope and LFO parameters). PCA is then carried out seperately on the resulting  $36 \times 72$, and $36 \times 24$ arrays to produce the Time principal components, and the Timbre principal components. 
-\\
+
 The Global principal components are used for the XY-RGB mapping of the Voronoi diagram, the Global PCA Macros, and for colouring the Blending Interface. The Time/Timbre PCA principal components are just used for the Time/Timbre Macro Controls.
 
-The user is given the option to switch between the Global, and Time/Timbre Macro Controls. The Global controls allow a greater amount of the space to be searched, but the Time/Timbre controls can be more understandable. See Section \ref{sec:SelectionEval} for an evaluation of the two  types.\\
-The Macro controls are the same for all presets, but centered on the currently selected preset(i.e. they allow a relative change of parameters not an absolute parameter change). A possible extension is to create a unique set of macro controls for each preset, which may make macro controls more useful, but at the sacrifice of consistency between presets.
+The user is given the option to switch between the Global and Time/Timbre Macro Controls. The Global controls allow a greater amount of the space to be searched, but the Time/Timbre controls can be more understandable. See Section \ref{sec:SelectionEval} for an evaluation of the two  types.
+The Macro controls are the same for all presets, but centered on the currently selected preset (i.e. they allow a relative change of parameters not an absolute parameter change). A possible extension is to create a unique set of macro controls for each preset, which may make macro controls more useful, but at the sacrifice of consistency between presets.
 
 Another possible extension to this approach is to allow parameter freezing (as in the Blending Interface, \S \ref{sec:BlendingDescription}), and automatically recalculate the Macro Control mapping based on the currently unfrozen parameters.
 
@@ -588,13 +589,13 @@ Histogram equalisation in one dimension (Fig. \ref{fig:HistEq}) is described bel
 	\caption{Histogram Equalisation in one dimension}
 	\label{fig:HistEq}
 \end{figure}\\
-A histogram is created by splitting the data into a number of eqaully spaced bins (six bins was found to work well for our dataset). The bins are then rescaled, such that the bin width is equal to the number of data points in the bin.
+A histogram is created by splitting the data into a number of equally spaced bins (six bins was found to work well for our dataset). The bins are then rescaled, such that the bin width is equal to the number of data points in the bin.
 
 This process is carried out for the presets in all five of the XY-RGB dimensions, and then each dimension is mapped to the range $[-0.95, 0.95]$, such that it will fit inside the axes of $[-1, 1]$. Figures \ref{fig:PCAnumPresets} and \ref{fig:PCAnumPresets2}, show this technique applied to the first three principal components.
 
-This approach, although simple, effectively redistributes the presets. As long as none of the bins are empty, the mapping in each dimension is peicewise-linear and continuous. This means that the Combined Preset Markers can be positioned correctly on the graph by first calculating the PCA scores, then passing these scores through the mapping function. Due to the continuity of the mapping function, the Macro Controls will cause the preset markers to move smoothly across the graph.
+This approach, although simple, effectively redistributes the presets. As long as none of the bins are empty, the mapping in each dimension is piecewise-linear and continuous. This means that the Combined Preset Markers can be positioned correctly on the graph by first calculating the PCA scores, then passing these scores through the mapping function. Due to the continuity of the mapping function, the Macro Controls will cause the preset markers to move smoothly across the graph.
 \subsection{Demonstrations of Preset Group Clustering}
-Having divided the presets into a set of (non-exlusive) categories, the clustering nature of the PCA process can be tested by viewing where the categories are placed in the diagram (Fig. \ref{fig:Categories}). This demonstrates that \textbf{PCA clusters the categories together}, although some are better clustered than others. Part of this is due to the fact that the categories are somewhat subjective, for example the decision between Synth Lead and Synth Pad, or between Piano/Keys and Plucked/Mallet. Some of the categories also include a wide range of sounds, especially Rhythmic and Synth Lead, and so have a less consistent pattern in their parameters.\\
+Having divided the presets into a set of (non-exlusive) categories, the clustering nature of the PCA process can be tested by viewing where the categories are placed in the diagram (Fig. \ref{fig:Categories}). This demonstrates that \emph{PCA clusters the categories together}, although some are better clustered than others. Part of this is due to the fact that the categories are somewhat subjective, for example the decision between Synth Lead and Synth Pad, or between Piano/Keys and Plucked/Mallet. Some of the categories also include a wide range of sounds, especially Rhythmic and Synth Lead, and so have a less consistent pattern in their parameters.\\
 Key limitations of the above analysis are the small sample size of presets, and the fact that many of the presets were made by using the Blending Interface, so potentially have overly similar parameters than if they'd been made from scratch by a person. To validate this approach more thoroughly, sets of presets from several pre-existing commercial synths should be tested. Once this larger dataset has been collected, a comparision of different dimensionality reduction techniques should be carried out.
 
 \begin{figure}
@@ -646,7 +647,7 @@ The consistency of the PCA mapping as more presets are added is of importance to
 \begin{figure}[h]
 	\hspace{-80pt}
 	\includegraphics[trim={0, 1cm, 0, 1cm}, clip, width = 8.5in]{PCAnumPresets1.eps}
-	\caption{PCA stability with number of presets. These plots show the positions of the indiviual presets when mapped onto the first and second principal components, with and without Histogram Equalisation. The mapping is recalculated each time a new preset is added. The positions are relatively stable except at discrete points where the component flips. These flips can be automatically corrected, as shown in the thrid row, with details of the correction process shown in Fig. \ref{fig:PCAnumPresets2}.}
+	\caption{PCA stability with number of presets. These plots show the positions of the indiviual presets when mapped onto the first and second principal components, with and without Histogram Equalisation. The mapping is recalculated each time a new preset is added. The positions are relatively stable except at discrete points where the component flips. These flips can be automatically corrected, as shown in the third row, with details of the correction process shown in Fig. \ref{fig:PCAnumPresets2}.}
 	\label{fig:PCAnumPresets}
 		\vspace{-10pt}
 \end{figure}
@@ -674,7 +675,7 @@ This algorithm is used on $PC_3$ in Fig. \ref{fig:PCAnumPresets2}. In order for 
 
 The variance of each principal component can be used to measure the effectiveness of the PCA mapping. If the first few components account for most of the variance of the dataset, then the dimensionality reduction has been successful.
 Fig. \ref{fig:LatentOriginal} shows how the fraction of the variance associated with each principal component changes as more presets are added. Over 50\% of the variance can be accounted for by $PC_{1,2}$,  over 90\% by $PC_{1 : 10}$, and the graph asymptotes to a relatively stable state. Fig. \ref{fig:LatentRandom} is the same plot for a random dataset the same size as the original dataset. Each of the fractions is rougly exponentially decreasing. When all 36 presets are included, only 50\% of the variance can be accounted for by $PC_{1 : 10}$. \\
-It appears that the dataset has some non-random internal structure which PCA is successfully managing to find. This suggests that \textbf{PCA is an appropriate technique to use on synth datasets}, however testing on other synth datasets is necessary to validate this result.
+It appears that the dataset has some non-random internal structure which PCA is successfully managing to find. This suggests that \emph{PCA is an appropriate technique to use on synth datasets}, however testing on other synth datasets is necessary to validate this result.
 \begin{figure}[h]
 	\vspace{-5pt}
 	\hspace{-40pt}
@@ -707,19 +708,19 @@ This interface was created as a Matlab figure-based application. Fig. \ref{fig:B
 \begin{figure}[h] 
 	\centering
 	\includegraphics[width = 5in]{BlendingAlgorithm.png}
-	\caption{Blending Algorithm flow chart}
+	\caption{Blending Algorithm flow chart.}
 	\label{fig:BlendingAlgorithm}
 \end{figure}
 %
-The blending of presets is calculated as a non orthogonal vetor decomposition: \cite{NonOrthogonal}
+The blending of presets is calculated as a non orthogonal vector decomposition: \cite{NonOrthogonal}
 \begin{equation}
-	\vec{P} = f(\alpha\vec{A} + \beta\vec{B} + \gamma\vec{C})
+	\vec{P} = f(\alpha\vec{A} + \beta\vec{B} + \gamma\vec{C}),
 	\label{eq:PresetMix}
 \end{equation}
-Where $\vec{P}$ is the blended preset, $\vec{A}$, $\vec{B}$, $\vec{C}$ are presets A, B and C, $f$ is a function which applies parameter constraints, and $\alpha$, $\beta$ and $\gamma$ are calculated from the following matrix equation:
+where $\vec{P}$ is the blended preset, $\vec{A}$, $\vec{B}$, $\vec{C}$ are presets A, B and C, $f$ is a function which applies parameter constraints, and $\alpha$, $\beta$ and $\gamma$ are calculated from the following matrix equation:
 \begin{equation}
 [\beta,  \gamma]^T = (\vec{M}^T\vec{M})\vec{M}^T[x, y], 
-	\hspace{1in} \alpha = 1 - (\beta + \gamma)
+	\hspace{1in} \alpha = 1 - (\beta + \gamma),
 \end{equation}
 \begin{wrapfigure}{R}{0.35\textwidth}
 	\vspace{-10pt}
@@ -768,19 +769,20 @@ Each time the presets are iterated, the first principal component, $PC_{1}$ is c
 	%	\vspace{-40pt}
 \end{figure}
 
-The Selection History display allows the user to browse their previously selected presets, by clicking on nodes of the graph. Each time presets are iterated, the vector from A to the selelected coordinates, $\vec{p}_i$ is recorded. The graph is constucted by joining these vectors head-to-tail (Fig. \ref{fig:SelectionHistory}). The colours of each edge of the graph are chosen based on $PC_{3,4,5}$ of the presets. See Fig. \ref{fig:BlendingInterface} for a typical  Selection History plot.
+The Selection History display allows the user to browse their previously selected presets, by clicking on nodes of the graph. Each time presets are iterated, the vector from A to the selelected coordinates, $\vec{p}_i$ is recorded. The graph is constucted by joining these vectors head-to-tail (Fig. \ref{fig:SelectionHistory}). The colours of each edge of the graph are chosen based on $PC_{3,4,5}$ of the presets. 
+%See Fig. \ref{fig:BlendingInterface} for a typical  Selection History plot.
 
 It may be possible to use some of the information contained in the graph (if the data from many users is collected), as a way to refine the preset generation algorithm. If the generation algorithm is producing good presets, then most of the choices should be somewhere between A, B and C on the interface. If the algorithm is producing bad presets, most of the choices will be very close to, or below A.
 
 The user has the option to freeze sections of the parameter space (Fig. \ref{fig:FreezeParams}). The parameters are divided into Time and Timbre parameters, and then subdivided into a total of 12 smaller categories (Table \ref{tab:Params}). This makes the Blending Interface more useful, as it allows users with knowledge of synthesisers to fine-tune the blending process to their needs. This tends to lead to more useful generated presets, as it reduces the dimensionality of the search space.
 
 \subsection{Preset Generation Algorithm} \label{sec:PresetGeneration}
-The aim of the Preset Generation Algorithm is to suggest useful new presets, based on the user's previous selections. In the field of \emph{Active Learning} \cite{ActiveLearning}, several similar problems have been adressed, the most relevant of which is a preference-gallery based approach to fine-tuning parametric procedural animations \cite{PreferenceGallery}.
-In this work a user is iteratively presented with four generated aminations, and selects their favourite. In each iteration, \emph{Bayesian optimisation} is used to learn from the previous selections, and generate four new animations. This procedure was shown to be superior to both a slider-based interface, and an interface in which the user rates each animation on a numeric scale. The gallery interface was improved by allowing the user to manually set and freeze parameters, especially for expert-users. Bayesian optimisation is well suited to this task, as it explicitely deals with the \emph{exploration-exploitation} tradeoff \cite{ExplorationExploitation} and is designed to minimise the number of user queries. However, the main limitation with this work is that traditional Bayesian Optimisation can only be used for problems with low ($<20$) dimensionality due to an exponential increase in necessary user queries. The animation model only had 12 parameters, and this still took a considerable ammount of training data to fine-tune the hyperparameters of the learning algorithm.  Adaptations of bayesian optimisation have managed to solve certain higher-dimensional problems \cite{BayesOptDimensionality}, but it is currently non-trivial to apply these results to general problems. Therefore an alternative algorithm was developed.
+The aim of the Preset Generation Algorithm is to suggest useful new presets, based on the user's previous selections. In the field of \emph{Active Learning} \cite{ActiveLearning}, several similar problems have been addressed, the most relevant of which is a preference-gallery based approach to fine-tuning parametric procedural animations \cite{PreferenceGallery}.
+In this work a user is iteratively presented with four generated aminations, and selects their favourite. In each iteration, \emph{Bayesian optimisation} is used to learn from the previous selections, and generate four new animations. This procedure was shown to be superior to both a slider-based interface, and an interface in which the user rates each animation on a numeric scale. The gallery interface was improved by allowing the user to manually set and freeze parameters, especially for expert-users. Bayesian optimisation is well suited to this task, as it explicitely deals with the \emph{exploration-exploitation} tradeoff \cite{ExplorationExploitation} and is designed to minimise the number of user queries. However, the main limitation with this work is that traditional Bayesian optimisation can only be used for problems with low ($<20$) dimensionality due to an exponential increase in necessary user queries. The animation model only had 12 parameters, and this still took a considerable ammount of training data to fine-tune the hyperparameters of the learning algorithm.  Adaptations of Bayesian optimisation have managed to solve certain higher-dimensional problems \cite{BayesOptDimensionality}, but it is currently non-trivial to apply these results to general problems. Therefore an alternative algorithm was developed.
 \begin{wrapfigure}{l}{0.4\textwidth}
-	\vspace{-30pt}
+	\vspace{-10pt}
 	\hspace{-31pt}
-	\includegraphics[width = 3.1in]{SigmoidWeights.eps}
+	\includegraphics[trim = {0, 0, 0, 0.5cm}, clip, width = 3.1in]{SigmoidWeights.eps}
 	\caption{Sigmoid weighting function}
 	\label{fig:SigmoidWeights}
 	
@@ -791,7 +793,7 @@ In this work a user is iteratively presented with four generated aminations, and
 	\vspace{40pt}
 \end{wrapfigure}
 
-The new presets are a \emph{stochastic weighted sum} of the $k$ previously selected presets:
+\vspace{-10pt}In this report we explored generating the new presets as a \emph{stochastic weighted sum} of the $k$ previously selected presets:
 \begin{equation}
 \{\vec{B}^{k+1}, \vec{C}^{k+1}\} = f(\eta\vec{P}^k + (1-\eta)\vec{w}^T\vec{H} + \varepsilon) 
 \end{equation}
@@ -800,23 +802,23 @@ where  $\vec{H} = [\vec{P}_1, \vec{P}_2, \dots \vec{P}_k]^T$ where $\vec{P}_i$ i
 \begin{equation}
 	w_i = \frac{a}{1 + \exp\left(-\frac{10}{k}(i-ck)\right)}
 \end{equation}
-where $a$ is a normalising constant such that $\sum_{i=1}^{k}w_i =1$, and $c\in [0, 1]$ is the \emph{center ratio} parameter, used to vary the weighting of recently selected presets (Fig. \ref{fig:SigmoidWeights}).
-
-Zero-mean Gaussian noise $\varepsilon$ is added to the weighted mean with a covariance defined by:
+where $a$ is a normalising constant such that $\sum_{i=1}^{k}w_i =1$, and $c\in [0, 1]$ is the \emph{centre ratio} parameter, used to vary the weighting of recently selected presets (Fig. \ref{fig:SigmoidWeights}).
+%
+Zero-mean Gaussian noise, $\varepsilon$, is added to the weighted mean with a covariance defined by:
 \begin{equation}
 \Sigma = b\times(\nu\Sigma_P + (1-\nu)\Sigma_H)\times\xi^k
 \end{equation}
-where $b\in\mathbb{R}^+$, $\Sigma_P$ is the covariance (\S \ref{sec:PCA}) of the preset dataset, $\Sigma_H$ is the covariance of the previously selected presets\footnote{When $k =1$, $\Sigma_H = \vec{0}$.}, $\nu \in [0, 1]$ sets the ratio of the covariances, and $\xi \in [0, 1]$ causes the magnitude of the covariance to decay as $k$ increases. The covariance was defined in this way so that the correlations from both the preset dataset and the previously selected presets are incorporated into the algorithm. If a user makes consistent decisions with regards to a particular parameter, its variance will decrease and eventually the parameter will become fixed. This algorithm has several hyperparameters which were set using an optimisation based approach, described in Section \ref{sec:ImageEditing}, then fine-tuned empirically until the algorithm gave sensible suggestions ($b=0.4, c=0.5, \eta=0.5,  \nu=0.3, \xi=0.9$).
+where $b\in\mathbb{R}^+$, $\Sigma_P$ is the covariance (\S \ref{sec:PCA}) of the preset dataset, $\Sigma_H$ is the covariance of the previously selected presets\footnote{When $k =1$, $\Sigma_H = \vec{0}$.}, $\nu \in [0, 1]$ sets the ratio of the covariances, and $\xi \in [0, 1]$ causes the magnitude of the covariance to decay as $k$ increases. The covariance was defined in this way so that the correlations from both the preset dataset and the previously selected presets are incorporated into the algorithm. If a user makes consistent decisions with regards to a particular parameter, the associated variance will decrease and eventually the parameter will become fixed. This algorithm has several hyperparameters which were set using an optimisation based approach, described in Section \ref{sec:ImageEditing}, then fine-tuned empirically until the algorithm gave sensible suggestions ($b=0.4, c=0.5, \eta=0.5,  \nu=0.3, \xi=0.9$).
 \vspace{-8pt}
 \section{Investigion of Permutation Ambiguity}\label{sec:PermutationAmbiguity}
 \vspace{-5pt}
-Due to the equivilance of the six operators of the synth architecture, there is the possibility of permutation ambiguity in the dataset (\S \ref{sec:SynthDescription}). However it may be possible to correct for this using knowledge of the synth architecture. Typically the operators with the loudest Output Level parameters act as \emph{modulators} and the operators with lower output levels act as \emph{carriers} (as defined in \cite{YeeKing}, Section 3.1.1). Therefore the dataset can be permutation-alligned by permuting each preset, such that the Output Level parameters are in decreasing order.\\
+Due to the equivalence of the six operators of the synth architecture, there is the possibility of permutation ambiguity in the dataset (\S \ref{sec:SynthDescription}). However it may be possible to correct for this using knowledge of the synth architecture. Typically the operators with the loudest Output Level parameters act as \emph{modulators} and the operators with lower output levels act as \emph{carriers} (as defined in \cite{YeeKing}, Section 3.1.1). Therefore the dataset can be permutation-alligned by permuting each preset, such that the Output Level parameters are in decreasing order.\\
 To determine the sucess of this approach, the original dataset was compared to the permuted dataset, and a randomly permuted dataset , using the following cost function:
 \begin{equation}
 	C = \sum_{i = 1}^{N}\sum_{j = i+1}^{N}\mathrm{error}(\vec{P}_i, \vec{P}_j)
 \end{equation}
 where $N$ is the number of presets, and $\mathrm{error}$ is the error metric defined in Section \ref{sec:ErrorMetric} with only the Timbre parameters included (as only these exhibit permutation ambiguity).\\
-The results of this evaluluation is shown in Table \ref{tab:PermutationAmbiguity}. The permutation-alligned dataset has a similar cost to the original dataset, and a 15\% lower cost than the randomly permuted data. It is worth noting that when creating the original dataset, most presets were designed to minimise permutation ambiguity, and so exhibit lower levels than a typical synth preset dataset might.  The interface was tested after permutation-alligning the presets, which seemed to improve the usefulness of the Macro Controls, and made the Blending Interface create more useful sounds. Furthermore the category clustering perfomance wasn't degraded. Based on the results, permutation-allignment seems to be a worthwhile endevour, as it gives a sigificant improvement over randomly permutated dataset, and gives potential improvements to the usefulness of the interface. More work needs to be done to thoroughly evaluate this technique, and to determine if incorporating more knowledge of the synth architecture can make the process more effective.
+The results of this evaluation is shown in Table \ref{tab:PermutationAmbiguity}. The permutation-alligned dataset has a similar cost to the original dataset, and a 15\% lower cost than the randomly permuted data. It is worth noting that when creating the original dataset, most presets were designed to minimise permutation ambiguity, and so exhibit lower levels than a typical synth preset dataset might.  The interface was tested after permutation-alligning the presets, which seemed to improve the usefulness of the Macro Controls, and made the Blending Interface create more useful sounds. Furthermore the category clustering perfomance wasn't degraded. Based on the results, permutation-allignment seems to be a worthwhile endeavour: it gives a sigificant improvement over a randomly permutated dataset, and gives potential improvements to the usefulness of the interface. More work needs to be done to thoroughly evaluate this technique, and to determine if incorporating more knowledge of the synth architecture can make the process more effective.
 \begin{table}[h]
 	\vspace{-20pt}
 	\centering
@@ -894,7 +896,7 @@ Perfect/Imperfect user tests were carrried out on the Blending Interface, using 
 	\label{fig:TradTest2}
 		\vspace{-10pt}
 \end{figure}
-For low values of $\sigma$, the Perfect Order tests folllows a smooth, approximately exponentially decreasing, curve. For high values of $\sigma$, and when the Random Order is used, the error decreases in a much less smooth manner. In all cases the Perfect Order gives a substantially faster convergence time. A comparison of the mean error for various values of $\sigma$ is shown in Fig. \ref{fig:TradTest2}. These results suggest that \textbf{the main limitation when using a Traditional Interface is not the accuracy with which the parameters are set, but the choice of parameter}.
+For low values of $\sigma$, the Perfect Order tests folllows a smooth, approximately exponentially decreasing, curve. For high values of $\sigma$, and when the Random Order is used, the error decreases in a much less smooth manner. In all cases the Perfect Order gives a substantially faster convergence time. A comparison of the mean error for various values of $\sigma$ is shown in Fig. \ref{fig:TradTest2}. These results suggest that \emph{the main limitation when using a Traditional Interface is not the accuracy with which the parameters are set, but the choice of parameter}.
 \vspace{-30pt}
 %
 \subsection{Selection Interface}\label{sec:SelectionEval}
@@ -953,7 +955,7 @@ As in the Selection Interface, there are some tests in which the error barely de
 A comparison of the test results from all three interfaces is shown in Figure \ref{fig:CombinedTest1}.  
 %COULD DO A TABLE OF INITIAL RATE OF ERROR REDUCTION
 \\
-The fastest converging test is the Perfect User with Perfect Order on the Traditional Interface, and the slowest converging test is the Imperfect User with Random Order on the Tradtional interface. Interestingly, the order at which the parameters are visited has a much more significant affect than the perfectness of the user. This is due to the Imperfect user model having a zero mean error, so after visiting a parameter several times, the error converge to zero. This result demonstrates that \textbf{the Traditional Interface can either be the best possible, and worst possible interface to control a synth with, depending on the experience level of the user and the intuitiveness of the parameters}.
+The fastest converging test is the Perfect User with Perfect Order on the Traditional Interface, and the slowest converging test is the Imperfect User with Random Order on the Tradtional interface. Interestingly, the order at which the parameters are visited has a much more significant affect than the perfectness of the user. This is due to the Imperfect user model having a zero mean error, so after visiting a parameter several times, the error converge to zero. This result demonstrates that \emph{the Traditional Interface can either be the best possible, and worst possible interface to control a synth with, depending on the experience level of the user and the intuitiveness of the parameters}.
 \\
 The initial error reduction rate of the Blending Interface is very fast, comparable with the Perfect User of the Traditional interface. The main reason for the initial speed of the Blending Interface is that in the first iteration it blends between 3 presets, all close to the goal preset, and so can extract some useful information from each.\\
 A key advantage of the Blending Interface is that it removes the need for the user to choose which order to alter the parameters which, as previously described, is the main factor of the speed of the Traditional Interface.\\
@@ -1050,13 +1052,16 @@ In typical synths, the parameters have a hierarchical nature, as the synthesis a
 
 More work needs to be done to create a truly general purpose soft-synth controller. The interface has been designed to be as general purpose as possible, allowing it to control arbitrary synths over the \emph{OSC} protocol, however it can currently only control one custom designed synth. The key difficulty preventing this was a lack of standardisation between soft-synths\footnote{Different soft-synths use a variety of communication protocols and preset storage methods, however efforts are being made to standardise these, such as the \emph{Native Kontrol Standard}.}. As many soft-synths are in the \emph{Virtual Studio Technology (VST)} format, making a version of the interface with acts as a \emph{VST host}, and uses the parameter retrieval and preset storage functionality of VSTs is a good next goal if this project is continued.
 
-Machine learning is a rapidly developing field with groundbreaking results in a variety of applications \cite{Automation}. There is a large amount of media attention about the distopian futures which may arise if machine learning algorithms gain a human-like level of intelligence \cite{Bostrom}. However, machine learning also has the potenital to augment the human experience, enhancing productivity and creativity of users by acting as a skilled assitant \cite{AudioEffects2}, or an \emph{oracle}. This project is an attempt to create such an assistant, and develops the framework for a creative interface to control synths. The interface currently uses simple machine learning algorithms and a small amount of data to acheive this. However, if adapted to control more synths and deployed to a large amount of users, the interaction data collected could allow more sophistochated algoirthms to be used. As the field of machine learning continues to advance, the potential power of such an interface will only increase.
+Machine learning is a rapidly developing field with groundbreaking results in a variety of applications \cite{Automation}. There is a large amount of media attention about the dystopian futures which may arise if machine learning algorithms gain a human-like level of intelligence \cite{Bostrom}. However, machine learning also has the potential to augment the human experience, enhancing productivity and creativity of users by acting as a skilled assitant \cite{AudioEffects2, AdobeBlog}, or an \emph{oracle}. This project is an attempt to create such an assistant, and develops the framework for a creative interface to control synths. The interface currently uses simple machine learning algorithms and a small amount of data to achieve this. However, if adapted to control more synths and deployed to a large amount of users, the interaction data collected could allow more sophistochated algoirthms to be used. As the field of machine learning continues to advance, the potential power of such an interface will only increase.
 
 \begin{thebibliography}{9}
 \singlespacing
 
 \bibitem{Wavetable}
 Ableton.com. (2018). \emph{Wavetable | Ableton}. [online] Available at: \url{https://www.ableton.com/en/packs/wavetable/} [Accessed 18 Apr. 2018].
+
+\bibitem{AdobeBlog}
+Adobe Blog. (2018). \emph{AI Gets Photographers More Creative}. [online] Available at: \url{https://theblog.adobe.com/how-ai-helps-photographers-get-more-creative/} [Accessed 1 May 2018].
 
 \bibitem{AppleSynth}
 Documentation.apple.com. (2009). \emph{A Brief History of the Synthesiser}. [online] Available at: \url{https://documentation.apple.com/en/logicstudio/instruments/index.html#chapter=A\%26section=5\%26tasks=true} [Accessed 20 Apr. 2018].
@@ -1077,7 +1082,7 @@ Chowming, J.M. (1977). \emph{The Synthesis of Complex Audio Spectra by Means of 
 Cycling 74. (2017). \emph{Max 7} [computer software]. San Francisco.
 
 \bibitem{AudioEffects2}
-De Man, B. (2017). \emph{Audio effects 2.0: rethinking the music production workflow}[keynote]. Audio Developer Conference (ADC'17). \url{https://www.youtube.com/watch?v=yJcqNR7by9o}  [Accessed 1  May. 2018]
+De Man, B. (2017). \emph{Audio effects 2.0: rethinking the music production workflow} [keynote]. Audio Developer Conference (ADC'17). [online] Available at: \url{https://www.youtube.com/watch?v=yJcqNR7by9o}  [Accessed 1  May. 2018]
 
 \bibitem{Voronoi}
 Dobrin, A. (2005). \emph{A review of properties and variations of Voronoi diagrams}. 
