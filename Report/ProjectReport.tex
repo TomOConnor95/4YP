@@ -300,10 +300,10 @@ Soft-synths have a wide variety of interfaces. Many follow similar design patter
 	%https://www.ableton.com/en/packs/wavetable/
 \end{figure}
 
-Some soft-synths have modular designs, such as \emph{Modular} by SoftTube, %\cite{SoftTube}
-and some even allow users to design synthesis modules from scratch, such as \emph{Max/MSP} and \emph{Supercollider}.
+Some soft-synths have modular designs, such as \emph{Modular} by SoftTube \cite{SoftTube},
+and some allow users to design synthesis modules from scratch, such as \emph{Max/MSP} and \emph{Supercollider}.
 
-There has been a wide range of reasearch in the Computer Music field in the use of multidimensional controllers, such as the  \emph{Myo}, \emph{Leap Motion} and \emph{Microsoft Kinect}, to control synthesis parameters in real time \cite{ICMC, TubbThesis}, and research into advanced user interaction types, such as waveform blending (see \emph{wavetable synthesis} \cite{Wavetable} and \emph{vector synthesis} ), preset blending \cite{Interpolation}, randomisation of presets, and many more \cite{YeeKing, EvolvedAudioEffects}.  Several studies have applied a variety of machine learning techniques to synthesiser control, as described in the next section.
+There has been a wide range of reasearch in the Computer Music field in the use of multidimensional controllers, such as the  \emph{Myo}, \emph{Leap Motion} and \emph{Microsoft Kinect}, to control synthesis parameters in real time \cite{ICMC, TubbThesis}, and research into advanced user interaction types, such as waveform blending (see \emph{wavetable synthesis} \cite{Wavetable} and \emph{vector synthesis} \cite{SY22}), preset blending \cite{Interpolation}, randomisation of presets, and many more \cite{YeeKing, EvolvedAudioEffects}.  Several studies have applied a variety of machine learning techniques to synthesiser control, as described in the next section.
 
 \section{Using Machine Learning to Control Synthesisers}\label{MachineLearning}
 Many users find programming synths difficult, due to the large amount of technical and creative skill necessary (\cite{YeeKing} \S 4.1.1). There have been several previous attempts to use machine learning to make programming synths easier and more expressive, from both academia and commercial products (\cite{YeeKing} \S 4.1.2).
@@ -1027,7 +1027,7 @@ The interface created in this project has many benefits over a traditional synth
 Several insights have been gained about synth parameter spaces: \\
 The key limitation of traditional synthesiser interfaces is the order of parameter selection (\S \ref{sec:TradEval}). An iterative preset blending algorithm using a stochastic preset generation algorithm has been shown to be able to effectively navigate synth parameter spaces (\S \ref{sec:BlendingDescription}). Synth preset datasets are not random, containing strong correlations and internal structure (\S \ref{sec:PCAmappingScale}). \emph{PCA} combined with {\emph{histogram equalisation} has been shown to be capable of exploiting this internal structure to perform dimensionality reduction, and to create effective Macro Controls (\S \ref{sec:BlendingEval}).
 	
-The interface has also been validated in a different context, image filtering (\S \ref{sec:ImageEditing}), with promising results. Popular photo-sharing applications, such as \emph{Instagram} and \emph{Snapchat}, use preset-based creative image filtering as a key feature,  WORK ON THIS MORE and so the Blending Interface has the potenital to be incorporated into such applications.  It could easily be applied to many other use cases, such as stage lighting design, or parametric 3D design, as each has a high dimensional parameter set which can be readily controlled using protocols such as \emph{OSC}.
+The interface has also been validated in a different context, image filtering (\S \ref{sec:ImageEditing}), with promising results. Popular photo-sharing applications, such as \emph{Instagram} and \emph{Snapchat}, use preset-based creative image filtering as a key feature. Incorporating the Blending Interface into such applications has the ability to increase the creative control of users, whilst keeping the application simple and intuitive to use.  It could easily be applied to many other use cases, such as stage lighting design, or parametric 3D design, as each has a high dimensional parameter set which can be readily controlled using protocols such as \emph{OSC}.
 \section{Further Work}
 The evaluation of this interface was only carried out on a single synth, due to the project's time constraints. An immediate goal is to validate the conclusions from this work on several other synths, especially those from other categories, such as \emph{subtractive}, \emph{additive} and \emph{physical modelling} synths. It is non-trivial to extend this work to modular synths (\S \ref{sec:SynthDescription}). To determine the effectiveness of the parameter-based evaluation carried out in this work, and evaluate other aspects of the interface such as creativity, a user study should be carried out.
 
@@ -1041,7 +1041,7 @@ In typical synths, the parameters have a hierarchical nature, as the synthesis a
 
 More work needs to be done to create a truly general purpose soft-synth controller. The interface has been designed to be as general purpose as possible, allowing it to control arbitrary synths over the \emph{OSC} protocol, however it can currently only control one custom designed synth. The key difficulty preventing this was a lack of standardisation between soft-synths\footnote{Different soft-synths use a variety of communication protocols and preset storage methods, however efforts are being made to standardise these, such as the \emph{Native Kontrol Standard}.}. As many soft-synths are in the \emph{Virtual Studio Technology (VST)} format, making a version of the interface with acts as a \emph{VST host}, and uses the parameter retrieval and preset storage functionality of VSTs is a good next goal if this project is continued.
 
-Machine learning is a rapidly developing field with groundbreaking results in a variety of applications \cite{Automation}. There is a large amount of media attention about the distopian futures which may arise if machine learning algorithms gain a human-like level of intelligence \cite{Bostrom}. However, machine learning also has the potenital to augment the human experience, enhancing productivity and creativity of users by acting as a skilled assitant, or an \emph{oracle}. This project is an attempt to create such an assistant, and develops the framework for a creative interface to control synths. The interface currently uses simple machine learning algorithms and a small amount of data to acheive this. However, if adapted to control more synths and deployed to a large amount of users, the interaction data collected could allow more sophistochated algoirthms to be used. As the field of machine learning continues to develop, the potential power of such an interface will only increase.
+Machine learning is a rapidly developing field with groundbreaking results in a variety of applications \cite{Automation}. There is a large amount of media attention about the distopian futures which may arise if machine learning algorithms gain a human-like level of intelligence \cite{Bostrom}. However, machine learning also has the potenital to augment the human experience, enhancing productivity and creativity of users by acting as a skilled assitant \cite{AudioEffects2}, or an \emph{oracle}. This project is an attempt to create such an assistant, and develops the framework for a creative interface to control synths. The interface currently uses simple machine learning algorithms and a small amount of data to acheive this. However, if adapted to control more synths and deployed to a large amount of users, the interaction data collected could allow more sophistochated algoirthms to be used. As the field of machine learning continues to advance, the potential power of such an interface will only increase.
 
 \begin{thebibliography}{9}
 \singlespacing
@@ -1064,14 +1064,20 @@ Clifton, Paul G. et al. (2016) \emph{Design of Embodied Interfaces for Engaging 
 \bibitem{FM}
 Chowming, J.M. (1977). \emph{The Synthesis of Complex Audio Spectra by Means of Frequency Modulation}.
 
+\bibitem{MaxMSP}
+Cycling 74. (2017). \emph{Max 7} [computer software]. San Francisco.
+
+\bibitem{AudioEffects2}
+De Man, B. (2017). \emph{Audio effects 2.0: rethinking the music production workflow}[keynote]. Audio Developer Conference (ADC'17). \url{https://www.youtube.com/watch?v=yJcqNR7by9o}  [Accessed 1  May. 2018]
+
 \bibitem{Voronoi}
 Dobrin, A. (2005). \emph{A review of properties and variations of Voronoi diagrams}. 
 
 \bibitem{MemoryColour}
 Dzulkifli, M. A. et al. (2013). The Influence of Colour on Memory Performance: A Review. The Malaysian Journal of Medical Sciences : MJMS, 20(2), 3–9.
 
-%\bibitem{SY22}
-%Encyclotronic. (2018). \emph{Yamaha SY22 Vector Synthesizer}. [online] Available at: \url{https://encyclotronic.com/synthesizers/yamaha/sy22-r345/} [Accessed 18 Apr. 2018].
+\bibitem{SY22}
+Encyclotronic. (2018). \emph{Yamaha SY22 Vector Synthesizer}. [online] Available at: \url{https://encyclotronic.com/synthesizers/yamaha/sy22-r345/} [Accessed 18 Apr. 2018].
 
 \bibitem{InfiniteDrum}
 Experiments.withgoogle.com. (2017). \emph{The Infinite Drum Machine by Manny Tan \& Kyle McDonald} - AI Experiments. [online] Available at: \url{https://experiments.withgoogle.com/ai/drum-machine} [Accessed 18 Apr. 2018].
@@ -1097,7 +1103,7 @@ J\'{o}nsson B et al. (2015). \emph{Interactively Evolving Compositional Sound Sy
 Kersten, S. (2008). \emph{skUG SuperCollider UGen library}. \url{http://space.k- hornz.de/software/skug/}.
 
 \bibitem{LinnKeynote}
-Linn, R. (2016). \emph{Keynote}.  Audio Developer Conference (ADC 2016). \url{https://www.youtube.com/watch?v=3bHGeSv37rU} [at 19:00]
+Linn, R. (2016). \emph{Keynote}.  Audio Developer Conference (ADC'16). \url{https://www.youtube.com/watch?v=3bHGeSv37rU} [at 19:00] [Accessed 20 Apr. 2018]
 
 \bibitem{Interpolation}
 Marier, M. (2012). \emph{Designing Mappings for Musical Interfaces Using Preset Interpolation}. NIME.
@@ -1138,8 +1144,8 @@ Settles, Burr. (2010). \emph{Active Learning Literature Survey}. University of W
 \bibitem{PCA}
 Shlens, D. (2014). \emph{A Tutorial on Principal Component Analysis}. arXiv:1404.1100 [cs.LG]
 
-%\bibitem{SoftTube}
-%Softube.com. (2016). Softube - Modular. [online] Available at: \url{https://www.softube.com/modular} [Accessed 18 Apr. 2018].
+\bibitem{SoftTube}
+Softube.com. (2016). Softube - Modular. [online] Available at: \url{https://www.softube.com/modular} [Accessed 18 Apr. 2018].
 
 \bibitem{EvolvedAudioEffects}
 Smith, B.D. (2017). \emph{Play it Again: Evolved Audio Effects and Synthesizer Programming}. In: Computational Intelligence in Music, Sound, Art and Design. EvoMUSART 2017. Lecture Notes in Computer Science, vol 10198. Springer, Cham.
@@ -1170,6 +1176,7 @@ Singh, P. et al. (2015). \emph{Histogram Equalization: A Strong Technique for Im
 
 \bibitem{ExplorationExploitation}
 Besbes, O. et al. (2014). \emph{Optimal Exploration-Exploitation in a Multi-Armed-Bandit Problem with Non-stationary Rewards}.	arXiv:1405.3316
+
 \end{thebibliography}
 \pagebreak
 
