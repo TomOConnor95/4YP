@@ -211,7 +211,7 @@ This project aims to tackle this problem by designing a radically new interface 
 \section{Key Ideas}
 Presets are widely used and very useful to musicians, and so should form a key part of the interface. Furthermore, the presets of a synth contain a lot of useable information. This is because the presets have been designed to highlight a diverse range of the synth's best sounds, avoiding the numerous regions of parameter space which create inaudible, or undesirable sounds. By analysing the timbre of the presets, rather than the timbre of the entire parameter space, a simpler, and more useful control space can be identified, whilst only requiring simple statistical techniques to be used.\\
 %
-Humans have impressive abilities of spatial memory, \cite{SpatialMemory}, spatial reasoning \cite{SpatialCognition}, and memory of colours \cite{MemoryColour}, and this can be exploited to increase the effectiveness of the interface. In particular, effort will be taken to maintain visual consistency throughout the interface.\\
+Humans have impressive abilities of spatial memory, \cite{SpatialMemory}, spatial reasoning \cite{SpatialCognition}, and memory of colours \cite{MemoryColour}, and this can be exploited to increase the effectiveness of the interface. In particular, effort will be taken to maintain visual consistency throughout the interface \cite{Consistency}.\\
 %
 Users are much better at giving a preferance between several options, rather that scoring individual options numerically \cite{RatingRanking, PreferenceGallery}. This is exploited in the Blending Interface (\S \ref{sec:BlendingDescription}), where in each iteration the user selects between a range of sounds, which were generated based on their previous preferences.
 %
@@ -260,8 +260,8 @@ The common methods of audio synthesis are as follows \cite{SynthTypes}:
 In addition, many synthesisers include the use of audio samples. Hybrid approaches of the above techniques are also common.
 
 \section{Introduction to Synthesiser Interfaces}
-Analogue synth interfaces, whether modular or fixed architecture, usually consist of a number of modules, such as VCOs and VCAs, controlled with potentiometers, switches, and control signals from elsewhere in the synth (Fig. \ref{fig:MoogSystem35}). \\
-%
+Analogue synth interfaces, whether modular or fixed architecture, usually consist of a number of modules, such as VCOs and VCAs, controlled with potentiometers, switches, and control signals from elsewhere in the synth (Fig. \ref{fig:MoogSystem35}). 
+
 \begin{figure}[h]
 	\centering
 	\includegraphics[width = 5in]{MoogSystem35.jpg}
@@ -346,6 +346,8 @@ In \cite{TubbThesis}, a number of guidelines for creative musical interfaces are
 	\vspace{-10pt}
 \end{enumerate}
 The Blending Interface (\S \ref{sec:BlendingDescription}) follows all of these design guidelines, and the Selection Interface (\S \ref{sec:SelectionDescription}) follows all except the \emph{Smoothness} condition (due to the sudden jumps between presets). Both are complex many-to many interfaces.
+
+In a review of \emph{usability heuristics} \cite{Consistency}, consistency, aesthetic integrity (simple design) and forgiveness (reversible computer actions) are identified amongst the most important heuristics to use when designing digital interfaces. Effort has been taken in this project to apply these heuristics whenever they apply.
 
 In \cite{TubbThesis}(\S 5.5.3), the EARS model for creative cognition is developed. It describes four modes of creative cognition which can be used to design and evaluate creative interfaces (Fig. \ref{fig:EARSmodel}).
 \begin{figure}[h] 
@@ -984,7 +986,7 @@ The \emph{EARS} model \cite{TubbThesis} describes four modes of creative cogniti
 The three interfaces are evaluated in terms of this model in Table \ref{tab:EARStable}.
 A conclusion to draw from this is that the interfaces effectively enable exploratory, algorithmic, and reflective processes, but are not suited to skilled interactions. To enable skilled interactions, one of the interfaces could be redisigned with this in mind, or a fourth interface could be introduced.  It should be designed for use with multidimensional controllers \cite{MappingStrategies, TubbThesis}, and involve moving through a parameter space consisting solely of the useful sounds of the synth. An \emph{interactive machine learning} system such as the \emph{Wekinator} \cite{Wekinator} would be well suited to this task, however more work needs to be done to integrate this approach with the other three interfaces.
 \begin{table}[h]
-%	\hspace{-1cm}
+	\hspace{-0.8cm}
 	\begin{tabular}{|l|l|l|l|l|L|}
 		\hline
 		\rowcolor[HTML]{EFEFEF} 
@@ -1000,11 +1002,12 @@ A conclusion to draw from this is that the interfaces effectively enable explora
 
 \section{Test of the Interface for Image Filtering}\label{sec:ImageEditing}
 To test the interface in a different context the Blending Interface was adapted to control a simple image filtering algorithm. The results of this process are shown in Fig. \ref{fig:ImageFIltering}, and the image filtering algorithm is described below.\\
-Two copies of an input image are seperately processed then combined together. The \emph{background layer} is formed by a linear combination of the input image and a greyscale version of the input image. The \emph{foreground layer} first uses MATLAB's \emph{imadjust} functon to adjust the \emph{intensity range} and \emph{gamma} of the input image's RGB channels, then applies a Gaussian shaped \emph{alpha map}. The algorithm has 18 parameters, all in the range $[0,1]$. A small collection of presets was generated for this algorithm, which the user can select between (Fig. \ref{fig:ImageFIlteringOutput}).
+Two copies of an input image are seperately processed then combined together. The \emph{background layer} is formed by a linear combination of the input image and a greyscale version of the input image:	$\mathrm{background} = k \times \mathrm{input} + (1-k) \times \mathrm{greyscale}(\mathrm{input}), \hspace{0.3cm} k \in [0, 1] $.\\
+ The \emph{foreground layer} first uses MATLAB's \emph{imadjust} functon \cite{Imadjust} to adjust the \emph{intensity range} and \emph{gamma} of the input image's RGB channels, then applies a Gaussian shaped \emph{alpha map}. The algorithm has 18 parameters, all in the range $[0,1]$. A small collection of presets was generated for this algorithm, which the user can select between (Fig. \ref{fig:ImageFIlteringOutput}).
 \begin{figure}[h]
 	\hspace{-30pt}
 	\includegraphics[width = 7in]{ImageBlendingLocations.png}
-	\caption{The Blending Interface applied to Image Filtering}
+	\caption{The Blending Interface applied to Image Filtering - Image preset ratios are as follows: Image 1: ($\alpha, \beta, \gamma)=(\frac{2}{3}, \frac{2}{3}, \frac{-1}{3})$. Image 2: ($\alpha, \beta, \gamma)=(\frac{1}{3}, \frac{1}{3}, \frac{1}{3})$. Image 3: ($\alpha, \beta, \gamma)=(\frac{-1}{3}, \frac{-1}{3}, \frac{5}{3})$.}
 	\label{fig:ImageFIltering}
 	\vspace{-20pt}
 \end{figure}
@@ -1114,6 +1117,9 @@ Linn, R. (2016). \emph{Keynote}.  Audio Developer Conference (ADC'16). \url{http
 \bibitem{Interpolation}
 Marier, M. (2012). \emph{Designing Mappings for Musical Interfaces Using Preset Interpolation}. NIME.
 
+\bibitem{Imadjust}
+Uk.mathworks.com. (2006). \emph{Adjust image intensity values or colormap - MATLAB imadjust}. [online] \url{https://uk.mathworks.com/help/images/ref/imadjust.html} [Accessed 1 May 2018].
+
 \bibitem{NonOrthogonal}
 Miguel (https://math.stackexchange.com/users/95625/miguel), \emph{Equation for non-orthogonal projection of a point onto two vectors representing the isometric axis?}, (version: 2017-03-07): \url{https://math.stackexchange.com/q/1123586}
 
@@ -1126,6 +1132,9 @@ Native-instruments.com. (2007). \emph{MASSIVE}. [online] Available at: \url{http
 \bibitem{SynthTypes}
 Nicol, C. (2005). \emph{Development and Exploration of a Timbre Space Representation of Audio}. Ph.D. University of Glasgow.
 References
+
+\bibitem{Consistency}
+Nielsen, J. (1994). \emph{Enhancing the explanatory power of usability heuristics}. In Proceedings of the SIGCHI Conference on Human Factors in Computing Systems (CHI '94). ACM, New York, NY, USA, 152-158. DOI=http://dx.doi.org/10.1145/191666.191729
 
 \bibitem{OSC}
 Opensoundcontrol.org. (2002). \emph{Introduction to OSC} [online] Available at: \url{http://opensoundcontrol.org/introduction-osc} [Accessed 18 Apr. 2018].

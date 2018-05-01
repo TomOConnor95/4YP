@@ -82,8 +82,8 @@ C = [sideLength/2;sideLength*(sqrt(3)/2)];
 %  P1 = B;
 %P1 = C;
 %P1 = (A+B+C)/3;
-% P1 = (2*A + 2*B -C)/3;
-P1 = (A+B+C)/3 +4*((A+B+C)/3 -(A+B)/2);
+ P1 = (2*A + 2*B -C)/3;
+% P1 = (A+B+C)/3 +4*((A+B+C)/3 -(A+B)/2);
 
 [alpha, beta, gamma] = calculatePresetRatios2(P1');
 
