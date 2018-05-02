@@ -19,8 +19,8 @@ presetArray(testPreset,:) = [];
 selectedImageNumber = 1;
 numberOfIterations = 200;
 
-squaredErrorSumHistory= zeros(1,numberOfIterations);
-
+squaredErrorSumHistory = zeros(1,numberOfIterations);
+parameterError = zeros(1,numberOfIterations);
 displayProgress = false;
 
 %% Miscellaneous parameters
@@ -156,6 +156,8 @@ while(currentGeneration < numberOfIterations)
     %[optimumMousePos1,squaredErrorSum1] = patternsearch(f,mousePosInitial,[],[],[],[],[],[],options1);
     [optimumMousePos1,squaredErrorSum1] = patternsearch(f,mousePosInitial,[],[],[],[],[],[],options);
     squaredErrorSumHistory(currentGeneration) = squaredErrorSum1;
+    parameterError(currentGeneration) = sum((P.presetA-targetParams).^2);
+    
     %     [optimumMousePos2,squaredErrorSum2] = fminunc(f, G.A');
     
     %     [minErrorSum, index] = min([squaredErrorSum1, squaredErrorSum2]);
@@ -197,7 +199,7 @@ while(currentGeneration < numberOfIterations)
     currentGeneration = currentGeneration + 1;
     
 end
-
+%%
 figure(7)
 % subplot(1,3,3)
 searchingText.Visible = 'off';
@@ -205,7 +207,15 @@ imshow(updateEditedImage2(imgLarger, P.presetA));
 set(gca,'Position',[0,0,1,1])
 
 % title('Final Image')
-hold off
+
 
 figure(9)
-semilogy(squaredErrorSumHistory)
+hold off
+plot(squaredErrorSumHistory)
+figure(10)
+plot(parameterError)
+
+figure(11), clf
+plot(squaredErrorSumHistory/squaredErrorSumHistory(1))
+hold on
+plot(parameterError/parameterError(1))

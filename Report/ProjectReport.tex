@@ -1012,7 +1012,7 @@ A conclusion to draw from this is that the interfaces effectively enable explora
 \section{Test of the Interface for Image Filtering}\label{sec:ImageEditing}
 To test the interface in a different context the Blending Interface was adapted to control a simple image filtering algorithm. The results of this process are shown in Fig. \ref{fig:ImageFIltering}, and the image filtering algorithm is described below.\\
 Two copies of an input image are seperately processed then combined together. The \emph{background layer} is formed by a linear combination of the input image and a greyscale version of the input image:	$\mathrm{background} = k \times \mathrm{input} + (1-k) \times \mathrm{greyscale}(\mathrm{input}), \hspace{0.3cm} k \in [0, 1] $.\\
- The \emph{foreground layer} first uses MATLAB's \emph{imadjust} functon \cite{Imadjust} to adjust the \emph{intensity range} and \emph{gamma} of the input image's RGB channels, then applies a Gaussian shaped \emph{alpha map}. The algorithm has 18 parameters, all in the range $[0,1]$. A small collection of presets was generated for this algorithm, which the user can select between (Fig. \ref{fig:ImageFIlteringOutput}).
+ The \emph{foreground layer} first uses MATLAB's \emph{imadjust} function \cite{Imadjust} to adjust the \emph{intensity range} and \emph{gamma} of the input image's RGB channels, then applies a Gaussian shaped \emph{alpha map}. The algorithm has 18 parameters, all in the range $[0,1]$. A small collection of presets was generated for this algorithm, which the user can select between (Fig. \ref{fig:ImageFIlteringOutput}).
 \begin{figure}[h]
 	\hspace{-30pt}
 	\includegraphics[width = 7in]{ImageBlendingLocations.png}
@@ -1021,20 +1021,22 @@ Two copies of an input image are seperately processed then combined together. Th
 	\vspace{-20pt}
 \end{figure}
 
-As the algorithm does not spatially transform the image in any way, a simple metric (the $L_2$ norm of the difference between the images\footnote{The image can be downsampled first to reduce the computation time.}) can be used to compare the outputs. This allows a Perfect User test (\S \ref{sec:PerfectImperfect}) to be carried out on the Blending Interface, however instead of using a parameter-based error metric (\S \ref{sec:ErrorMetric}) the image-based error metric can be used. This simulates a real user in a more realistic manner as the comparison is in the perceptual space rather than the parameter space. Once again, MATLAB's \emph{Patternsearch} algorithm was used to optimise the blend between presets A, B and C. These tests were carried out using a variety of test images, start presets and end presets. This allowed the rates of convergence to be compared when developing the preset generation algorithm (\S \ref{sec:PresetGeneration}), which was used to set its hyperparameters.
+As the algorithm does not spatially transform the image in any way, a simple metric (the $L_2$ norm of the difference between the images\footnote{The image can be downsampled first to reduce the computation time.}) can be used to compare the outputs. This allows a Perfect User test (\S \ref{sec:PerfectImperfect}) to be carried out on the Blending Interface, however instead of using a parameter-based error metric (\S \ref{sec:ErrorMetric}) the image-based error metric can be used. This simulates a real user in a more realistic manner as the comparison is in the perceptual space rather than the parameter space. Once again, MATLAB's \emph{Patternsearch} algorithm was used to optimise the blend between presets A, B and C. These tests were carried out using a variety of test images, start presets and end presets, see Fig. \ref{fig:ImageFIlteringGraph} for analysis of a typical example. This also allowed the rates of convergence to be compared when developing the preset generation algorithm (\S \ref{sec:PresetGeneration}), which was used to set its hyperparameters.
 
 \begin{figure}[h]
 	\hspace{-30pt}
-	\includegraphics[trim = {2cm, 0cm, 2cm, 0cm}, clip, width = 7in]{ImageTestGraph.png}
-	\caption{A Perfect User test using the Blending Interface to control the Image Filtering Algorithm.}
-	\label{fig:ImageFIlteringOutput}
+	\includegraphics[trim = {2cm, 0.2cm, 2cm, 0.3cm}, clip, width = 7in]{ImageTestGraph2.png}
+	\vspace{-20pt}
+	\caption{A Perfect User test using the Blending Interface to control the Image Filtering Algorithm. A goal preset is selected from the set of presets, and the start preset is chosen as the closest preset to this, based on the image-based error metric. The final image is visually close to the goal image and the image-based error metric correspondingly falls by 90\%. This is \emph{not} reflected in the parameter-based error metric, suggesting that for image filtering, a parameter-based metric is not a good approximation for an image-based error metric. A source of this difference may redundancy in the parameter set, i.e the same image can be produced in several ways. Hovever, it is important to note that the relationship between image-based and parameter-based error may not be reciprocal: minimising the parameter-based metric may also minimise the image-based metric. }
+	\label{fig:ImageFIlteringGraph}
 %	\vspace{-20pt}
 \end{figure}
 
 \begin{figure}[h]
 %	\hspace{-30pt}
-	\includegraphics[trim = {0.5cm, 12.5cm, 2cm, 1cm}, clip, width = 6in]{ImageEditing.png}
-	\caption{Several Outputs from the Image Filtering Algorithm (original image top left).}
+\centering
+	\includegraphics[trim = {0.5cm, 12.5cm, 2cm, 1cm}, clip, width = 5in]{ImageEditing.png}
+	\caption{Several presets for the Image Filtering Algorithm (original image top left).}
 	\label{fig:ImageFIlteringOutput}
 	\vspace{-20pt}
 \end{figure}
@@ -1053,11 +1055,11 @@ The interface created in this project has many benefits over a traditional synth
 Several insights have been gained about synth parameter spaces: \\
 The key limitation of traditional synthesiser interfaces is the order of parameter selection (\S \ref{sec:TradEval}). An iterative preset blending algorithm using a stochastic preset generation algorithm has been shown to be able to effectively navigate synth parameter spaces (\S \ref{sec:BlendingDescription}). Synth preset datasets are not random, containing strong correlations and internal structure (\S \ref{sec:PCAmappingScale}). \emph{PCA} combined with {\emph{histogram equalisation} has been shown to be capable of exploiting this internal structure to perform dimensionality reduction, and to create effective Macro Controls (\S \ref{sec:BlendingEval}).
 	
-The interface has also been validated in a different context, image filtering (\S \ref{sec:ImageEditing}), with promising results. Popular photo-sharing applications, such as \emph{Instagram} and \emph{Snapchat}, use preset-based creative image filtering as a key feature. Incorporating the Blending Interface into such applications has the ability to increase the creative control of users, whilst keeping the application simple and intuitive to use.  It could easily be applied to many other use cases, such as stage lighting design, or parametric 3D design, as each has a high dimensional parameter set which can be readily controlled using protocols such as \emph{OSC}.
-\section{Further Work}
+The interface has also been validated in a different context, image filtering (\S \ref{sec:ImageEditing}), with promising results. Popular photo-sharing applications, such as \emph{Instagram} and \emph{Snapchat}, use preset-based creative image filtering as a key feature. Incorporating the Blending Interface into such applications has the ability to increase the creative control of users, whilst keeping the application simple and intuitive to use.  It could easily be applied to many other use cases, such as stage lighting design, or parametric 3D design, as each has a high dimensional parameter set which can be readily controlled using protocols such as \emph{OSC}. \vspace{-15pt}
+\section{Further Work}\vspace{-5pt}
 The evaluation of this interface was only carried out on a single synth, due to the project's time constraints. An immediate goal is to validate the conclusions from this work on several other synths, especially those from other categories, such as \emph{subtractive}, \emph{additive} and \emph{physical modelling} synths. It is non-trivial to extend this work to modular synths (\S \ref{sec:SynthDescription}). To determine the effectiveness of the parameter-based evaluation carried out in this work, and evaluate other aspects of the interface such as creativity, a user study should be carried out.
 
-Due to the difficulties of using a sound-based error metric (\S \ref{sec:MachineLearning}) a parameter based error metric was used to evaluate the interface's performance. The tests of the interface with an image filtering algorithm (\S \ref{sec:ImageEditing}) suggest that the parameter based error-metric has a similar performance to the image-based error metric, however more work needs to be done to thoroughly test this result. Furthermore, whether or not the parameter-based metric is comparable with using a sound-based metric is still an open question. It may be also possible to incorporate more knowledge of the synth into the error metric to explicitely remove the effect of permutation ambiguity, and to better approximate using a sound-based error metric. 
+Due to the difficulties of using a sound-based error metric (\S \ref{sec:MachineLearning}) a parameter based error metric was used to evaluate the interface's performance. Tests of the interface with an image filtering algorithm (\S \ref{sec:ImageEditing}) suggest that the parameter-based error metric produces different results to the image-based error metric, however more work needs to be done to thoroughly test this result. Furthermore, whether or not the parameter-based metric is comparable with using a sound-based metric is still an open question. It may be also possible to incorporate more knowledge of the synth into the error metric to explicitely remove the effect of permutation ambiguity and parameter redundancy, to better approximate using a sound-based error metric. 
 
 The interface has been designed with touch-screen contollers in mind, so it would be interesting to implement the interface on a touch screen. Either a dedicated app could be made, or the customisable \emph{OSC} controllers \emph{Lemur} or \emph{Mira} could be used. The interface could be further extended by taking into consideration the \emph{multi-touch} capabilities of modern touchscreens.
 
