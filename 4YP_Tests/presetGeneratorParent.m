@@ -58,12 +58,12 @@ classdef (Abstract) presetGeneratorParent
             
             % set up history plots
             screenSize = get(0,'Screensize');
-            figure(3)
-            subplot(1,2,1)
-            obj.historyPlot = createHistoryPlot(obj.presetAHistory);
-            
-            subplot(1,2,2)
-            obj.P1HistoryPlot = createPointHistoryPlot();
+%             figure(3)
+%             subplot(1,2,1)
+%             obj.historyPlot = createHistoryPlot(obj.presetAHistory);
+%             
+%             subplot(1,2,2)
+%             obj.P1HistoryPlot = createPointHistoryPlot();
             
             set(gcf,'Position',[-screenSize(3)/26,screenSize(4)/1.6,screenSize(3)/2.4,screenSize(4)/2.5])
 
@@ -113,11 +113,11 @@ classdef (Abstract) presetGeneratorParent
             [obj.presetCHistory] = obj.presetCHistory.addnode(oldIndex, obj.presetC);
             obj.currentTreeIndex = newIndex;
             
-            % update all trees for point history plot
-            obj.P1HistoryPlot = updatePointHistoryPlot(obj.P1HistoryPlot,mousePointClicked, oldIndex, newIndex, obj.lineColour);
-            
-            % Update plot to show evolution of parameters
-            obj.historyPlot = updatePresetHistoryPlot(obj.historyPlot,obj.presetAHistory);
+%             % update all trees for point history plot
+%             obj.P1HistoryPlot = updatePointHistoryPlot(obj.P1HistoryPlot,mousePointClicked, oldIndex, newIndex, obj.lineColour);
+%             
+%             % Update plot to show evolution of parameters
+%             obj.historyPlot = updatePresetHistoryPlot(obj.historyPlot,obj.presetAHistory);
         end
         
         function obj = switchPresets(obj, switchIndex)
@@ -168,11 +168,11 @@ classdef (Abstract) presetGeneratorParent
             
             obj.currentTreeIndex = newIndex;
             
-            % update all trees for point history plot - Specialised 
-            obj.P1HistoryPlot = updatePointHistoryPlotCombinePresets(obj.P1HistoryPlot, oldIndex, newIndex, presetsDoubleClicked);
-            
-            % Update plot to show evolution of parameters
-            obj.historyPlot = updatePresetHistoryPlot(obj.historyPlot,obj.presetAHistory);
+%             % update all trees for point history plot - Specialised 
+%             obj.P1HistoryPlot = updatePointHistoryPlotCombinePresets(obj.P1HistoryPlot, oldIndex, newIndex, presetsDoubleClicked);
+%             
+%             % Update plot to show evolution of parameters
+%             obj.historyPlot = updatePresetHistoryPlot(obj.historyPlot,obj.presetAHistory);
         end
         
         %-----Functions to freeze Foreground/Background -------------------
