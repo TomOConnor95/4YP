@@ -29,6 +29,7 @@
 \DeclareGraphicsExtensions{.pdf,.png,.jpg,.eps}
 
 \captionsetup[figure]{labelfont={bf},name={Fig.},labelsep=period}
+\captionsetup[table]{labelfont={bf},name={Table},labelsep=period}
 
 \usepackage{titlesec}
 %\titlespacing\chapter{0pt}{4pt plus 4pt minus 2pt}{4pt plus 2pt minus 2pt}
@@ -234,7 +235,7 @@ Users are much better at giving a preferance between several options, rather tha
 \section{Introduction to Synthesisers}
 \emph{Synthesisers} (synths) are devices which can create a wide variety of musical sounds in response to  user input, typically in the form of notes played on a keyboard. The history of synths closely follows the evolution of electronics over the last century.\\
 Early synths, 1900 - 1960, used the technologies of the time to create sound. These included steam powered electromagnetic generators, vaccum tubes, electrostatic antennae, and a variety of electro-mechanical technologies \cite{AppleSynth}.\\
-In the 1960s and 70s technology from early analogue computers and laboratory test equipment was used to create sound. The invention of the transistor made many types of electronic circuit cheap and practical to use, allowing the creation of  \emph{modular synthesisers}. These consisted of many modules of electronics, such as voltage-controlled oscillators, filters and amplifiers (VCOs, VCFs and VCAs) and envelope generators, which were patched together with cables (Fig. \ref{fig:MoogSystem35}). As this technology matured, many more modules were invented, such as \emph{ring-modulators}, \emph{sequencers}, and effects units such as \emph{reverb}.
+In the 1960s and 70s technology from early analogue computers and laboratory test equipment was used to create sound. The invention of the transistor made many types of electronic circuit cheap and practical to use, allowing the creation of  \emph{modular synthesisers}. These consisted of many modules of electronics, such as voltage-controlled oscillators, filters and amplifiers (VCOs, VCFs and VCAs) and envelope generators, which were patched together with cables (Fig. \ref{fig:MoogSystem35}). As this technology matured, many more modules were invented, such as ring-modulators, sequencers, and effects units such as reverb.
 %
 %Wiki - "The earliest synthesizers used a variety of thermionic-valve (vacuum tube) and electro-mechanical technologies.". \\
 %In the 1960s and 70s, after the invention of the transistor, - Wiki - "Early analogue synthesizers used technology from electronic analogue computers and laboratory test equipment. They were generally "modular" synthesizers, consisting of a number of independent electronic modules connected by patch cables into a patchbay that resembled the jackfields used by 1940s-era telephone operators. Synthesizer modules in early analog synthesizers included voltage-controlled oscillators (VCOs), voltage-controlled filters (VCFs), and voltage-controlled amplifiers (VCAs). The control voltage varied frequency in VCOs and VCFs, and attenuation (gain) in VCAs. Additionally, they used envelope generators, low-frequency oscillators, and ring modulators. Some synthesizers also had effects devices, such as reverb units, or tools such as sequencers or sound mixers. 
@@ -242,7 +243,7 @@ In the 1960s and 70s technology from early analogue computers and laboratory tes
 Later \emph{analogue synthesisers} were fixed architecture (or semi-modular), and much more compact and user friendly, such as the \emph{Minimoog} and the \emph{Prophet-5}. At this time, synths began to feauture commonly in popular music, both in the studio and in live situations \cite{Synth}.\\
 In the 1980s, \emph{digital syntheisers} were invented, allowing a much wider variety of synthesis techniques than is possible with analogue electronics. In particular FM synthesis defined much of the musical sound of the 1980s, and was popularised by the Yamaha \emph{DX7} synth.\\
 Since the invention of personal computers, many popular synths have been recreated digitally as \emph{software synthesisers}, commonly known as \emph{plug-ins}, and are widely used in modern \emph{Digital Audio Workstations} (DAWs). As well as recreatations of hardware synths, many novel software synths have been developed solely for use on computers, making use of the flexibility, increased computing power, and interactive display capabitilies of computers.\\
-A much more in depth history of synths, as well as deatiled explanation of all aspects of sound synthesis can be found in \emph{The Syntheser} by Mark Vail \cite{Synth}.
+A detailed history of synths, as well as thprough explanation of all aspects of sound synthesis can be found in \emph{The Syntheser} by Mark Vail \cite{Synth}.
 
 The common methods of audio synthesis are as follows \cite{SynthTypes}:
 \begin{itemize}
@@ -265,7 +266,7 @@ Analogue synth interfaces, whether modular or fixed architecture, usually consis
 \begin{figure}[h]
 	\centering
 	\includegraphics[width = 5in]{MoogSystem35.jpg}
-	\caption{Analogue synthesiser - \emph{System 35} (Moog) \cite{MoogSystem35}}
+	\caption{Analogue synthesiser - \emph{System 35} (Moog) \cite{MoogSystem35}.}
 	\label{fig:MoogSystem35}
 	% https://www.moogmusic.com/products/modulars/system-35
 \end{figure}
@@ -275,7 +276,7 @@ Digital synthesisers can be much more flexible in their interface, as the audio 
 \begin{figure}[h] 
 	\centering
 	\includegraphics[trim = {0, 0.2cm, 0, 0.5cm}, clip, width = 5in]{yamaha_fs1r.jpg}
-	\caption{Digital synthesiser - \emph{FS1R} (Yamaha) \cite{FS1R}}
+	\caption{Digital synthesiser - \emph{FS1R} (Yamaha) \cite{FS1R}.}
 	\label{fig:YamahFS1R}
 	% http://www.vintagesynth.com/yamaha/fs1r.php
 	\vspace{-10pt}
@@ -286,7 +287,7 @@ Soft-synths have a wide variety of interfaces. Many follow similar design patter
 	\centering
 	\includegraphics[width = 5in]{MassiveNI.jpg}
 	\vspace{-5pt}
-	\caption{Software Synthesiser - \emph{Massive} (Native Instruments) \cite{Massive}}
+	\caption{Software Synthesiser - \emph{Massive} (Native Instruments) \cite{Massive}.}
 	\label{fig:MassiveNI}
 	%https://www.soundonsound.com/reviews/native-instruments-massive
 	\vspace{-10pt}
@@ -295,28 +296,28 @@ Soft-synths have a wide variety of interfaces. Many follow similar design patter
 \begin{figure}[h] 
 	\centering
 	\includegraphics[width = 5in]{AbletonWavetable.jpg}
-	\caption{Software Synthesiser - \emph{Wavetable} (Ableton)\cite{Wavetable} }
+	\caption{Software Synthesiser - \emph{Wavetable} (Ableton)\cite{Wavetable}.}
 	\label{fig:AbletonWavetable}
 	%https://www.ableton.com/en/packs/wavetable/
 \end{figure}
 
-Some soft-synths have modular designs, such as \emph{Modular} by SoftTube \cite{SoftTube},
-and some allow users to design synthesis modules from scratch, such as \emph{Max/MSP} and \emph{Supercollider}.
+Some soft-synths have modular designs, such as \emph{Modular} by SoftTube, % \cite{SoftTube}
+and some allow users to design synthesis modules from scratch, such as \emph{Max/MSP} \cite{MaxMSP} and \emph{Supercollider}.
 
 There has been a wide range of reasearch in the Computer Music field in the use of multidimensional controllers, such as the  \emph{Myo}, \emph{Leap Motion} and \emph{Microsoft Kinect}, to control synthesis parameters in real time \cite{ICMC, TubbThesis}, and research into advanced user interaction types, such as waveform blending (see \emph{wavetable synthesis} \cite{Wavetable} and \emph{vector synthesis} \cite{SY22}), preset blending \cite{Interpolation}, randomisation of presets, and many more \cite{YeeKing, EvolvedAudioEffects}.  Several studies have applied a variety of machine learning techniques to synthesiser control, as described in the next section.
 
 \section{Using Machine Learning to Control Synthesisers}\label{sec:MachineLearning}
 Many users find programming synths difficult, due to the large amount of technical and creative skill necessary (\cite{YeeKing} \S 4.1.1). There have been several previous attempts to use machine learning to make programming synths easier and more expressive, from both academia and commercial products (\cite{YeeKing} \S 4.1.2).
 
-The Google NSynth project \cite{NSynth} develops a technique for interpolating between sampled instruments, in the latent space (low-dimensional internal representation) of an \emph{Autoencoder} rather than operating directly on the audio recordings. This project has impressive results, generating much higher quality synthetic instrument samples than can be generated by interpolating between audio samples. However, a downside is that it relies upon pre-computing a large database of audio recordings to densely sample the latent space, which are then interpolated for real time playback. Furthermore only 16 instruments were sampled, as there is an exponential increase in the number of possible combinations that have to be pre-computed as more instruments are added.
-
 \emph{Tone-matching} is an active area of research in which synths are automatically programmed to match a reference audio recording. Common techniques involve using global optimisation techniques, such as genetic algorithms, feed-forward neural networks and gradient methods. This either requires a system which continuously monitors the output of the synth and calculates a sound-based metric to compare to the reference recording's metric, or requires a densely sampled database of metric values over the parameter space of the synth.  The Mel Frequency Cepstrum Coefficient (MFCC) has been identified as the best metric to use, as it is based on human perception \cite{YeeKing}.
+
+Dimensionality reduction was applied to audio recordings in the \emph{Infinite Drum Machine} \cite{InfiniteDrum}. In this work, \emph{t-Distributed Stochatic Neighbour Embedding} (tSNE) was used to create a two dimensional mapping of a large number of audio recording (samples). An interface based on this mapping was used for sample-selection in a drum machine. \\
+The Selection Interface (\S \ref{sec:SelectionDescription}) draws inspiration from this project. It would be possible to carry out the same process for a synth if first an audio recording was taken of each preset. However, the best way to select which audio recording should be taken from each preset is not clear, as different presets respond very differently to the \emph{MIDI Note}, \emph{Velocity}, and \emph{Note Length}. Therefore the best sampling method to accurately characterise a synthesiser preset, in as few audio recordings as possible, is an open research question.
+In this work a parameter-based approach is taken, to see if similar quality results can be obtained through a statistical analysis of the presets of a synth. This approach has many benefits such as the speed of the mapping, and the amount of storage required.
 
 Several works have applied \emph{interactive genetic algorithms} to synth programming \cite{EvolutionaryInteractive, GenSynth, GenComparison}. Typically the genetic algorithm produces a variety of presets, and the user acts as the \emph{fitness function}, selecting the best of these to be used for the next iteration. An advantage of using genetic algorithms is that they can be applied to modular synths, allowing the synthesis architecture to mutate. The Blending Interface (\S \ref{sec:BlendingDescription}) has a similar iterative approach, but has been designed so that each iteration can be carried out a lot faster by the user. 
 
-Dimensionality reduction was applied to audio recordings in the \emph{Infinite Drum Machine} \cite{InfiniteDrum}. In this work, \emph{t-Distributed Stochatic Neighbour Embedding} (tSNE) was used to create a two dimensional mapping of a large number of audio recording (samples). An interface based on this mapping was used for sample-selection in a drum machine. \\
-The Selection Interface (\S \ref{sec:SelectionDescription}) draws inspiration from this project. It would be possible to carry out the same process for a synth if first an audio recording was taken of each preset. However, the best way to select which audio recording should be taken from each preset is not clear, as different presets respond very differently to the \emph{MIDI Note}, \emph{Velocity}, and \emph{Note Length}. Therefore the best sampling method to accurately characterise a synthesiser preset, in as few audio recordings as possible, is an open research question.\\
-In this work a parameter-based approach is taken, to see if similar quality results can be obtained through a statistical analysis of the presets of a synth. This approach has many benefits such as the speed of the mapping, and the amount of storage required.
+The Google NSynth project \cite{NSynth} develops a technique for interpolating between sampled instruments, in the latent space (low-dimensional internal representation) of an \emph{Autoencoder} rather than operating directly on the audio recordings. This project has impressive results, generating much higher quality synthetic instrument samples than can be generated by interpolating between audio samples. However, a downside is that it relies upon pre-computing a large database of audio recordings to densely sample the latent space, which are then interpolated for real time playback. Furthermore, there is an exponential increase in the number of possible combinations that have to be pre-computed as more instruments are added, which prevents this technique from being used in an iterative manner. The method proposed in this project does not have these drawbacks, as its parameter-based approach is very quick to compute, and so no pre-computing is necessary.
 
 The \emph{Wekinator} \cite{Wekinator} is an infuential application of \emph{interactive machine learning} (also known as \emph{active learning}) in music, in which expressive control mappings can be generated for many different types of user interaction based on a small number of user supplied training examples. This approach could be used to allow the interface designed in this report to be controlled more expressively, and make it better suited to live performance. \vspace{-10pt}
 \section{HCI design principles for Creative Musical Interfaces}\label{sec:Tubb}
@@ -333,7 +334,7 @@ There are four main types of parameter mapping in synthesier interfaces:
 \vspace{-10pt}
 Complex many-to-many mappings appear to be the most effective for many users, as well as being more fun and inspiring higher levels of creativity. It appears that they allow users to intuitively learn to navigate the control space. One-to-one interfaces on the other hand require the user to break the creative process into a number of subtasks, and are reported to be confusing and frustrating to use \cite{MappingStrategies}.\\
 %
-Robert Tubb \cite{TubbThesis} presents  a number of guidelines for creative musical interfaces:
+A number of guidelines for creative musical interfaces have been identified \cite{TubbThesis}:
 \begin{enumerate}
 	\vspace{-10pt}
 \setlength\itemsep{-1.2em}
@@ -349,15 +350,13 @@ The Blending Interface (\S \ref{sec:BlendingDescription}) follows all of these d
 
 In a review of \emph{usability heuristics} \cite{Consistency}, consistency, aesthetic integrity (simple design) and forgiveness (reversible computer actions) are identified amongst the most important heuristics to use when designing digital interfaces. Effort has been taken in this project to apply these heuristics whenever they apply.
 
-In \cite{TubbThesis}(\S 5.5.3), the EARS model for creative cognition is developed. It describes four modes of creative cognition which can be used to design and evaluate creative interfaces (Fig. \ref{fig:EARSmodel}).
+The EARS model (\cite{TubbThesis}(\S 5.5.3)) describes four \emph{modes of creative cognition} which can be used to design and evaluate creative interfaces (Fig. \ref{fig:EARSmodel}). For different creative tasks, interfaces suited to an appropriate mode of creative cognition (Exploratory, Reflective, Skilled or Algorithmic) will be more effective. It is important for users to be able to easily switch between these different modes, as this allows users to fine-tune the interface to their particular creative process. This project's interface is evaluated using this model in Section \ref{sec:EARS}.
 \begin{figure}[h] 
 	\centering
-	\includegraphics[width = 5in]{EARSmodel.png}
+	\includegraphics[trim = {0, 0.5cm, 0, 0.3cm}, clip, width = 4.6in]{EARSmodel.png}
 	\caption{The four quadrants formed by drawing distinctions between implicit vs. explicit thinking (left/right) and divergent vs. convergent thinking (top/bottom). Convergent processes are conceptual/parameter space traversal mechanisms that work upon improving the fitness of solutions. Divergent processes generate candidate solutions via traversal mechanisms that ignore any prediction of increasing value, e.g. creating lots of scattered points \cite{TubbThesis}.}
 	\label{fig:EARSmodel}
-\end{figure}\\
-For different creative tasks, interfaces suited to an appropriate mode of creative cognition (Exploratory, Reflective, Skilled or Algorithmic) will be more effective, and it is important for users to be able to easily switch between these different modes. This project's interface is evaluated using this model in Section \ref{sec:EARS}.
-
+\end{figure}
 %ALSO>>>>>Talk about the stuff about multidemsional controlers having higher thoroughput. - Not sure this is relevant
 
 \chapter{Description of Synthesiser Algorithm}
@@ -430,7 +429,7 @@ Modulation Envelope Amount                       & 6 x $\mathrm{env}_{i}^{mod}$ 
 																	  & Vibrato Time            		& $[0, 20]$ seconds      &                       			&\\
 																	  & Stereo Spread           	  & $[0, 1]$                   		&                       			&\\ \hline
 	\end{tabular}
-\caption{Synthesiser Parameters}
+\caption{Synthesiser Parameters. 96 parameters are grouped into 2 categories (Time and Timbre) and 12 sub-categories (see Parameter Group column). Weighting refers to the weight each parameter is given in the error metric defined in Section \ref{sec:ErrorMetric}. All parameters are shown as knobs on the synthesiser schematic (Fig \ref{fig:SynthSchematic}).}
 \label{tab:Params}
 \end{table}
 
@@ -442,7 +441,7 @@ Some synths use short audio recordings, known as samples, as part of their sound
 This work is aimed at analogue-style synths, in which there are a medium number of parameters with a fixed internal routing. Effects modules, such as reverb, delay and chorus have not been included in the synth, as these can easily be added to the signal chain by users. Effects modules also tend to be much easier to control than synths, as they typically have fewer, and more intuitive parameters. Effects modules are typically chained together in series, with no feedback, so each effect module is a seperate transfer function, with no covariance between the parameters.
 
 
-The DX7 was chosen as a base synth as although it is very powerful, it is notoriously difficult to use due to the unintuitive phase modulation algorithm. An improved interface has the ability to open up FM synthesiser programming to non-expert users. %WORK ON THIS
+The DX7 was chosen as a base synth as although it is very powerful, it is notoriously difficult to use due to the unintuitive phase modulation algorithm. An improved interface could therefore make the power of this synth (and FM synths in general) availiable to non-expert users. %WORK ON THIS
 
 The synth was designed to have access to as wide a range of sounds as possible with as few parameters as possible. For example instead of having a separate envelope generator for each oscillator as the  DX7 does, only two envelopes were included, with an adjustable amount per operator. The synth has 96 total parameters, compared to the 126 of the DX7, but it can replicate most of the useful sounds of a DX7. Despite aims to reduce parameter count, there are still many redundant parameters in most presets for this synth. For example, if the amplitude of one of the LFOs is set to zero, all of the other parameters to do with the LFO will have no effect on the sound. This is a common feature with synths, and presents a challenge when trying to learn useful information from the parameters.
 
@@ -451,7 +450,7 @@ In Yee King's thesis \cite{YeeKing}, a similar FM7 Ugen based Supercollider synt
 As this synth has six identical operators which can be configured in any combination, there is lots of possible \emph{permutation ambiguity}: if two operators have all of their parameters switched, the sound will remain identical. This presents a challenge (\S \ref{sec:PermutationAmbiguity}) as two presets can have very different parameters despite having the same sound.
 
 \chapter{Description of Full Interface}
-The full interface developed in this project is a combination of three interfaces. Each has the ability to vary the entire set of parameters, and produce a wide variety of sounds, but they are designed to complement each other as well as possible. The user can easily move back and forth between the different interfaces. The interface is designed to use as little information about the synth as possible, so that it can be easily applied to other synths. A video of the full interface can be viewed at (LINK), and a working demo can be downloaded from (LINK). This chapter gives an overview of each interface, with a detailed description in the next chapter. \vspace{-30pt}
+The full interface developed in this project is a combination of three interfaces. Each has the ability to vary the entire set of parameters, and produce a wide variety of sounds, but they are designed to complement each other as well as possible. The user can easily move back and forth between the different interfaces. The interface is designed to use as little information about the synth as possible, so that it can be easily applied to other synths. A video of the full interface can be viewed, and a working demo can be downloaded from \cite{Github}. This chapter gives an overview of each interface, with a detailed description in the following chapter. \vspace{-10pt}
 \section{Traditional Interface}
 \vspace{-5pt}
 The \emph{Traditional Interface} is designed to be representative of a typical soft-synth interface. It has a knob or slider for each synthesis parameter, and has interactive visualisations for some parts of the architecture (namely the envelopes and LFOs). The interface is arranged in three seperate pages, two of which are shown in Fig. \ref{fig:TraditionalInterface}. 
@@ -469,10 +468,12 @@ If the full interface were to be extended to work with any VST, the traditional 
 \end{figure}
 
 \section{Selection Interface}
-Typical soft-synths are supplied with a large number of presets, which are usually named and arranged into categories. They are usually displayed in a list which can be searched by name, or split into category. In many soft-synths, each preset is given a set of \emph{Macro Controls} (usually eight), each of which vary one or more parameters, and aim to give the user a quick way to fine-tune the presets to their needs.\\
+Typical soft-synths are supplied with a large number of presets, which are usually named and arranged into categories. They are usually displayed in a list which can be searched by name, or split into category. In many soft-synths, each preset is given a set of \emph{Macro Controls} (usually eight), each of which vary one or more parameters, and aim to give the user a quick way to fine-tune the presets to their needs.
+
 The \emph{Selection Interface} is a new approach to displaying presets, arranging the presets as cells of a \emph{2D Voronoi diagram} \cite{Voronoi}, such that similar presets are close to each other and coloured similarly. The presets can quickly be compared by moving the mouse around the diagram, and presets are selected by clicking on the cells. Once a preset is selected it can be edited by Macro Controls. 
-The presets have been divided into a number of categories. Clicking the category buttons at the top of the interface highlights the selected category (Fig. \ref{fig:PCAInterface}). By clicking the `Display Mode' button, it is also possible to limit the presets displayed to just the selected category(s), displayed in a recalculated Voronoi diagram.\\
-Both the 2D spacing of the presets, and the mapping of the Macro Controls are calculated automatically from the set of presets' parameter values using Principal Component Analysis combined with Histogram Equalisation.
+The presets have been divided into a number of categories. Clicking the category buttons at the top of the interface highlights the selected category (Fig. \ref{fig:PCAInterface}). By clicking the `Display Mode' button, it is also possible to limit the presets displayed to just the selected category(s), displayed in a recalculated Voronoi diagram.
+
+Both the 2D spacing of the presets, and the mapping of the Macro Controls are calculated automatically from the set of presets' parameter values using Principal Component Analysis combined with Histogram Equalisation (\S \ref{sec:PCAhist}).
 
 \begin{figure}[h] 
 	\centering
@@ -485,7 +486,7 @@ Both the 2D spacing of the presets, and the mapping of the Macro Controls are ca
 \end{figure}
 
 \section{Blending Interface}
-Preset Blending is a popular approach in synth interface design, where new presets are created by a linear combination of presets.\footnote{For example, the \emph{Alchemy} and \emph{FM8} soft-synths allow preset blending, and the  \emph{Nodes} object in \emph{Max/MSP} is a commonly used implementation of preset blending.} The \emph{Blending Interface} extends this approach.
+Preset Blending is a popular approach in synth interface design, where new presets are created by a linear combination of presets.\footnote{For example, the \emph{Alchemy} and \emph{FM8} soft-synths allow preset blending, and the  \emph{Nodes} object in \emph{Max/MSP} \cite{MaxMSP} is a commonly used implementation of preset blending.} The \emph{Blending Interface} extends this approach.
 
 Three initial presets (A, B, C) are selected, and are placed on the corners of a triangle at the centre of the interface (Fig. \ref{fig:BlendingInterface}). As the cursor moves over the interface, a new preset is created as a weighted sum of the three presets, based on proximity to the corners (\S \ref{sec:BlendingDescription}). Once the user finds the optimal preset in the space, the user clicks. The preset clicked on then becomes the preset A (i.e is placed on the bottom corner of the triangle), and a new preset B and C are generated with a novel algorithm (\S \ref{sec:PresetGeneration}). 
 This process can repeat as many times as desired, allowing the user to keep searching through the parameter space.
@@ -509,7 +510,7 @@ When the application is started, the Selection Interface is displayed first. Onc
 Once three presets have been selected, the user has the option of clicking the `Blend Mode' button which opens the Blending Interface, and assigns the three selected presets to A, B and C. The user can then use the Blending Interface for as long as necessary, and then click the `Return to Preset Selection' button. This time another marker is created, with dotted lines to the three initially selected presets. 
 This marker can then be used in the same way as the cells of the Voronoi diagram, i.e it can be previewed by clicking, selected by double clicking, and can be edited with the Macro Controls or the Traditional Interface.
 
- Parameter visualisations are displayed alongside all of the interfaces to give the user more feedback of the changes they are making with the interface, and to aid in understanding the synthesis algorithm. These are shown on the left and bottom sides of the interface in Fig. \ref{fig:CombinedInterface}.
+\emph{Parameter visualisations} (such as diagrams of the LFOs' outputs and the waveform produced by the synth) are displayed alongside all of the interfaces to give the user more feedback of the changes they are making with the interface, and to aid in understanding the synthesis algorithm. These are shown on the left and bottom sides of the interface in Fig. \ref{fig:CombinedInterface}.
  
 The following chapter gives a detailed description of each of the interfaces, and describes some of the technical challenges which had to be overcome to make the interfaces work effectively.
 \begin{figure}[h] 
@@ -538,7 +539,8 @@ Even if the user knows exactly what each parameter should be set to, it still ta
 \pagebreak
 \section{Selection Interface}\label{sec:SelectionDescription}
 %\subsection{Detailed Description}
-\vspace{-7pt} This interface was created as a MATLAB figure-based application. A key technical detail of this interface is the choice of mapping function from the high dimensional parameter space to the 5-dimensional XY-RGB space of the interface. Many dimensionality reduction techniques could be used for this, such as \emph{tSNE} \cite{InfiniteDrum}, \emph{Linear Discriminant Analysis}, and \emph{Autoencoders} \cite{NSynth}. The simplest dimensionality reduction technique was chosen: \emph{Principal Component Analysis} (\emph{PCA}). It is linear, non-parametric and has a closed-form solution, making it reliable and simple to implement. PCA is shown to be effective for this application, however, other techniques should be investigated as a follow-up work. \vspace{-5pt}
+\vspace{-7pt} This interface was created as a MATLAB figure-based application. A key technical detail of this interface is the choice of mapping function from the high dimensional parameter space to the 5-dimensional XY-RGB space of the interface. Many dimensionality reduction techniques could be used for this, such as \emph{tSNE} \cite{InfiniteDrum}, \emph{Linear Discriminant Analysis}, and \emph{Autoencoders} \cite{NSynth}. The simplest dimensionality reduction technique was chosen: \emph{Principal Component Analysis} (\emph{PCA}). It is linear, non-parametric and has a closed-form solution, making it reliable and simple to implement. PCA is shown to be effective for this application, however, the other techniques may be necessary for higher-dimensional synths and should be tested as a follow-up work. 
+\vspace{-25pt}
 \subsection{Principal Component Analysis}\label{sec:PCA}
 \vspace{-5pt}
 PCA finds an optimal linear transformation of a dataset onto a set of decorrelated orthogonal basis vectors known as \emph{principal components}. This transformation is optimal in the sense that it diagonalises the covariance matrix of the transformed dataset. 
@@ -561,8 +563,8 @@ The Macro controls are the same for all presets, but centered on the currently s
 Another possible extension to this approach is to allow parameter freezing (as in the Blending Interface, \S \ref{sec:BlendingDescription}), and automatically recalculate the Macro Control mapping based on the currently unfrozen parameters.
 
 
-\subsection{PCA + Histogram Equalisation Description}
-When using the Global PCA scores to calculate the XY-RGB position of each preset in the Voronoi diagram, there are some undesirable characteristics of the mapping produced. The sizes of the cells varies dramatically, and the majority of the presets usually get compressed into one of the corners (Fig. \ref{fig:histEqBefore}). This is because PCA is linear, and so outliers will skew the diagram. After rescaling to $[-1, 1]$ to fit in the diagram, the inliers will be compressed to a small range. A similar effect occurs with the colour mapping, causing many of the colours to be similar to each other, minimising the dynamic range of the diagram. Research in the field of user interface design shows that users usually associate larger icons with greater importance (REFERENCE), therefore it would be preferable for all the presets to be of a similar size, so as not to give uninteded meaning to particular presets.\\
+\subsection{PCA + Histogram Equalisation Description}\label{sec:PCAhist}
+When using the Global PCA scores to calculate the XY-RGB position of each preset in the Voronoi diagram, there are some undesirable characteristics of the mapping produced. The sizes of the cells varies dramatically, and the majority of the presets usually get compressed into one of the corners (Fig. \ref{fig:histEqBefore}). This is because PCA is linear, and so outliers will skew the diagram. After rescaling to $[-1, 1]$ to fit in the diagram, the inliers will be compressed to a small range. A similar effect occurs with the colour mapping, causing many of the colours to be similar to each other, minimising the dynamic range of the diagram. Small user interface elements are much harder to select with a mouse than large elements \cite{FittsLaw}, and are often assumed to be less important by users. It is therefore preferable for all the presets to be of a similar size, so as not to give uninteded meaning to particular presets.
 To fix this issue, a variant of an image processing method known as \emph{histogram equalisation} \cite{HistogramEqualisation} was used, resulting in the mapping shown in Fig. \ref{fig:histEqAfter}.
 
 \begin{figure}
@@ -579,7 +581,8 @@ To fix this issue, a variant of an image processing method known as \emph{histog
 		\caption{PCA + Histogram equalisation}
 		\label{fig:histEqAfter}
 	\end{subfigure}
-	\caption{Selection Interface before and after Histogram Equalisation}\label{fig:PCAhistEq}
+	\caption{Selection Interface before and after Histogram Equalisation. Individal presets are shown as cells of the Voronoi diagrams.}\label{fig:PCAhistEq}
+	\vspace{-10pt}
 \end{figure}
 
 Histogram equalisation in one dimension (Fig. \ref{fig:HistEq}) is described below.
@@ -664,7 +667,7 @@ Iterate from $k = 1$, to $k = N-1$, where $N$ is the number of presets.
 If $\|PC_i^{k+1} - PC_i^k)\|_1 > \|PC_i^{k+1} - (-PC_i^k))\|_1$,  flip the sign of all remaining presets.
 %\vspace{-30pt}
 \end{itemize}
-This algorithm is used on $PC_3$ in Fig. \ref{fig:PCAnumPresets2}. In order for this algorithm to work well, the preset mapping needs to be Histogram Normalised and centered on zero. To implement the algorithm in the interface, all that is necessary to do is keep track of which components have been flipped, and each time a new preset is added, check if $\|PC_i^{k+1} - PC_i^k)\|_1 > \|PC_i^{k+1} - (-PC_i^k))\|_1$ to determine whether to flip component $i$, and update the record of flipped components. 
+This algorithm is used on $PC_3$ in Fig. \ref{fig:PCAnumPresets2}. In order for this algorithm to work well, the preset mapping needs to be histogram-equalised and centered on zero. To implement the algorithm in the interface, all that is necessary to do is keep track of which components have been flipped, and each time a new preset is added, check if $\|PC_i^{k+1} - PC_i^k)\|_1 > \|PC_i^{k+1} - (-PC_i^k))\|_1$ to determine whether to flip component $i$, and update the record of flipped components. 
 
 \begin{figure}
 	\vspace{-0.5cm}
@@ -728,15 +731,15 @@ where $\vec{P}$ is the blended preset, $\vec{A}$, $\vec{B}$, $\vec{C}$ are prese
 \begin{wrapfigure}{R}{0.35\textwidth}
 	\vspace{-10pt}
 	\includegraphics[width = \textwidth/3]{BlendVectors.png}
-	\caption{Non-orthogonal vector decomposition}
+	\caption{Non-orthogonal vector decomposition.}
 	\label{fig:BlendingVectors}
 	%\vspace{-60pt}
 	\includegraphics[width = \textwidth/3]{FreqCoarse.png}
-	\caption{Mapping from continuous to coarse frequency}
+	\caption{Mapping from continuous to coarse frequency.}
 	\label{fig:Freq Coarse}
 	%\vspace{-60pt}
 	\includegraphics[width = \textwidth/3]{BlendingColours2.png}
-	\caption{$PC_{3,4,5}$ applied to RGB colour of Blending Interface}
+	\caption{$PC_{3,4,5}$ applied to RGB colour of the Blending Interface.}
 	\label{fig:BlendingColours}
 	\vspace{-30pt}
 \end{wrapfigure}
@@ -751,11 +754,12 @@ To make the iterative blending process more intuitive, and to maintain consisten
 	\centering
 	%\vspace{-40pt}
 	\includegraphics[width = \textwidth/3]{SelectionHistory.png}
-	\caption{Selection History plot construction}
+	\caption{Selection History plot construction.}
 	\label{fig:SelectionHistory}
-	\vspace{7pt}
+	\vspace{2pt}
 	\includegraphics[width = \textwidth/3]{FreezeParams2.png}
-	\caption{Parameter Freezing}
+	\vspace{-27pt}
+	\caption{Parameter Freezing.}
 	\label{fig:FreezeParams}
 	\vspace{-70pt}
 \end{wrapfigure}
@@ -774,8 +778,7 @@ Each time the presets are iterated, the first principal component, $PC_{1}$ is c
 
 The Selection History display allows the user to browse their previously selected presets, by clicking on nodes of the graph. Each time presets are iterated, the vector from A to the selelected coordinates, $\vec{p}_i$ is recorded. The graph is constucted by joining these vectors head-to-tail (Fig. \ref{fig:SelectionHistory}). The colours of each edge of the graph are chosen based on $PC_{3,4,5}$ of the presets. 
 %See Fig. \ref{fig:BlendingInterface} for a typical  Selection History plot.
-
-It may be possible to use some of the information contained in the graph (if the data from many users is collected), as a way to refine the preset generation algorithm. If the generation algorithm is producing good presets, then most of the choices should be somewhere between A, B and C on the interface. If the algorithm is producing bad presets, most of the choices will be very close to, or below A.
+It may be possible to use some of the information contained in the graph to test the preset generation algorithm. If the algorithm is producing good presets, then most of the choices should be somewhere between A, B and C on the interface. If the algorithm is producing bad presets, most of the choices will be very close to, or below A. Preliminary empirical results suggest good performance: few  selections are very close to A. However, data from many users must be tested before any strong conclusions can be drawn.
 
 The user has the option to freeze sections of the parameter space (Fig. \ref{fig:FreezeParams}). The parameters are divided into Time and Timbre parameters, and then subdivided into a total of 12 smaller categories (Table \ref{tab:Params}). This makes the Blending Interface more useful, as it allows users with knowledge of synthesisers to fine-tune the blending process to their needs. This tends to lead to more useful generated presets, as it reduces the dimensionality of the search space.
 
@@ -829,7 +832,7 @@ The results of this evaluation is shown in Table \ref{tab:PermutationAmbiguity}.
 		& Original Dataset & Permutation-Alligned & Randomly Permuted \\ \hline
 		Cost $\times 10^4$ & 2.427            & 2.452                 & 2.8264  (mean of 50 runs, $\sigma = 0.0098$)
 	\end{tabular}
-\caption{Permutation Ambiguity Evaluation Results}
+\caption{Permutation Ambiguity Evaluation Results.}
 \label{tab:PermutationAmbiguity}
 \vspace{-20pt}
 \end{table}
@@ -847,8 +850,8 @@ The \emph{Perfect User} has perfect knowledge of the synth and the interface, so
 
 The \emph{Imperfect User} has imperfect knowledge of the synth and the interface, so chooses interactions similarly to the Perfect User, but misses by a certain amount: $\Delta P_i = \Delta P_i^0 * (1 + \varepsilon)$, where $\Delta P_i^0$ is the Perfect parameter change, and $\varepsilon$ is a zero-mean Gaussian random variable with standard deviation $\sigma$ (which can be varied to account for the different skill levels of users). N.B. an Imperfect user with $\sigma = 0$ is equivalent to the Perfect User.
 
-A key consideration for the Traditional Interface is the order which parameters are varied. In the \emph{Ideal Order}, parameters are visited in decreasing order of importance. In the \emph{Random Order}, parameters are visited in a completely random order. Real users operate somewhere in the middle of these regimes depending on their skill level. 
-\vspace{-10pt}
+A key consideration for the Traditional Interface is the order which parameters are varied. In the \emph{Ideal Order}, parameters are visited in decreasing order of \emph{importance} (their current contribution to the error metric). In the \emph{Random Order}, parameters are visited in a completely random order. Real users operate somewhere in the middle of these regimes depending on their skill level. 
+\vspace{-25pt}
 \section{Error Metric}\label{sec:ErrorMetric}
 \vspace{-5pt}
 A parameter-based error metric is used for these tasks due to the complexity of using a sound based comparisons of presets(\S \ref{sec:MachineLearning}).
@@ -895,7 +898,7 @@ Perfect/Imperfect user tests were carrried out on the Blending Interface, using 
 	\centering
 	%	\vspace{-40pt}
 	\includegraphics[width = 5in]{TradInterfaceTests2.eps}
-	\caption{Perfect/Imperfect user tests for Traditional Interface averaged over all 36 goal presets. Ideal Order shown with solid lines, Random Order shown with dotted lines. The parameter order has a much more significant effect than the imperfections of the user.}
+	\caption{Perfect/Imperfect user tests for Traditional Interface averaged over all 36 goal presets (Perfect: $\sigma =0$). Ideal Order shown with solid lines, Random Order shown with dotted lines. The parameter order has a much more significant effect than the imperfections of the user. }
 	\label{fig:TradTest2}
 		\vspace{-10pt}
 \end{figure}
@@ -906,12 +909,12 @@ For low values of $\sigma$, the Ideal Order tests folllows a smooth, approximate
 A similar evaluation was carried out with the selection interface. Again all 36 presets were used as goal presets, with the closest preset used each time as the starting point. For each test, the PCA values were calculated for the remaining 35 presets, simulating the situation where the PCA Macros were being used to find a brand new preset. As before, two parameter orders were tested: the Macro Controls were visited cyclically in order of PCA number, or visited in a random order. For each iteration of the test, the MATLAB \emph{Patternsearch} algorithm\footnote{A \emph{Generalised Pattern Seach (GPS)} \cite{GeneralisedPatternSearch} \emph{Direct Search} algorithm (no gradients are required) \cite{DirectSearch}. For these one-off tests the only goal is to find the minimum, with the convergence speed being irrelevant. The cost function is smooth and only a single parameter is being altered at a time, so \emph{Patternsearch} is appropriate. If a sound-based error metric was used the search space would become highly non-convex, presenting a significant challenge when optimising. Whether or not the simulated user test would even be possible remains to be seen.} was used to minimise the error metric for a particular Macro Control, to simulate a Perfect User.\\ 
 A key question with the interface is whether the Global or Time/Timbre version of the PCA Macro Controls should be used. The results for a test with the combination of both sets of macros is shown in Fig. \ref{fig:PCAtest1}, and a comparison of the mean results for the different macro configurations is shown in Fig. \ref{fig:PCAtest2}.
 \begin{figure}
-	\caption{Perfect/Imperfect user tests for Selection Interface}
+	\caption{Perfect User tests for Selection Interface}
 	\begin{subfigure}[b]{\textwidth}
 \hspace{-60pt}
 	\includegraphics[width = 8in]{PCAInterfaceTests1.eps}
 	\vspace{-10pt}
-	\caption{Perfect User tests ($\sigma = 0$) for the Selection Interface. The left plot shows a simulation in which the Macro Controls are visited in order of principal component number. In the right plot, the Macro Controls are visited in a random order.. The thin lines show individual instances of the test, and the thick red lines show the mean results. N.B. there is a large variation in the effectiveness of the Macro Controls depending on the goal preset. For low numbers of iterations, the }
+	\caption{Perfect User tests ($\sigma = 0$) for the Selection Interface. The left plot shows a simulation in which the Macro Controls are visited in order of principal component number. In the right plot, the Macro Controls are visited in a random order.. The thin lines show individual instances of the test, and the thick red lines show the mean results. N.B. there is a large variation in the effectiveness of the Macro Controls depending on the goal preset. For low numbers of iterations, the Random Order is less effective.}
 	\label{fig:PCAtest1}
 	%	\vspace{-30pt}
 \end{subfigure}
@@ -1001,7 +1004,7 @@ A conclusion to draw from this is that the interfaces effectively enable explora
 		\cellcolor[HTML]{EFEFEF}Selection   & Yes          & No           & Yes         & No       & \begin{tabular}[c]{@{}L@{}}Exploration by browsing and varying presets. \\ Reflective as easy comparison of original presets with combined and varied presets.\end{tabular}                                                                                                                                                                                                            \\ \hline
 		\cellcolor[HTML]{EFEFEF}Blending    & Yes          & Maybe        & Yes         & Maybe    & \begin{tabular}[c]{@{}L@{}}Well suited to exploratory, due to simple interface and preset generation. \\ May be used algorithmically due to parameter freezing.\\ The Selection History graph enables reflective comparison and combination.\\ May be used as a skilled strategy, but is not optimised for this approach. Too low dimensional and unpredictable.\end{tabular} \\ \hline
 	\end{tabular}
-\caption{EARS Model evaluation of the three synthesiser interfaces}
+\caption{EARS Model evaluation of the three synthesiser interfaces.}
 \label{tab:EARStable}
 \end{table}
 
@@ -1023,7 +1026,7 @@ As the algorithm does not spatially transform the image in any way, a simple met
 \begin{figure}[h]
 	\hspace{-30pt}
 	\includegraphics[trim = {2cm, 0cm, 2cm, 0cm}, clip, width = 7in]{ImageTestGraph.png}
-	\caption{A Perfect User Test using the Blending Interface to control the Image Filtering Algorithm.}
+	\caption{A Perfect User test using the Blending Interface to control the Image Filtering Algorithm.}
 	\label{fig:ImageFIlteringOutput}
 %	\vspace{-20pt}
 \end{figure}
@@ -1117,6 +1120,9 @@ Experiments.withgoogle.com. (2017). \emph{The Infinite Drum Machine by Manny Tan
 \bibitem{Wekinator}
 Fiebrink, R. et al. (2010). \emph{The Wekinator: A System for Real-time, Interactive Machine Learning in Music}. Proceedings of The Eleventh International Society for Music Information Retrieval Conference (ISMIR 2010). 
 
+\bibitem{FittsLaw}
+Fitts, P. M. (1954). \emph{The information capacity of the human motor system in controlling the amplitude of movement}. Journal of Experimental Psychology. 47 (6): 381–391.
+
 \bibitem{ICMC}
 Hantrakul, L. and Kaczmarek, K. (2014). \emph{Implementations of the Leap Motion in sound synthesis, effects modulation and assistive performance tools}. In: International Computer Music Conference. 
 
@@ -1159,6 +1165,9 @@ References
 \bibitem{Consistency}
 Nielsen, J. (1994). \emph{Enhancing the explanatory power of usability heuristics}. In Proceedings of the SIGCHI Conference on Human Factors in Computing Systems (CHI '94). ACM, New York, NY, USA, 152-158. DOI=http://dx.doi.org/10.1145/191666.191729
 
+\bibitem{Github}
+O'Connor, T. (2018). \emph{TomOConnor95/4YP}. [online] GitHub. Available at: \url{https://github.com/TomOConnor95/4YP} [Accessed 2 May 2018].
+
 \bibitem{OSC}
 Opensoundcontrol.org. (2002). \emph{Introduction to OSC} [online] Available at: \url{http://opensoundcontrol.org/introduction-osc} [Accessed 18 Apr. 2018].
 
@@ -1182,8 +1191,8 @@ Settles, Burr. (2010). \emph{Active Learning Literature Survey}. University of W
 \bibitem{PCA}
 Shlens, D. (2014). \emph{A Tutorial on Principal Component Analysis}. arXiv:1404.1100 [cs.LG]
 
-\bibitem{SoftTube}
-Softube.com. (2016). Softube - Modular. [online] Available at: \url{https://www.softube.com/modular} [Accessed 18 Apr. 2018].
+%\bibitem{SoftTube}
+%Softube.com. (2016). Softube - Modular. [online] Available at: \url{https://www.softube.com/modular} [Accessed 18 Apr. 2018].
 
 \bibitem{EvolvedAudioEffects}
 Smith, B.D. (2017). \emph{Play it Again: Evolved Audio Effects and Synthesizer Programming}. In: Computational Intelligence in Music, Sound, Art and Design. EvoMUSART 2017. Lecture Notes in Computer Science, vol 10198. Springer, Cham.
