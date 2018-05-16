@@ -2,6 +2,7 @@ classdef ApplicationDataPCAInterface < handle
     properties (SetAccess = public, GetAccess = public)
         % Preset Data
         presetStore;
+        presetStoreEdited;
         presetStoreVaried;
         
         presetCategories;
@@ -35,6 +36,9 @@ classdef ApplicationDataPCAInterface < handle
         
         presetPCAParams;
         
+        % Doesn't work quite right yet - preset markers in wrong place!
+        weightedPCA = false;
+        
         % UI elements - PCA Voronoi
         selectedColour = [1.0, 0, 0];
         mouseOverColour = [0, 0, 1.0];
@@ -62,6 +66,7 @@ classdef ApplicationDataPCAInterface < handle
         
         %Combined Preset Markers and data
         combinedPresets;
+        combinedPresetsEdited;
         combinedPresetsVaried;
         combinedPresetPCAParams;
         combinedLines;
@@ -92,6 +97,9 @@ classdef ApplicationDataPCAInterface < handle
         controlPanel;
         popup;
         blendModeButton;
+        editModeButton;
+        resetMacrosButton;
+        undoEditButton;
         macroTypeButton;
         macroType = 'TimbreTime';
         
@@ -126,12 +134,15 @@ classdef ApplicationDataPCAInterface < handle
         
         midiControls;
         
+        UIapp;
         blendingAppData;
     end
     
     methods
         % Constructor
-        function obj = ApplicationDataPCAInterface()
+        function obj = ApplicationDataPCAInterface(UIapp_in)
+            % This UI is contained in UIapp
+            obj.UIapp = UIapp_in;
             
             % Open UDP connection
             obj.u = udp('127.0.0.1',57120);
@@ -147,7 +158,7 @@ classdef ApplicationDataPCAInterface < handle
             % Load Presets
             presetRead = matfile('PresetStoreSC.mat');
             obj.presetStore = presetRead.presetStore;
-            
+            obj.presetStoreEdited = obj.presetStore;
             obj.presetStoreVaried = obj.presetStore;
             
             obj.presetPCAParams = repmat({zeros(4,4)},1,length(obj.presetStore(:,1)));
@@ -175,15 +186,6 @@ classdef ApplicationDataPCAInterface < handle
             
             % Create control panel - buttons to move to different UIs
             createControlPanel(obj);
-%             % Blend Mode Button
-%             createBlendModeButton(obj);
-%             
-%             % Macro Type Button
-%             createMacroTypeButton(obj);
-%             
-%             % Add pop-up menu to display the selected Preset
-%             createPopup(obj);
-            
             
             % Category Buttons
             createCategoryButtons(obj);
@@ -209,6 +211,7 @@ classdef ApplicationDataPCAInterface < handle
             
             % Set up Blending App
             obj.blendingAppData = ApplicationDataBlendingInterface(obj);
+            
             
         end
         
@@ -257,7 +260,9 @@ else
         appData.blendModeButton.Enable = 'off';
     end
 end
-%drawnow()
+
+%Correctly Enable/Disable Edit Mode Button
+correctlyEnableDisableEditModeButton(appData);
 
 % Deselect previous combined marker if necessary
 if ~isempty(appData.combinedMarkers)
@@ -267,6 +272,13 @@ if ~isempty(appData.combinedMarkers)
         appData.combinedMarkers{appData.combinedMarkerLastClicked}.Color = [1,0,0];
     elseif (appData.combinedMarkerLastClicked > 0)
         appData.combinedMarkers{appData.combinedMarkerLastClicked}.Color = appData.selectedColour;
+    end
+end
+
+% Control dotted line thickness
+if ~isempty(appData.combinedLines)
+    for i = 1:length(appData.combinedLines) 
+        appData.combinedLines{i}.LineWidth = 2;
     end
 end
 
@@ -333,9 +345,11 @@ appData.leftNumDisplays{idx}.String = num2str(appData.leftSliders{idx}.Value);
 
 storeLeftSliderPosition(appData)
 
-updatePCAWeightsAndSendParams(appData)
+updatePCAWeightsAndSendParams(appData);
 
-updatePresetVariedMarker(appData)
+updatePresetVariedMarker(appData);
+
+correctlyEnableDisableResetPresetButton(appData);
 
 % Update Timbre Plots
 appData.timbreData = timbrePlotDataFromPreset(appData.presetStoreVaried(appData.idxCurrent,:));
@@ -360,11 +374,13 @@ end
 function rightSliderCallback (object, eventdata, idx, appData)
 appData.rightNumDisplays{idx}.String = num2str(appData.rightSliders{idx}.Value);
 
-storeRightSliderPosition(appData)
+storeRightSliderPosition(appData);
 
-updatePCAWeightsAndSendParams(appData)
+updatePCAWeightsAndSendParams(appData);
 
-updatePresetVariedMarker(appData)
+updatePresetVariedMarker(appData);
+
+correctlyEnableDisableResetPresetButton(appData);
 
 if  isequal(appData.lastSelectedPresetType, 'Original')
     % Update Time Plots
@@ -386,25 +402,29 @@ end
 function leftGlobalSliderCallback (object, eventdata, idx, appData)
 appData.leftGlobalNumDisplays{idx}.String = num2str(appData.leftGlobalSliders{idx}.Value);
 
-storeLeftGlobalSliderPosition(appData)
+storeLeftGlobalSliderPosition(appData);
 
-updatePCAWeightsAndSendParams(appData)
+updatePCAWeightsAndSendParams(appData);
  
-updatePresetVariedMarker(appData)
+updatePresetVariedMarker(appData);
 
-updateTimeAndTimbrePlots(appData)
+correctlyEnableDisableResetPresetButton(appData);
+
+updateTimeAndTimbrePlots(appData);
                             
 end
 function rightGlobalSliderCallback (object, eventdata, idx, appData)
 appData.rightGlobalNumDisplays{idx}.String = num2str(appData.rightGlobalSliders{idx}.Value);
 
-storeRightGlobalSliderPosition(appData)
+storeRightGlobalSliderPosition(appData);
 
-updatePCAWeightsAndSendParams(appData)
+updatePCAWeightsAndSendParams(appData);
 
-updatePresetVariedMarker(appData)
+updatePresetVariedMarker(appData);
 
-updateTimeAndTimbrePlots(appData)
+correctlyEnableDisableResetPresetButton(appData);
+
+updateTimeAndTimbrePlots(appData);
 end
 
 function leftTextCallback (object, eventdata, idx, appData)
@@ -412,11 +432,13 @@ function leftTextCallback (object, eventdata, idx, appData)
 appData.leftNumDisplays{idx}.String = num2str(0);
 appData.leftSliders{idx}.Value = 0;
 
-storeLeftSliderPosition(appData)
+storeLeftSliderPosition(appData);
 
-updatePCAWeightsAndSendParams(appData)
+updatePCAWeightsAndSendParams(appData);
 
-updatePresetVariedMarker(appData)
+updatePresetVariedMarker(appData);
+
+correctlyEnableDisableResetPresetButton(appData);
 
 % Update Timbre Plots
 appData.timbreData = timbrePlotDataFromPreset(appData.presetStoreVaried(appData.idxCurrent,:));
@@ -430,11 +452,13 @@ function rightTextCallback (object, eventdata, idx, appData)
 appData.rightNumDisplays{idx}.String = num2str(0);
 appData.rightSliders{idx}.Value = 0;
 
-storeRightSliderPosition(appData)
+storeRightSliderPosition(appData);
 
-updatePCAWeightsAndSendParams(appData)
+updatePCAWeightsAndSendParams(appData);
 
-updatePresetVariedMarker(appData)
+updatePresetVariedMarker(appData);
+
+correctlyEnableDisableResetPresetButton(appData);
 
 % Update Time Plots
 appData.timeData = timePlotDataFromPreset(appData.presetStoreVaried(appData.idxCurrent,:));
@@ -449,11 +473,13 @@ function leftGlobalTextCallback (object, eventdata, idx, appData)
 appData.leftGlobalNumDisplays{idx}.String = num2str(0);
 appData.leftGlobalSliders{idx}.Value = 0;
 
-storeLeftGlobalSliderPosition(appData)
+storeLeftGlobalSliderPosition(appData);
 
-updatePCAWeightsAndSendParams(appData)
+updatePCAWeightsAndSendParams(appData);
 
-updatePresetVariedMarker(appData)
+updatePresetVariedMarker(appData);
+
+correctlyEnableDisableResetPresetButton(appData);
 
 % Update Timbre Plots
 appData.timbreData = timbrePlotDataFromPreset(appData.presetStoreVaried(appData.idxCurrent,:));
@@ -472,11 +498,13 @@ function rightGlobalTextCallback (object, eventdata, idx, appData)
 appData.rightGlobalNumDisplays{idx}.String = num2str(0);
 appData.rightGlobalSliders{idx}.Value = 0;
 
-storeRightGlobalSliderPosition(appData)
+storeRightGlobalSliderPosition(appData);
 
-updatePCAWeightsAndSendParams(appData)
+updatePCAWeightsAndSendParams(appData);
 
-updatePresetVariedMarker(appData)
+updatePresetVariedMarker(appData);
+
+correctlyEnableDisableResetPresetButton(appData);
 
 % Update Timbre Plots
 appData.timbreData = timbrePlotDataFromPreset(appData.presetStoreVaried(appData.idxCurrent,:));
@@ -492,7 +520,7 @@ end
 
 function blendModeButtonCallback (object, eventdata, appData)
 disp('Blend Mode Button Clicked');
-appData.idxSelected;
+%appData.idxSelected;
 
 % There must be 3 selected presets when this funciton is called
 assert(((length(appData.idxSelected) + length(appData.combinedMarkersSelected)) == 3),'3 presets needed for blending')
@@ -502,18 +530,36 @@ switch length(appData.idxSelected)
         presetA = appData.presetStoreVaried(appData.idxSelected(1),:);
         presetB = appData.presetStoreVaried(appData.idxSelected(2),:);
         presetC = appData.presetStoreVaried(appData.idxSelected(3),:);
+        
+        colourA = appData.patches{appData.idxSelected(1)}.FaceColor;
+        colourB = appData.patches{appData.idxSelected(2)}.FaceColor;
+        colourC = appData.patches{appData.idxSelected(3)}.FaceColor;
     case 2
         presetA = appData.presetStoreVaried(appData.idxSelected(1),:);
         presetB = appData.presetStoreVaried(appData.idxSelected(2),:);
         presetC = appData.combinedPresetsVaried{appData.combinedMarkersSelected(1)};
+        
+        colourA = appData.patches{appData.idxSelected(1)}.FaceColor;
+        colourB = appData.patches{appData.idxSelected(2)}.FaceColor;
+        colourC = appData.combinedMarkers{appData.combinedMarkersSelected(1)}.MarkerFaceColor;
+        
     case 1
         presetA = appData.presetStoreVaried(appData.idxSelected(1),:);
         presetB = appData.combinedPresetsVaried{appData.combinedMarkersSelected(1)};
         presetC = appData.combinedPresetsVaried{appData.combinedMarkersSelected(2)};
+        
+        colourA = appData.patches{appData.idxSelected(1)}.FaceColor;
+        colourB = appData.combinedMarkers{appData.combinedMarkersSelected(1)}.MarkerFaceColor;
+        colourC = appData.combinedMarkers{appData.combinedMarkersSelected(2)}.MarkerFaceColor;
+        
     case 0
         presetA = appData.combinedPresetsVaried{appData.combinedMarkersSelected(1)};
         presetB = appData.combinedPresetsVaried{appData.combinedMarkersSelected(2)};
         presetC = appData.combinedPresetsVaried{appData.combinedMarkersSelected(3)};
+        
+        colourA = appData.combinedMarkers{appData.combinedMarkersSelected(1)}.MarkerFaceColor;
+        colourB = appData.combinedMarkers{appData.combinedMarkersSelected(2)}.MarkerFaceColor;
+        colourC = appData.combinedMarkers{appData.combinedMarkersSelected(3)}.MarkerFaceColor;
 end
 
 appData.blendingAppData.P = presetGeneratorSCMonteCarloMV(presetA, presetB, presetC, appData.blendingAppData);
@@ -522,6 +568,19 @@ sendAllStructParamsOverOSC(appData.blendingAppData.P.presetA,...
     appData.blendingAppData.nameStrings,...
     appData.blendingAppData.typeStrings,...
     appData.blendingAppData.u);
+
+% Recolour Blending Interface
+colours = calculateAllOuterPCAColours(appData.blendingAppData, presetA, presetB, presetC);
+colours.A = colourA;
+colours.B = colourB;
+colours.C = colourC;
+
+appData.blendingAppData.P = recolourBlendingGeometry(appData.blendingAppData.P, colours);
+
+appData.blendingAppData.pauseButton.String = 'Begin Searching';
+appData.blendingAppData.pauseButton.BackgroundColor = appData.blendingAppData.pauseColour;
+
+% Hide/Show correct windows
 
 set(figure(1), 'Visible', 'on')
 if appData.blendingAppData.displayBarGraphs == true
@@ -542,8 +601,92 @@ appData.blendingAppData.isPaused = true;
 appData.blendingAppData.G.panel.Visible = 'on';
 appData.blendingAppData.phPanel.Visible = 'off';
 
-appData.blendingAppData.pauseButton.String = 'Begin Searching';
-appData.blendingAppData.pauseButton.BackgroundColor = appData.blendingAppData.pauseColour;
+
+end
+
+function editModeButtonCallback (object, eventdata, appData)
+disp('Edit Mode Button Clicked');
+
+% Find current Preset, vith macro variations
+if isequal(appData.lastSelectedPresetType, 'Original')
+    preset = appData.presetStoreVaried(appData.idxSelected(end),:);  
+elseif isequal(appData.lastSelectedPresetType, 'Combined')
+    preset = appData.combinedPresetsVaried{appData.combinedMarkerLastClicked};
+else
+    error('Incorrect Preset Type')
+end
+% send preset to traditional UI
+appData.UIapp = loadPreset(appData.UIapp, preset);
+appData.UIapp.PresetSpinner.Limits(1) = 0;
+appData.UIapp.PresetSpinner.Value = 0;
+
+% Hide/show necessary windows
+appData.UIapp.UIFigure.Visible = 'on';
+
+end
+
+function resetMacrosButtonCallback (object, eventdata, appData)
+disp('Reset Macros Button Clicked');
+
+% Reset macro Controls
+if isequal(appData.lastSelectedPresetType, 'Original')
+    appData.presetStoreVaried(appData.idxSelected(end),:) =...
+            appData.presetStoreEdited(appData.idxSelected(end),:);
+
+    appData.presetPCAParams{appData.idxSelected(end)} = zeros(4);
+    
+    sendAllStructParamsOverOSC(appData.presetStoreVaried(appData.idxCurrent,:),...
+      appData.nameStrings, appData.typeStrings, appData.u);
+    
+elseif isequal(appData.lastSelectedPresetType, 'Combined')
+    appData.combinedPresetsVaried{appData.combinedMarkerLastClicked} =...
+            appData.combinedPresetsEdited{appData.combinedMarkerLastClicked};
+        
+    sendAllStructParamsOverOSC(appData.combinedPresetsVaried{appData.combinedMarkerLastClicked},...
+      appData.nameStrings, appData.typeStrings, appData.u);
+  
+    appData.combinedPresetPCAParams{appData.combinedMarkerLastClicked} = zeros(4);
+else
+    error('Incorrect Preset Type')
+end
+
+% Update Preset Markers
+updatePresetVariedMarker(appData)
+
+% Reset Sliders
+updateSliders(zeros(4), appData);
+
+% Reset NumDisplays
+updateNumDisplays(zeros(4), appData);
+
+% Update Time and Timbre plots
+updateTimeAndTimbrePlots(appData)
+
+
+correctlyEnableDisableResetPresetButton(appData)
+end
+
+function undoEditButtonCallback (object, eventdata, appData)
+disp('Undo Edit Button Clicked');
+if isequal(appData.lastSelectedPresetType, 'Original')
+    appData.presetStoreEdited(appData.idxSelected(end),:) = ...
+        appData.presetStore(appData.idxSelected(end),:);  
+    
+    switchToPreset(appData.idxSelected(end), appData);
+    
+elseif isequal(appData.lastSelectedPresetType, 'Combined')
+    appData.combinedPresetsEdited{appData.combinedMarkerLastClicked} = ...
+        appData.combinedPresets{appData.combinedMarkerLastClicked};
+    
+    switchToCombinedPreset(appData.combinedMarkerLastClicked, appData)
+    
+else
+    error('Incorrect Preset Type')
+end
+updatePCAWeightsAndSendParams(appData);
+updatePresetVariedMarker(appData);
+
+appData.undoEditButton.Enable = 'off';
 end
 
 function macroTypeButtonCallback (object, eventdata, appData)
@@ -567,6 +710,31 @@ elseif strcmp(appData.macroType, 'Global') == true
 else
     disp('Invalid MacroType Selected')
 end
+end
+
+function numPopupCallback(object, eventdata, appData)
+    idx = appData.popup.Value;
+    
+    switchToPreset(idx, appData);
+    
+    if ~ismember(idx, appData.idxSelected)
+        appData.idxSelected = [appData.idxSelected, idx];
+
+        appData.patches{idx}.EdgeColor = appData.selectedColour;
+    end
+    
+    if ~isempty(appData.idxPopupSelected)
+        appData.idxSelected(appData.idxSelected == appData.idxPopupSelected) = [];
+        
+        appData.patches{appData.idxPopupSelected}.FaceColor = appData.colours{appData.idxPopupSelected};
+        appData.patches{appData.idxPopupSelected}.EdgeColor = [0,0,0];
+        appData.patches{appData.idxPopupSelected}.LineWidth = 0.5;
+    end
+     
+    appData.idxPopupSelected = idx;
+
+    appData.patches{idx}.EdgeColor = appData.selectedColour;
+    
 end
 
 function categoryButtonCallback (object, eventdata, idx, appData)
@@ -696,58 +864,43 @@ if idx < 5
 
     appData.leftNumDisplays{idx}.String = num2str(appData.leftSliders{idx}.Value);
 
-    storeLeftSliderPosition(appData)
+    storeLeftSliderPosition(appData);
      
 else
     appData.rightSliders{idx-4}.Value = (midiCC * 10) - 5;
  
     appData.rightNumDisplays{idx-4}.String = num2str(appData.rightSliders{idx-4}.Value);
 
-    storeRightSliderPosition(appData)
+    storeRightSliderPosition(appData);
 end
 
-updatePCAWeightsAndSendParams(appData)
+updatePCAWeightsAndSendParams(appData);
 
-updatePresetVariedMarker(appData)
+updatePresetVariedMarker(appData);
+
+correctlyEnableDisableResetPresetButton(appData);
 
 if idx < 5
     % Update Timbre Plots
-    appData.timbreData = timbrePlotDataFromPreset(appData.presetStoreVaried(appData.idxCurrent,:));
+    if isequal(appData.lastSelectedPresetType, 'Original')
+        appData.timbreData = timbrePlotDataFromPreset(appData.presetStoreVaried(appData.idxCurrent,:));
+    else
+        appData.timbreData = timbrePlotDataFromPreset(appData.combinedPresetsVaried{appData.combinedMarkerLastClicked});
+    end
     appData.timbrePlots = updateTimbrePlots(appData.timbrePlots, appData.timbreData); 
 else
     % Update Time Plots
-    appData.timeData = timePlotDataFromPreset(appData.presetStoreVaried(appData.idxCurrent,:));
+    if isequal(appData.lastSelectedPresetType, 'Original')
+        appData.timeData = timePlotDataFromPreset(appData.presetStoreVaried(appData.idxCurrent,:));
+    else
+        appData.timeData = timePlotDataFromPreset(appData.combinedPresetsVaried{appData.combinedMarkerLastClicked});
+    end
     appData.timePlots = updateTimePlots(appData.timePlots, appData.timeData);  
 end
 dispstat(sprintf(preset2string(appData.presetStoreVaried(appData.idxCurrent, :),...
                                 appData.nameStrings)));
- 
 end
 
-function numPopupCallback(object, eventdata, appData)
-    idx = appData.popup.Value;
-    
-    switchToPreset(idx, appData);
-    
-    if ~ismember(idx, appData.idxSelected)
-        appData.idxSelected = [appData.idxSelected, idx];
-
-        appData.patches{idx}.EdgeColor = appData.selectedColour;
-    end
-    
-    if ~isempty(appData.idxPopupSelected)
-        appData.idxSelected(appData.idxSelected == appData.idxPopupSelected) = [];
-        
-        appData.patches{appData.idxPopupSelected}.FaceColor = appData.colours{appData.idxPopupSelected};
-        appData.patches{appData.idxPopupSelected}.EdgeColor = [0,0,0];
-        appData.patches{appData.idxPopupSelected}.LineWidth = 0.5;
-    end
-     
-    appData.idxPopupSelected = idx;
-
-    appData.patches{idx}.EdgeColor = appData.selectedColour;
-    
-end
 %----------------------------------------------------------%
 %----------------------Misc Functions----------------------%
 %----------------------------------------------------------%
@@ -764,7 +917,7 @@ if isequal(appData.lastSelectedPresetType, 'Original')
 
     % Alter Selected preset
     appData.presetStoreVaried(appData.idxCurrent,:) = adjustPresetWithPCA(...
-        appData.presetStore(appData.idxCurrent,:),...
+        appData.presetStoreEdited(appData.idxCurrent,:),...
         appData.coeffCell, pcaWeightsTT,...
         appData.globalCoeffCell, pcaWeightsGlobal);
 
@@ -781,7 +934,7 @@ elseif  isequal(appData.lastSelectedPresetType, 'Combined')
 
     % Alter Selected preset
     appData.combinedPresetsVaried{appData.combinedMarkerLastClicked} = adjustPresetWithPCA(...
-        appData.combinedPresets{appData.combinedMarkerLastClicked},...
+        appData.combinedPresetsEdited{appData.combinedMarkerLastClicked},...
         appData.coeffCell, pcaWeightsTT,...
         appData.globalCoeffCell, pcaWeightsGlobal);
 
@@ -914,42 +1067,7 @@ end
 function updatePresetVariedMarker(appData)
 if isequal(appData.lastSelectedPresetType, 'Original')
 
-    alteredPresetFlattened = cell2mat(appData.presetStoreVaried(appData.idxCurrent,:));
-    mu = mean(cell2mat(appData.presetStoreVaried));
-    alteredPresetFlattened = alteredPresetFlattened - mu;
-
-    idxMax = max([appData.idxX, appData.idxY, appData.idxR, appData.idxG, appData.idxB]);
-    testScore = alteredPresetFlattened*appData.coeff(:,1:idxMax);
-
-    idxX = appData.idxX; 
-    idxY = appData.idxY; 
-    idxR = appData.idxR;
-    idxG = appData.idxG;
-    idxB = appData.idxB;
-
-    if appData.normaliseHistogram == true
-        % Need to apply the same historam normalisation to the new positition
-        testScore(idxX) = newPointHistogramNormalisation(...
-            testScore(idxX),appData.histParams.nX, appData.histParams.edgesX, appData.histBlend);
-
-        testScore(idxY) = newPointHistogramNormalisation(...
-            testScore(idxY),appData.histParams.nY, appData.histParams.edgesY, appData.histBlend);
-
-        testScore(idxR) = newPointHistogramNormalisation(...
-            testScore(idxR),appData.histParams.nR, appData.histParams.edgesR, appData.histBlend);
-
-        testScore(idxG) = newPointHistogramNormalisation(...
-            testScore(idxG),appData.histParams.nG, appData.histParams.edgesG, appData.histBlend);
-
-        testScore(idxB) = newPointHistogramNormalisation(...
-            testScore(idxB),appData.histParams.nB, appData.histParams.edgesB, appData.histBlend);
-    end
-        % Maybe should store the minimum and maximum value to avoid recalculation
-        x = mapRange(testScore(idxX), appData.minX, appData.maxX, 0.05, 0.95);
-        y = mapRange(testScore(idxY), appData.minY, appData.maxY, 0.05, 0.95);
-        R = bound(mapRange(testScore(idxR), appData.minR, appData.maxR, 0.1, 1), 0, 1);
-        G = bound(mapRange(testScore(idxG), appData.minG, appData.maxG, 0.1, 1), 0, 1);
-        B = bound(mapRange(testScore(idxB), appData.minB, appData.maxB, 0.1, 1), 0, 1);
+    [x, y, R, G, B] = calculatePCAScores(appData, appData.presetStoreVaried(appData.idxCurrent,:));
 
     if isempty(appData.variedPresetMarkers{appData.idxCurrent})
         appData.variedPresetLines{appData.idxCurrent} = plot(...
@@ -970,7 +1088,10 @@ if isequal(appData.lastSelectedPresetType, 'Original')
         appData.variedPresetLines{appData.idxCurrent}.YData(1) = y;
     end
 elseif isequal(appData.lastSelectedPresetType, 'Combined')
-    appData.combinedMarkers{appData.combinedMarkerLastClicked}.MarkerFaceColor = [0.3,0.3,1];
+    
+    [~, ~, R, G, B] = calculatePCAScores(appData, appData.combinedPresetsVaried{appData.combinedMarkerLastClicked});
+    
+    appData.combinedMarkers{appData.combinedMarkerLastClicked}.MarkerFaceColor = [R,G,B];
 else
     error('Incorrent Preset Type')
 end
@@ -1081,8 +1202,13 @@ mu = mean(presetStoreFlattened);
 presetStoreFlattened = presetStoreFlattened - mu;
 
 
-[coeff, score, latent] = pca(presetStoreFlattened);
-
+if appData.weightedPCA == true
+    [coeff, score, latent] = pca(presetStoreFlattened, 'VariableWeights','variance');
+else
+    [coeff, score, latent] = pca(presetStoreFlattened);
+end
+    
+    
 appData.coeff = coeff;
 appData.score = score;
 appData.latent = latent;
@@ -1148,10 +1274,20 @@ B = mapVectorRange(B, 0.1,1);
 appData.colours = num2cell([R,G,B],2);
 
 % Perform PCA on presets - timbre parameters
-[timbreCoeff, timbreScore, timbreLatent] = pca(presetStoreFlattened(:,1:72));
+
+if appData.weightedPCA == true
+    [timbreCoeff, timbreScore, timbreLatent] = pca(presetStoreFlattened(:,1:72), 'VariableWeights','variance');
+else
+    [timbreCoeff, timbreScore, timbreLatent] = pca(presetStoreFlattened(:,1:72));
+end
+    
 
 % Perform PCA on presets - time parameters
-[timeCoeff, timeScore, timeLatent] = pca(presetStoreFlattened(:,73:94));
+if appData.weightedPCA == true
+    [timeCoeff, timeScore, timeLatent] = pca(presetStoreFlattened(:,73:94), 'VariableWeights','variance');
+else
+    [timeCoeff, timeScore, timeLatent] = pca(presetStoreFlattened(:,73:94));
+end
 
 coeffCombined = [timbreCoeff(:,1:4), zeros(size(timbreCoeff(:,1:4)));...
                  zeros(size(timeCoeff(:,1:4))), timeCoeff(:,1:4), ];
@@ -1167,7 +1303,12 @@ mu = mean(presetStoreFlattened);
 
 presetStoreFlattened = presetStoreFlattened - mu;
 
-[coeff, score, latent] = pca(presetStoreFlattened);
+if appData.weightedPCA == true
+    [coeff, score, latent] = pca(presetStoreFlattened, 'VariableWeights','variance');
+else
+    [coeff, score, latent] = pca(presetStoreFlattened);
+end
+
 % 
 % appData.coeff = coeff;
 % appData.score = score;
@@ -1268,32 +1409,6 @@ end
 %xOut = xNorm;
 xOut = histBlend*xNorm + (1-histBlend)*xIn;
 
-end
-
-function [score] = newPointHistogramNormalisation(scoreIn, n, edges, histBlend)
-    lowerEdgeIdx = find(edges < scoreIn, 1, 'last' );
-    
-    if isempty(lowerEdgeIdx)
-        score = 0;
-    else
-        if lowerEdgeIdx == 0
-        lowerSum = 0;
-        else
-            lowerSum = sum(n(1:lowerEdgeIdx-1));
-        end
-
-        if lowerEdgeIdx == length(edges)
-            %disp('Out of range')
-            score = mapRange(scoreIn,...
-                        edges(lowerEdgeIdx), edges(lowerEdgeIdx)*1.1,...
-                        lowerSum, lowerSum*1.1);
-        else
-        score = mapRange(scoreIn,...
-                        edges(lowerEdgeIdx), edges(lowerEdgeIdx + 1),...
-                        lowerSum, lowerSum + n(lowerEdgeIdx));
-        end
-    end
-    score = histBlend*score + (1-histBlend)*scoreIn;
 end
 
 function categorySelect(appData, categoryIndeces)
@@ -1413,13 +1528,52 @@ else
     error('Incorrect Category Setting')
 end
 end
+
+function correctlyEnableDisableResetPresetButton(appData)
+
+    if isequal(appData.lastSelectedPresetType, 'Original')
+        if isempty(appData.idxSelected)
+            enable = 0;
+        else
+            if isequal(appData.presetPCAParams{appData.idxSelected(end)}, zeros(4))
+                enable = 0;
+            else
+                enable = 1; 
+            end 
+        end
+        
+    elseif isequal(appData.lastSelectedPresetType, 'Combined')
+        if isempty(appData.combinedMarkersSelected)
+            enable = 0;
+        else
+            if isequal(appData.combinedPresetPCAParams{appData.combinedMarkerLastClicked}, zeros(4))
+                enable = 0;
+            else
+                enable = 1; 
+            end 
+        end
+    else
+        error('Incorrect Preset Type')
+    end
+
+if enable == 0 && isequal(appData.resetMacrosButton.Enable, 'on')
+appData.resetMacrosButton.Enable = 'off';
+end
+
+
+if enable == 1 && isequal(appData.resetMacrosButton.Enable, 'off')
+    appData.resetMacrosButton.Enable = 'on';
+end
+
+end
 %----------------------------------------------------------%
 %----------------------UI Objects--------------------------%
 %----------------------------------------------------------%
 
 function createPresetVoronoi(appData)
 figure(5), clf, 
-set(figure(5), 'MenuBar', 'none', 'ToolBar' ,'none')
+set(figure(5), 'MenuBar', 'none', 'ToolBar' ,'none',...
+                'Position', appData.UIapp.UIFigure.Position)
 
 appData.hiddenAxes = axes('position',[0,0.2,1,0.7],...
         'Units','Normalized',...
@@ -1604,6 +1758,15 @@ appData.controlPanel = uipanel('Position',[0.0, 0.0, 0.3, 0.2]);
 % Blend Mode Button
 createBlendModeButton(appData, appData.controlPanel);
 
+% Edit Mode Button
+createEditModeButton(appData, appData.controlPanel);
+
+% Reset Macros Button
+createResetMacrosButton(appData, appData.controlPanel);
+
+% Undo Edit Button
+createUndoEditButton(appData, appData.controlPanel);
+
 % Macro Type Button
 createMacroTypeButton(appData, appData.controlPanel);
 
@@ -1616,8 +1779,47 @@ appData.blendModeButton = uicontrol(panel,...
     'style', 'pushbutton',...
     'string', 'Blend Mode',...
     'units', 'normalized',...
-    'position', [0.0 0.6 0.5 0.4],...
+    'position', [0.0 0.625 0.5 0.375],...
     'callback', {@blendModeButtonCallback, appData},...
+    'visible', 'on',...
+    'FontSize', 13,...
+    'Enable', 'off');
+
+end
+
+function createEditModeButton(appData, panel)
+appData.editModeButton = uicontrol(panel,...
+    'style', 'pushbutton',...
+    'string', 'Edit Mode',...
+    'units', 'normalized',...
+    'position', [0.0 0.3 0.5 0.375],...
+    'callback', {@editModeButtonCallback, appData},...
+    'visible', 'on',...
+    'FontSize', 13,...
+    'Enable', 'off');
+
+end
+
+function createResetMacrosButton(appData, panel)
+appData.resetMacrosButton = uicontrol(panel,...
+    'style', 'pushbutton',...
+    'string', 'Reset Macros',...
+    'units', 'normalized',...
+    'position', [0.5 0.0 0.5 0.35],...
+    'callback', {@resetMacrosButtonCallback, appData},...
+    'visible', 'on',...
+    'FontSize', 12,...
+    'Enable', 'off');
+
+end
+
+function createUndoEditButton(appData, panel)
+appData.undoEditButton = uicontrol(panel,...
+    'style', 'pushbutton',...
+    'string', 'Undo Edit',...
+    'units', 'normalized',...
+    'position', [0.0 0.0 0.5 0.35],...
+    'callback', {@undoEditButtonCallback, appData},...
     'visible', 'on',...
     'FontSize', 13,...
     'Enable', 'off');
@@ -1643,7 +1845,7 @@ appData.macroTypeButton = uicontrol(panel,...
     'style', 'pushbutton',...
     'string', 'Macro Type',...
     'units', 'normalized',...
-    'position', [0.5 0.0 0.5 0.4],...
+    'position', [0.5 0.3 0.5 0.375],...
     'callback', {@macroTypeButtonCallback, appData},...
     'visible', 'on',...
     'FontSize', 13);
@@ -1720,7 +1922,7 @@ set(figure(6), 'MenuBar', 'none', 'ToolBar' ,'none')
 
 appData.timeData = timePlotDataFromPreset(appData.presetStore(1,:));
 appData.timePlots = createAllTimePlots(appData.timeData);
-set(figure(6), 'Position',(get(figure(5), 'Position') - [550, 0, 0, 0]))
+set(figure(6), 'Position',(appData.UIapp.UIFigure.Position - [250, 0, 450, 0]))
 end
 
 function createTimbrePlots(appData)
@@ -1729,7 +1931,7 @@ set(figure(7), 'MenuBar', 'none', 'ToolBar' ,'none')
 
 appData.timbreData = timbrePlotDataFromPreset(appData.presetStore(1,:));
 appData.timbrePlots = createAllTimbrePlots(appData.timbreData);
-set(figure(7), 'Position',(get(figure(5), 'Position') - [550, 420, -550, 0]))
+set(figure(7), 'Position',([0, (appData.UIapp.UIFigure.Position(2)-340), (appData.UIapp.UIFigure.Position(3)+250), 300]))
 end
 
 % Midi Input

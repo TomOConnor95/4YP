@@ -51,6 +51,10 @@ classdef ApplicationDataBlendingInterface < handle
     methods
         % Constructor
         function obj = ApplicationDataBlendingInterface(pcaAppData_in)
+            %----------------------------------------------------------%
+            %----------------------Miscellaneous-----------------------%
+            %----------------------------------------------------------%
+            obj.pcaAppData = pcaAppData_in;
             
             % Open UDP connection
             obj.u = udp('127.0.0.1',57120); 
@@ -90,10 +94,7 @@ classdef ApplicationDataBlendingInterface < handle
             %set(figure(3), 'Visible', 'off')
             
             set(figure(4), 'Visible', 'off')
-            %----------------------------------------------------------%
-            %----------------------Miscellaneous-----------------------%
-            %----------------------------------------------------------%
-            obj.pcaAppData = pcaAppData_in;
+            
             
         end
         
@@ -195,6 +196,9 @@ disp('Freeze Timbre Button Clicked')
 appData.P = appData.P.toggleTimbreState();
 correctlyColourFreezeButtons(appData);
 correctlyDisableFreezeToggles(appData);
+
+% Update colours correctly
+appData.P = appData.P.recolourPresets();
 end
 
 function timeButtonCallback (object, eventdata, appData)
@@ -203,6 +207,9 @@ disp('Freeze Time Button Clicked')
 appData.P = appData.P.toggleTimeState();
 correctlyColourFreezeButtons(appData);
 correctlyDisableFreezeToggles(appData);
+
+% Update colours correctly
+appData.P = appData.P.recolourPresets();
 end
 
 function saveButtonCallback (object, eventdata, appData)
@@ -232,10 +239,14 @@ set(figure(5), 'Visible', 'on')
 
 axes(appData.pcaAppData.ax)          
 
+% Calculate PCA scores for new preset
+[x, y, R, G, B] = calculatePCAScores(appData.pcaAppData, appData.P.presetA);
+
 %Create Marker on voronoi diagram for combined preset
 presetPositions = [appData.pcaAppData.presetPositions(appData.pcaAppData.idxSelected,:);
                    appData.pcaAppData.combinedMarkerPositions(appData.pcaAppData.combinedMarkersSelected,:)];
-PM = mean(presetPositions);
+%PM = mean(presetPositions);
+PM = [x,y];
 P1a = presetPositions(1,:);
 P1b = presetPositions(2,:);
 P1c = presetPositions(3,:);
@@ -245,16 +256,17 @@ lineColour = 'g';
 idx = length(appData.pcaAppData.combinedPresets)+1;
 
 appData.pcaAppData.combinedPresets{idx} = appData.P.presetA;
+appData.pcaAppData.combinedPresetsEdited{idx} = appData.P.presetA;
 appData.pcaAppData.combinedPresetsVaried{idx} = appData.P.presetA;
 
 appData.pcaAppData.combinedMarkerPositions(idx,:) = PM;
 appData.pcaAppData.combinedLines{idx} = plot(appData.pcaAppData.ax,...
-                [PM(1), P1a(1), PM(1), P1b(1), PM(1), P1c(1), PM(1)],...
-                [PM(2), P1a(2), PM(2), P1b(2), PM(2), P1c(2), PM(2)],...
+                [PM(1), P1a(1), NaN, PM(1), P1b(1), NaN, PM(1), P1c(1)],...
+                [PM(2), P1a(2), NaN, PM(2), P1b(2), NaN, PM(2), P1c(2)],...
                 'Color', lineColour, 'LineStyle', ':','LineWidth',3, 'PickableParts','none');
 
-appData.pcaAppData.combinedMarkers{idx} = plot(appData.pcaAppData.ax, PM(1), PM(2), 'o','MarkerSize',12,...
-    'MarkerFaceColor',[0.1,1.0,0.1],...
+appData.pcaAppData.combinedMarkers{idx} = plot(appData.pcaAppData.ax, PM(1), PM(2), 'o','MarkerSize',15,...
+    'MarkerFaceColor',[R,G,B],...
     'Color', appData.pcaAppData.mouseOverSelectedColour,...
     'LineWidth', 3,...
     'PickableParts','all',...
@@ -276,8 +288,19 @@ if ~isempty(appData.pcaAppData.combinedMarkersSelected)
     for i = 1:length(appData.pcaAppData.combinedMarkersSelected)
         appData.pcaAppData.combinedMarkers{appData.pcaAppData.combinedMarkersSelected(i)}.LineWidth = 1;
         appData.pcaAppData.combinedMarkers{appData.pcaAppData.combinedMarkersSelected(i)}.Color = [1,0,0];
+        
+        appData.pcaAppData.combinedLines{appData.pcaAppData.combinedMarkersSelected(i)}.LineWidth = 2;
     end
 end
+
+if length(appData.pcaAppData.combinedLines) > 1
+    for i = 1:length(appData.pcaAppData.combinedLines) 
+        if i ~= idx
+            appData.pcaAppData.combinedLines{i}.LineWidth = 2;
+        end
+    end
+end
+
 appData.pcaAppData.combinedMarkersSelected = idx;
 appData.pcaAppData.combinedMarkerLastClicked = idx;
 appData.pcaAppData.combinedPresetPCAParams{idx} = zeros(4);
@@ -336,12 +359,15 @@ if appData.combinedMarkerLastClicked == idx
         appData.combinedMarkers{idx}.LineWidth = 3;
         appData.combinedMarkers{idx}.Color = appData.mouseOverColour;
     end  
+    %Correctly Enable/Disable Edit Mode Button
+    correctlyEnableDisableEditModeButton(appData);
 else
     % Current marker has not just been double clicked
     if isempty(appData.combinedMarkersSelected(appData.combinedMarkersSelected == idx))
         % Current marker hasn't already been selected
         appData.combinedMarkers{idx}.LineWidth = 3;
         appData.combinedMarkers{idx}.Color = appData.mouseOverColour;
+
     else
         % Current marker has already been selected
         appData.combinedMarkers{idx}.LineWidth = 3;
@@ -353,27 +379,42 @@ else
             && (appData.combinedMarkerLastClicked > 0)
         appData.combinedMarkers{appData.combinedMarkerLastClicked}.LineWidth = 1;
         appData.combinedMarkers{appData.combinedMarkerLastClicked}.Color = [1,0,0];
+        
     elseif (appData.combinedMarkerLastClicked > 0)
         appData.combinedMarkers{appData.combinedMarkerLastClicked}.Color = appData.selectedColour;
     end
 end
 
+% Control dotted line thickness
+appData.combinedLines{idx}.LineWidth = 3;
+if length(appData.combinedLines) > 1
+    for i = 1:length(appData.combinedLines) 
+        if i ~= idx
+            appData.combinedLines{i}.LineWidth = 2;
+        end
+    end
+end
+
 appData.combinedMarkerLastClicked = idx;
 
-    % Update sliders to new preset
-    updateSliders(appData.combinedPresetPCAParams{idx}, appData);
+% Update sliders to new preset
+updateSliders(appData.combinedPresetPCAParams{idx}, appData);
 
-    % Update NumDisplays to new preset
-    updateNumDisplays(appData.combinedPresetPCAParams{idx}, appData);
+% Update NumDisplays to new preset
+updateNumDisplays(appData.combinedPresetPCAParams{idx}, appData);
 
 
 end
+
 function freezeSectionsCallback (object, eventdata, appData)
 % writes continuous mouse position to base workspace
 disp('Freeze Section Toggle Button Clicked')
 
 appData.P = appData.P.setFreezeSectionsToggled(...
     checkFreezeToggles(appData.p1, appData.p2));
+
+% Update colours correctly
+appData.P = appData.P.recolourPresets();
 end  
 
 %----------------------------------------------------------%
@@ -468,7 +509,8 @@ end
 function createBlendingInterface(appData)
 % Plot all geometry for Blending Interface
 figure(1), clf
-set(figure(1), 'MenuBar', 'none', 'ToolBar' ,'none')
+set(figure(1), 'MenuBar', 'none', 'ToolBar' ,'none',...
+               'Position', appData.pcaAppData.UIapp.UIFigure.Position)
 appData.G = createBlendingGeometry();
 % Blending Interface Callbacks
 set (gca, 'ButtonDownFcn', {@mouseClickedBlending, appData});
@@ -528,11 +570,11 @@ function createFreezeSectionUI(appData)
 figure(4)
 clf
 f1Pos = appData.G.figurePosition;
-f4Pos = f1Pos;
+f4Pos = zeros(1,4);
 f4Pos(1) = f1Pos(1)+f1Pos(3);
-f4Pos(2) = f1Pos(2)-f1Pos(4);
-f4Pos(3) = ceil(f4Pos(3)/2);
-f4Pos(4) = f4Pos(4)*2;
+f4Pos(2) = f1Pos(2);
+f4Pos(3) = 250;
+f4Pos(4) = f1Pos(4);
 
 set(figure(4), 'MenuBar', 'none', 'ToolBar' ,'none',...
     'Position', f4Pos);

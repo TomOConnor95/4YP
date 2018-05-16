@@ -12,7 +12,7 @@ mu = mean(presetStoreFlattened);
 
 presetStoreFlattened = presetStoreFlattened - mu;
 
-[coeff, score, latent] = pca(presetStoreFlattened);
+[coeff, score, latent] = pca(presetStoreFlattened); % 'VariableWeights','variance'
 
 
 labels = cell(1,length(presetStore(:,1)));

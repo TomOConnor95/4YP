@@ -5,7 +5,7 @@ Tdata.mod = reshape(preset{1},6,6);
 Tdata.freqCoarse = preset{2};
 Tdata.freqFine = preset{3};
 
-Tdata.outputLevels = preset{3};
+Tdata.outputLevels = preset{4};
 
 Tdata.freq = Tdata.freqCoarse.*(1+Tdata.freqFine);
 
@@ -25,7 +25,7 @@ Tdata.routingData = repmat({[0,0;0,0]},6,6);
 for i = 1:6
     nonZeroIndeces = find(Tdata.mod(i,:));
     for j = nonZeroIndeces
-        Tdata.routingData{i,j} = [0, 1; j, i];
+        Tdata.routingData{i,j} = [0, 1; i, j];
     end   
 end
 

@@ -9,6 +9,7 @@ classdef presetGeneratorSCMonteCarloMV < presetGeneratorSCParent
         stdExponent
         sigmoidCenterRatio;
         lastValueWeighting; % Between 0 and 1
+        presetStoreCovariance;
     end
     methods
         % Constructor
@@ -31,6 +32,11 @@ classdef presetGeneratorSCMonteCarloMV < presetGeneratorSCParent
             end 
             obj.stdExponent = 1.5;
             obj.sigmoidCenterRatio = 0.5;
+            
+            for i=1:12
+                presetStore = obj.appData.pcaAppData.presetStore;
+                obj.presetStoreCovariance{i} = cov(presetStore{i});
+            end
         end
    
     end
@@ -49,7 +55,8 @@ classdef presetGeneratorSCMonteCarloMV < presetGeneratorSCParent
                 newPresetsMean = (obj.lastValueWeighting*obj.presetA{i} + (1-obj.lastValueWeighting)*weights*historyArray);
 
                 % Covariance matrix
-                sigma = diag(zeros(1,length(historyArray(1,:)))+std(historyArray).^obj.stdExponent + obj.tempOffset);
+                sigma = diag(zeros(1,length(historyArray(1,:)))+std(historyArray).^obj.stdExponent + obj.tempOffset)...
+                            + 0.2*(obj.presetStoreCovariance{i});
 
                 sigma = obj.tempScaling * sigma;         %.*randn(1,length(obj.presetA));
                 % Multivarite Normal distrubution samples
